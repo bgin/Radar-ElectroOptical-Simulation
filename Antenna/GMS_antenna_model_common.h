@@ -101,29 +101,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_4KiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_4KiB( std::complex<float>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_4KiB( std::complex<float>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -252,11 +252,11 @@ namespace gms {
                       inline void allocate() {
                           using namespace gms::common;
                           this->ex  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->nx,64ULL);
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->nx,64ULL);
                           this->ey  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->ny,64ULL);
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
                           this->ez  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->ny,64ULL);
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
                       }
                     
               };
@@ -310,29 +310,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_4KiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_2MiB( std::complex<float>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_1GiB( std::complex<float>*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -458,11 +458,11 @@ namespace gms {
                       inline void allocate() {
                           using namespace gms::common;
                           this->mx  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->nx,64ULL);
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->nx,64ULL);
                           this->my  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->ny,64ULL);
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
                           this->mz  = (std::complex<float>*)
-                                         gms_mm_malloc( std::complex<float>*this->nz,64ULL); 
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->nz,64ULL); 
                       }
                     
               };
@@ -515,29 +515,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->ex = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(td::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->ex = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->ex = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -662,11 +662,11 @@ namespace gms {
                       void allocate() {
                             using namespace gms::common;
                             this->ex  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
                             this->ey  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
                             this->ez  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nz,64ULL);
                       }
               };
 
@@ -719,29 +719,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->mx = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<double>*)
-                                                 gms_mmap_4KiB(std::complex<double>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->mx = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<double>*)
-                                                 gms_mmap_2MiB(std::complex<double>*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->mx = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<double>*)
-                                                 gms_mmap_1GiB(std::complex<double>*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -869,11 +869,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->mx  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
                         this->my  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
                         this->mz  = (std::complex<double>*)
-                                         gms_mm_malloc(std::complex<double>*this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nz,64ULL);
                     }
                     
               };
@@ -1748,47 +1748,47 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->mxr = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->mxr = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->mxr = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->mxi = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->myr = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->myi = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->mzr = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->mzi = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -1957,12 +1957,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->mxr  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->mxi  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->myr  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->myi  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->mzr  = (double*)gms_mm_malloc(this->nz,64ULL);
-                        this->mzi  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->mxr  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->mxi  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->myr  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->myi  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->mzr  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
+                        this->mzi  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
                    }    
                    
               };
@@ -2017,29 +2017,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jex = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2165,11 +2165,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nx,64ULL);
                         this->jey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->ny,64ULL);
                         this->jez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nz,64ULL);
                     }
                     
               };
@@ -2223,29 +2223,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmx = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<float>*)
-                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2371,11 +2371,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jmx  = (std::complex<float>*)
-                                         gms_mm_malloc(this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nx,64ULL);
                         this->jmy  = (std::complex<float>*)
-                                         gms_mm_malloc(this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->ny,64ULL);
                         this->jmz  = (std::complex<float>*)
-                                         gms_mm_malloc(this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nz,64ULL);
                     }
                     
               };
@@ -2430,29 +2430,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jex = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jey = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jez = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2578,11 +2578,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jex  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
                         this->jey  = (std::complex<double>*)
-                                         gms_mm_malloc(this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
                         this->jez  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nz,64ULL);
                     }
                     
               };
@@ -2637,29 +2637,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmx = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
                                       this->jmy = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
                                       this->jmz = (std::complex<double>*)
-                                                 gms_mmap_1GiB(this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -2785,11 +2785,11 @@ namespace gms {
                     inline void allocate() {
                         using namespace gms::common;
                         this->jmx  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nx,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
                         this->jmy  = (std::complex<double>*)
-                                         gms_mm_malloc(this->ny,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
                         this->jmz  = (std::complex<double>*)
-                                         gms_mm_malloc(this->nz,64ULL);
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nz,64ULL);
                     }
                     
               };
@@ -2849,47 +2849,47 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jexr = (float*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jexr = (float*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jexr = (float*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (float*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (float*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (float*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (float*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (float*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -3055,12 +3055,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->jexr  = (float*)gms_mm_malloc(this->nx,64ULL);
-                        this->jexi  = (float*)gms_mm_malloc(this->nx,64ULL);
-                        this->jeyr  = (float*)gms_mm_malloc(this->ny,64ULL);
-                        this->jeyi  = (float*)gms_mm_malloc(this->ny,64ULL);
-                        this->jezr  = (float*)gms_mm_malloc(this->nz,64ULL);
-                        this->jezi  = (float*)gms_mm_malloc(this->nz,64ULL);
+                        this->jexr  = (float*)gms_mm_malloc(sizeof(float)*this->nx,64ULL);
+                        this->jexi  = (float*)gms_mm_malloc(sizeof(float)*this->nx,64ULL);
+                        this->jeyr  = (float*)gms_mm_malloc(sizeof(float)*this->ny,64ULL);
+                        this->jeyi  = (float*)gms_mm_malloc(sizeof(float)*this->ny,64ULL);
+                        this->jezr  = (float*)gms_mm_malloc(sizeof(float)*this->nz,64ULL);
+                        this->jezi  = (float*)gms_mm_malloc(sizeof(float)*this->nz,64ULL);
                    }    
                    
               };
@@ -3119,47 +3119,47 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jmxr = (float*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (float*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (float*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (float*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (float*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (float*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmxr = (float*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (float*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (float*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (float*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (float*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (float*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmxr = (float*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (float*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (float*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (float*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (float*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (float*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(float)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -3325,12 +3325,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->jmxr  = (float*)gms_mm_malloc(this->nx,64ULL);
-                        this->jmxi  = (float*)gms_mm_malloc(this->nx,64ULL);
-                        this->jmyr  = (float*)gms_mm_malloc(this->ny,64ULL);
-                        this->jmyi  = (float*)gms_mm_malloc(this->ny,64ULL);
-                        this->jmzr  = (float*)gms_mm_malloc(this->nz,64ULL);
-                        this->jmzi  = (float*)gms_mm_malloc(this->nz,64ULL);
+                        this->jmxr  = (float*)gms_mm_malloc(sizeof(float)*this->nx,64ULL);
+                        this->jmxi  = (float*)gms_mm_malloc(sizeof(float)*this->nx,64ULL);
+                        this->jmyr  = (float*)gms_mm_malloc(sizeof(float)*this->ny,64ULL);
+                        this->jmyi  = (float*)gms_mm_malloc(sizeof(float)*this->ny,64ULL);
+                        this->jmzr  = (float*)gms_mm_malloc(sizeof(float)*this->nz,64ULL);
+                        this->jmzi  = (float*)gms_mm_malloc(sizeof(float)*this->nz,64ULL);
                    }    
                     
               };
@@ -3390,47 +3390,47 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jexr = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jexr = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jexr = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jexi = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jeyr = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jeyi = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jezr = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jezi = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -3596,12 +3596,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->jexr  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->jexi  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->jeyr  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->jeyi  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->jezr  = (double*)gms_mm_malloc(this->nz,64ULL);
-                        this->jezi  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->jexr  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->jexi  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->jeyr  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->jeyi  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->jezr  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
+                        this->jezi  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
                    }    
               };
 
@@ -3660,47 +3660,47 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->jmxr = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (double*)
-                                                  gms_mmap_4KiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (double*)
-                                                  gms_mmap_4KiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (double*)
-                                                  gms_mmap_4KiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_4KiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->jmxr = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (double*)
-                                                  gms_mmap_2MiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (double*)
-                                                  gms_mmap_2MiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (double*)
-                                                  gms_mmap_2MiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_2MiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->jmxr = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmxi = (double*)
-                                                  gms_mmap_1GiB(this->nx,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nx,prot,flags,fd,offset);
                                       this->jmyr = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmyi = (double*)
-                                                  gms_mmap_1GiB(this->ny,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->ny,prot,flags,fd,offset);
                                       this->jmzr = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->jmzi = (double*)
-                                                  gms_mmap_1GiB(this->nz,prot,flags,fd,offset);
+                                                  gms_mmap_1GiB(sizeof(double)*this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -3866,12 +3866,12 @@ namespace gms {
                       
                    inline void allocate() {
                         using namespace gms::common;
-                        this->jmxr  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->jmxi  = (double*)gms_mm_malloc(this->nx,64ULL);
-                        this->jmyr  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->jmyi  = (double*)gms_mm_malloc(this->ny,64ULL);
-                        this->jmzr  = (double*)gms_mm_malloc(this->nz,64ULL);
-                        this->jmzi  = (double*)gms_mm_malloc(this->nz,64ULL);
+                        this->jmxr  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->jmxi  = (double*)gms_mm_malloc(sizeof(double)*this->nx,64ULL);
+                        this->jmyr  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->jmyi  = (double*)gms_mm_malloc(sizeof(double)*this->ny,64ULL);
+                        this->jmzr  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
+                        this->jmzi  = (double*)gms_mm_malloc(sizeof(double)*this->nz,64ULL);
                    }    
               };
 
