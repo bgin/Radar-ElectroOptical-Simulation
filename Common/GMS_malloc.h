@@ -138,71 +138,25 @@ namespace gms {
                 //  int fd, off_t offset);
 
 
-#if !defined (MMAP_FUNC_4KIB_BODY)
-#define MMAP_FUNC_4KIB_BODY  \   
-            do{       \                        
-                  void * ptr = nullptr;  \
-                  int32_t n4KiB_pages = 0;     \
-                  int32_t len = 0;             \
-                  len = static_cast<int32_t>(length);  \
-                  n4KiB_pages = len/4096;              \
-                  if(len != n4KiB_pages*4096) {        \
-                      n4KiB_pages++;                    \
-                  }                                    \
-                  len = n4KiB_pages*4096;                \
-                  ptr = mmap(NULL,static_cast<std::size_t>(len),  \
-                  prot,flag,fd,offset);  \
-            }while(0)
-#endif
-
-
-#if !defined (MMAP_FUNC_2MIB_BODY)
-#define MMAP_FUNC_2MIB_BODY     \
-           do{         \
-               void * ptr = nullptr;  \
-               int32_t n2MiB_pages = 0;  \
-               int32_t len = 0;  \
-               len = static_cast<int32_t>(length);  \
-               n2MiB_pages = len/2097152; \
-               if(len != n2MiB_pages*2097152) { \
-                  n2MiB_pages++; \
-               } \
-               len = n2MiB_pages*2097152; \
-               ptr = mmap(NULL,static_cast<std::size_t>(len), \
-               prot,flag,fd,offset); \
-           }while(0)   
-#endif
-
-
-#if !defined (MMAP_FUNC_1GIB_BODY)
-#define MMAP_FUNC_1GIB_BODY \
-           do{ \
-              void  * ptr = nullptr; \
-              int32_t n1GiB_pages = 0; \
-              int32_t len = 0;    \
-              len = static_cast<int32_t>(length); \
-              n1GiB_pages = len/1073741824; \
-              if(len != n1GiB_pages*1073741824) { \
-                 n1GiB_pages++;  \
-              } \
-              len = n1GiB_pages*1073741824;
-              ptr = mmap(NULL,static_cast<std::size_t>(len), \
-              prot,flag,fd,offset); \
-           }while(0)
-#endif
 
 		 __ATTR_COLD__
 		 __attribute__ ((malloc))
 		 __attribute__ ((alloc_size(1)))
 		 __attribute__ ((returns_nonnull))
 		 __attribute__ ((assume_aligned(4096)))
-		 void * gms_mmap_4KiB(const std::size_t len,
+		 template<typename T>
+		 void * gms_mmap_4KiB(const std::size_t length,
 		                      const int32_t prot,
 				      const int32_t flags,
 				      const int32_t fd,
 				      const off_t offset) {
 
-                      MMAP_FUNC_4KIB_BODY(double)
+                      void * ptr = nullptr; 
+                      std::size_t totmem = sizeof(T)*length;   
+                      std::size_t nlargep= totmem/(4096ULL);
+                      if(totmem != nlargep*4096ULL) nlargep++;
+                      totmem = nlargep*4096ULL;           
+                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
                       if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!"
@@ -218,14 +172,20 @@ namespace gms {
 		__attribute__ ((alloc_size(1)))
 		__attribute__ ((returns_nonnull))
 		__attribute__ ((assume_aligned(2097152)))
-		void *  gms_mmap_2MiB(const std::size_t len,
+		template<typename T>
+		void *  gms_mmap_2MiB(const std::size_t length,
 		                      const int32_t prot,
 				      const int32_t flags,
 				      const int32_t fd,
 				      const off_t offset) {
 				     
 				      
-                      MMAP_FUNC_2MIB_BODY
+                      void * ptr = nullptr; 
+                      std::size_t totmem = sizeof(T)*length;   
+                      std::size_t nlargep= totmem/(2097152ULL);
+                      if(totmem != nlargep*2097152ULL) nlargep++;
+                      totmem = nlargep*2097152ULL;           
+                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
 		      if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                  std::cerr << "Requested stack-backtrace -- not implemented yet!!"
@@ -241,13 +201,19 @@ namespace gms {
 		__attribute__ ((alloc_size(1)))
 		__attribute__ ((returns_nonnull))
 		__attribute__ ((assume_aligned(1073741824)))
-                void * gms_mmap_1GiB(const std::size_t len,
+		template<typename T>
+                void * gms_mmap_1GiB(const std::size_t length,
 		                     const int32_t prot,
 				     const int32_t flags,
 				     const int32_t fd,
 				     const off_t offset) {
 
-		      MMAP_FUNC_1GIB_BODY
+		      void * ptr = nullptr; 
+                      std::size_t totmem = sizeof(T)*length;   
+                      std::size_t nlargep= totmem/(1073741824ULL);
+                      if(totmem != nlargep*1073741824ULL) nlargep++;
+                      totmem = nlargep*1073741824ULL;           
+                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
 		      if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!"
@@ -258,10 +224,11 @@ namespace gms {
 		}
 
 		
-		__ATTR_COLD__		       
+		__ATTR_COLD__
+		template<typename T>		       
                 int gms_ummap(void * __restrict ptr,
 		              const std::size_t len) {
-                     return (munmap(ptr,size));
+                     return (munmap(ptr,sizeof(T)*len));
 		}
 
 	
