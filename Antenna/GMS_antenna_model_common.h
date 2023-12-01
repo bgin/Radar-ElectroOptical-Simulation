@@ -47,11 +47,17 @@ namespace file_info {
 #define USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES 0
 #endif
 
+// Use complex type decomposed into two real arrays.
+#if !defined (GMS_ANTENNA_MODEL_COMMON_USE_COMPLEX_DECOMPOSED)
+#define GMS_ANTENNA_MODEL_COMMON_USE_COMPLEX_DECOMPOSED 0
+#endif
+
 namespace gms {
 
 
           namespace  radiolocation {
           
+#if (GMS_ANTENNA_MODEL_COMMON_USE_COMPLEX_DECOMPOSED) == 0
 
               struct __ATTR_ALIGN__(64) E_c4_t {
                       // Complex electric field.
@@ -101,29 +107,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->ex = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->ey = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->ez = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB<std::complex<float>>(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -215,9 +221,9 @@ namespace gms {
                       
                           using namespace gms::common;
                           if(this->issmap) {
-                             gms_unmap(this->ex,this->nx);
-                             gms_unmap(this->ey,this->ny);
-                             gms_unmap(this->ez,this->nz);
+                             gms_unmap<std::complex<float>>(this->ex,this->nx);
+                             gms_unmap<std::complex<float>>(this->ey,this->ny);
+                             gms_unmap<std::complex<float>>(this->ez,this->nz);
                           }
                           else {
                               gms_mm_free(this->ex);
@@ -257,6 +263,191 @@ namespace gms {
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
                           this->ez  = (std::complex<float>*)
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
+                      }
+                      
+                     
+                    
+              };
+              
+              
+             struct __ATTR_ALIGN__(64) E2d_c4_t {
+                      // Complex electric field coordinates theta,phi
+                      std::complex<float> * __restrict et;
+                      std::complex<float> * __restrict ep;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,31)
+#endif
+                     inline E2d_c4_t() noexcept(true) {
+                          
+                          this->nx  = 0ULL;
+                          this->ny  = 0ULL;
+                          this->et  = NULL;
+                          this->ep  = NULL;
+                        
+                      } 
+                          
+                     inline E2d_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny) {
+                                  
+                          using namespace gms::common;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline E2d_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                            
+                             switch (fsize) {
+                                 case:0
+                                      this->et = (std::complex<float>*)
+                                                 gms_mmap_4KiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
+                                      this->ep = (std::complex<float>*)
+                                                 gms_mmap_4KiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
+                                      
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->et = (std::complex<float>*)
+                                                 gms_mmap_2MiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
+                                      this->ep = (std::complex<float>*)
+                                                 gms_mmap_2MiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->et = (std::complex<float>*)
+                                                 gms_mmap_1GiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
+                                      this->ep = (std::complex<float>*)
+                                                 gms_mmap_1GiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                     inline E2d_c4_t(const std::vector<std::complex<float>> &e_t,    //shall be of the same size (no error checking implemented)
+                                   const std::vector<std::complex<float>> &e_p) {    //shall be of the same size (no error checking implemented)
+                                 
+                          using namespace gms::common;
+                          this->nx = e_t.size();
+                          this->ny = e_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->et,&e_t[0],lenx);
+                          std::memcpy(this->ep,&e_p[0],leny);
+                              
+                     }
+                     
+                     inline E2d_c4_t(const std::valarray<std::complex<float>> &e_t,
+                                     const std::valarray<std::complex<float>> &e_p) {
+                                 
+                          using namespace gms::common;
+                          
+                          this->nx = e_t.size();
+                          this->ny = e_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->et,&e_t[0],lenx);
+                          std::memcpy(this->ep,&e_p[0],leny);
+                                    
+                     }
+                             
+                             
+                      
+                     inline E2d_c4_t(const std::size_t _nx,
+                                   const std::size_t _ny,
+                                   const std::complex<float> * __restrict e_t,
+                                   const std::complex<float> * __restrict e_p) {
+                                  
+                          using namespace gms::common;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->et[0],&e_t[0],this->nx);
+	                  avx512_uncached_memmove(&this->ep[0],&e_p[0],this->ny);
+	                 
+#else
+	                  avx512_cached_memmove(&this->et[0],&e_t[0],this->nx);
+	                  avx512_cached_memmove(&this->ep[0],&e_p[0],this->ny);
+	                
+#endif
+                   }  
+                   
+                    inline  E2d_c4_t(E2d_c4_t && rhs) {
+                          
+                          this->nx = rhs.nx;
+                          this->ny = rhs.ny;
+                          this->et = &rhs.et[0];
+                          this->ep = &rhs.ep[0];
+                          rhs.nx     = 0ULL;
+                          rhs.ny     = 0ULL;
+                          rhs.et     = NULL;
+                          rhs.ep     = NULL;
+                        
+                      }
+                                 
+                     E2d_c4_t(const E2d_c4_t &)             = delete;
+                      
+                     inline ~E2d_c4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->issmap) {
+                             gms_unmap<std::complex<float>>(this->et,this->nx);
+                             gms_unmap<std::complex<float>>(this->ep,this->ny);
+                            
+                          }
+                          else {
+                              gms_mm_free(this->et);
+                              gms_mm_free(this->ep);
+                             
+                          }
+                      }
+                      
+                     E2d_c4_t & operator=(const E2d_c4_t &) = delete;
+                      
+                     inline E2d_c4_t & operator=(E2d_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->et);
+                           gms_mm_free(this->ep);
+                           this->nx   = rhs.nx;
+                           this->ny   = rhs.ny;
+                           this->et   = &rhs.et[0];
+                           this->ep   = &rhs.ep[0];
+                           rhs.nx     = 0ULL;
+                           rhs.ny     = 0ULL;
+                           rhs.et     = NULL;
+                           rhs.ep     = NULL;
+                           return (*this);
+                      }
+                      
+                      inline void allocate() {
+                          using namespace gms::common;
+                          this->et  = (std::complex<float>*)
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->nx,64ULL);
+                          this->ep  = (std::complex<float>*)
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
+                          
                       }
                     
               };
@@ -310,29 +501,29 @@ namespace gms {
                              switch (fsize) {
                                  case:0
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_4KiB<std::complex<float>>(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                                 gms_mmap_2MiB<std::complex<float>>(this->nz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
                                       this->mx = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB<std::complex<float>>(this->nx,prot,flags,fd,offset);
                                       this->my = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                                 gms_mmap_1GiB<std::complex<float>>(this->ny,prot,flags,fd,offset);
                                       this->mz = (std::complex<float>*)
-                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
+                                                 gms_mmap_1GiB<std::complex<float>>(this->nz,prot,flags,fd,offset); 
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -421,9 +612,9 @@ namespace gms {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
-                             gms_unmap(this->mx,this->nx);
-                             gms_unmap(this->my,this->nx);
-                             gms_unmap(this->mz,this->nx);
+                             gms_unmap<std::complex<float>>(this->mx,this->nx);
+                             gms_unmap<std::complex<float>>(this->my,this->nx);
+                             gms_unmap<std::complex<float>>(this->mz,this->nx);
                           }
                           else {
                               gms_mm_free(this->mx);
@@ -463,6 +654,189 @@ namespace gms {
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
                           this->mz  = (std::complex<float>*)
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->nz,64ULL); 
+                      }
+                    
+              };
+              
+              
+              struct __ATTR_ALIGN__(64) H2d_c4_t {
+                      // Complex magnetic field coordinates theta,phi
+                      std::complex<float> * __restrict mt;
+                      std::complex<float> * __restrict mp;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,31)
+#endif
+                     inline H2d_c4_t() noexcept(true) {
+                          
+                          this->nx  = 0ULL;
+                          this->ny  = 0ULL;
+                          this->mt  = NULL;
+                          this->mp  = NULL;
+                        
+                      } 
+                          
+                     inline H2d_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny) {
+                                  
+                          using namespace gms::common;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline H2d_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                            
+                             switch (fsize) {
+                                 case:0
+                                      this->mt = (std::complex<float>*)
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->mp = (std::complex<float>*)
+                                                 gms_mmap_4KiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mt = (std::complex<float>*)
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->mp = (std::complex<float>*)
+                                                 gms_mmap_2MiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mt = (std::complex<float>*)
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->mp = (std::complex<float>*)
+                                                 gms_mmap_1GiB( sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                     inline H2d_c4_t(const std::vector<std::complex<float>> &m_t,    //shall be of the same size (no error checking implemented)
+                                     const std::vector<std::complex<float>> &m_p) {    //shall be of the same size (no error checking implemented)
+                                 
+                          using namespace gms::common;
+                          this->nx = m_t.size();
+                          this->ny = m_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->mt,&m_t[0],lenx);
+                          std::memcpy(this->mp,&m_p[0],leny);
+                              
+                     }
+                     
+                     inline H2d_c4_t(const std::valarray<std::complex<float>> &m_t,
+                                     const std::valarray<std::complex<float>> &m_p) {
+                                 
+                          using namespace gms::common;
+                          
+                          this->nx = m_t.size();
+                          this->ny = m_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->mt,&m_t[0],lenx);
+                          std::memcpy(this->mp,&m_p[0],leny);
+                                    
+                     }
+                             
+                             
+                      
+                     inline H2d_c4_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::complex<float> * __restrict m_t,
+                                     const std::complex<float> * __restrict m_p) {
+                                  
+                          using namespace gms::common;
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mt[0],&m_t[0],this->nx);
+	                  avx512_uncached_memmove(&this->mp[0],&m_p[0],this->ny);
+	                 
+#else
+	                  avx512_cached_memmove(&this->mt[0],&m_t[0],this->nx);
+	                  avx512_cached_memmove(&this->mp[0],&m_p[0],this->ny);
+	                
+#endif
+                   }  
+                   
+                    inline  H2d_c4_t(H2d_c4_t && rhs) {
+                          
+                          this->nx = rhs.nx;
+                          this->ny = rhs.ny;
+                          this->mt = &rhs.et[0];
+                          this->mp = &rhs.ep[0];
+                          rhs.nx     = 0ULL;
+                          rhs.ny     = 0ULL;
+                          rhs.mt     = NULL;
+                          rhs.mp     = NULL;
+                        
+                      }
+                                 
+                     H2d_c4_t(const H2d_c4_t &)             = delete;
+                      
+                     inline ~H2d_c4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->issmap) {
+                             gms_unmap(this->mt,this->nx);
+                             gms_unmap(this->mp,this->ny);
+                            
+                          }
+                          else {
+                              gms_mm_free(this->mt);
+                              gms_mm_free(this->mp);
+                             
+                          }
+                      }
+                      
+                     H2d_c4_t & operator=(const H2d_c4_t &) = delete;
+                      
+                     inline H2d_c4_t & operator=(H2d_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->mt);
+                           gms_mm_free(this->mp);
+                           this->nx   = rhs.nx;
+                           this->ny   = rhs.ny;
+                           this->mt   = &rhs.mt[0];
+                           this->mp   = &rhs.mp[0];
+                           rhs.nx     = 0ULL;
+                           rhs.ny     = 0ULL;
+                           rhs.mt     = NULL;
+                           rhs.mp     = NULL;
+                           return (*this);
+                      }
+                      
+                      inline void allocate() {
+                          using namespace gms::common;
+                          this->mt  = (std::complex<float>*)
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->nx,64ULL);
+                          this->mp  = (std::complex<float>*)
+                                         gms_mm_malloc( sizeof(std::complex<float>)*this->ny,64ULL);
+                          
                       }
                     
               };
@@ -877,7 +1251,8 @@ namespace gms {
                     }
                     
               };
-   
+
+#else   
 
               struct __ATTR_ALIGN__(64) E_r4_t {
                       //  ! Complex Electric  field  decomposed into real and imaginary parts 
@@ -1967,6 +2342,9 @@ namespace gms {
                    
               };
 
+#endif
+
+#if (GMS_ANTENNA_MODEL_COMMON_USE_COMPLEX_DECOMPOSED) == 0
 
                struct __ATTR_ALIGN__(64) Je_c4_t {
                       // Complex electric current
@@ -2794,6 +3172,7 @@ namespace gms {
                     
               };
 
+#else
 
                struct __ATTR_ALIGN__(64) Je_r4_t {
                      // ! Complex Electric Current  decomposed into real and imaginary parts 
@@ -3875,6 +4254,7 @@ namespace gms {
                    }    
               };
 
+#endif
 
              struct __ATTR_ALIGN__(64) N3D_c4_t {
                       // Antenna aperture surface vector: N, (Nx,Ny,Nz) complex-single
@@ -4643,6 +5023,169 @@ namespace gms {
                     }
                     
               };
+              
+              
+            struct __ATTR_ALIGN__(64) Ff239r4_t {
+                      // Psi function's (phi,theta) values
+                      float * __restrict psi;
+                      std::size_t        nph; // number of Psi function's phi values  -- 1st dimension
+                      std::size_t        nth; // number of Psi function's theta values -- 2nd dimension
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,39)
+#endif
+                     inline Ff239r4_t() noexcept(true) {
+                          
+                          this->nph    = 0ULL;
+                          this->nth    = 0ULL;
+                          this->psi    = NULL;
+                         
+                         
+                      } 
+                          
+                     inline Ff239r4_t(const std::size_t _nph,
+                                      const std::size_t _nth) {
+                                 
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline Ff239r4_t(const std::size_t _nph,
+                                      const std::size_t _nth,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nph = _nph;
+                             this->nth = _nth;
+                             const std::size_t totmem = this->nph*this->nth;
+                             switch (fsize) {
+                                 case:0
+                                      this->psi = (float*)
+                                                 gms_mmap_4KiB(sizeof(float)*totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->psi = (float*)
+                                                 gms_mmap_2MiB(sizeof(float)*totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->psi = (float*)
+                                                 gms_mmap_1GiB(sizeof(float)*totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   Ff239r4_t(const std::size_t _nph,
+                                       const std::size_t _nth,
+                                       const std::vector<float> &rhs) {   
+                                      
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(float)*(this->nph*this->nth);
+                          std::memcpy(this->psi,&rhs[0],totmem);
+                                                       
+                     }
+                     
+                    inline   Ff239r4_t(const std::size_t _nph,
+                                       const std::size_t _nth,
+                                       const std::valarray<float> &rhs) {
+                                      
+                                 
+                         
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(float)*(this->nph*this->nth);
+                          std::memcpy(this->n2dt,&n2d_t[0],totmem);
+                       
+                         
+                     }
+                      
+                   inline   Ff239r4_t(const std::size_t _nph,
+                                      const std::size_t _nth,
+                                      const std::complex<double> * __restrict _psi) {
+                                    
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::sie_t totmem = sizeof(float)*(this->nph*this->nth);
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->psi[0],&_psi[0],totmem);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->psi[0],&_psi[0],totmem);
+#endif
+                   }  
+                   
+                  inline  Ff239r4_t(Ff239r4_t && rhs) {
+                          
+                          this->nph     = rhs.nph;
+                          this->nth     = rhs.nth;
+                          this->psi     = &rhs.psi[0];
+                          rhs.nph       = 0ULL;
+                          rhs.nth       = 0ULL;
+                          rhs.psi       = NULL;
+                               
+                 }
+                                 
+                   Ff239r4_t(const Ff239r4_t &)     = delete;
+                      
+                   inline   ~Ff239r4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             const std::size_t totmem = this->nph*this->nth;
+                             gms_unmap(this->n2dt,sizeof(float)*totmem);
+                                               
+                          }
+                          else {
+                              gms_mm_free(this->n2dt);
+                              gms_mm_free(this->n2dp);
+                            
+                          }
+                      }
+                      
+                    N2D_c8_t & operator=(const N2D_c8_t &) = delete;
+                      
+                    inline  N2D_c8_t & operator=(N2D_c8_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->n2dt);
+                           gms_mm_free(this->n2dp);
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->n2dt  = &rhs.n2dt[0];
+                           this->n2dp  = &rhs.n2dp[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.n2dt    = NULL;
+                           rhs.n2dp    = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->n2dt  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
+                        this->n2dp  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
+                       
+                    }
+           };
               
 
 
