@@ -2381,7 +2381,7 @@ namespace gms {
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) Je_c8_t {
+               struct __ATTR_ALIGN__(64) Je_c8_t {
                       // Complex electric current
                      
                       std::complex<double> * __restrict jex;
@@ -3336,7 +3336,7 @@ namespace gms {
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) Je_r8_t {
+              struct __ATTR_ALIGN__(64) Je_r8_t {
                      // ! Complex Electric Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
                       
@@ -3606,7 +3606,7 @@ namespace gms {
               };
 
 
-              typedef struct __ATTR_ALIGN__(64) Jm_r8_t {
+              struct __ATTR_ALIGN__(64) Jm_r8_t {
                      // ! Complex Magnetic Current  decomposed into real and imaginary parts 
                      // ! To be used mainly by the integrators.
                       
@@ -3876,9 +3876,774 @@ namespace gms {
               };
 
 
-            
+             struct __ATTR_ALIGN__(64) N3D_c4_t {
+                      // Antenna aperture surface vector: N, (Nx,Ny,Nz) complex-single
+                      std::complex<float> * __restrict n3dx;
+                      std::complex<float> * __restrict n3dy;
+                      std::complex<float> * __restrict n3dz;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      std::size_t                      nz;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,15)
+#endif
+                     inline N3D_c4_t() noexcept(true) {
+                          
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
+                          this->nz   = 0ULL;
+                          this->n3dx  = NULL;
+                          this->n3dy  = NULL;
+                          this->n3dz  = NULL;
+                      } 
+                          
+                     inline N3D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz) {
+                     
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline N3D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->n3dx = (std::complex<float>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<float>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<float>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->n3dx = (std::complex<float>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<float>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<float>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->n3dx = (std::complex<float>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<float>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<float>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nz,prot,flags,fd,offset); 
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   N3D_c4_t(const std::vector<std::complex<float>> &n3d_x,    //shall be of the same size (no error checking implemented)
+                                     const std::vector<std::complex<float>> &n3d_y,    //shall be of the same size (no error checking implemented)
+                                     const std::vector<std::complex<float>> &n3d_z) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = n3d_x.size();
+                          this->ny = n3d_y.size();
+                          this->nz = n3d_z.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->n3dx,&n3d_x[0],lenx);
+                          std::memcpy(this->n3dy,&n3d_y[0],leny);
+                          std::memcpy(this->n3dz,&n3d_z[0],lenz);       
+                     }
+                     
+                    inline   N3D_c4_t(const std::valarray<std::complex<float>> &n3d_x,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &n3d_y,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &n3d_z) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = n3d_x.size();
+                          this->ny = n3d_y.size();
+                          this->nz = n3d_z.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<float>)*this->nz;
+                          std::memcpy(this->n3dx,&n3d_x[0],lenx);
+                          std::memcpy(this->n3dy,&n3d_y[0],leny);
+                          std::memcpy(this->n3dz,&n3d_z[0],lenz);       
+                     }
+                      
+                   inline   N3D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<float> * __restrict n3d_x,
+                                    const std::complex<float> * __restrict n3d_y,
+                                    const std::complex<float> * __restrict n3d_z) {
+                          
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->n3dx[0],&n3d_x[0],this->nx);
+	                  avx512_uncached_memmove(&this->n3dy[0],&n3d_y[0],this->ny);
+	                  avx512_uncached_memmove(&this->n3dz[0],&n3d_z[0],this->nz);
+#else
+	                  avx512_cached_memmove(&this->n3dx[0],&n3d_x[0],this->nx);
+	                  avx512_cached_memmove(&this->n3dy[0],&n3d_y[0],this->ny);
+	                  avx512_cached_memmove(&this->n3dz[0],&n3d_z[0],this->nz);
+#endif
+                   }  
+                   
+                  inline  N3D_c4_t(N3D_c4_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->nz     = rhs.nz;
+                          this->n3dx   = &rhs.n3dx[0];
+                          this->n3dy   = &rhs.n3dy[0];
+                          this->n3dz   = &rhs.n3dz[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.nz       = 0ULL;
+                          rhs.n3dx     = NULL;
+                          rhs.n3dy     = NULL;
+                          rhs.n3dz     = NULL;
+                      }
+                                 
+                   N3D_c4_t(const N3D_c4_t &)             = delete;
+                      
+                   inline   ~N3D_c4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap(this->n3dx,this->nx);
+                             gms_unmap(this->n3dy,this->ny);
+                             gms_unmap(this->n3dz,this->nz);
+                          }
+                          else {
+                              gms_mm_free(this->n3dx);
+                              gms_mm_free(this->n3dy);
+                              gms_mm_free(this->n3dz);
+                          }
+                      }
+                      
+                    N3D_c4_t & operator=(const N3D_c4_t &) = delete;
+                      
+                    inline  N3D_c4_t & operator=(N3D_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->n3dx);
+                           gms_mm_free(this->n3dy);
+                           gms_mm_free(this->n3dz);
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
+                           this->n3dx   = &rhs.n3dx[0];
+                           this->n3dy   = &rhs.n3dy[0];
+                           this->n3dz   = &rhs.n3dz[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
+                           rhs.n3dx     = NULL;
+                           rhs.n3dy     = NULL;
+                           rhs.n3dz     = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->n3dx  = (std::complex<float>*)
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nx,64ULL);
+                        this->n3dy  = (std::complex<float>*)
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->ny,64ULL);
+                        this->n3dz  = (std::complex<float>*)
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nz,64ULL);
+                    }
+                    
+              };
 
 
+
+              struct __ATTR_ALIGN__(64) N3D_c8_t {
+                      // Antenna aperture surface vector: N, (Nx,Ny,Nz) complex-single
+                      std::complex<double> * __restrict n3dx;
+                      std::complex<double> * __restrict n3dy;
+                      std::complex<double> * __restrict n3dz;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      std::size_t                      nz;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,15)
+#endif
+                     inline N3D_c8_t() noexcept(true) {
+                          
+                          this->nx   = 0ULL;
+                          this->ny   = 0ULL;
+                          this->nz   = 0ULL;
+                          this->n3dx  = NULL;
+                          this->n3dy  = NULL;
+                          this->n3dz  = NULL;
+                      } 
+                          
+                     inline N3D_c8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::size_t _nz) {
+                     
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline N3D_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->n3dx = (std::complex<double>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<double>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<double>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->n3dx = (std::complex<double>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<double>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<double>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->n3dx = (std::complex<double>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n3dy = (std::complex<double>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->n3dz = (std::complex<double>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nz,prot,flags,fd,offset); 
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   N3D_c8_t(const std::vector<std::complex<double>> &n3d_x,    //shall be of the same size (no error checking implemented)
+                                      const std::vector<std::complex<double>> &n3d_y,    //shall be of the same size (no error checking implemented)
+                                      const std::vector<std::complex<double>> &n3d_z) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = n3d_x.size();
+                          this->ny = n3d_y.size();
+                          this->nz = n3d_z.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->n3dx,&n3d_x[0],lenx);
+                          std::memcpy(this->n3dy,&n3d_y[0],leny);
+                          std::memcpy(this->n3dz,&n3d_z[0],lenz);       
+                     }
+                     
+                    inline   N3D_c8_t(const std::valarray<std::complex<double>> &n3d_x,    //shall be of the same size (no error checking implemented)
+                                      const std::valarray<std::complex<double>> &n3d_y,    //shall be of the same size (no error checking implemented)
+                                      const std::valarray<std::complex<double>> &n3d_z) {  //shall be of the same size (no error checking implemented)
+                         
+                          this->nx = n3d_x.size();
+                          this->ny = n3d_y.size();
+                          this->nz = n3d_z.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          const std::size_t lenz = sizeof(std::complex<double>)*this->nz;
+                          std::memcpy(this->n3dx,&n3d_x[0],lenx);
+                          std::memcpy(this->n3dy,&n3d_y[0],leny);
+                          std::memcpy(this->n3dz,&n3d_z[0],lenz);       
+                     }
+                      
+                   inline   N3D_c8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                    const std::size_t _nz,
+                                    const std::complex<double> * __restrict n3d_x,
+                                    const std::complex<double> * __restrict n3d_y,
+                                    const std::complex<double> * __restrict n3d_z) {
+                          
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->n3dx[0],&n3d_x[0],this->nx);
+	                  avx512_uncached_memmove(&this->n3dy[0],&n3d_y[0],this->ny);
+	                  avx512_uncached_memmove(&this->n3dz[0],&n3d_z[0],this->nz);
+#else
+	                  avx512_cached_memmove(&this->n3dx[0],&n3d_x[0],this->nx);
+	                  avx512_cached_memmove(&this->n3dy[0],&n3d_y[0],this->ny);
+	                  avx512_cached_memmove(&this->n3dz[0],&n3d_z[0],this->nz);
+#endif
+                   }  
+                   
+                  inline  N3D_c8_t(N3D_c8_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->nz     = rhs.nz;
+                          this->n3dx   = &rhs.n3dx[0];
+                          this->n3dy   = &rhs.n3dy[0];
+                          this->n3dz   = &rhs.n3dz[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.nz       = 0ULL;
+                          rhs.n3dx     = NULL;
+                          rhs.n3dy     = NULL;
+                          rhs.n3dz     = NULL;
+                      }
+                                 
+                   N3D_c8_t(const N3D_c8_t &)             = delete;
+                      
+                   inline   ~N3D_c8_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap(this->n3dx,this->nx);
+                             gms_unmap(this->n3dy,this->ny);
+                             gms_unmap(this->n3dz,this->nz);
+                          }
+                          else {
+                              gms_mm_free(this->n3dx);
+                              gms_mm_free(this->n3dy);
+                              gms_mm_free(this->n3dz);
+                          }
+                      }
+                      
+                    N3D_c8_t & operator=(const N3D_c8_t &) = delete;
+                      
+                    inline  N3D_c8_t & operator=(N3D_c8_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->n3dx);
+                           gms_mm_free(this->n3dy);
+                           gms_mm_free(this->n3dz);
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
+                           this->n3dx  = &rhs.n3dx[0];
+                           this->n3dy  = &rhs.n3dy[0];
+                           this->n3dz  = &rhs.n3dz[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
+                           rhs.n3dx    = NULL;
+                           rhs.n3dy    = NULL;
+                           rhs.n3dz    = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->n3dx  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
+                        this->n3dy  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
+                        this->n3dz  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nz,64ULL);
+                    }
+                    
+              };
+
+              
+            struct __ATTR_ALIGN__(64) N2D_c4_t {
+                      // Antenna aperture surface vector: N, (theta,phi) complex-single
+                      std::complex<float> * __restrict n2dt;
+                      std::complex<float> * __restrict n2dp;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,31)
+#endif
+                     inline N2D_c4_t() noexcept(true) {
+                          
+                          this->nx    = 0ULL;
+                          this->ny    = 0ULL;
+                          this->n2dt  = NULL;
+                          this->n2dp  = NULL;
+                         
+                      } 
+                          
+                     inline N2D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny) {
+                                 
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline N2D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             switch (fsize) {
+                                 case:0
+                                      this->n2dt = (std::complex<float>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<float>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->n2dt = (std::complex<float>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<float>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->n2dt = (std::complex<float>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<float>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<float>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   N2D_c4_t(const std::vector<std::complex<float>> &n2d_t,    //shall be of the same size (no error checking implemented)
+                                     const std::vector<std::complex<float>> &n2d_p) {    //shall be of the same size (no error checking implemented)
+                                  
+                      
+                          this->nx = n2d_t.size();
+                          this->ny = n2d_p.size();
+                        
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->n2dt,&n2d_t[0],lenx);
+                          std::memcpy(this->n2dp,&n2d_p[0],leny);
+                              
+                     }
+                     
+                    inline   N2D_c4_t(const std::valarray<std::complex<float>> &n2d_t,    //shall be of the same size (no error checking implemented)
+                                     const std::valarray<std::complex<float>> &n2d_p) {    //shall be of the same size (no error checking implemented)
+                                 
+                         
+                          this->nx = n2d_t.size();
+                          this->ny = n2d_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<float>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<float>)*this->ny;
+                          std::memcpy(this->n2dt,&n2d_t[0],lenx);
+                          std::memcpy(this->n2dp,&n2d_p[0],leny);
+                         
+                     }
+                      
+                   inline   N2D_c4_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const std::complex<float> * __restrict n2d_t,
+                                    const std::complex<float> * __restrict n2d_p) {
+                                    
+                          
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->n2dt[0],&n2d_t[0],this->nx);
+	                  avx512_uncached_memmove(&this->n2dp[0],&n2d_p[0],this->ny);
+#else	                  	          
+	                  avx512_cached_memmove(&this->n2dt[0],&n2d_t[0],this->nx);
+	                  avx512_cached_memmove(&this->n2dp[0],&n2d_p[0],this->ny);
+	                
+#endif
+                   }  
+                   
+                  inline  N2D_c4_t(N2D_c4_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->n2dt   = &rhs.n2dt[0];
+                          this->n2dp   = &rhs.n2dp[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.n2dt     = NULL;
+                          rhs.n2dp     = NULL;
+                         
+                      }
+                                 
+                   N2D_c4_t(const N2D_c4_t &)             = delete;
+                      
+                   inline   ~N2D_c4_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap(this->n2dt,this->nx);
+                             gms_unmap(this->n2dp,this->ny);
+                          
+                          }
+                          else {
+                              gms_mm_free(this->n2dt);
+                              gms_mm_free(this->n2dp);
+                            
+                          }
+                      }
+                      
+                    N2D_c4_t & operator=(const N2D_c4_t &) = delete;
+                      
+                    inline  N2D_c4_t & operator=(N2D_c4_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->n2dt);
+                           gms_mm_free(this->n2dp);
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->n2dt  = &rhs.n2dt[0];
+                           this->n2dp  = &rhs.n2dp[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.n2dt    = NULL;
+                           rhs.n2dp    = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->n2dt  = (std::complex<float>*)
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->nx,64ULL);
+                        this->n2dp  = (std::complex<float>*)
+                                         gms_mm_malloc(sizeof(std::complex<float>)*this->ny,64ULL);
+                       
+                    }
+                    
+              };
+              
+              
+              struct __ATTR_ALIGN__(64) N2D_c8_t {
+                      // Antenna aperture surface vector: N, (theta,phi) complex-single
+                      std::complex<double> * __restrict n2dt;
+                      std::complex<double> * __restrict n2dp;
+                      std::size_t                      nx;
+                      std::size_t                      ny;
+                      bool                             ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,31)
+#endif
+                     inline N2D_c8_t() noexcept(true) {
+                          
+                          this->nx    = 0ULL;
+                          this->ny    = 0ULL;
+                          this->n2dt  = NULL;
+                          this->n2dp  = NULL;
+                         
+                      } 
+                          
+                     inline N2D_c8_t(const std::size_t _nx,
+                                     const std::size_t _ny) {
+                                 
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline N2D_c8_t(const std::size_t _nx,
+                                    const std::size_t _ny,
+                                    const int32_t prot,
+                                    const int32_t flags,
+                                    const int32_t fd,
+                                    const int32_t offset,
+                                    const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             switch (fsize) {
+                                 case:0
+                                      this->n2dt = (std::complex<double>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<double>*)
+                                                 gms_mmap_4KiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->n2dt = (std::complex<double>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<double>*)
+                                                 gms_mmap_2MiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->n2dt = (std::complex<double>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->nx,prot,flags,fd,offset);
+                                      this->n2dp = (std::complex<double>*)
+                                                 gms_mmap_1GiB(sizeof(std::complex<double>)*this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   N2D_c8_t(const std::vector<std::complex<double>> &n2d_t,    //shall be of the same size (no error checking implemented)
+                                      const std::vector<std::complex<double>> &n2d_p) {    //shall be of the same size (no error checking implemented)
+                                  
+                      
+                          this->nx = n2d_t.size();
+                          this->ny = n2d_p.size();
+                        
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          std::memcpy(this->n2dt,&n2d_t[0],lenx);
+                          std::memcpy(this->n2dp,&n2d_p[0],leny);
+                              
+                     }
+                     
+                    inline   N2D_c8_t(const std::valarray<std::complex<double>> &n2d_t,    //shall be of the same size (no error checking implemented)
+                                      const std::valarray<std::complex<double>> &n2d_p) {    //shall be of the same size (no error checking implemented)
+                                 
+                         
+                          this->nx = n2d_t.size();
+                          this->ny = n2d_p.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenx = sizeof(std::complex<double>)*this->nx;
+                          const std::size_t leny = sizeof(std::complex<double>)*this->ny;
+                          std::memcpy(this->n2dt,&n2d_t[0],lenx);
+                          std::memcpy(this->n2dp,&n2d_p[0],leny);
+                         
+                     }
+                      
+                   inline   N2D_c8_t(const std::size_t _nx,
+                                     const std::size_t _ny,
+                                     const std::complex<double> * __restrict n2d_t,
+                                     const std::complex<double> * __restrict n2d_p) {
+                                    
+                          
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->n2dt[0],&n2d_t[0],this->nx);
+	                  avx512_uncached_memmove(&this->n2dp[0],&n2d_p[0],this->ny);
+#else	                  	          
+	                  avx512_cached_memmove(&this->n2dt[0],&n2d_t[0],this->nx);
+	                  avx512_cached_memmove(&this->n2dp[0],&n2d_p[0],this->ny);
+	                
+#endif
+                   }  
+                   
+                  inline  N2D_c8_t(N2D_c8_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->n2dt   = &rhs.n2dt[0];
+                          this->n2dp   = &rhs.n2dp[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.n2dt     = NULL;
+                          rhs.n2dp     = NULL;
+                         
+                      }
+                                 
+                   N2D_c8_t(const N2D_c8_t &)             = delete;
+                      
+                   inline   ~N2D_c8_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap(this->n2dt,this->nx);
+                             gms_unmap(this->n2dp,this->ny);
+                          
+                          }
+                          else {
+                              gms_mm_free(this->n2dt);
+                              gms_mm_free(this->n2dp);
+                            
+                          }
+                      }
+                      
+                    N2D_c8_t & operator=(const N2D_c8_t &) = delete;
+                      
+                    inline  N2D_c8_t & operator=(N2D_c8_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           gms_mm_free(this->n2dt);
+                           gms_mm_free(this->n2dp);
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->n2dt  = &rhs.n2dt[0];
+                           this->n2dp  = &rhs.n2dp[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.n2dt    = NULL;
+                           rhs.n2dp    = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->n2dt  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
+                        this->n2dp  = (std::complex<double>*)
+                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
+                       
+                    }
+                    
+              };
+              
 
 
 
