@@ -5515,7 +5515,7 @@ namespace gms {
                            }
                            this->ndip   = rhs.ndip;
                            this->nth    = rhs.nth;
-                           this->FT     = &rhs.Ft[0];
+                           this->Ft     = &rhs.Ft[0];
                            rhs.ndip     = 0ULL;
                            rhs.nth      = 0ULL;
                            rhs.Ft       = NULL;
@@ -5529,6 +5529,302 @@ namespace gms {
            };
               
 
+            //! Sinusoidal current distribution (2.43)
+            template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) If243 {
+                      // F(theta) values per each dipole
+                      T * __restrict Iz;
+                      std::size_t        nz; // number of  F(theta) values -- 2nd dimension
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,47)
+#endif
+                     inline If243() noexcept(true) {
+                          
+                     
+                          this->nz    = 0ULL;
+                          this->Iz    = NULL;
+                    } 
+                          
+                     inline If243(const std::size_t _nz){
+                      
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline If243(    const std::size_t _nz,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->Iz = (T*)
+                                                 gms_mmap_4KiB<T>(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->Iz = (T*)
+                                                 gms_mmap_2MiB<T>(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->Iz = (T*)
+                                                 gms_mmap_1GiB<T>(this->nz,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   If243( const std::vector<T> &rhs) {   
+                                      
+                          this->nz = rhs.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*this->nz;
+                          std::memcpy(this->Iz,&rhs[0],totmem);
+                                                       
+                     }
+                     
+                    inline   If243( const std::valarray<T> &rhs) {
+                                      
+                          this->nz = rhs.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*this->nz;
+                          std::memcpy(this->Iz,&rhs[0],totmem);
+                       
+                   }
+                      
+                   inline   If243(    const std::size_t _nz,
+                                      const T * __restrict _Iz) {
+                                    
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*this->nz;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->Iz[0],&_Iz[0],totmem);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->Iz[0],&_Iz[0],totmem);
+#endif
+                   }  
+                   
+                  inline  If243(If243 && rhs) {
+                          
+                          this->nz      = rhs.nz;
+                          this->Iz      = &rhs.Iz[0];
+                          rhs.nz        = 0ULL;
+                          rhs.Iz        = NULL;
+                 }
+                                 
+                   If243(const If243 &)     = delete;
+                      
+                   inline   ~If243() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap)  
+                               gms_unmap<T>(this->Iz,this->nz);
+                          else                     
+                               gms_mm_free(this->Iz); 
+                   }
+                      
+                    If243 & operator=(const If243 &) = delete;
+                      
+                    inline  If243 & operator=(If243 &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) 
+                              gms_unmap<T>(this->Iz,this->nz);
+                           else
+                              gms_mm_free(this->Iz);
+                           this->nz     = rhs.nz;
+                           this->Iz     = &rhs.Iz[0];
+                           rhs.nz       = 0ULL;
+                           rhs.Iz       = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->Iz  = (T*)gms_mm_malloc(sizeof(T)*this->nz,64ULL);
+                   }
+           };
+           
+         
+         //  Radiation pattern of similiar EM radiators (2.96) 
+          template<typename T,
+          typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) Ff296 {
+                      // F(theta) values per each dipole
+                      T * __restrict Ftp;
+                      std::size_t        nth; // number of theta values (2.96)
+                      std::size_t        nph; //  number of phi values (2.96) -- 2nd dimension
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,39)
+#endif
+                     inline Ff296() noexcept(true) {
+                          
+                          this->nth    = 0ULL;
+                          this->nph    = 0ULL;
+                          this->Ftp    = NULL;
+                         
+                         
+                      } 
+                          
+                     inline Ff296(const std::size_t _nth,
+                                  const std::size_t _nph) {
+                                 
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline Ff296(    const std::size_t _nth,
+                                      const std::size_t _nph,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nth  = _nth;
+                             this->nph  = _nph;
+                             const std::size_t totmem = this->nth*this->nph;
+                             switch (fsize) {
+                                 case:0
+                                      this->Ftp = (T*)
+                                                 gms_mmap_4KiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->Ftp = (T*)
+                                                 gms_mmap_2MiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->Ftp = (T*)
+                                                 gms_mmap_1GiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   Ff296(    const std::size_t _nth,
+                                       const std::size_t _nph,
+                                       const std::vector<T> &rhs) {   
+                                      
+                          this->nth  = _nth;
+                          this->nph  = _nph;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->nth*this->nph);
+                          std::memcpy(this->Ftp,&rhs[0],totmem);
+                                                       
+                     }
+                     
+                    inline   Ff296(    const std::size_t _nth,
+                                       const std::size_t _nph,
+                                       const std::valarray<T> &rhs) {
+                                      
+                                 
+                         
+                          this->nth = _nth;
+                          this->nph = _nph;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->nth*this->nph);
+                          std::memcpy(this->Ftp,&rhs[0],totmem);
+                       
+                         
+                     }
+                      
+                   inline   Ff296(    const std::size_t _nth,
+                                      const std::size_t _nph,
+                                      const T * __restrict _Ftp) {
+                                    
+                          this->nth  = _nth;
+                          this->nph  = _nph;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->nth*this->nph);
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->Ftp[0],&_Ftp[0],totmem);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->Ftp[0],&_Ftp[0],totmem);
+#endif
+                   }  
+                   
+                  inline  Ff296(Ff296 && rhs) {
+                          
+                          this->nth     = rhs.nth;
+                          this->nph     = rhs.nph;
+                          this->Ftp     = &rhs.Ftp[0];
+                          rhs.nth       = 0ULL;
+                          rhs.nph       = 0ULL;
+                          rhs.Ftp       = NULL;
+                               
+                 }
+                                 
+                   Ff296(const Ff296 &)     = delete;
+                      
+                   inline   ~Ff296() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             const std::size_t totmem = this->nth*this->nph;
+                             gms_unmap<T>(this->Ftp,totmem);
+                                               
+                          }
+                          else {
+                              gms_mm_free(this->Ftp);
+                                                        
+                          }
+                      }
+                      
+                    Ff296 & operator=(const Ff296 &) = delete;
+                      
+                    inline  Ff296 & operator=(Ff296 &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) {
+                              const std::size_t totmem = this->nth*this->nph;
+                              gms_unmap<T>(this->Ftp,totmem);
+                           }
+                           else {
+                                gms_mm_free(this->Ftp);
+                           }
+                           this->nth    = rhs.nth;
+                           this->nph    = rhs.nph;
+                           this->Ftp    = &rhs.Ftp[0];
+                           rhs.nth      = 0ULL;
+                           rhs.nph      = 0ULL;
+                           rhs.Ftp      = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->Ftp  = (T*)gms_mm_malloc(sizeof(T)*(this->nth*this->nph),64ULL);
+                   }
+           };     
 
 
 
