@@ -237,9 +237,16 @@ namespace gms {
                      inline E_c4_t & operator=(E_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->ex);
-                           gms_mm_free(this->ey);
-                           gms_mm_free(this->ez);
+                           if(this->ismmap) {
+                             gms_unmap<std::complex<float>>(this->ex,this->nx);
+                             gms_unmap<std::complex<float>>(this->ey,this->ny);
+                             gms_unmap<std::complex<float>>(this->ez,this->nz);
+                           }
+                           else {
+                             gms_mm_free(this->ex);
+                             gms_mm_free(this->ey);
+                             gms_mm_free(this->ez);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->nz   = rhs.nz;
@@ -428,8 +435,14 @@ namespace gms {
                      inline E2d_c4_t & operator=(E2d_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->et);
-                           gms_mm_free(this->ep);
+                           if(this->ismmap) {
+                               gms_unmap<std::complex<float>>(this->et,this->nx);
+                               gms_unmap<std::complex<float>>(this->ep,this->ny);
+                           }
+                           else {
+                              gms_mm_free(this->et);
+                              gms_mm_free(this->ep);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->et   = &rhs.et[0];
@@ -628,9 +641,16 @@ namespace gms {
                      inline  H_c4_t & operator=(H_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->mx);
-                           gms_mm_free(this->my);
-                           gms_mm_free(this->mz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<float>>(this->mx,this->nx);
+                              gms_unmap<std::complex<float>>(this->my,this->nx);
+                              gms_unmap<std::complex<float>>(this->mz,this->nx);
+                           } 
+                           else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->nz   = rhs.nz;
@@ -817,8 +837,14 @@ namespace gms {
                      inline H2d_c4_t & operator=(H2d_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->mt);
-                           gms_mm_free(this->mp);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<float>>(this->mt,this->nx);
+                              gms_unmap<std::complex<float>>(this->mp,this->ny);
+                           }
+                           else {
+                             gms_mm_free(this->mt);
+                             gms_mm_free(this->mp);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->mt   = &rhs.mt[0];
@@ -1015,9 +1041,16 @@ namespace gms {
                      inline E_c8_t & operator=(E_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->ex);
-                           gms_mm_free(this->ey);
-                           gms_mm_free(this->ez);
+                           if(this->ismmap) {
+                               gms_unmap<std::complex<double>>(this->ex,this->nx);
+                               gms_unmap<std::complex<double>>(this->ey,this->ny);
+                               gms_unmap<std::complex<double>>(this->ez,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->ex);
+                              gms_mm_free(this->ey);
+                              gms_mm_free(this->ez);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->nz   = rhs.nz;
@@ -1222,9 +1255,16 @@ namespace gms {
                     inline  H_c8_t & operator=(H_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->mx);
-                           gms_mm_free(this->my);
-                           gms_mm_free(this->mz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<double>>(this->mx,this->nx);
+                              gms_unmap<std::complex<double>>(this->my,this->ny);
+                              gms_unmap<std::complex<double>>(this->mz,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                           }
                            this->nx   = rhs.nx;
                            this->ny   = rhs.ny;
                            this->nz   = rhs.nz;
@@ -1486,12 +1526,22 @@ namespace gms {
                       inline E_r4_t & operator=(E_r4_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->exr);
-                            gms_mm_free(this->exi);
-                            gms_mm_free(this->eyr);
-                            gms_mm_free(this->eyi);
-                            gms_mm_free(this->ezr);
-                            gms_mm_free(this->ezi);
+                            if(this->ismmap) {
+                                gms_unmap<float>(this->exr,this->nx);
+                                gms_unmap<float>(this->exi,this->nx);
+                                gms_unmap<float>(this->eyr,this->ny); 
+                                gms_unmap<float>(this->eyi,this->ny);
+                                gms_unmap<float>(this->ezr,this->nz);
+                                gms_unmap<float>(this->ezi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->exr);
+                               gms_mm_free(this->exi);
+                               gms_mm_free(this->eyr);
+                               gms_mm_free(this->eyi);
+                               gms_mm_free(this->ezr);
+                               gms_mm_free(this->ezi);
+                            }
                             this->nx   = rhs.nx;
                             this->ny   = rhs.ny;
                             this->nz   = rhs.nz;
@@ -1757,12 +1807,22 @@ namespace gms {
                       inline H_r4_t & operator=(H_r4_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->mxr);
-                            gms_mm_free(this->mxi);
-                            gms_mm_free(this->myr);
-                            gms_mm_free(this->myi);
-                            gms_mm_free(this->mzr);
-                            gms_mm_free(this->mzi);
+                            if(this->ismmap) {
+                               gms_unmap<float>(this->mxr,this->nx);
+                               gms_unmap<float>(this->mxi,this->nx);
+                               gms_unmap<float>(this->myr,this->ny); 
+                               gms_unmap<float>(this->myi,this->ny);
+                               gms_unmap<float>(this->mzr,this->nz);
+                               gms_unmap<float>(this->mzi,this->nz);
+                            }
+                            else {
+                              gms_mm_free(this->mxr);
+                              gms_mm_free(this->mxi);
+                              gms_mm_free(this->myr);
+                              gms_mm_free(this->myi);
+                              gms_mm_free(this->mzr);
+                              gms_mm_free(this->mzi);
+                            }
                             this->nx   = rhs.nx;
                             this->ny   = rhs.ny;
                             this->nz   = rhs.nz;
@@ -2030,12 +2090,22 @@ namespace gms {
                       inline E_r8_t & operator=(E_r8_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->exr);
-                            gms_mm_free(this->exi);
-                            gms_mm_free(this->eyr);
-                            gms_mm_free(this->eyi);
-                            gms_mm_free(this->ezr);
-                            gms_mm_free(this->ezi);
+                            if(this->ismmap) {
+                                gms_unmap<double>(this->exr,this->nx);
+                                gms_unmap<double>(this->exi,this->nx);
+                                gms_unmap<double>(this->eyr,this->ny); 
+                                gms_unmap<double>(this->eyi,this->ny);
+                                gms_unmap<double>(this->ezr,this->nz);
+                                gms_unmap<double>(this->ezi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->exr);
+                               gms_mm_free(this->exi);
+                               gms_mm_free(this->eyr);
+                               gms_mm_free(this->eyi);
+                               gms_mm_free(this->ezr);
+                               gms_mm_free(this->ezi);
+                            }
                             this->nx   = rhs.nx;
                             this->ny   = rhs.ny;
                             this->nz   = rhs.nz;
@@ -2303,12 +2373,22 @@ namespace gms {
                       inline H_r8_t & operator=(H_r8_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->mxr);
-                            gms_mm_free(this->mxi);
-                            gms_mm_free(this->myr);
-                            gms_mm_free(this->myi);
-                            gms_mm_free(this->mzr);
-                            gms_mm_free(this->mzi);
+                            if(this->ismmap) {
+                               gms_unmap<double>(this->mxr,this->nx);
+                               gms_unmap<double>(this->mxi,this->nx);
+                               gms_unmap<double>(this->myr,this->ny); 
+                               gms_unmap<double>(this->myi,this->ny);
+                               gms_unmap<double>(this->mzr,this->nz);
+                               gms_unmap<double>(this->mzi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->mxr);
+                               gms_mm_free(this->mxi);
+                               gms_mm_free(this->myr);
+                               gms_mm_free(this->myi);
+                               gms_mm_free(this->mzr);
+                               gms_mm_free(this->mzi);
+                            }
                             this->nx   = rhs.nx;
                             this->ny   = rhs.ny;
                             this->nz   = rhs.nz;
@@ -2522,9 +2602,16 @@ namespace gms {
                     inline  Je_c4_t & operator=(Je_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->jex);
-                           gms_mm_free(this->jey);
-                           gms_mm_free(this->jez);
+                           if(this->ismmap) {
+                               gms_unmap<std::complex<float>>(this->jex,this->nx);
+                               gms_unmap<std::complex<float>>(this->jey,this->ny);
+                               gms_unmap<std::complex<float>>(this->jez,this->nz);
+                           }
+                           else {
+                             gms_mm_free(this->jex);
+                             gms_mm_free(this->jey);
+                             gms_mm_free(this->jez);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -2728,9 +2815,16 @@ namespace gms {
                     inline  Jm_c4_t & operator=(Jm_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->jmx);
-                           gms_mm_free(this->jmy);
-                           gms_mm_free(this->jmz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<float>>(this->jmx,this->nx);
+                              gms_unmap<std::complex<float>>(this->jmy,this->ny);
+                              gms_unmap<std::complex<float>>(this->jmz,this->nz);
+                           }
+                           else {
+                             gms_mm_free(this->jmx);
+                             gms_mm_free(this->jmy);
+                             gms_mm_free(this->jmz);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -2935,9 +3029,16 @@ namespace gms {
                     inline  Je_c8_t & operator=(Je_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->jex);
-                           gms_mm_free(this->jey);
-                           gms_mm_free(this->jez);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<double>>(this->jex,this->nx);
+                              gms_unmap<std::complex<double>>(this->jey,this->ny);
+                              gms_unmap<std::complex<double>>(this->jez,this->nz);
+                           }
+                           else {
+                             gms_mm_free(this->jex);
+                             gms_mm_free(this->jey);
+                             gms_mm_free(this->jez);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -3142,9 +3243,16 @@ namespace gms {
                     inline  Jm_c8_t & operator=(Jm_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->jmx);
-                           gms_mm_free(this->jmy);
-                           gms_mm_free(this->jmz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<double>>(this->jmx,this->nx);
+                              gms_unmap<std::complex<double>>(this->jmy,this->ny);
+                              gms_unmap<std::complex<double>>(this->jmz,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->jmx);
+                              gms_mm_free(this->jmy);
+                              gms_mm_free(this->jmz);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -3405,12 +3513,22 @@ namespace gms {
                       inline Je_r4_t & operator=(Je_r4_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->jexr);
-                            gms_mm_free(this->jexi);
-                            gms_mm_free(this->jeyr);
-                            gms_mm_free(this->jeyi);
-                            gms_mm_free(this->jezr);
-                            gms_mm_free(this->jezi);
+                            if(this->ismmap) {
+                                gms_unmap<float>(this->jexr,this->nx);
+                                gms_unmap<float>(this->jexi,this->nx);
+                                gms_unmap<float>(this->jeyr,this->ny); 
+                                gms_unmap<float>(this->jeyi,this->ny);
+                                gms_unmap<float>(this->jezr,this->nz);
+                                gms_unmap<float>(this->jezi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->jexr);
+                               gms_mm_free(this->jexi);
+                               gms_mm_free(this->jeyr);
+                               gms_mm_free(this->jeyi);
+                               gms_mm_free(this->jezr);
+                               gms_mm_free(this->jezi);
+                            }
                             this->nx    = rhs.nx;
                             this->ny    = rhs.ny;
                             this->nz    = rhs.nz;
@@ -3675,12 +3793,22 @@ namespace gms {
                       inline Jm_r4_t & operator=(Jm_r4_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->jmxr);
-                            gms_mm_free(this->jmxi);
-                            gms_mm_free(this->jmyr);
-                            gms_mm_free(this->jmyi);
-                            gms_mm_free(this->jmzr);
-                            gms_mm_free(this->jmzi);
+                            if(this->ismmap) {
+                                gms_unmap<float>(this->jmxr,this->nx);
+                                gms_unmap<float>(this->jmxi,this->nx);
+                                gms_unmap<float>(this->jmyr,this->ny); 
+                                gms_unmap<float>(this->jmyi,this->ny);
+                                gms_unmap<float>(this->jmzr,this->nz);
+                                gms_unmap<float>(this->jmzi,this->nz);
+                            }
+                            else {
+                                gms_mm_free(this->jmxr);
+                                gms_mm_free(this->jmxi);
+                                gms_mm_free(this->jmyr);
+                                gms_mm_free(this->jmyi);
+                                gms_mm_free(this->jmzr);
+                                gms_mm_free(this->jmzi);
+                            }
                             this->nx    = rhs.nx;
                             this->ny    = rhs.ny;
                             this->nz    = rhs.nz;
@@ -3946,12 +4074,22 @@ namespace gms {
                       inline Je_r4_t & operator=(Je_r4_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->jexr);
-                            gms_mm_free(this->jexi);
-                            gms_mm_free(this->jeyr);
-                            gms_mm_free(this->jeyi);
-                            gms_mm_free(this->jezr);
-                            gms_mm_free(this->jezi);
+                            if(this->ismmap) {
+                                gms_unmap<double>(this->jexr,this->nx);
+                                gms_unmap<double>(this->jexi,this->nx);
+                                gms_unmap<double>(this->jeyr,this->ny); 
+                                gms_unmap<double>(this->jeyi,this->ny);
+                                gms_unmap<double>(this->jezr,this->nz);
+                                gms_unmap<double>(this->jezi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->jexr);
+                               gms_mm_free(this->jexi);
+                               gms_mm_free(this->jeyr);
+                               gms_mm_free(this->jeyi);
+                               gms_mm_free(this->jezr);
+                               gms_mm_free(this->jezi);
+                            }
                             this->nx    = rhs.nx;
                             this->ny    = rhs.ny;
                             this->nz    = rhs.nz;
@@ -4216,12 +4354,22 @@ namespace gms {
                       inline Jm_r8_t & operator=(Jm_r8_t &&rhs) {
                             using namespace gms::common;
                             if(this==&rhs) return (*this);
-                            gms_mm_free(this->jmxr);
-                            gms_mm_free(this->jmxi);
-                            gms_mm_free(this->jmyr);
-                            gms_mm_free(this->jmyi);
-                            gms_mm_free(this->jmzr);
-                            gms_mm_free(this->jmzi);
+                            if(this->ismmap) {
+                                gms_unmap<double>(this->jmxr,this->nx);
+                                gms_unmap<double>(this->jmxi,this->nx);
+                                gms_unmap<double>(this->jmyr,this->ny); 
+                                gms_unmap<double>(this->jmyi,this->ny);
+                                gms_unmap<double>(this->jmzr,this->nz);
+                                gms_unmap<double>(this->jmzi,this->nz);
+                            }
+                            else {
+                               gms_mm_free(this->jmxr);
+                               gms_mm_free(this->jmxi);
+                               gms_mm_free(this->jmyr);
+                               gms_mm_free(this->jmyi);
+                               gms_mm_free(this->jmzr);
+                               gms_mm_free(this->jmzi);
+                            }
                             this->nx    = rhs.nx;
                             this->ny    = rhs.ny;
                             this->nz    = rhs.nz;
@@ -4431,9 +4579,16 @@ namespace gms {
                     inline  N3D_c4_t & operator=(N3D_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->n3dx);
-                           gms_mm_free(this->n3dy);
-                           gms_mm_free(this->n3dz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<float>>(this->n3dx,this->nx);
+                              gms_unmap<std::complex<float>>(this->n3dy,this->ny);
+                              gms_unmap<std::complex<float>>(this->n3dz,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->n3dx);
+                              gms_mm_free(this->n3dy);
+                              gms_mm_free(this->n3dz);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -4638,9 +4793,16 @@ namespace gms {
                     inline  N3D_c8_t & operator=(N3D_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->n3dx);
-                           gms_mm_free(this->n3dy);
-                           gms_mm_free(this->n3dz);
+                           if(this->ismmap) {
+                              gms_unmap<std::complex<double>>(this->n3dx,this->nx);
+                              gms_unmap<std::complex<double>>(this->n3dy,this->ny);
+                              gms_unmap<std::complex<double>>(this->n3dz,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->n3dx);
+                              gms_mm_free(this->n3dy);
+                              gms_mm_free(this->n3dz);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->nz    = rhs.nz;
@@ -4822,8 +4984,14 @@ namespace gms {
                     inline  N2D_c4_t & operator=(N2D_c4_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->n2dt);
-                           gms_mm_free(this->n2dp);
+                           if(this->ismmap) {
+                               gms_unmap<std::complex<float>>(this->n2dt,this->nx);
+                               gms_unmap<std::complex<float>>(this->n2dp,this->ny);
+                           }
+                           else {
+                              gms_mm_free(this->n2dt);
+                              gms_mm_free(this->n2dp);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->n2dt  = &rhs.n2dt[0];
@@ -5000,8 +5168,14 @@ namespace gms {
                     inline  N2D_c8_t & operator=(N2D_c8_t &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->n2dt);
-                           gms_mm_free(this->n2dp);
+                           if(this->ismmap) {
+                                gms_unmap<std::complex<double>>(this->n2dt,this->nx);
+                                gms_unmap<std::complex<double>>(this->n2dp,this->ny);
+                           }
+                           else {
+                              gms_mm_free(this->n2dt);
+                              gms_mm_free(this->n2dp);
+                           }
                            this->nx    = rhs.nx;
                            this->ny    = rhs.ny;
                            this->n2dt  = &rhs.n2dt[0];
@@ -5025,16 +5199,19 @@ namespace gms {
               };
               
               
-            struct __ATTR_ALIGN__(64) Ff239r4_t {
+            template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) Ff239 {
                       // Psi function's (phi,theta) values
-                      float * __restrict psi;
+                      T * __restrict psi;
                       std::size_t        nph; // number of Psi function's phi values  -- 1st dimension
                       std::size_t        nth; // number of Psi function's theta values -- 2nd dimension
                       bool               ismmap;
 #if (USE_STRUCT_PADDING) == 1
                       PAD_TO(0,39)
 #endif
-                     inline Ff239r4_t() noexcept(true) {
+                     inline Ff239() noexcept(true) {
                           
                           this->nph    = 0ULL;
                           this->nth    = 0ULL;
@@ -5043,8 +5220,8 @@ namespace gms {
                          
                       } 
                           
-                     inline Ff239r4_t(const std::size_t _nph,
-                                      const std::size_t _nth) {
+                     inline Ff239(const std::size_t _nph,
+                                  const std::size_t _nth) {
                                  
                           this->nph = _nph;
                           this->nth = _nth;
@@ -5052,7 +5229,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline Ff239r4_t(const std::size_t _nph,
+                     inline Ff239(    const std::size_t _nph,
                                       const std::size_t _nth,
                                       const int32_t prot,
                                       const int32_t flags,
@@ -5065,18 +5242,18 @@ namespace gms {
                              const std::size_t totmem = this->nph*this->nth;
                              switch (fsize) {
                                  case:0
-                                      this->psi = (float*)
-                                                 gms_mmap_4KiB<float>(totmem,prot,flags,fd,offset);
+                                      this->psi = (T*)
+                                                 gms_mmap_4KiB<T>(totmem,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:1
-                                      this->psi = (float*)
-                                                 gms_mmap_2MiB<float>(totmem,prot,flags,fd,offset);
+                                      this->psi = (T*)
+                                                 gms_mmap_2MiB<T>(totmem,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  case:2
-                                      this->psi = (float*)
-                                                 gms_mmap_1GiB<float>(totmem,prot,flags,fd,offset);
+                                      this->psi = (T*)
+                                                 gms_mmap_1GiB<T>(totmem,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
                                  default :
@@ -5086,22 +5263,22 @@ namespace gms {
                      }
                       
                       
-                    inline   Ff239r4_t(const std::size_t _nph,
+                    inline   Ff239(    const std::size_t _nph,
                                        const std::size_t _nth,
-                                       const std::vector<float> &rhs) {   
+                                       const std::vector<T> &rhs) {   
                                       
                           this->nph = _nph;
                           this->nth = _nth;
                           allocate();
                           this->ismmap = false;
-                          const std::size_t totmem = sizeof(float)*(this->nph*this->nth);
+                          const std::size_t totmem = sizeof(T)*(this->nph*this->nth);
                           std::memcpy(this->psi,&rhs[0],totmem);
                                                        
                      }
                      
-                    inline   Ff239r4_t(const std::size_t _nph,
+                    inline   Ff239(const std::size_t _nph,
                                        const std::size_t _nth,
-                                       const std::valarray<float> &rhs) {
+                                       const std::valarray<T> &rhs) {
                                       
                                  
                          
@@ -5109,21 +5286,21 @@ namespace gms {
                           this->nth = _nth;
                           allocate();
                           this->ismmap = false;
-                          const std::size_t totmem = sizeof(float)*(this->nph*this->nth);
-                          std::memcpy(this->n2dt,&n2d_t[0],totmem);
+                          const std::size_t totmem = sizeof(T)*(this->nph*this->nth);
+                          std::memcpy(this->psi,&rhs[0],totmem);
                        
                          
                      }
                       
-                   inline   Ff239r4_t(const std::size_t _nph,
+                   inline   Ff239(const std::size_t _nph,
                                       const std::size_t _nth,
-                                      const std::complex<double> * __restrict _psi) {
+                                      const T * __restrict _psi) {
                                     
                           this->nph = _nph;
                           this->nth = _nth;
                           allocate();
                           this->ismmap = false;
-                          const std::sie_t totmem = sizeof(float)*(this->nph*this->nth);
+                          const std::size_t totmem = sizeof(T)*(this->nph*this->nth);
 #if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->psi[0],&_psi[0],totmem);
 #else	         	                  	          
@@ -5131,7 +5308,7 @@ namespace gms {
 #endif
                    }  
                    
-                  inline  Ff239r4_t(Ff239r4_t && rhs) {
+                  inline  Ff239(Ff239 && rhs) {
                           
                           this->nph     = rhs.nph;
                           this->nth     = rhs.nth;
@@ -5142,49 +5319,213 @@ namespace gms {
                                
                  }
                                  
-                   Ff239r4_t(const Ff239r4_t &)     = delete;
+                   Ff239(const Ff239 &)     = delete;
                       
-                   inline   ~Ff239r4_t() {
+                   inline   ~Ff239() {
                       
                           using namespace gms::common;
                           if(this->ismmap) {
                              const std::size_t totmem = this->nph*this->nth;
-                             gms_unmap<float>(this->n2dt,totmem);
-                                               
+                             gms_unmap<T>(this->psi,totmem);
                           }
                           else {
-                              gms_mm_free(this->n2dt);
-                              gms_mm_free(this->n2dp);
-                            
+                              gms_mm_free(this->psi);
+                                                 
                           }
                       }
                       
-                    N2D_c8_t & operator=(const N2D_c8_t &) = delete;
+                    Ff239 & operator=(const Ff239 &) = delete;
                       
-                    inline  N2D_c8_t & operator=(N2D_c8_t &&rhs) {
+                    inline  Ff239 & operator=(Ff239 &&rhs) {
                            using namespace gms::common;
                            if(this==&rhs) return (*this);
-                           gms_mm_free(this->n2dt);
-                           gms_mm_free(this->n2dp);
-                           this->nx    = rhs.nx;
-                           this->ny    = rhs.ny;
-                           this->n2dt  = &rhs.n2dt[0];
-                           this->n2dp  = &rhs.n2dp[0];
-                           rhs.nx      = 0ULL;
-                           rhs.ny      = 0ULL;
-                           rhs.n2dt    = NULL;
-                           rhs.n2dp    = NULL;
+                           if(this->ismmap) {
+                               const std::size_t totmem = this->nph*this->nth;
+                               gms_unmap<T>(this->psi,totmem);
+                           }
+                           else {
+                               gms_mm_free(this->psi);
+                           }
+                           this->nph   = rhs.nph;
+                           this->nth   = rhs.nth;
+                           this->psi   = &rhs.psi[0];
+                           rhs.nph     = 0ULL;
+                           rhs.nth     = 0ULL;
+                           rhs.psi    = NULL;
                            return (*this);
                       }
                       
                     inline void allocate() {
                         using namespace gms::common;
-                        this->n2dt  = (std::complex<double>*)
-                                         gms_mm_malloc(sizeof(std::complex<double>)*this->nx,64ULL);
-                        this->n2dp  = (std::complex<double>*)
-                                         gms_mm_malloc(sizeof(std::complex<double>)*this->ny,64ULL);
+                        this->n2dt  =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->nx,64ULL);
+                        
                        
                     }
+           };
+           
+           // ! Elementary electric dipoles (radiation patterns) (2.40)
+            template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) Ff240 {
+                      // F(theta) values per each dipole
+                      T * __restrict Fth;
+                      std::size_t        ndip; // number of dipoles
+                      std::size_t        nth; // number of  F(theta) values -- 2nd dimension
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,39)
+#endif
+                     inline Ff240() noexcept(true) {
+                          
+                          this->ndip   = 0ULL;
+                          this->nth    = 0ULL;
+                          this->Fth    = NULL;
+                         
+                         
+                      } 
+                          
+                     inline Ff240(const std::size_t _ndip,
+                                  const std::size_t _nth) {
+                                 
+                          this->nph = _nph;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline Ff240(    const std::size_t _ndip,
+                                      const std::size_t _nth,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->ndip = _dip;
+                             this->nth  = _nth;
+                             const std::size_t totmem = this->ndip*this->nth;
+                             switch (fsize) {
+                                 case:0
+                                      this->Ft = (T*)
+                                                 gms_mmap_4KiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->Ft = (T*)
+                                                 gms_mmap_2MiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->Ft = (T*)
+                                                 gms_mmap_1GiB<T>(totmem,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   Ff240(    const std::size_t _ndip,
+                                       const std::size_t _nth,
+                                       const std::vector<T> &rhs) {   
+                                      
+                          this->ndip = _ndp;
+                          this->nth  = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->ndip*this->nth);
+                          std::memcpy(this->FT,&rhs[0],totmem);
+                                                       
+                     }
+                     
+                    inline   Ff240(const std::size_t _ndip,
+                                       const std::size_t _nth,
+                                       const std::valarray<T> &rhs) {
+                                      
+                                 
+                         
+                          this->ndip = _ndip;
+                          this->nth = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->ndip*this->nth);
+                          std::memcpy(this->Ft,&rhs[0],totmem);
+                       
+                         
+                     }
+                      
+                   inline   Ff240(const std::size_t _ndip,
+                                      const std::size_t _nth,
+                                      const T * __restrict _Ft) {
+                                    
+                          this->ndip = _ndip;
+                          this->nth  = _nth;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t totmem = sizeof(T)*(this->ndip*this->nth);
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->Ft[0],&_Ft[0],totmem);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->Ft[0],&_Ft[0],totmem);
+#endif
+                   }  
+                   
+                  inline  Ff240(Ff240 && rhs) {
+                          
+                          this->ndip    = rhs.ndip;
+                          this->nth     = rhs.nth;
+                          this->Ft      = &rhs.Ft[0];
+                          rhs.ndip      = 0ULL;
+                          rhs.nth       = 0ULL;
+                          rhs.Ft        = NULL;
+                               
+                 }
+                                 
+                   Ff240(const Ff240 &)     = delete;
+                      
+                   inline   ~Ff240() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             const std::size_t totmem = this->ndip*this->nth;
+                             gms_unmap<T>(this->Ft,totmem);
+                                               
+                          }
+                          else {
+                              gms_mm_free(this->Ft);
+                                                        
+                          }
+                      }
+                      
+                    Ff240 & operator=(const Ff240 &) = delete;
+                      
+                    inline  Ff240 & operator=(Ff240 &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) {
+                              const std::size_t totmem = this->ndip*this->nth;
+                              gms_unmap<T>(this->Ft,totmem);
+                           }
+                           else {
+                                gms_mm_free(this->Ft);
+                           }
+                           this->ndip   = rhs.ndip;
+                           this->nth    = rhs.nth;
+                           this->FT     = &rhs.Ft[0];
+                           rhs.ndip     = 0ULL;
+                           rhs.nth      = 0ULL;
+                           rhs.Ft       = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->Ft  = (T*)gms_mm_malloc(sizeof(T)*(this->ndip*this->nth),64ULL);
+                   }
            };
               
 
