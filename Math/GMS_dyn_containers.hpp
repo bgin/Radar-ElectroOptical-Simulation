@@ -1266,6 +1266,552 @@ namespace gms {
               };
               
               
+            template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) DC3D_t {
+                      // Psi function's (phi,theta) values
+                      T * __restrict mx;
+                      T * __restrict my;
+                      T * __restrict mz;
+                      std::size_t        nx; 
+                      std::size_t        ny; 
+                      std::size_t        nz;
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,15)
+#endif
+                     inline DC3D_t() noexcept(true) {
+                          
+                          this->nx    = 0ULL;
+                          this->ny    = 0ULL;
+                          this->nz    = 0ULL
+                          this->mx    = NULL;
+                          this->my    = NULL;
+                          this->mz    = NULL;
+                      } 
+                          
+                     inline DC3D_t(const std::size_t _nx,
+                                   const std::size_t _ny,
+                                   const std::size_t _nz) {
+                                 
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          this->nz = _nz;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline DC3D_t(   const std::size_t _nx,
+                                      const std::size_t _ny,
+                                      const std::size_t _nz,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             this->nz = _nz;
+                             switch (fsize) {
+                                 case:0
+                                      this->mx = (T*)
+                                                 gms_mmap_4KiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_4KiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->mz = (T*)
+                                                 gms_mmap_4KiB<T>(this->nz,prot,flags,fd,offset);           
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mx = (T*)
+                                                 gms_mmap_2MiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_2MiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->mz = (T*)
+                                                 gms_mmap_2MiB<T>(this->nz,prot,flags,fd,offset);    
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mx = (T*)
+                                                 gms_mmap_1GiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_1GiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->mz = (T*)
+                                                 gms_mmap_1GiB<T>(this->nz,prot,flags,fd,offset);  
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   DC3D_t(   const std::vector<T> &_mx
+                                       const std::vector<T> &_my,
+                                       const std::vector<T> &_mz) {   
+                                      
+                          this->nx = _mx.size();
+                          this->ny = _my.size();
+                          this->nz = _mz.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+                          const std::size_t lenmz = sizeof(T)*this->nz;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                          std::memcpy(this->my,&_my[0],lenmy);  
+                          std::memcpy(this->mz,&_mz[0],lenmz);                           
+                     }
+                     
+                    inline   DC3D_t(   const std::valarray<T> &_mx
+                                       const std::valarray<T> &_my,
+                                       const std::valarray<T> &_mz) {   
+                                      
+                          this->nx = _mx.size();
+                          this->ny = _my.size();
+                          this->nz = _mz.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+                          const std::size_t lenmz = sizeof(T)*this->nz;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                          std::memcpy(this->my,&_my[0],lenmy);  
+                          std::memcpy(this->mz,&_mz[0],lenmz);       
+                                      
+                  }    
+                                           
+                                                  
+                   inline   DC3D_t(   const std::size_t _nx,
+                                      const std::size_t _ny,
+                                      const std::size_t _nz,
+                                      const T * __restrict _mx,
+                                      const T * __restrict _my,
+                                      const T * __restrict _mz ) {
+                                    
+                          this->nx  = _nx;
+                          this->ny  = _ny;
+                          this->nz  = _nz;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+                          const std::size_t lenmz = sizeof(T)*this->nz;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
+	                  avx512_uncached_memmove(&this->my[0],&_my[0],lenmy);
+	                  avx512_uncached_memmove(&this->mz[0],&_mz[0],lenmz);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->mx[0],&_mx[0],lenmx);
+	                  avx512_cached_memmove(&this->my[0],&_my[0],lenmy);
+	                  avx512_cached_memmove(&this->mz[0],&_mz[0],lenmz);
+#endif
+                   }  
+                   
+                  inline  DC3D_t(DC3D_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->nz     = rhs.nz
+                          this->mx     = &rhs.mx[0];
+                          this->my     = &rhs.my[0];
+                          this->mz     = &rhs.mz[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.nz       = 0ULL;
+                          rhs.mx       = NULL;
+                          rhs.my       = NULL;
+                          rhs.mz       = NULL;     
+                 }
+                                 
+                   DC3D_t(const DC3D_t &)     = delete;
+                      
+                   inline   ~DC3D_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap<T>(this->mx,this->nx);
+                             gms_unmap<T>(this->my,this->ny);
+                             gms_unmap<T>(this->mz,this->nz);
+                          }
+                          else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                          }
+                      }
+                      
+                    DC3D_t & operator=(const DC3D_t &) = delete;
+                      
+                    inline  DC3D_t & operator=(DC3D_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) {
+                               gms_unmap<T>(this->mx,this->nx);
+                               gms_unmap<T>(this->my,this->ny);
+                               gms_unmap<T>(this->mz,this->nz);
+                           }
+                           else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                              gms_mm_free(this->mz);
+                           }
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->nz    = rhs.nz;
+                           this->mx    = &rhs.mx[0];
+                           this->my    = &rhs.my[0];
+                           this->mz    = &rhs.mz[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.nz      = 0ULL;
+                           rhs.mx      = NULL;
+                           rhs.my      = NULL;
+                           rhs.mz      = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->mx =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->nx,64ULL);
+                        this->my =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->ny,64ULL);
+                        this->mz =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->nz,64ULL);
+                       
+                    }
+           };
+           
+           
+            template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) DC2D_t {
+                     
+                      T * __restrict mx;
+                      T * __restrict my;
+                      std::size_t        nx; 
+                      std::size_t        ny; 
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,31)
+#endif
+                     inline DC2D_t() noexcept(true) {
+                          
+                          this->nx    = 0ULL;
+                          this->ny    = 0ULL;
+                          this->mx    = NULL;
+                          this->my    = NULL;
+                    } 
+                          
+                     inline DC2D_t(const std::size_t _nx,
+                                   const std::size_t _ny) {                                  
+                                 
+                          this->nx = _nx;
+                          this->ny = _ny;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline DC2D_t(   const std::size_t _nx,
+                                      const std::size_t _ny,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             this->ny = _ny;
+                             switch (fsize) {
+                                 case:0
+                                      this->mx = (T*)
+                                                 gms_mmap_4KiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_4KiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mx = (T*)
+                                                 gms_mmap_2MiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_2MiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mx = (T*)
+                                                 gms_mmap_1GiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->my = (T*)
+                                                 gms_mmap_1GiB<T>(this->ny,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   DC2D_t(   const std::vector<T> &_mx
+                                       const std::vector<T> &_my) {
+                                       
+                          this->nx = _mx.size();
+                          this->ny = _my.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                          std::memcpy(this->my,&_my[0],lenmy);  
+                                           
+                     }
+                     
+                    inline   DC2D_t(   const std::valarray<T> &_mx
+                                       const std::valarray<T> &_my) {
+                                      
+                          this->nx = _mx.size();
+                          this->ny = _my.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                          std::memcpy(this->my,&_my[0],lenmy);  
+                                                   
+                  }    
+                                           
+                                                  
+                   inline   DC2D_t(   const std::size_t _nx,
+                                      const std::size_t _ny,
+                                      const T * __restrict _mx,
+                                      const T * __restrict _my) {
+                                    
+                          this->nx  = _nx;
+                          this->ny  = _ny;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          const std::size_t lenmy = sizeof(T)*this->ny;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
+	                  avx512_uncached_memmove(&this->my[0],&_my[0],lenmy);
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->mx[0],&_mx[0],lenmx);
+	                  avx512_cached_memmove(&this->my[0],&_my[0],lenmy);
+	                 
+#endif
+                   }  
+                   
+                  inline  DC2D_t(DC2D_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->ny     = rhs.ny;
+                          this->mx     = &rhs.mx[0];
+                          this->my     = &rhs.my[0];
+                          rhs.nx       = 0ULL;
+                          rhs.ny       = 0ULL;
+                          rhs.mx       = NULL;
+                          rhs.my       = NULL;
+                 }
+                                 
+                   DC2D_t(const DC2D_t &)     = delete;
+                      
+                   inline   ~DC2D_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) {
+                             gms_unmap<T>(this->mx,this->nx);
+                             gms_unmap<T>(this->my,this->ny);
+                            
+                          }
+                          else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                           
+                          }
+                      }
+                      
+                    DC2D_t & operator=(const DC2D_t &) = delete;
+                      
+                    inline  DC2D_t & operator=(DC2D_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) {
+                               gms_unmap<T>(this->mx,this->nx);
+                               gms_unmap<T>(this->my,this->ny);
+                           }
+                           else {
+                              gms_mm_free(this->mx);
+                              gms_mm_free(this->my);
+                           }
+                           this->nx    = rhs.nx;
+                           this->ny    = rhs.ny;
+                           this->mx    = &rhs.mx[0];
+                           this->my    = &rhs.my[0];
+                           rhs.nx      = 0ULL;
+                           rhs.ny      = 0ULL;
+                           rhs.mx      = NULL;
+                           rhs.my      = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->mx =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->nx,64ULL);
+                        this->my =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->ny,64ULL);
+                                              
+                    }
+           };
+           
+           
+           template<typename T,
+            typename = std::enable_if<!std::is_integral<T>::value && 
+                                       std::is_floating_point<T>::value>::type>
+            struct __ATTR_ALIGN__(64) DC1D_t {
+                     
+                      T * __restrict mx;
+                      std::size_t        nx; 
+                      bool               ismmap;
+#if (USE_STRUCT_PADDING) == 1
+                      PAD_TO(0,47)
+#endif
+                     inline DC1D_t() noexcept(true) {
+                          
+                          this->nx    = 0ULL;
+                          this->mx    = NULL;
+                     } 
+                          
+                     inline DC1D_t(const std::size_t _nx) {
+                                                             
+                          this->nx = _nx;
+                          allocate();
+                          this->ismmap = false;
+                      }  
+                      
+                     inline DC1D_t(   const std::size_t _nx,
+                                      const int32_t prot,
+                                      const int32_t flags,
+                                      const int32_t fd,
+                                      const int32_t offset,
+                                      const int32_t fsize) {
+                             using namespace gms::common;
+                             this->nx = _nx;
+                             switch (fsize) {
+                                 case:0
+                                      this->mx = (T*)
+                                                 gms_mmap_4KiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:1
+                                      this->mx = (T*)
+                                                 gms_mmap_2MiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 case:2
+                                      this->mx = (T*)
+                                                 gms_mmap_1GiB<T>(this->nx,prot,flags,fd,offset);
+                                      this->ismmap = true;
+                                 break;
+                                 default :
+                                      allocate();
+                                      this->ismmap = false; // do not call mmap!!                        
+                             }          
+                     }
+                      
+                      
+                    inline   DC1D_t(   const std::vector<T> &_mx) {
+                                   
+                          this->nx = _mx.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                                                             
+                     }
+                     
+                    inline   DC1D_t(   const std::valarray<T> &_mx) {
+                                       
+                          this->nx = _mx.size();
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+                          std::memcpy(this->mx,&_mx[0],lenmx);
+                                                                    
+                  }    
+                                           
+                                                  
+                   inline   DC1D_t(   const std::size_t _nx,
+                                      const T * __restrict _mx) {
+                                      
+                          this->nx  = _nx;
+                          allocate();
+                          this->ismmap = false;
+                          const std::size_t lenmx = sizeof(T)*this->nx;
+#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
+	     
+#else	         	                  	          
+	                  avx512_cached_memmove(&this->mx[0],&_mx[0],lenmx);
+	                  
+#endif
+                   }  
+                   
+                  inline  DC1D_t(DC1D_t && rhs) {
+                          
+                          this->nx     = rhs.nx;
+                          this->mx     = &rhs.mx[0];
+                          rhs.nx       = 0ULL;
+                          rhs.mx       = NULL;
+                  }
+                                 
+                   DC1D_t(const DC1D_t &)     = delete;
+                      
+                   inline   ~DC1D_t() {
+                      
+                          using namespace gms::common;
+                          if(this->ismmap) 
+                             gms_unmap<T>(this->mx,this->nx);
+                          else 
+                              gms_mm_free(this->mx);                             
+                                                                                        
+                   }
+                      
+                    DC1D_t & operator=(const DC1D_t &) = delete;
+                      
+                    inline  DC1D_t & operator=(DC1D_t &&rhs) {
+                           using namespace gms::common;
+                           if(this==&rhs) return (*this);
+                           if(this->ismmap) 
+                               gms_unmap<T>(this->mx,this->nx);
+                           else 
+                              gms_mm_free(this->mx);   
+                           
+                           this->nx    = rhs.nx;
+                           this->mx    = &rhs.mx[0];
+                           rhs.nx      = 0ULL;
+                           rhs.mx      = NULL;
+                           return (*this);
+                      }
+                      
+                    inline void allocate() {
+                        using namespace gms::common;
+                        this->mx =   (T*)
+                                         gms_mm_malloc(sizeof(T)*this->nx,64ULL);
+                                                                    
+                    }
+           };
+           
+           
+           
+           
+              
+              
 
               
               
