@@ -80,15 +80,17 @@ namespace gms {
                                       std::complex<float> * __restrict m_y,
                                       std::complex<float> * __restrict m_z) {
                           using namespace gms::common;
-                         
+                          this->mnx = _mnx;
+                          this->mny = _mny;
+                          this->mnz = _mnz;
 #if (USE_GMS_STAT_CONTAINERS_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],_mnx);
-	                  avx512_uncached_memmove(&this->my[0],&m_y[0],_mny);
-	                  avx512_uncached_memmove(&this->mz[0],&m_z[0],_mnz);
+	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
+	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->mny);
+	                  avx512_uncached_memmove(&this->mz[0],&m_z[0],this->mnz);
 #else
-	                  avx512_cached_memmove(&this->mx[0],&m_x[0],_mnx);
-	                  avx512_cached_memmove(&this->my[0],&m_y[0],_mny);
-	                  avx512_cached_memmove(&this->mz[0],&m_z[0],_mnz);
+	                  avx512_cached_memmove(&this->mx[0],&m_x[0],this->mnx);
+	                  avx512_cached_memmove(&this->my[0],&m_y[0],this->mny);
+	                  avx512_cached_memmove(&this->mz[0],&m_z[0],this->mnz);
 #endif                         
                       }  
                       
@@ -98,7 +100,9 @@ namespace gms {
                                       const std::vector<std::complex<float>> &m_y,    //shall be of the same size (no error checking implemented)
                                       const std::vector<std::complex<float>> &m_z) {  //shall be of the same size (no error checking implemented)
                           
-                          
+                          this->mnx = m_x.size();
+                          this->mny = m_y.size();
+                          this->mnz = m_z.size();
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           const std::size_t lemny = sizeof(std::complex<float>)*this->mny;
                           const std::size_t lemnz = sizeof(std::complex<float>)*this->mnz;
@@ -112,6 +116,9 @@ namespace gms {
                                       const std::valarray<std::complex<float>> &m_z) {
                          
                           
+                          this->mnx = m_x.size();
+                          this->mny = m_y.size();
+                          this->mnz = m_z.size();
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           const std::size_t lemny = sizeof(std::complex<float>)*this->mny;
                           const std::size_t lemnz = sizeof(std::complex<float>)*this->mnz;
@@ -216,13 +223,15 @@ namespace gms {
                                       std::complex<float> * __restrict m_y)
                                       
                           using namespace gms::common;
+                          this->mnx = _mnx;
+                          this->mny = _mny;
 #if (USE_GMS_STAT_CONTAINERS_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],_mnx);
-	                  avx512_uncached_memmove(&this->my[0],&m_y[0],_mny);
+	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
+	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->mny);
 	                  
 #else
-	                  avx512_cached_memmove(&this->mx[0],&m_x[0],_mnx);
-	                  avx512_cached_memmove(&this->my[0],&m_y[0],_mny);
+	                  avx512_cached_memmove(&this->mx[0],&m_x[0],this->mnx);
+	                  avx512_cached_memmove(&this->my[0],&m_y[0],this->mny);
 	                 
 #endif                         
                       }  
@@ -231,7 +240,9 @@ namespace gms {
                       
                      inline SC2D_c4_t(const std::vector<std::complex<float>> &m_x,    //shall be of the same size (no error checking implemented)
                                       const std::vector<std::complex<float>> &m_y){    //shall be of the same size (no error checking implemented)
-                                     
+                           
+                          this->mnx = m_x.size();
+                          this->mny = m_y.size();          
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           const std::size_t lemny = sizeof(std::complex<float>)*this->mny;
                           std::memcpy(&this->mx[0],&m_x[0],lemnx);
@@ -241,7 +252,9 @@ namespace gms {
                      
                      inline SC2D_c4_t(const std::valarray<std::complex<float>> &m_x,
                                       const std::valarray<std::complex<float>> &m_y) {
-                                                        
+                              
+                          this->mnx = m_x.size();
+                          this->mny = m_y.size();                              
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           const std::size_t lemny = sizeof(std::complex<float>)*this->mny;
                           std::memcpy(&this->mx[0],&m_x[0],lemnx);
@@ -252,7 +265,7 @@ namespace gms {
                    
                               
                                                 
-                     SC2D_c4_t(const SC2D_c4_t &rhs)  {
+                    inline SC2D_c4_t(const SC2D_c4_t &rhs)  {
                      
                           using namespace gms::common;
                           this->mnx = rhs.mnx;
@@ -271,7 +284,7 @@ namespace gms {
                       
                     
                       
-                     SC2D_c4_t & operator=(const SC2D_c4_t &rhs) {
+                    inline SC2D_c4_t & operator=(const SC2D_c4_t &rhs) {
                      
                            using namespace gms::common;
                            if(this == &rhs) return (*this);
@@ -291,12 +304,12 @@ namespace gms {
                     }
                       
                     
-                     std::complex<float> __restrict *  mx_ptr() const {
+                  inline   std::complex<float> __restrict *  mx_ptr() const {
                           
                           return (std::__addressof(this->mx[0]));
                     } 
                     
-                     std::complex<float> __restrict * my_ptr() const {
+                  inline   std::complex<float> __restrict * my_ptr() const {
                           
                           return (std::__addressof(this->my[0]));
                     }
@@ -335,11 +348,12 @@ namespace gms {
                                       std::complex<float> * __restrict m_x) {
                                     
                           using namespace gms::common;
+                          this->mnx = _mnx;
 #if (USE_GMS_STAT_CONTAINERS_NT_STORES)  == 1
-	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],_mnx);
+	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
 	                  	                  
 #else	                 
-                          avx512_cached_memmove(&this->mx[0],&m_x[0],_mnx);
+                          avx512_cached_memmove(&this->mx[0],&m_x[0],this->mnx);
 	                                  
 #endif                         
                       }  
@@ -347,14 +361,16 @@ namespace gms {
                    
                       
                      inline SC1D_c4_t(const std::vector<std::complex<float>> &m_x) {    //shall be of the same size (no error checking implemented)
-                                     
+                              
+                          this->mnx = m_x.size();       
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           std::memcpy(&this->mx[0],&m_x[0],lemnx);
                                             
                      }
                      
                      inline SC1D_c4_t(const std::valarray<std::complex<float>> &m_x) {
-                                      
+                           
+                          this->mnx = m_x.size();           
                           const std::size_t lemnx = sizeof(std::complex<float>)*this->mnx;
                           std::memcpy(&this->mx[0],&m_x[0],lemnx);
                      }
@@ -362,7 +378,7 @@ namespace gms {
                    
                               
                                                 
-                     SC1D_c4_t(const SC1D_c4_t &rhs)  {
+                   inline  SC1D_c4_t(const SC1D_c4_t &rhs)  {
                      
                           using namespace gms::common;
                           this->mnx = rhs.mnx;
@@ -380,7 +396,7 @@ namespace gms {
                       
                     
                       
-                     SC1D_c4_t & operator=(const SC1D_c4_t &rhs) {
+                  inline   SC1D_c4_t & operator=(const SC1D_c4_t &rhs) {
                      
                            using namespace gms::common;
                            if(this == &rhs) return (*this);
@@ -399,7 +415,7 @@ namespace gms {
                     }
                       
                     
-                     std::complex<float> __restrict *  mx_ptr() const {
+                  inline   std::complex<float> __restrict *  mx_ptr() const {
                           
                           return (std::__addressof(this->mx[0]));
                     } 
@@ -420,9 +436,9 @@ namespace gms {
                         std::size_t Nz>
                struct  SC3D_r4_t {
                      
-                      std::size_t        mnx;
-                      std::size_t        mny;
-                      std::size_t        mnz;
+                      std::size_t   mnx = Nx;
+                      std::size_t   mny = Ny;
+                      std::size_t   mnz = Nz;
                      __ATTR_ALIGN__(64) float  mxr[(mnx == 0) ? 16 : mnx];
                      __ATTR_ALIGN__(64) float  mxi[(mny == 0) ? 16 : mny];
                      __ATTR_ALIGN__(64) float  myr[(myr == 0) ? 16 : myr];
@@ -512,7 +528,7 @@ namespace gms {
                       }
                       
                      
-                      SC3D_r4_t(const SC3D_r4_t &rhs) {
+                    inline  SC3D_r4_t(const SC3D_r4_t &rhs) {
                           
                          using namespace gms::common;
                          this->mnx = rhs.mnx;
@@ -537,7 +553,7 @@ namespace gms {
                       
                     
                       
-                      SC3D_r4_t & operator=(const SC3D_r4_t &rhs) {
+                   inline   SC3D_r4_t & operator=(const SC3D_r4_t &rhs) {
                       
                           using namespace gms::common;
                           if(this == &rhs) return (*this);
@@ -562,32 +578,32 @@ namespace gms {
                            return (*this);       
                     }
                     
-                    float * __restrict get_mxr() const {
+                 inline   float * __restrict get_mxr() const {
                          
                          return (std::__addressof(this->mxr[0]));
                    }
                    
-                    float * __restrict get_mxi() const {
+                 inline   float * __restrict get_mxi() const {
                          
                          return (std::__addressof(this->mxi[0]));
                    }
                    
-                    float * __restrict get_myr() const {
+                 inline   float * __restrict get_myr() const {
                          
                          return (std::__addressof(this->myr[0]));
                    }
                    
-                    float * __restrict get_myi() const {
+                inline    float * __restrict get_myi() const {
                          
                          return (std::__addressof(this->myi[0]));
                    }
                    
-                    float * __restrict get_mzr() const {
+                 inline   float * __restrict get_mzr() const {
                          
                          return (std::__addressof(this->mzr[0]));
                    }
                    
-                    float * __restrict get_mzi() const {
+                 inline   float * __restrict get_mzi() const {
                          
                          return (std::__addressof(this->mzi[0]));
                    }
@@ -601,8 +617,8 @@ namespace gms {
                         std::size_t Ny>
               struct  SC2D_r4_t {
                      
-                      std::size_t        mnx;
-                      std::size_t        mny;
+                      std::size_t        mnx = Nx;
+                      std::size_t        mny = Ny;
                      __ATTR_ALIGN__(64) float  mxr[(mnx == 0) ? 16 : mnx];
                      __ATTR_ALIGN__(64) float  mxi[(mny == 0) ? 16 : mny];
                      __ATTR_ALIGN__(64) float  myr[(myr == 0) ? 16 : myr];
@@ -670,7 +686,7 @@ namespace gms {
                       }
                       
                      
-                      SC2D_r4_t(const SC2D_r4_t &rhs) {
+                    inline  SC2D_r4_t(const SC2D_r4_t &rhs) {
                           
                          using namespace gms::common;
                          this->mnx = rhs.mnx;
@@ -692,7 +708,7 @@ namespace gms {
                       
                     
                       
-                      SC2D_r4_t & operator=(const SC2D_r4_t &rhs) {
+                   inline   SC2D_r4_t & operator=(const SC2D_r4_t &rhs) {
                       
                           using namespace gms::common;
                           if(this == &rhs) return (*this);
@@ -715,22 +731,22 @@ namespace gms {
                            return (*this);       
                     }
                     
-                    float * __restrict get_mxr() const {
+                 inline   float * __restrict get_mxr() const {
                          
                          return (std::__addressof(this->mxr[0]));
                    }
                    
-                    float * __restrict get_mxi() const {
+                 inline   float * __restrict get_mxi() const {
                          
                          return (std::__addressof(this->mxi[0]));
                    }
                    
-                    float * __restrict get_myr() const {
+                 inline   float * __restrict get_myr() const {
                          
                          return (std::__addressof(this->myr[0]));
                    }
                    
-                    float * __restrict get_myi() const {
+                 inline   float * __restrict get_myi() const {
                          
                          return (std::__addressof(this->myi[0]));
                    }
@@ -746,7 +762,7 @@ namespace gms {
             template<std::size_t Nx>
             struct  SC1D_r4_t {
                      
-                      std::size_t        mnx;
+                      std::size_t        mnx = Nx;
                      __ATTR_ALIGN__(64) float  mxr[(mnx == 0) ? 16 : mnx];
                      __ATTR_ALIGN__(64) float  mxi[(mny == 0) ? 16 : mny];
                     
@@ -796,7 +812,7 @@ namespace gms {
                       }
                       
                      
-                      SC1D_r4_t(const SC1D_r4_t &rhs) {
+                    inline  SC1D_r4_t(const SC1D_r4_t &rhs) {
                           
                          using namespace gms::common;
                          this->mnx = rhs.mnx;
@@ -815,7 +831,7 @@ namespace gms {
                       
                     
                       
-                      SC1D_r4_t & operator=(const SC1D_r4_t &rhs) {
+                    inline  SC1D_r4_t & operator=(const SC1D_r4_t &rhs) {
                       
                           using namespace gms::common;
                           if(this == &rhs) return (*this);
@@ -836,12 +852,12 @@ namespace gms {
                            return (*this);       
                     }
                     
-                    float * __restrict get_mxr() const {
+                 inline   float * __restrict get_mxr() const {
                          
                          return (std::__addressof(this->mxr[0]));
                    }
                    
-                    float * __restrict get_mxi() const {
+                 inline  float * __restrict get_mxi() const {
                          
                          return (std::__addressof(this->mxi[0]));
                    }
