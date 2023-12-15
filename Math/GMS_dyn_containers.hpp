@@ -36,8 +36,8 @@ namespace file_info {
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
-#if !defined (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)
-#define USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES 0
+#if !defined (USE_GMS_DYN_CONTAINERS_NT_STORES)
+#define USE_GMS_DYN_CONTAINERS_NT_STORES 0
 #endif
 
 
@@ -173,7 +173,7 @@ namespace gms {
                           this->mnz = _mnz;
                           allocate();
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
 	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->mny);
 	                  avx512_uncached_memmove(&this->mz[0],&m_z[0],this->mnz);
@@ -370,7 +370,7 @@ namespace gms {
                           this->mny = _mny;
                           allocate();
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
 	                  avx512_uncached_memmove(&this->my[0],&m_y[0],this->mny);
 	                 
@@ -531,7 +531,7 @@ namespace gms {
                           this->mnx = _mnx;
                           allocate();
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&m_x[0],this->mnx);
 	                                  
 #else
@@ -754,7 +754,7 @@ namespace gms {
                           this->mnz = _mnz;
                           allocate()
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mxr[0],&m_xr[0],this->mnx);
 	                  avx512_uncached_memmove(&this->mxi[0],&m_xi[0],this->mnx);
 	                  avx512_uncached_memmove(&this->myr[0],&m_yr[0],this->mny);
@@ -1001,7 +1001,7 @@ namespace gms {
                           this->mny = _mny;
                           allocate()
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mxr[0],&m_xr[0],this->mnx);
 	                  avx512_uncached_memmove(&this->mxi[0],&m_xi[0],this->mnx);
 	                  avx512_uncached_memmove(&this->myr[0],&m_yr[0],this->mny);
@@ -1193,7 +1193,7 @@ namespace gms {
                           this->mnx = _mnx;
                           allocate()
                           this->ismmap = false;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mxr[0],&m_xr[0],this->mnx);
 	                  avx512_uncached_memmove(&this->mxi[0],&m_xi[0],this->mnx);
 	                  
@@ -1266,11 +1266,13 @@ namespace gms {
               };
               
               
-            template<typename T,
-            typename = std::enable_if<!std::is_integral<T>::value && 
-                                       std::is_floating_point<T>::value>::type>
-            struct __ATTR_ALIGN__(64) DC3D_t {
-                      // Psi function's (phi,theta) values
+            template<typename T, typename Enable = void>
+            struct DC3D_t {};  
+              
+            template<typename T>
+            struct __ATTR_ALIGN__(64) DC3D_t<T,
+            typename std::enable_if<std::is_floating_point<T>::value>::type> {
+                     
                       T * __restrict mx;
                       T * __restrict my;
                       T * __restrict mz;
@@ -1400,7 +1402,7 @@ namespace gms {
                           const std::size_t lenmx = sizeof(T)*this->nx;
                           const std::size_t lenmy = sizeof(T)*this->ny;
                           const std::size_t lenmz = sizeof(T)*this->nz;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
 	                  avx512_uncached_memmove(&this->my[0],&_my[0],lenmy);
 	                  avx512_uncached_memmove(&this->mz[0],&_mz[0],lenmz);
@@ -1487,11 +1489,13 @@ namespace gms {
            };
            
            
+           template<typename T, typename Enable = void>
+           struct DC2D_t {};
+           
             template<typename T,
-            typename = std::enable_if<!std::is_integral<T>::value && 
-                                       std::is_floating_point<T>::value>::type>
-            struct __ATTR_ALIGN__(64) DC2D_t {
-                     
+            struct __ATTR_ALIGN__(64) DC2D_t<T,
+            typename std::is_floating_point<T>::value>::type> {
+                                  
                       T * __restrict mx;
                       T * __restrict my;
                       std::size_t        nx; 
@@ -1596,7 +1600,7 @@ namespace gms {
                           this->ismmap = false;
                           const std::size_t lenmx = sizeof(T)*this->nx;
                           const std::size_t lenmy = sizeof(T)*this->ny;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
 	                  avx512_uncached_memmove(&this->my[0],&_my[0],lenmy);
 #else	         	                  	          
@@ -1669,11 +1673,13 @@ namespace gms {
                     }
            };
            
+            template<typename T,
+            typename  Enable = void>
+            struct  DC1D_t {};
            
-           template<typename T,
-            typename = std::enable_if<!std::is_integral<T>::value && 
-                                       std::is_floating_point<T>::value>::type>
-            struct __ATTR_ALIGN__(64) DC1D_t {
+           template<typename T>
+            struct __ATTR_ALIGN__(64) DC1D_t<T,
+            typename std::enable_if<std::is_floating_point<T>::value>::type> {
                      
                       T * __restrict mx;
                       std::size_t        nx; 
@@ -1753,7 +1759,7 @@ namespace gms {
                           allocate();
                           this->ismmap = false;
                           const std::size_t lenmx = sizeof(T)*this->nx;
-#if (USE_GMS_ANTENNA_MODEL_COMMON_NT_STORES)  == 1
+#if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->mx[0],&_mx[0],lenmx);
 	     
 #else	         	                  	          
