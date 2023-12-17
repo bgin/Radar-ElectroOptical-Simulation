@@ -335,6 +335,65 @@ namespace gms {
          };
          
          
+         // ! Internal antenna noise temperature values (2.179)
+         template<typename T>
+         struct Tf2179R1x_t {
+                          
+                         std::size_t  nt; // ! number of values of Electrical field, 
+                                 // ! horizontal polarization, receiption point (2.173)
+                         DC1D_t<T>    f2179;
+         };
+         
+         
+         //  External antenna noise temperature values (2.180) 
+         template<typename T>
+         struct Tf2180R1x_t {
+                       
+                         std::size_t  nt; // number of external to antenna noise temperature values (2.180)
+                         DC1D_t<T>    f2180;
+         };
+         
+         
+         //  The values of noise atmosphere temperature (2.181)
+         template<typename T>
+         struct Tf2181R1x_t {
+                          
+                         std::size_t  nt;
+                         DC1D_t<T>    f2181;
+         };
+         
+         
+         // The values of total antenna noise temperature (2.182)
+         template<typename T>
+         struct Tf2182R1x_t {
+                       
+                         std::size_t  nt;
+                         DC1D_t<T>    f2182;
+         };
+         
+         
+         // The values of optical curve length for 'n' curves (2.186)
+         template<typename T>
+         struct Qf2186R1x_t {
+                      
+                         std::size_t  nq;
+                         DC1D_t<T>    f2186;
+         };
+         
+         
+         // The values of 'x,y,z' (eikonal) coordinate (2.187)
+         template<typename T>
+         struct L2187R1x_t {
+                        // ! number of values of 'x' (eikonal) coordinate (2.187)
+                        // ! number of values of 'y' (eikonal) coordinate (2.187)
+                        // ! number of values of 'z' (eikonal) coordinate (2.187)
+                         std::size_t nLx;
+                         std::size_t nLy;
+                         std::size_t nLz;
+                         DC1D_t<T>   Lx;
+                         DC1D_t<T>   Ly;
+                         DC1D_t<T>   Lz;
+         };
          // 
 
        } // radiolocation
