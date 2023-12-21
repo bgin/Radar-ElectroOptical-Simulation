@@ -316,6 +316,135 @@ namespace gms {
                             DC1D<T>_t   Ft;
                 };
                 
+                
+                // Azimuthal 'phi' and 'theta' coordinate values of radiation pattern for V-antenna (3.97)
+                template<typename T>
+                struct Ff397R1x_t {
+                            
+                            std::size_t np; // number of azimuthal 'phi' coordinate values of radiation pattern for V-antenna (3.97)
+                            std::size_t nt; // number of azimuthal 'theta' coordinate values of radiation pattern for V-antenna (3.97)
+                            std::size_t nd; // number of dipoles in dipole array (3.97)
+                            DC1D<T>_t   Fpt;
+                };
+                
+                
+                // Meridional 'phi' and 'theta' coordinate values of radiation pattern for V-antenna (3.98)
+                template<typename T>
+                struct Ff398R1x_t {
+                            
+                            std::size_t np; // number of meridional 'phi' coordinate values of radiation pattern for V-antenna (3.98)
+                            std::size_t nt; // number of meridional 'theta' coordinate values of radiation pattern for V-antenna (3.98)
+                            std::size_t nd; // number of dipoles in dipole array (3.98)
+                            DC1D<T>_t   Fpt;
+                };
+                
+                
+                // Impedance values of V-antenna located in the free space (3.99)
+                template<typename T>
+                struct Rf399R1x_t {
+                            
+                            std::size_t nR; // Impedance values of V-antenna located in the free space (3.99)
+                            std::size_t nd; // number of dipoles in dipole array (3.99)
+                            DC1D<T>_t   Rd;
+                };
+                
+                
+                // Phi and theta values of radiation pattern for V-antenna (Pistolkors antenna) (3.100) 
+                template<typename T>
+                struct Ff3100R1x_t {
+                            
+                            std::size_t np; // number of phi values of radiation pattern for V-antenna (Pistolkors antenna) (3.100)
+                            std::size_t nt; // number of theta values of radiation pattern for V-antenna (Pistolkors antenna) (3.100)
+                            std::size_t nd; // number of dipoles in dipole array (3.100)
+                            DC1D<T>_t   Fpt;
+                };
+                
+                
+                // Phi values [horizontal plane] of radiation pattern 
+                             //  ! for V-antenna (Pistolkors antenna) (3.101) 
+                template<typename T>
+                struct Ff3101R1x_t {
+                            
+                            std::size_t np; // ! number of phi values [horizontal plane] of radiation pattern 
+                                            // ! for V-antenna (Pistolkors antenna) (3.101)
+                            std::size_t nd; // number of dipoles in dipole array (3.101) 
+                            DC1D<T>_t   Fp;
+                };
+                
+                
+                // Values (W/cm) of critical voltage for dipole antenna (3.104)
+                template<typename T>
+                struct Ef3104R1x_t {
+                            
+                            std::size_t nE; // number of values (W/cm) of critical voltage for dipole antenna (3.104)
+                            DC1D<T>_t   E;
+                };
+                
+                
+                // Values for mutual impedance of two dipole antennae (3.110)
+                template<typename T>
+                struct Zf3110R1x_t {
+                            
+                            std::size_t nZ; // number of values for mutual impedance of two dipole antennae (3.110)
+                            DC1D<T>_t   Z;
+                };
+                
+                
+                // Phi values of radiation pattern for two-dipole antenna (horizontal-plane) (3.122)
+                template<typename T>
+                struct Ff3122R1x_t {
+                             
+                            std::size_t np; // number of phi values of radiation pattern for two-dipole antenna (horizontal plane)(3.122)
+                            DC1D<T>_t   Fp;
+                };
+                
+                
+                // Phi values of radiation pattern for two-dipole antenna 
+                              // ! plane-perpendicular to antennae axis(3.123)
+                template<typename T>
+                struct Ff3123R1x_t {
+                            
+                            std::size_t np; // ! number of phi values of radiation pattern for two-dipole antenna 
+                                            // ! plane-perpendicular to antennae axis(3.123)
+                            DC1D<T>_t   Fp;
+                };
+                
+                
+                // ! Theta values of radiation pattern for 2D array of dipoles (horizontal plane) (3.126)
+                template<typename T>
+                struct Ff3126R1x_t {
+                            
+                            std::size_t nt; //  number of theta values of radiation pattern for 2D array of dipoles (horizontal plane) (3.126)
+                            DC1D<T>_t   Ft;
+                };
+                
+                
+                 // ! Theta values of radiation pattern for 2D array of dipoles (vertical plane) (3.127)
+                template<typename T>
+                struct Ff3127R1x_t {
+                            
+                            std::size_t nt; //  number of theta values of radiation pattern for 2D array of dipoles (vertical plane) (3.127)
+                            DC1D<T>_t   Ft;
+                };
+                
+                
+                //  Theta values (horizontal-plane) of radiation pattern for aperiodic reflector (3.136)
+                template<typename T>
+                struct Ff3136R1x_t {
+                            
+                            std::size_t nt; // number of theta values (horizontal-plane) of radiation pattern for aperiodic reflector (3.136)
+                            DC1D<T>_t   Ft;
+                };
+                
+                
+                // Delta values (vertical-plane) of radiation pattern for aperiodic reflector (3.137)
+                template<typename T>
+                struct Ff3137R1x_t {
+                         
+                            std::size_t nd; // number of delta values (vertical-plane) of radiation pattern for aperiodic reflector (3.137)
+                            DC1D<T>_t   Fd;  
+                           
+                };
       }
 
 
