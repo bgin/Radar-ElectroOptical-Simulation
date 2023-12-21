@@ -11,7 +11,7 @@
 #include <cstring>
 #include <array>
 #include "GMS_config.h"
-
+#include "GMS_malloc.h"
 
 namespace gms {
  
@@ -1405,16 +1405,16 @@ T *ball_unit_sample_nd ( int dim_num, int &seed )
 //    Output, T BALL_UNIT_SAMPLE_ND[DIM_NUM], the random point.
 //
 {
+  using namespace gms::common;
   int i;
   T r;
   T random_cosine;
   T random_sign;
   T random_sine;
-  T *x;
+  T * __restrict x;
   T xi;
 
-  x = new T[dim_num];
-
+  x =  (T*)gms_mm_malloc(sizeof(T)*(std::size_t)dim_num,64ULL);
   x[0] = 1.0;
   for ( i = 1; i < dim_num; i++ )
   {
@@ -2818,6 +2818,10 @@ T circle_imp_point_dist_2d ( T r, T pc[2], T p[2]  )
 }
 //****************************************************************************80
 
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
+static
+template<typename T>
 T circle_imp_point_dist_signed_2d ( T r, T pc[2], T p[2] )
 
 //****************************************************************************80
@@ -2862,8 +2866,10 @@ T circle_imp_point_dist_signed_2d ( T r, T pc[2], T p[2] )
 {
   T t;
   T value;
-
-  t = pow ( p[0] - pc[0], 2 ) + pow ( p[1] - pc[1], 2 ) - r * r;
+  T t0,t1;
+  t0 = (p[0]-pc[0])*(p[0]-pc[0]);
+  t1 = (p[1]-pc[1])*(p[1]-pc[1]);
+  t = t0+t1 - r * r;
 
   value = r8_sign ( t ) * sqrt ( fabs ( t ) );
 
@@ -2871,6 +2877,10 @@ T circle_imp_point_dist_signed_2d ( T r, T pc[2], T p[2] )
 }
 //****************************************************************************80
 
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
+static
+template<typename T>
 T circle_imp_point_near_2d ( T r, T pc[2], T p[2],
   T pn[2] )
 
@@ -2937,7 +2947,7 @@ T circle_imp_point_near_2d ( T r, T pc[2], T p[2],
   r2 = 0.0;
   for ( i = 0; i < DIM_NUM; i++ )
   {
-    r2 = r2 + pow ( p[i] - pc[i], 2 );
+    r2 = r2 + (p[i]-pc[i])*(p[i]-pc[i]);
   }
   r2 = sqrt ( r2 );
 
@@ -2952,7 +2962,10 @@ T circle_imp_point_near_2d ( T r, T pc[2], T p[2],
 # undef DIM_NUM
 }
 //****************************************************************************80
-
+__ATTR_ALIGN__(32)
+__ATTR_ALWAYS_INLINE__
+static
+template<typename T>
 T *circle_imp_points_2d ( T r, T pc[2], int n )
 
 //****************************************************************************80
