@@ -6,15 +6,15 @@
 
 namespace file_info {
 
-     const unsigned int GMS_ANTENNA_COMMON_ADT_MAJOR = 2;
-     const unsigned int GMS_ANTENNA_COMMON_ADT_MINOR = 0;
-     const unsigned int GMS_ANTENNA_COMMON_ADT_MICRO = 0;
-     const unsigned int GMS_ANTENNA_COMMON_ADT_FULLVER =
-       1000U*GMS_ANTENNA_COMMON_ADT_MAJOR+100U*GMS_ANTENNA_COMMON_ADT_MINOR+
-       10U*GMS_ANTENNA_COMMON_ADT_MICRO;
-     const char * const GMS_ANTENNA_COMMON_ADT_CREATION_DATE = "23-12-2023 08:35 +00200 (SAT 23 DEC 2023 GMT+2)";
-     const char * const GMS_ANTENNA_COMMON_ADT_BUILD_DATE    = __DATE__ " " __TIME__;
-     const char * const GMS_ANTENNA_COMMON_ADT_SYNOPSIS      = "Dipole antenna model abstract data types - SSE based."
+     const unsigned int GMS_DIPOLE_ANT_TYPES_SSE_MAJOR = 2;
+     const unsigned int GMS_DIPOLE_ANT_TYPES_SSE_MINOR = 0;
+     const unsigned int GMS_DIPOLE_ANT_TYPES_SSE_MICRO = 0;
+     const unsigned int GMS_DIPOLE_ANT_TYPES_SSE_FULLVER =
+       1000U*GMS_DIPOLE_ANT_TYPES_SSE_MAJOR+100U*GMS_DIPOLE_ANT_TYPES_SSE_MINOR+
+       10U*GMS_DIPOLE_ANT_TYPES_SSE_MICRO;
+     const char * const GMS_DIPOLE_ANT_TYPES_SSE_CREATION_DATE = "23-12-2023 08:35 +00200 (SAT 23 DEC 2023 GMT+2)";
+     const char * const GMS_DIPOLE_ANT_TYPES_SSE_BUILD_DATE    = __DATE__ " " __TIME__;
+     const char * const GMS_DIPOLE_ANT_TYPES_SSE_SYNOPSIS      = "Dipole antenna model abstract data types - SSE based."
 
 }
 
