@@ -293,6 +293,447 @@ namespace gms {
                   DC1D<T>_t   uhgx;
                   DC1D<T>_t   uhgy;
            };
+           
+           
+           // Smoothing and approximating curve for linearly-piecewise height function (x-coordinate)
+           // Smoothing and approximating curve for linearly-piecewise height function (y-coordinate)
+           template<typename T>
+           struct XYSMBHR1x_t {
+                   
+                  std::size_t nx;
+                  std::size_t ny;
+                  DC1D<T>_t   xsmbh;
+                  DC1D<T>_t   ysmbh
+           };
+           
+           
+           // Empty space in-between of buildings (per single column) x number columns
+           struct ESBBI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict esbb;
+           };
+           
+           
+           // An area values of in-between buildings empty spaces (per single column) x number columns
+           template<typename T> 
+           struct AESBBR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval;
+                  DC1D<T>_t   aesbb;
+           };
+           
+           
+           // An area values of each building (per single building column) x number columns
+           template<typename T>
+           struct ABCR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   abc;
+           };
+           
+           
+           // Number of south-facing walls (per each column) x number of columns
+           struct SWPCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict swpc;
+           };
+           
+           
+           // Number of east-facing walls (per each column) x number of columns
+           struct EWPCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict ewpc;
+           };
+           
+           
+           // Number of west-facing walls (per each column) x number of columns
+           struct WWPCI1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict wwpc;
+           };
+           
+           
+           // Number of north-facing walls (per each column) x number of columns
+           struct NWPCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict nwpc;
+           };
+           
+           
+           // Number of building roofs per each column x number of columns
+           struct BRPCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict brpc; 
+           };
+           
+           
+           //  An area of every building [flat] roof (per each column) x number of columns
+           template<typename T>
+           struct BRAPCR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   brapc;
+           };
+           
+           
+           // Number of angled roof -- south facing roof wall (per each column) x number of columns
+           struct SRWCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict srwc;
+           };
+           
+           
+           // Number of angled roof -- east facing roof wall (per each column) x number of columns
+           struct ERWCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict erwc;
+           };
+           
+           
+           // Number of angled roof -- west facing roof wall (per each column)  x number of columns
+           struct WRWCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict wrwc;
+           };
+           
+           
+           // Number angled roof -- north facing roof wall (per each column) x number of columns
+           struct NRWCI1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  int32_t * __restrict nrwc;
+           };
+           
+           
+           // An angled roof inclination (deg) -- south facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IDSRWR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   idsrw;
+           };
+           
+           
+           // An angled roof inclination (deg) -- east facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IDERWR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   iderw;
+           };
+           
+           
+           // An angled roof inclination (deg) -- west facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IDWRWR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   idwrw;
+           };
+           
+           
+           // An angled roof inclination (rad) -- south facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IDNRWR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   idnrw; 
+           };
+           
+           
+           //  An angled roof inclination (rad) -- south facing roof wall 
+           //  (per each column) x number of columns
+           template<typename T>
+           struct IRSRWR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   irsrw; 
+           };
+           
+           
+           //  An angled roof inclination (rad) -- east facing roof wall 
+           //  (per each column) x number of columns
+           template<typename T>
+           struct IRERWR1x_t {
+                    
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   irerw;
+           };
+           
+           
+           //  An angled roof inclination (rad) -- north facing roof wall 
+           //  (per each column) x number of columns
+           template<typename T>
+           struct IRNRWR1x_t {
+                    
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   irnrw; 
+           };
+           
+           
+           // An angled roof inclination surface area -- south facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct ISRAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   isra;  
+           };
+           
+           
+           // An angled roof inclination surface area -- west facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IWRAR1x_t {
+                    
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   iwra;  
+           };
+           
+           
+           // An angled roof inclination surface area -- east facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct IERAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   iera;   
+           };
+           
+           
+           // An angled roof inclination surface area -- north facing roof wall 
+           // (per each column) x number of columns
+           template<typename T>
+           struct INRAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   inra;  
+           };
+           
+           
+           // South wall upper-facing edge inclination (rad) -- 
+           // (per each column)  x number of columns
+          template<typename T>
+          struct SWUER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   swue;   
+          };
+          
+          
+          // East wall upper-facing edge inclination (rad) -- 
+          // (per each column)  x number of columns
+          template<typename T>
+          struct EWUER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   ewue;   
+          };
+          
+          
+          // West wall upper-facing edge inclination (rad) -- 
+          // (per each column)  x number of columns
+          template<typename T>
+          struct WWUER1x_t {
+                  
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   wwue;   
+          };
+          
+          
+          // North wall upper-facing edge inclination (rad) -- 
+          // (per each column)  x number of columns
+          template<typename T>
+          struct NWUER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   nwue;    
+          };
+          
+          
+          // Shared right edge between the south wall and east wall inclination (rad) 
+                                    // ! -- (per each column) x number of columns
+          template<typename T>
+          struct SEWER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   sewe; 
+          };
+          
+          // Shared left edge between the south wall and west wall inclination (rad) 
+                                    // ! -- (per each column) x number of columns
+          template<typename T>
+          struct SWWER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   swwe;
+          };
+          
+          
+           // Shared right edge between the north wall and east wall inclination (rad) 
+                                    // ! -- (per each column) x number of columns
+           template<typename T>
+           struct NWEER1x_t {
+                    
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   nwee;
+           };
+           
+           
+           // Shared right edge between the north wall and west wall inclination (rad) 
+           // ! -- (per each column) x number of columns
+           template<typename T>
+           struct NWWER1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   nwwe; 
+           };
+           
+           
+           // Simple cell-based mesh
+           template<typename T>
+           struct CellMeshR1x_t {
+                  
+                  // Number of divisions along the x,y,z
+                  int32_t ndiv[3];
+                  // Number of cells
+                  std::size_t nL;
+                  // Compute numerical integration.
+                  bool nint;
+                  // Coordinates (x,y,z) of the center
+                  // of Lth cell.
+                  DC1D<T>_t  cx;
+                  DC1D<T>_t  cy;
+                  DC1D<T>_t  cz;
+                  DC1D<T>_t  dv;
+                  // (X,Y,Z) dimensions of the Ith
+                  // rectangular volume cell (this is needed for
+                  // the numerical integration)
+                  DC1D<T>_t  dx;
+                  DC1D<T>_t  dy;
+                  DC1D<T>_t  dz;
+           };
+           
+           
+           // South walls surface area (for every building, per column) x number of columns
+           template<typename T>
+           struct SWSAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   swsa;
+           };
+           
+           
+           // East walls surface area (for every building, per column) x number of columns
+           template<typename T>
+           struct EWSAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   ewsa; 
+           };
+           
+           
+           // West walls surface area (for every building, per column) x number of columns
+           template<typename T>
+           struct WWSAR1x_t {
+                   
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   wwsa;  
+           };
+           
+           
+           // North walls surface area (for every building, per column) x number of columns
+           template<typename T>
+           struct NWSAR1x_t {
+                    
+                   std::size_t ncols;
+                   std::size_t nval;
+                   DC1D<T>_t   nwsa;   
+           };
+           
+           
+           // South walls moist/non moist logical (per column) x number of columns
+           struct MNMSWR1x_t {
+                    
+                   int32_t ncols;
+                   int32_t nval;
+                   bool * __restrict mnmsw; 
+           };
+           
+           
+            // East walls moist/non moist logical (per column) x number of columns
+           struct MNMEWR1x_t {
+                    
+                   int32_t ncols;
+                   int32_t nval;
+                   bool * __restrict mnmew; 
+           };
+           
+           
+             // West walls moist/non moist logical (per column) x number of columns
+           struct MNMWWR1x_t {
+                    
+                   int32_t ncols;
+                   int32_t nval;
+                   bool * __restrict mnmww; 
+           };
+           
+           
+             // North walls moist/non moist logical (per column) x number of columns
+           struct MNMNWR1x_t {
+                    
+                   int32_t ncols;
+                   int32_t nval;
+                   bool * __restrict mnmnw; 
+           };
      }
 
 
