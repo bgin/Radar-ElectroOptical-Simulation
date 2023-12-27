@@ -701,7 +701,7 @@ namespace gms {
            
            
            // South walls moist/non moist logical (per column) x number of columns
-           struct MNMSWR1x_t {
+           struct MNMSWB1x_t {
                     
                    int32_t ncols;
                    int32_t nval;
@@ -710,7 +710,7 @@ namespace gms {
            
            
             // East walls moist/non moist logical (per column) x number of columns
-           struct MNMEWR1x_t {
+           struct MNMEWB1x_t {
                     
                    int32_t ncols;
                    int32_t nval;
@@ -719,7 +719,7 @@ namespace gms {
            
            
              // West walls moist/non moist logical (per column) x number of columns
-           struct MNMWWR1x_t {
+           struct MNMWWB1x_t {
                     
                    int32_t ncols;
                    int32_t nval;
@@ -728,13 +728,713 @@ namespace gms {
            
            
              // North walls moist/non moist logical (per column) x number of columns
-           struct MNMNWR1x_t {
+           struct MNMNWB1x_t {
                     
                    int32_t ncols;
                    int32_t nval;
                    bool * __restrict mnmnw; 
            };
-     }
+           
+           
+           // ! The values describing the ratio (percentage) of south wall 
+                            // ! moisture to dryness (per each column) x number of columns
+           template<typename T>
+           struct MDSWRR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mdswr;
+           };
+           
+           
+           // ! The values describing the ratio (percentage) of east wall 
+                            // ! moisture to dryness (per each column) x number of columns
+           template<typename T>
+           struct MDEWRR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mdewr;
+           };
+           
+           
+           //  The values describing the ratio (percentage) of west wall 
+                             //! moisture to dryness (per each column) x number of columns
+           template<typename T>
+           struct MDWWRR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mdwwr;
+           };  
+           
+           
+           //  The values describing the ratio (percentage) of north wall 
+                             //! moisture to dryness (per each column) x number of columns              
+           template<typename T>
+           struct MDNWRR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mdnwr;
+           };   
+           
+           
+           // The logical values of flat roof moistness (being either moist or dry) 
+                              // ! (per column) x number of columns                
+          struct MDRB1x_t {
+                 
+                 int32_t ncols;
+                 int32_t nval;
+                 bool * __restrict mdr;
+          }; 
+          
+          
+          // The values describing the ratio (percentage) of flat roof moisture to dryness 
+                              // ! (per each column) x number of columns 
+          template<typename T>
+          struct MDRRR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mdrr; 
+          };
+          
+          
+          // The values describing the surface of moist part of the flat roof 
+                               // ! (per each column) x number of columns
+          template<typename T>
+          struct MPFRR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpfr; 
+          };     
+          
+          
+          // The values describing the surface of dry part of the flat roof 
+                               // ! (per each column) x number of columns  
+          template<typename T>
+          struct DPFRR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpfr; 
+          };   
+          
+          
+          //  The values describing the surface of moist part of the south wall 
+                                // ! (per each column) x number of columns   
+          template<typename T>
+          struct MPSWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpsw; 
+          };  
+          
+          
+          //  The values describing the surface of dry part of the south wall 
+                               //  ! (per each column) x number of columns  
+          template<typename T>
+          struct DPSWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpsw; 
+          };   
+          
+          
+          //  The values describing the surface of moist part of the east wall 
+                                // ! (per each column) x number of columns
+          template<typename T>
+          struct MPEWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpew; 
+          };   
+          
+         // The values describing the surface of dry part of the east wall 
+                                // ! (per each column) x number of columns 
+          template<typename T>
+          struct DPEWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpew; 
+          };  
+          
+          
+         // The values describing the surface of moist part of the west wall 
+                                 //! (per each column) x number of columns
+          template<typename T>
+          struct MPWWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpww; 
+          }; 
+          
+          
+        //  The values describing the surface of dry part of the west wall 
+                                 //! (per each column) x number of columns 
+          template<typename T>
+          struct DPWWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpww; 
+          };  
+          
+          
+        // The values describing the surface of moist part of the north wall 
+                                 //! (per each column) x number of columns
+         template<typename T>
+         struct MPNWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpnw; 
+          }; 
+          
+          
+         //  The values describing the surface of dry part of the north wall 
+                                // ! (per each column) x number of columns
+         template<typename T>
+         struct DPNWR1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpnw; 
+          }; 
+          
+          
+          // The values describing the surface of moist part of the angled south roof wall
+                               // ! (per each column) x number of columns
+          template<typename T>
+          struct MPSARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpsar;
+          };
+          
+          
+          // The values describing the surface of dry part of the angled south roof wall
+                               // ! (per each column) x number of columns
+          template<typename T>
+          struct DPSARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpsar;
+          };
+          
+          
+          // The values describing the surface of moist part of the angled east roof wall
+                               // ! (per each column) x number of columns 
+          template<typename T>
+          struct MPEARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpear;
+          };
+          
+          
+         // The values describing the surface of dry part of the angled east roof wall
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct DPEARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpear;
+          }; 
+          
+          
+          // The values describing the surface of moist part of the angled west roof wall
+                               // ! (per each column) x number of columns  
+          template<typename T>
+          struct MPWARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpwar;
+          }; 
+          
+          
+           // The values describing the surface of dry part of the angled west roof wall
+                               // ! (per each column) x number of columns  
+          template<typename T>
+          struct DPWARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpwar;
+          }; 
+          
+          
+           // The values describing the surface of moist part of the angled north roof wall
+                               // ! (per each column) x number of columns  
+          template<typename T>
+          struct MPNARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   mpnar;
+          }; 
+          
+          
+          // The values describing the surface of dry part of the angled north roof wall
+                               // ! (per each column) x number of columns  
+          template<typename T>
+          struct DPNARR1x_t {
+                   
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC1D<T>_t   dpnar;
+          }; 
+          
+          
+         // The values describing the complex permittivity of south walls
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CESWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cesw;
+         };
+         
+         
+         // The values describing the complex permeabillity of south walls
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CMSWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmsw;
+         };
+         
+         
+         // The values describing the complex permittivity of west walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CEWWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   ceww;
+         };
+         
+         
+          // The values describing the complex permeability of west walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CMWWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmww;
+         };
+         
+         
+          // The values describing the complex permittivity of east walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CEEWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   ceew;
+         };
+         
+         
+          // The values describing the complex permeability of east walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CMEWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmew;
+         };
+         
+         
+          // The values describing the complex permittivity of north walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CENWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cenw;
+         };
+         
+         
+          // The values describing the complex permeability of north walls
+                               // ! (per each column) x number of columns 
+         template<typename T>
+         struct CMNWC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmnw;
+         };
+         
+         
+          // The values describing the complex permittivity of south angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CESARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cesar;
+         };
+         
+         
+         // The values describing the complex permeabillity of south angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CMSARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmsar;
+         };
+         
+         
+         // The values describing the complex permittivity of east angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CEEARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   ceear;
+         };
+         
+         
+         // The values describing the complex permeabillity of east angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CMEARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmear;
+         };
+         
+         
+         // The values describing the complex permittivity of west angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CEWARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cewar;
+         };
+         
+         
+         // The values describing the complex permeabillity of west angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CMWARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmwar;
+         };
+         
+         
+          // The values describing the complex permittivity of north angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CENARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cenar;
+         };
+         
+         
+         // The values describing the complex permeabillity of north angled roof
+                               // ! (per each column) x number of columns  
+         template<typename T>
+         struct CMNARC1x_t {
+                  
+                  std::size_t ncols;
+                  std::size_t nval;
+                  DC2D<T>_t   cmnar;
+         };
+         
+         
+         // The components of south walls normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVSWR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of east walls normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVEWR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of west walls normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVWWR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of north walls normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVNWR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+         // The components of each building normal vector
+                                    // ! (per each column) x number of columns 
+         template<typename T>
+         struct NVBR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;  
+         };
+         
+         
+         // The components of each building flat roof normal vector
+                                    // ! (per each column) x number of columns 
+         template<typename T>
+         struct NVFRR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;   
+         };
+         
+         
+          // The components of south angled roof normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVSARR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of east angled roof normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVEARR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of west angled roof normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVWARR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+        // The components of north angled roof normal vector
+                                    // ! (per each column) x number of columns  
+         template<typename T>
+         struct NVNARR1x_t {
+                  
+                  std::size_t ncols
+                  std::size_t nval
+                  DC1D<T>_t   nvx;
+                  DC1D<T>_t   nvy;
+                  DC1D<T>_t   nvz;
+         };
+         
+         
+         // The values of each south wall height and width
+                        // ! (per each column) x number of columns  
+         template<typename T>
+         struct HWSWR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                DC1D<T>_t   hsw;
+                DC1D<T>_t   wsw;
+         };
+         
+         
+          // The values of each east wall height and width
+                        // ! (per each column) x number of columns  
+         template<typename T>
+         struct HWEWR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                DC1D<T>_t   hew;
+                DC1D<T>_t   wew;
+         };
+         
+         
+         // The values of each west wall height and width
+                        // ! (per each column) x number of columns  
+         template<typename T>
+         struct HWWWR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                DC1D<T>_t   hww;
+                DC1D<T>_t   www;
+         };
+         
+         
+          // The values of each north wall height and width
+                        // ! (per each column) x number of columns  
+         template<typename T>
+         struct HWNWR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                DC1D<T>_t   hnw;
+                DC1D<T>_t   wnw;
+         };
+         
+         
+         // The values of each flat roof height and width
+                        // ! (per each column) x number of columns  
+         template<typename T>
+         struct HWFRR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                DC1D<T>_t   hfr;
+                DC1D<T>_t   wfr;
+         };
+         
+         
+        // The values of each south non-flat roof (either triangular, squared or rectangulart) 
+        // height and width (base) (per each column) x number of columns  
+         template<typename T>
+         struct HWSNFRR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                DC1D<T>_t   hsnfr;
+                DC1D<T>_t   wsnfr;
+         };
+         
+         
+        // The values of each east non-flat roof (either triangular, squared or rectangulart) 
+        // height and width (base) (per each column) x number of columns  
+         template<typename T>
+         struct HWENFRR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                DC1D<T>_t   henfr;
+                DC1D<T>_t   wenfr;
+         };
+         
+         
+        // The values of each west non-flat roof (either triangular, squared or rectangulart) 
+        // height and width (base) (per each column) x number of columns  
+         template<typename T>
+         struct HWWNFRR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                DC1D<T>_t   hwnfr;
+                DC1D<T>_t   wwnfr;
+         };
+         
+         
+        // The values of each north non-flat roof (either triangular, squared or rectangulart) 
+        // height and width (base) (per each column) x number of columns  
+         template<typename T>
+         struct HWNNFRR1x_t {
+                
+                std::size_t ncols;
+                std::size_t nval;
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                DC1D<T>_t   hnnfr;
+                DC1D<T>_t   wnnfr;
+         };
+         
+         
+         // Any kind of metallic structure fixed on the roof, e.g., an wire antenna, cylindrical object (ventillation)
+         // or parabollic antenna, or similar type (per each column) x number of columns.
+         struct BRMSB1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                bool * __restrict want; // a wire antennae
+                bool * __restrict pant; // a parabollic antennae
+                bool * __restrict yant; // yagi type antennae
+                bool * __restrict lpda; // log-periodic dipole array
+                bool * __restrict cant; // cell phone sector bars antennae
+                bool * __restrict cylo; // any kind of cylindrical (ventillation) object
+         };
+         
+         
+         
+         
+           
+     }// radiolocation
 
 
 
