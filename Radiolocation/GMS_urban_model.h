@@ -1549,6 +1549,74 @@ namespace gms {
          };
          
          
+         // The values of RCS for the south angled roof of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSSARR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcssar;
+         };
+         
+         
+         // The values of RCS for the south east roof of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSEARR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsear;
+         };
+         
+         
+         // The values of RCS for the west angled roof of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSWARR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcswar;
+         };
+         
+         
+         // The values of RCS for the north angled roof of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSNARR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsnar;
+         };
+         
+         
+         // The values of whole building surface area
+         // of every building in building column
+         template<typename T>
+         struct WBSAR1x_t {
+                 
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t wbsa;
+         };
+         
+         
+         // The values of whole building internal volume
+         // of every building in building column
+         template<typename T>
+         struct WBIVR1x_t {
+                 
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t wbiv;
+         };
+         
+         
+         
+         
            
      }// radiolocation
 
