@@ -1431,6 +1431,122 @@ namespace gms {
          };
          
          
+         // The number of ventillation objects per single building roof
+         // for every building column.
+         struct NVOI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict nvo;
+         };
+         
+         
+         // The number of wire antennae per single building roof
+         // for every building column.
+         struct NWAI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict nwa;
+         };
+         
+         
+          // The number of yagi-antennae per single building roof
+         // for every building column.
+         struct NYAI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict nya;
+         };
+         
+         
+          // The number of log-periodic dipole antennae per single building roof
+         // for every building column.
+         struct NLPDAI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict nlpda;
+         };
+         
+         
+          // The number of parabollic antennae per single building roof
+         // for every building column.
+         struct NPAI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict npa;
+         };
+         
+         
+          // The number of cell-phone antennae per single building roof
+         // for every building column.
+         struct NCPAI1x_t {
+                
+                int32_t ncols;
+                int32_t nval;
+                int32_t * __restrict ncpa;
+         };
+         
+         
+         // The values of RCS for the flat roof of
+         // building column.
+         template<typename T>
+         struct RCSFRR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsfr;
+         };
+         
+         
+          // The values of RCS for the south wall of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSSWR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcssw;
+         };
+         
+         
+          
+          // The values of RCS for the east wall of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSEWR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsew;
+         };
+         
+         
+          
+          // The values of RCS for the west wall of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSWWR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsww;
+         };
+         
+         
+          
+          // The values of RCS for the north wall of
+         // of every building in the building column.
+         template<typename T>
+         struct RCSNWR1x_t {
+                
+                 std::size_t ncols;
+                 std::size_t nval;
+                 DC1D<T>_t   rcsnw;
+         };
          
          
            
