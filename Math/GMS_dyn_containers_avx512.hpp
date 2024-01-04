@@ -395,7 +395,7 @@ namespace gms {
                          
                     } 
                           
-                     inline DC1D_zmm8c8_t(const std::size_t _mnx) {
+                     inline explicit DC1D_zmm8c8_t(const std::size_t _mnx) {
                                  
                           using namespace gms::common;
                           this->mnx = _mnx;
@@ -865,7 +865,7 @@ namespace gms {
                          
                     } 
                           
-                     inline DC1D_zmm16c4_t(const std::size_t _mnx) {
+                     inline explicit DC1D_zmm16c4_t(const std::size_t _mnx) {
                                  
                           using namespace gms::common;
                           this->mnx = _mnx;
@@ -990,7 +990,7 @@ namespace gms {
                          
                     } 
                           
-                     inline DC1D_m512_t(const std::size_t _mnx) {
+                     inline explicit DC1D_m512_t(const std::size_t _mnx) {
                                  
                           using namespace gms::common;
                           this->mnx = _mnx;
@@ -1116,7 +1116,7 @@ namespace gms {
                          
                     } 
                           
-                     inline DC1D_m512d_t(const std::size_t _mnx) {
+                     inline explicit DC1D_m512d_t(const std::size_t _mnx) {
                                  
                           using namespace gms::common;
                           this->mnx = _mnx;
