@@ -66,7 +66,7 @@ namespace gms {
                           this->mz  = NULL;
                       } 
                           
-                     inline explicit DC3D_c4_t(const std::size_t _mnx,
+                     inline  DC3D_c4_t(const std::size_t _mnx,
                                    const std::size_t _mny,
                                    const std::size_t _mnz) {
                           using namespace gms::common;
@@ -77,7 +77,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline explicit DC3D_c4_t(const std::size_t _mnx,
+                     inline  DC3D_c4_t(const std::size_t _mnx,
                                    const std::size_t _mny,
                                    const std::size_t _mnz,
                                    const int32_t prot,
@@ -281,7 +281,7 @@ namespace gms {
                          
                       } 
                           
-                     inline explicit DC2D_c4_t(const std::size_t _mnx,
+                     inline  DC2D_c4_t(const std::size_t _mnx,
                                    const std::size_t _mny) {
                           using namespace gms::common;
                           this->mnx = _mnx;
@@ -290,7 +290,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline explicit DC2D_c4_t(const std::size_t _mnx,
+                     inline  DC2D_c4_t(const std::size_t _mnx,
                                    const std::size_t _mny,
                                    const int32_t prot,
                                    const int32_t flags,
@@ -470,7 +470,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline explicit DC1D_c4_t(const std::size_t _mnx,
+                     inline  DC1D_c4_t(const std::size_t _mnx,
                                       const int32_t prot,
                                    const int32_t flags,
                                    const int32_t fd,
@@ -524,7 +524,7 @@ namespace gms {
                              
                              
                       
-                     inline explicit DC1D_c4_t(const std::size_t _mnx,
+                     inline  DC1D_c4_t(const std::size_t _mnx,
                                       const std::complex<float> * __restrict m_x) {
                                  
                           using namespace gms::common;
@@ -616,7 +616,7 @@ namespace gms {
                          this->mzi  = NULL;
                       }                    
                       
-                      inline explicit DC3D_r4_t(const std::size_t _nx,
+                      inline  DC3D_r4_t(const std::size_t _nx,
                                        const std::size_t _ny,
                                       const std::size_t _nz) {
                              this->mnx = _nx;
@@ -626,7 +626,7 @@ namespace gms {
                              this->ismmap = false;
                       }  
                       
-                      inline explicit DC3D_r4_t(const std::size_t _nx,
+                      inline  DC3D_r4_t(const std::size_t _nx,
                                     const std::size_t _ny,
                                     const std::size_t _nz,
                                     const int32_t prot,
@@ -892,7 +892,7 @@ namespace gms {
                          this->myi  = NULL;
                     }                    
                       
-                      inline explicit DC2D_r4_t(const std::size_t _nx,
+                      inline  DC2D_r4_t(const std::size_t _nx,
                                        const std::size_t _ny) {
                                      
                              this->mnx = _nx;
@@ -901,7 +901,7 @@ namespace gms {
                              this->ismmap = false;
                       }  
                       
-                      inline explicit DC2D_r4_t(const std::size_t _nx,
+                      inline  DC2D_r4_t(const std::size_t _nx,
                                     const std::size_t _ny,
                                     const int32_t prot,
                                     const int32_t flags,
@@ -990,7 +990,7 @@ namespace gms {
                                  
                       }
                       
-                      inline explicit DC2D_r4_t(const std::size_t _mnx,
+                      inline  DC2D_r4_t(const std::size_t _mnx,
                                     const std::size_t _mny,
                                     const float * __restrict m_xr,   
                                     const float * __restrict m_xi,
@@ -1123,7 +1123,7 @@ namespace gms {
                              this->ismmap = false;
                       }  
                       
-                      inline explicit DC1D_r4_t(const std::size_t _nx,
+                      inline  DC1D_r4_t(const std::size_t _nx,
                                        const int32_t prot,
                                     const int32_t flags,
                                     const int32_t fd,
@@ -1186,7 +1186,7 @@ namespace gms {
                                                                
                       }
                       
-                      inline explicit DC1D_r4_t(const std::size_t _mnx,
+                      inline  DC1D_r4_t(const std::size_t _mnx,
                                        const float * __restrict m_xr,   
                                     const float * __restrict m_xi) {
                                                              
@@ -1293,7 +1293,7 @@ namespace gms {
                           this->mz    = NULL;
                       } 
                           
-                     inline explicit DC3D_t(const std::size_t _nx,
+                     inline  DC3D_t(const std::size_t _nx,
                                    const std::size_t _ny,
                                    const std::size_t _nz) {
                                  
@@ -1304,7 +1304,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline explicit DC3D_t(   const std::size_t _nx,
+                     inline  DC3D_t(   const std::size_t _nx,
                                       const std::size_t _ny,
                                       const std::size_t _nz,
                                       const int32_t prot,
@@ -1387,7 +1387,7 @@ namespace gms {
                   }    
                                            
                                                   
-                   inline   explicit DC3D_t(   const std::size_t _nx,
+                   inline    DC3D_t(   const std::size_t _nx,
                                       const std::size_t _ny,
                                       const std::size_t _nz,
                                       const T * __restrict _mx,
@@ -1512,7 +1512,7 @@ namespace gms {
                           this->my    = NULL;
                     } 
                           
-                     inline explicit DC2D_t(const std::size_t _nx,
+                     inline  DC2D_t(const std::size_t _nx,
                                    const std::size_t _ny) {                                  
                                  
                           this->nx = _nx;
@@ -1521,7 +1521,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline explicit DC2D_t(   const std::size_t _nx,
+                     inline  DC2D_t(   const std::size_t _nx,
                                       const std::size_t _ny,
                                       const int32_t prot,
                                       const int32_t flags,
@@ -1589,7 +1589,7 @@ namespace gms {
                   }    
                                            
                                                   
-                   inline  explicit DC2D_t(   const std::size_t _nx,
+                   inline   DC2D_t(   const std::size_t _nx,
                                       const std::size_t _ny,
                                       const T * __restrict _mx,
                                       const T * __restrict _my) {
@@ -1752,7 +1752,7 @@ namespace gms {
                   }    
                                            
                                                   
-                   inline  explicit DC1D_t(   const std::size_t _nx,
+                   inline   DC1D_t(   const std::size_t _nx,
                                       const T * __restrict _mx) {
                                       
                           this->nx  = _nx;
