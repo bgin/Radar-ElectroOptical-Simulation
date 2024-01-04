@@ -19,6 +19,7 @@ namespace file_info {
 }
 
 #include <cstdint>
+#include <memory>
 #include "GMS_config"
 
 
@@ -33,8 +34,11 @@ namespace gms {
             struct BRCcount_t {
                    
                    __ATTR_ALIGN__(64) int32_t bpc[nbpc];
-                   __ATTR_ALIGN__(64) int32_t bpr[nbpr]; 
-                  
+                   __ATTR_ALIGN__(64) int32_t bpr[nbpr];
+                   constexpr T * bpc_beg() { return (std::addressof(bpc[0]));} 
+                   constexpr T * bpr_beg() { return (std::addressof(bpr[0]));}
+                   constexpr int32_t bpc_size() { return (nbpc);}
+                   constexpr int32_t bpr_size() { return (nbpr);}
             };
         
             // latitude   values (deg), per building
@@ -46,6 +50,10 @@ namespace gms {
                    
                    __ATTR_ALIGN__(64) T blatd[nblatd];
                    __ATTR_ALIGN__(64) T blond[nblond];
+                   constexpr T * blatd_beg() { return (std::addressof(blatd[0]));} 
+                   constexpr T * blond_beg() { return (std::addressof(blond[0]));}
+                   constexpr int32_t blatd_size() { return (nblatd);}
+                   constexpr int32_t blond_size() { return (nblond);}
             };
             
             
@@ -58,6 +66,10 @@ namespace gms {
                    
                    __ATTR_ALIGN__(64) T blatr[nblatr];
                    __ATTR_ALIGN__(64) T blonr[nblonr];
+                   constexpr T * blatr_beg() { return (std::addressof(blatr[0]));} 
+                   constexpr T * blonr_beg() { return (std::addressof(blonr[0]));}
+                   constexpr int32_t blatd_size() { return (nblatr);}
+                   constexpr int32_t blond_size() { return (nblonr);}
             };
             
             
@@ -67,6 +79,8 @@ namespace gms {
             struct EllpbR1x_t {
                     
                   __ATTR_ALIGN__(64) T ellpb[nellpb];
+                  constexpr T * ellpb_beg() { return (std::addressof(ellpb[0]));}
+                  constexpr int32_t ellpb_size() { return (nellpb);}
             };
             
             
@@ -81,7 +95,10 @@ namespace gms {
                    
                    __ATTR_ALIGN__(64) T pxb[nbpc*npxb]
                    __ATTR_ALIGN__(64) T pyb[nbpc*npyb];
-                  
+                   constexpr T * pxb_beg() { return (std::addressof(pxb[0]));}
+                   constexpr T * pyb_beg() { return (std::addressof(pyb[0]));}
+                   constexpr int32_t pxb_size() { return (nbpc*npxb);}
+                   constexpr int32_t pyb_size() { return (nbpc*npyb);}
             };
             
             
@@ -93,7 +110,10 @@ namespace gms {
                     __ATTR_ALIGN__(64) T lstr[nstr];
                     __ATTR_ALIGN__(64) T wstr[nstr];
                     __ATTR_ALIGN__(64) T astr[nstr];
-                   
+                    constexpr T * lstr_beg() { return (std::addressof(lstr[0]));}
+                    constexpr T * wstr_beg() { return (std::addressof(wstr[0]));}
+                    constexpr T * astr_beg() { return (std::addressof(astr[0]));}
+                    constexpr int32_t xstr_size() { return (nstr);}
             };
             
             
@@ -310,34 +330,34 @@ namespace gms {
            
            
            // Number of south-facing walls (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct SWPCI1x_t {
                   
-                   __ATTR_ALIGN__(64) int32_t swpc[ncols*nval];
+                   __ATTR_ALIGN__(64) int32_t swpc[ncols];
            };
            
            
            // Number of east-facing walls (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct EWPCI1x_t {
                   
-                 __ATTR_ALIGN__(64) int32_t ewpc[ncols*nval];
+                 __ATTR_ALIGN__(64) int32_t ewpc[ncols];
            };
            
            
            // Number of west-facing walls (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct WWPCI1x_t {
                    
-                __ATTR_ALIGN__(64) int32_t  wwpc[ncols*nval];
+                __ATTR_ALIGN__(64) int32_t  wwpc[ncols];
            };
            
            
            // Number of north-facing walls (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct NWPCI1x_t {
                   
-                __ATTR_ALIGN__(64) int32_t  nwpc[ncols*nval];
+                __ATTR_ALIGN__(64) int32_t  nwpc[ncols];
            };
            
            
@@ -358,34 +378,34 @@ namespace gms {
            
            
            // Number of angled roof -- south facing roof wall (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct SRWCI1x_t {
                   
-                 __ATTR_ALIGN__(64) int32_t srwc[ncols*nval];
+                 __ATTR_ALIGN__(64) int32_t srwc[ncols];
            };
            
            
            // Number of angled roof -- east facing roof wall (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct ERWCI1x_t {
                   
-                  __ATTR_ALIGN__(64) int32_t  erwc[ncols*nval];
+                  __ATTR_ALIGN__(64) int32_t  erwc[ncols];
            };
            
            
            // Number of angled roof -- west facing roof wall (per each column)  x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct WRWCI1x_t {
                   
-                __ATTR_ALIGN__(64) int32_t  wrwc[ncols*nval];
+                __ATTR_ALIGN__(64) int32_t  wrwc[ncols];
            };
            
            
            // Number angled roof -- north facing roof wall (per each column) x number of columns
-           template<int32_t ncols,int32_t nval>
+           template<int32_t ncols>
            struct NRWCI1x_t {
                   
-                __ATTR_ALIGN__(64) int32_t nrwc[ncols*nval];
+                __ATTR_ALIGN__(64) int32_t nrwc[ncols];
            };
            
            
@@ -481,164 +501,141 @@ namespace gms {
            
            // An angled roof inclination surface area -- north facing roof wall 
            // (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct INRAR1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   inra;  
+                  __ATTR_ALIGN__(64) T inra[ncols*nval];   
            };
            
            
            // South wall upper-facing edge inclination (rad) -- 
            // (per each column)  x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct SWUER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   swue;   
+                 __ATTR_ALIGN__(64) T swue[ncols*nval];    
           };
           
           
           // East wall upper-facing edge inclination (rad) -- 
           // (per each column)  x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct EWUER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   ewue;   
+                 __ATTR_ALIGN__(64) T ewue[ncols*nval];    
           };
           
           
           // West wall upper-facing edge inclination (rad) -- 
           // (per each column)  x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct WWUER1x_t {
                   
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   wwue;   
+                 __ATTR_ALIGN__(64) T wwue[ncols*nval];     
           };
           
           
           // North wall upper-facing edge inclination (rad) -- 
           // (per each column)  x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct NWUER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   nwue;    
+                 __ATTR_ALIGN__(64) T nwue[ncols*nval];       
           };
           
           
           // Shared right edge between the south wall and east wall inclination (rad) 
                                     // ! -- (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct SEWER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   sewe; 
+                 __ATTR_ALIGN__(64) T sewe[ncols*nval];     
           };
           
           // Shared left edge between the south wall and west wall inclination (rad) 
                                     // ! -- (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct SWWER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   swwe;
+                 __ATTR_ALIGN__(64) T swwe[ncols*nval];   
           };
           
           
            // Shared right edge between the north wall and east wall inclination (rad) 
                                     // ! -- (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct NWEER1x_t {
                     
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   nwee;
+                  __ATTR_ALIGN__(64) T nwee[ncols*nval];   
            };
            
            
            // Shared right edge between the north wall and west wall inclination (rad) 
            // ! -- (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct NWWER1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   nwwe; 
+                  __ATTR_ALIGN__(64) T nwee[ncols*nval];   
            };
            
            
            // Simple cell-based mesh
-           template<typename T>
+           template<typename T,int32_t nL>
            struct CellMeshR1x_t {
                   
-                  // Number of divisions along the x,y,z
-                  int32_t ndiv[3];
-                  // Number of cells
-                  std::size_t nL;
-                  // Compute numerical integration.
-                  bool nint;
                   // Coordinates (x,y,z) of the center
                   // of Lth cell.
-                  DC1D<T>_t  cx;
-                  DC1D<T>_t  cy;
-                  DC1D<T>_t  cz;
-                  DC1D<T>_t  dv;
+                  __ATTR_ALIGN__(64) T cx[nL];
+                  __ATTR_ALIGN__(64) T cy[nL];
+                  __ATTR_ALIGN__(64) T cz[nL];
+                  __ATTR_ALIGN__(64) T dv[nL];
                   // (X,Y,Z) dimensions of the Ith
                   // rectangular volume cell (this is needed for
                   // the numerical integration)
-                  DC1D<T>_t  dx;
-                  DC1D<T>_t  dy;
-                  DC1D<T>_t  dz;
+                  __ATTR_ALIGN__(64) T dx[nL];
+                  __ATTR_ALIGN__(64) T dy[nL];
+                  __ATTR_ALIGN__(64) T dz[nL];
+                  // Number of divisions along the x,y,z
+                  int32_t ndiv[3];
+                  // Compute numerical integration.
+                  bool nint;
+                 
+                  
            };
            
            
            // South walls surface area (for every building, per column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct SWSAR1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   swsa;
+                  __ATTR_ALIGN__(64) T swsa[ncols*nval];
            };
            
            
            // East walls surface area (for every building, per column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct EWSAR1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   ewsa; 
+                  __ATTR_ALIGN__(64) T ewsa[ncols*nval];
            };
            
            
            // West walls surface area (for every building, per column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct WWSAR1x_t {
                    
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   wwsa;  
+                  __ATTR_ALIGN__(64) T wwsa[ncols*nval];
            };
            
            
            // North walls surface area (for every building, per column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct NWSAR1x_t {
                     
-                   std::size_t ncols;
-                   std::size_t nval;
-                   DC1D<T>_t   nwsa;   
+                  __ATTR_ALIGN__(64) T wwsa[ncols*nval]; 
+                  T * begin() { return (std::__adressof(wwsa[0]));}
+                  constexpr int32_t size() { return (ncols*nval)};  
+                 
            };
            
            
