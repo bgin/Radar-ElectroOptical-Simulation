@@ -122,10 +122,10 @@ namespace gms {
 		      static inline
 		      __m512d gamma_log_zmm8r8(const __m512d x) {
 		      
-                            if(__builtin_expect(_mm512_cmp_pd_mask(x,_0,_CMP_LE_OQ),0) ||
-			       __builtin_expect(_mm512_cmp_pd_mask(x,xbig,_CMP_GT_OQ),0)) {
-                               return (huge);
-			    }
+                            //if(__builtin_expect(_mm512_cmp_pd_mask(x,_0,_CMP_LE_OQ),0) ||
+			   //    __builtin_expect(_mm512_cmp_pd_mask(x,xbig,_CMP_GT_OQ),0)) {
+                           //    return (huge);
+			   // }
  
                          __ATTR_ALIGN__(64) const __m512d c[7] = { _mm512_set1_pd(-1.910444077728E-03),
 			                                     _mm512_set1_pd(8.4171387781295E-04),
@@ -343,10 +343,10 @@ namespace gms {
 		      static inline
 		      __m512 gamma_log_zmm16r4(const __m512 x) {
 		      
-                            if(__builtin_expect(_mm512_cmp_ps_mask(x,_0,_CMP_LE_OQ),0) ||
-			       __builtin_expect(_mm512_cmp_ps_mask(x,xbig,_CMP_GT_OQ),0)) {
-                               return (huge);
-			    }
+                          //  if(__builtin_expect(_mm512_cmp_ps_mask(x,_0,_CMP_LE_OQ),0) ||
+			  //     __builtin_expect(_mm512_cmp_ps_mask(x,xbig,_CMP_GT_OQ),0)) {
+                          //     return (huge);
+			  //  }
  
                          __ATTR_ALIGN__(64) const __m512 c[7] = { _mm512_set1_ps(-1.910444077728E-03),
 			                                     _mm512_set1_ps(8.4171387781295E-04),
@@ -1251,12 +1251,12 @@ namespace gms {
 		      __m512d beta_zmm8r8(const __m512d a,
 		                          const __m512d b) {
 
-                        const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+                       // const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			const __m512d _0  = _mm512_setzero_pd();
-			if(__builtin_expect(_mm512_cmp_pd_mask(a,_0,_CMP_LE_OQ),0) ||
-			   __builtin_expect(_mm512_cmp_pd_mask(b,_0,_CMP_LE_OQ),0)) {
-                           return (nan);
-			}
+			//if(__builtin_expect(_mm512_cmp_pd_mask(a,_0,_CMP_LE_OQ),0) ||
+			//   __builtin_expect(_mm512_cmp_pd_mask(b,_0,_CMP_LE_OQ),0)) {
+                       //    return (nan);
+			//}
 			const __m512d ab  = _mm512_add_pd(a,b);
 			__m512d beta      = _mm512_setzero_pd();
 			beta              = _mm512_exp_pd(
@@ -1433,13 +1433,13 @@ namespace gms {
                            const __m512d pi    = _mm512_set1_pd(3.14159265358979323846264338328);
 			   const __m512d _0    = _mm512_setzero_pd();
 			   const __m512d _1    = _mm512_set1_pd(1.0);
-			   const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			  // const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			   const __m512d _1_2  = _mm512_set1_pd(0.5);
 			   __m512d x;
-			   if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			      __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                              return (nan);
-			   }
+			  // if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			  //    __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                          //    return (nan);
+			  // }
 #if (USE_SLEEF_LIB) == 1
                              x = _mm512_mul_pd(xsin(_mm512_mul_pd(pi,_mm512_sub_pd(cdf,_1_2))));
 			     
@@ -1461,13 +1461,13 @@ namespace gms {
                            const __m512 pi    = _mm512_set1_ps(3.14159265358979323846264338328f);
 			   const __m512 _0    = _mm512_setzero_ps();
 			   const __m512 _1    = _mm512_set1_ps(1.0f);
-			   const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			  // const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
 			   const __m512 _1_2  = _mm512_set1_ps(0.5f);
 			   __m512 x;
-			   if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			      __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                              return (nan);
-			   }
+			 //  if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			 //     __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                         //     return (nan);
+			 //  }
 #if (USE_SLEEF_LIB) == 1
                              x = _mm512_mul_ps(xsinf(_mm512_mul_ps(pi,_mm512_sub_ps(cdf,_1_2))));
 			     
@@ -1574,12 +1574,12 @@ namespace gms {
                            const __m512d pi    = _mm512_set1_pd(3.14159265358979323846264338328);
 			   const __m512d _0    = _mm512_setzero_pd();
 			   const __m512d _1    = _mm512_set1_pd(1.0);
-			   const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			  // const __m512d nan   = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			   __m512d pdf,t0;
 			   __mmask8 m,m1;
-			   if(__builtin_expect(_mm512_cmp_pd_mask(a,_0,_CMP_LE_OQ))) {
-                               return (nan);
-			   }
+			 //  if(__builtin_expect(_mm512_cmp_pd_mask(a,_0,_CMP_LE_OQ))) {
+                         //      return (nan);
+			 //  }
 			   m  =  _mm512_cmp_pd_mask(x,zmm8r8_negate(a),_CMP_LE_OQ);
 			   t0 =  _mm512_sqrt_pd(_mm512_sub_pd(_mm512_mul_pd(a,a),
 			                                      _mm512_mul_pd(x,x)));
@@ -1603,12 +1603,12 @@ namespace gms {
                            const __m512 pi    = _mm512_set1_ps(3.14159265358979323846264338328f);
 			   const __m512 _0    = _mm512_setzero_ps();
 			   const __m512 _1    = _mm512_set1_ps(1.0f);
-			   const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			  // const __m512 nan   = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
 			   __m512 pdf,t0;
 			   __mmask 16m,m1;
-			   if(__builtin_expect(_mm512_cmp_ps_mask(a,_0,_CMP_LE_OQ))) {
-                               return (nan);
-			   }
+			  // if(__builtin_expect(_mm512_cmp_ps_mask(a,_0,_CMP_LE_OQ))) {
+                         //      return (nan);
+			 //  }
 			   m  =  _mm512_cmp_ps_mask(x,zmm16r4_negate(a),_CMP_LE_OQ);
 			   t0 =  _mm512_sqrt_ps(_mm512_sub_ps(_mm512_mul_ps(a,a),
 			                                      _mm512_mul_ps(x,x)));
@@ -1724,7 +1724,7 @@ namespace gms {
                             const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			    return (nan);
 			 }
-			 uniform          = svrng_new_uniform_distribution_double(0.0,1.0);
+			 uniform          = svrng_new_normal_distribution_double(0.0,1.0);
 			 const double * __restrict ptr = (const double*)(&svrng_generate8_double(engine,uniform));
 			 cdf              = arcsin_cdf_inv_zmm8r8(_mm512_loadu_pd(&ptr[0]));
 			 svrng_delete_engine(engine);
@@ -2043,12 +2043,12 @@ namespace gms {
 
                         const __m512d  _0  = _mm512_setzero_pd();
 			const __m512d  _1  = _mm512_set1_pd(1.0);
-			const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			//const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			__m512d t0,t1,x;
-			if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			   __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                           return (nan);
-			}
+			//if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			//   __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                       //    return (nan);
+			//}
 			t0                 = zmm8r8_negate(_mm512_log_pd(_mm512_sub_pd(_1,cdf)));
 			t1                 = _mm512_pow_pd(t0,_mm512_div_pd(_1,c));
 			x                  = _mm512_fmadd_pd(a,b,t1);
@@ -2070,12 +2070,12 @@ namespace gms {
 
                         const __m512  _0  = _mm512_setzero_ps();
 			const __m512  _1  = _mm512_set1_ps(1.0f);
-			const __m512  nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			//const __m512  nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
 			__m512 t0,t1,x;
-			if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			   __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                           return (nan);
-			}
+			//if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			//   __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                       //    return (nan);
+			//}
 			t0                 = zmm16r4_negate(_mm512_log_pd(_mm512_sub_ps(_1,cdf)));
 			t1                 = _mm512_pow_ps(t0,_mm512_div_ps(_1,c));
 			x                  = _mm512_fmadd_ps(a,b,t1);
@@ -2269,13 +2269,13 @@ namespace gms {
 		                                const __m512d a,
 						const __m512d b) {
 
-                          const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+                        //  const __m512d  nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			  const __m512d  _0  = _mm512_setzero_pd();
 			  const __m512d  _1  = _mm512_set1_pd(1.0);
-			  if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			     __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                           return (nan);
-			  }
+			 // if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			 //    __builtin_expect(_mm512_cmp_pd_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                         //  return (nan);
+			 // }
 			  const __m512d t0   =  _mm512_log_pd(_mm512_sub_pd(_1,cdf));
 			  const __m512d t1   =  _mm512_log_pd(_mm512_sub_pd(_1,a));
 			  const __m512d t2   =  _mm512_div_pd(t1,t2)
@@ -2296,13 +2296,13 @@ namespace gms {
 		                                const __m512 a,
 						const __m512 b) {
 
-                          const __m512  nan = _mm512_set1_pd(std::numeric_limits<float>::quiet_NaN());
+                       //   const __m512  nan = _mm512_set1_pd(std::numeric_limits<float>::quiet_NaN());
 			  const __m512  _0  = _mm512_setzero_ps();
 			  const __m512  _1  = _mm512_set1_ps(1.0f);
-			  if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			     __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
-                           return (nan);
-			  }
+			//  if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			//     __builtin_expect(_mm512_cmp_ps_mask(cdf,_1,_CMP_GT_OQ),0)) {
+                        //   return (nan);
+			//  }
 			  const __m512 t0   =  _mm512_log_ps(_mm512_sub_ps(_1,cdf));
 			  const __m512 t1   =  _mm512_log_ps(_mm512_sub_ps(_1,a));
 			  const __m512 t2   =  _mm512_div_ps(t1,t2)
@@ -2822,7 +2822,7 @@ namespace gms {
                              const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
 			     return (nan);
 			  }
-			  uniform             = svrng_new_uniform_distribution_double(0.0,1.0);
+			  uniform             = svrng_new_normal_distribution_double(0.0,1.0);
 			  t0                  = _mm512_fmadd_pd(_4,_mm512_mul_pd(b,b),_1);
 			  tau                 = _mm512_add_pd(_1,_mm512_sqrt_pd(t0));
 			  t1                  = _mm512_add_pd(b,b);
@@ -2891,7 +2891,7 @@ namespace gms {
                              const __m512 nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
 			     return (nan);
 			  }
-			  uniform             = svrng_new_uniform_distribution_float(0.0f,1.0f);
+			  uniform             = svrng_new_normal_distribution_float(0.0f,1.0f);
 			  t0                  = _mm512_fmadd_ps(_4,_mm512_mul_ps(b,b),_1);
 			  tau                 = _mm512_add_ps(_1,_mm512_sqrt_ps(t0));
 			  t1                  = _mm512_add_ps(b,b);
@@ -3112,8 +3112,8 @@ namespace gms {
 			 const __m512d _1 = _mm512_setzero_pd(1.0);
 			 const __m512d n2 = _mm512_setzero_pd(-2.0);
 			 __m512d inv,t0,t1,;
-                         if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			    __builtin_expect(_mm512_cmp_pd_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
+                       //  if(__builtin_expect(_mm512_cmp_pd_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			//    __builtin_expect(_mm512_cmp_pd_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
 			 t0  = _mm512_log_pd(_mm512_sub_pd(_1,cdf));
 			 t1  = _mm512_mul_pd(_2,_mm512_mul_pd(a,a));
                          inv = _mm512_sqrt_pd(_mm512_mul_pd(t0,t1));
@@ -3135,8 +3135,8 @@ namespace gms {
 			 const __m512 _1 = _mm512_setzero_ps(1.0f);
 			 const __m512 n2 = _mm512_setzero_ps(-2.0f);
 			 __m512 inv,t0,t1,;
-                         if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
-			    __builtin_expect(_mm512_cmp_ps_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
+                       //  if(__builtin_expect(_mm512_cmp_ps_mask(cdf,_0,_CMP_LT_OQ),0) ||
+			//    __builtin_expect(_mm512_cmp_ps_mask(_1,cdf,_CMP_LT_OQ),0)) {return;}
 			 t0  = _mm512_log_ps(_mm512_sub_ps(_1,cdf));
 			 t1  = _mm512_mul_ps(_2,_mm512_mul_ps(a,a));
                          inv = _mm512_sqrt_ps(_mm512_mul_ps(t0,t1));
