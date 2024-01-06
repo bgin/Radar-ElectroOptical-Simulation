@@ -32,9 +32,19 @@ namespace gms {
             // Building units per row
             template<int32_t nbpc,int32_t nbpr>
             struct BRCcount_t {
-                   
+#if defined (__AVX512F__)                   
                    __ATTR_ALIGN__(64) int32_t bpc[nbpc];
                    __ATTR_ALIGN__(64) int32_t bpr[nbpr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                   __ATTR_ALIGN__(32) int32_t bpc[nbpc];
+                   __ATTR_ALIGN__(32) int32_t bpr[nbpr];
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16) int32_t bpc[nbpc];
+                   __ATTR_ALIGN__(16) int32_t bpr[nbpr];
+#else
+                   int32_t bpc[nbpc];
+                   int32_t bpr[nbpr];
+#endif
                    constexpr T * bpc_beg() { return (std::addressof(bpc[0]));} 
                    constexpr T * bpr_beg() { return (std::addressof(bpr[0]));}
                    constexpr int32_t bpc_size() { return (nbpc);}
@@ -47,9 +57,19 @@ namespace gms {
             // Number of longtitude values (deg), per building
             template<typename T,int32_t nblatd,int32_t nblond>
             struct BLatLondR1x_t {
-                   
+#if defined (__AVX512F__)                   
                    __ATTR_ALIGN__(64) T blatd[nblatd];
                    __ATTR_ALIGN__(64) T blond[nblond];
+#elif defined (__AVX__) || defined (__AVX2__)
+                   __ATTR_ALIGN__(32) T blatd[nblatd];
+                   __ATTR_ALIGN__(32) T blond[nblond];
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16) T blatd[nblatd];
+                   __ATTR_ALIGN__(16) T blond[nblond];
+#else
+                     T blatd[nblatd];
+                     T blond[nblond];
+#endif
                    constexpr T * blatd_beg() { return (std::addressof(blatd[0]));} 
                    constexpr T * blond_beg() { return (std::addressof(blond[0]));}
                    constexpr int32_t blatd_size() { return (nblatd);}
@@ -63,9 +83,19 @@ namespace gms {
             // Number of longtitude values (rad), per building
             template<typename T,int32_t nblatr,int32_t nblonr>
             struct BLatLonrR1x_t {
-                   
+#if defined (__AVX512F__)                   
                    __ATTR_ALIGN__(64) T blatr[nblatr];
                    __ATTR_ALIGN__(64) T blonr[nblonr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                   __ATTR_ALIGN__(32) T blatr[nblatr];
+                   __ATTR_ALIGN__(32) T blonr[nblonr];
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16) T blatr[nblatr];
+                   __ATTR_ALIGN__(16) T blonr[nblonr];
+#else
+                   T blatr[nblatr];
+                   T blonr[nblonr];
+#endif
                    constexpr T * blatr_beg() { return (std::addressof(blatr[0]));} 
                    constexpr T * blonr_beg() { return (std::addressof(blonr[0]));}
                    constexpr int32_t blatd_size() { return (nblatr);}
@@ -77,8 +107,15 @@ namespace gms {
             // Number of ellipsoidal (radar waveform irradiating field) cells for building column
             template<typename T,int32_t nellpb>
             struct EllpbR1x_t {
-                    
+#if defined (__AVX512F__)                    
                   __ATTR_ALIGN__(64) T ellpb[nellpb];
+#elif defined (__AVX__) || defined (__AVX2__)   
+                  __ATTR_ALIGN__(32) T ellpb[nellpb];  
+#elif defined (__SSE__)
+                  __ATTR_ALIGN__(16) T ellpb[nellpb];   
+#else
+                  T ellpb[nellpb];   
+#endif      
                   constexpr T * ellpb_beg() { return (std::addressof(ellpb[0]));}
                   constexpr int32_t ellpb_size() { return (nellpb);}
             };
@@ -92,9 +129,19 @@ namespace gms {
             template<typename T,int32_t nbpc,
                      int32_t npxb,int32_t npyb>
             struct PxybR1x_t {
-                   
-                   __ATTR_ALIGN__(64) T pxb[nbpc*npxb]
+#if defined (__AVX512F__)                    
+                   __ATTR_ALIGN__(64) T pxb[nbpc*npxb];
                    __ATTR_ALIGN__(64) T pyb[nbpc*npyb];
+#elif defined (__AVX__) || defined (__AVX2__)
+                   __ATTR_ALIGN__(32) T pxb[nbpc*npxb];
+                   __ATTR_ALIGN__(32) T pyb[nbpc*npyb];
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16) T pxb[nbpc*npxb];
+                   __ATTR_ALIGN__(16) T pyb[nbpc*npyb];
+#else
+                    T pxb[nbpc*npxb];
+                    T pyb[nbpc*npyb];
+#endif
                    constexpr T * pxb_beg() { return (std::addressof(pxb[0]));}
                    constexpr T * pyb_beg() { return (std::addressof(pyb[0]));}
                    constexpr int32_t pxb_size() { return (nbpc*npxb);}
@@ -106,10 +153,23 @@ namespace gms {
              // number of streets
             template<typename T,int32_t nstr>
             struct SLWAR1x_t {
-                    
+#if defined (__AVX512F__)                    
                     __ATTR_ALIGN__(64) T lstr[nstr];
                     __ATTR_ALIGN__(64) T wstr[nstr];
                     __ATTR_ALIGN__(64) T astr[nstr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32) T lstr[nstr];
+                    __ATTR_ALIGN__(32) T wstr[nstr];
+                    __ATTR_ALIGN__(32) T astr[nstr]; 
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16) T lstr[nstr];
+                    __ATTR_ALIGN__(16) T wstr[nstr];
+                    __ATTR_ALIGN__(16) T astr[nstr];
+#else
+                     T lstr[nstr];
+                     T wstr[nstr];
+                     T astr[nstr];
+#endif
                     constexpr T * lstr_beg() { return (std::addressof(lstr[0]));}
                     constexpr T * wstr_beg() { return (std::addressof(wstr[0]));}
                     constexpr T * astr_beg() { return (std::addressof(astr[0]));}
@@ -124,9 +184,23 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmstr,int32_t npmstr>
             struct MStrR1x_t {
-                    
+#if defined (__AVX512F__)                    
                     __ATTR_ALIGN__(64) T mstr[nstr*nmstr];
                     __ATTR_ALIGN__(64) T pmstr[nstr*npmstr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32) T mstr[nstr*nmstr];
+                    __ATTR_ALIGN__(32) T pmstr[nstr*npmstr];
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16) T mstr[nstr*nmstr];
+                    __ATTR_ALIGN__(16) T pmstr[nstr*npmstr];
+#else
+                     T mstr[nstr*nmstr];
+                     T pmstr[nstr*npmstr];
+#endif                    
+                    constexpr T * mstr_beg()  { return (std::addressof(mstr[0]));}
+                    constexpr T * pmstr_beg() { return (std::addressof(pmstr[0]));}
+                    constexpr int32_t mstr_size()  { return (nstr*nmstr);}
+                    constexpr int32_t pmstr_size() { return (nstr*npmstr);}
             };
             
             
@@ -134,8 +208,17 @@ namespace gms {
             // number of streets
             template<int32_t nstr>
             struct CStrIx_t {
-                    
-                 __ATTR_ALIGN__ int32_t cstr[nstr];
+#if defined (__AVX512F__)                    
+                 __ATTR_ALIGN__(64) int32_t cstr[nstr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                 __ATTR_ALIGN__(32) int32_t cstr[nstr];
+#elif defined (__SSE__)
+                 __ATTR_ALIGN__(16) int32_t cstr[nstr];
+#else
+                 int32_t cstr[nstr];
+#endif
+                 constexpr int32_t * cstr_beg() { return (std::addressof(cstr[0]));}
+                 constexpr int32_t cstr_size()  { return (nstr);}
             };
             
             
@@ -146,11 +229,29 @@ namespace gms {
             template<typename T,int32_t nstr,int32_t npcstr,
                               int32_t natstr,int32_t ntcstr>
             struct CDStrR1x_t {
-                    
+#if defined (__AVX512F__)                           
                     __ATTR_ALIGN__(64) T pcstr[nstr*npcstr];
                     __ATTR_ALIGN__(64) T atstr[nstr*natstr];
                     __ATTR_ALIGN__(64) T tcstr[nstr*ntcstr];
-                   
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32) T pcstr[nstr*npcstr];
+                    __ATTR_ALIGN__(32) T atstr[nstr*natstr];
+                    __ATTR_ALIGN__(32) T tcstr[nstr*ntcstr]; 
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16) T pcstr[nstr*npcstr];
+                    __ATTR_ALIGN__(16) T atstr[nstr*natstr];
+                    __ATTR_ALIGN__(16) T tcstr[nstr*ntcstr]; 
+#else
+                    T pcstr[nstr*npcstr];
+                    T atstr[nstr*natstr];
+                    T tcstr[nstr*ntcstr];
+#endif                  
+                    constexpr T * pcstr_beg() { return (std::addressof(pcstr[0]));}
+                    constexpr T * atstr_beg() { return (std::addressof(atstr[0]));}
+                    constexpr T * tcstr_beg() { return (std::addressof(tcstr[0]));}
+                    constexpr int32_t pcstr_size() { return (nstr*npcstr);}
+                    constexpr int32_t atstr_size() { return (nstr*natstr);}
+                    constexpr int32_t tcstr_size() { return (nstr*ntcstr);}
             };
             
             
@@ -160,12 +261,35 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmustr,int32_t nepstr> 
             struct MEStr1C1x_t {       
-            
+#if defined (__AVX512F__)             
                     __ATTR_ALIGN__(64) T murstr[nstr*nmustr];
                     __ATTR_ALIGN__(64) T muistr[nstr*nmustr];
                     __ATTR_ALIGN__(64) T eprstr[nstr*nepstr];
                     __ATTR_ALIGN__(64) T epistr[nstr*nepstr];
-                  
+#elif defined (__AVX__) || (__AVX2__)
+                    __ATTR_ALIGN__(32) T murstr[nstr*nmustr];
+                    __ATTR_ALIGN__(32) T muistr[nstr*nmustr];
+                    __ATTR_ALIGN__(32) T eprstr[nstr*nepstr];
+                    __ATTR_ALIGN__(32) T epistr[nstr*nepstr];
+#elif defined (__SSE__) 
+                    __ATTR_ALIGN__(16) T murstr[nstr*nmustr];
+                    __ATTR_ALIGN__(16) T muistr[nstr*nmustr];
+                    __ATTR_ALIGN__(16) T eprstr[nstr*nepstr];
+                    __ATTR_ALIGN__(16) T epistr[nstr*nepstr];
+#else
+                     T murstr[nstr*nmustr];
+                     T muistr[nstr*nmustr];
+                     T eprstr[nstr*nepstr];
+                     T epistr[nstr*nepstr];
+#endif
+                    constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
+                    constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
+                    constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
+                    constexpr T * epistr_beg() { return (std::addressof(epistr[0]));}
+                    constexpr int32_t murstr_size() { return (nstr*nmustr);}
+                    constexpr int32_t muistr_size() { return (nstr*nmustr);}
+                    constexpr int32_t eprstr_size() { return (nstr*nepstr);}
+                    constexpr int32_t epistr_size() { return (nstr*nepstr);}
             };
             
             
@@ -177,12 +301,35 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmustr,int32_t nepstr>
             struct MEStr2C1x_t {
-                     
+#if defined (__AVX512F__)                     
                     __ATTR_ALIGN__(64) T murstr[nstr*nmustr];
                     __ATTR_ALIGN__(64) T muistr[nstr*nmustr];
                     __ATTR_ALIGN__(64) T eprstr[nstr*nepstr];
                     __ATTR_ALIGN__(64) T epistr[nstr*nepstr];  
-                    
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32) T murstr[nstr*nmustr];
+                    __ATTR_ALIGN__(32) T muistr[nstr*nmustr];
+                    __ATTR_ALIGN__(32) T eprstr[nstr*nepstr];
+                    __ATTR_ALIGN__(32) T epistr[nstr*nepstr];  
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16) T murstr[nstr*nmustr];
+                    __ATTR_ALIGN__(16) T muistr[nstr*nmustr];
+                    __ATTR_ALIGN__(16) T eprstr[nstr*nepstr];
+                    __ATTR_ALIGN__(16) T epistr[nstr*nepstr];  
+#else
+                     T murstr[nstr*nmustr];
+                     T muistr[nstr*nmustr];
+                     T eprstr[nstr*nepstr];
+                     T epistr[nstr*nepstr];  
+#endif
+                    constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
+                    constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
+                    constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
+                    constexpr T * epistr_beg() { return (std::addressof(epistr[0]));}
+                    constexpr int32_t murstr_size() { return (nstr*nmustr);}
+                    constexpr int32_t muistr_size() { return (nstr*nmustr);}
+                    constexpr int32_t eprstr_size() { return (nstr*nepstr);}
+                    constexpr int32_t epistr_size() { return (nstr*nepstr);}
             };
             
             
@@ -192,9 +339,19 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nustr,int32_t nvstr>
             struct SCrvR1x_t {
-                     
+#if defined (__AVX512F__)                     
                     __ATTR_ALIGN__(64) T ustr[nstr*nustr];
                     __ATTR_ALIGN__(64) T vstr[nstr*nvstr];
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32) T ustr[nstr*nustr];
+                    __ATTR_ALIGN__(32) T vstr[nstr*nvstr];
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16) T ustr[nstr*nustr];
+                    __ATTR_ALIGN__(16) T vstr[nstr*nvstr];
+#else
+                     T ustr[nstr*nustr];
+                     T vstr[nstr*nvstr];
+#endif
                  
             };
             
