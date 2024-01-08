@@ -33,18 +33,22 @@ namespace gms {
             template<int32_t nbpc,int32_t nbpr>
             struct BRCcount_t {
 #if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64) int32_t bpc[nbpc];
-                   __ATTR_ALIGN__(64) int32_t bpr[nbpr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                   __ATTR_ALIGN__(32) int32_t bpc[nbpc];
-                   __ATTR_ALIGN__(32) int32_t bpr[nbpr];
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                   __ATTR_ALIGN__(16) int32_t bpc[nbpc];
-                   __ATTR_ALIGN__(16) int32_t bpr[nbpr];
-#else
-                   int32_t bpc[nbpc];
-                   int32_t bpr[nbpr];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                   int32_t bpc[nbpc];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                   int32_t bpr[nbpr];
+
                    constexpr T * bpc_beg() { return (std::addressof(bpc[0]));} 
                    constexpr T * bpr_beg() { return (std::addressof(bpr[0]));}
                    constexpr int32_t bpc_size() { return (nbpc);}
@@ -58,18 +62,22 @@ namespace gms {
             template<typename T,int32_t nblatd,int32_t nblond>
             struct BLatLondR1x_t {
 #if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64) T blatd[nblatd];
-                   __ATTR_ALIGN__(64) T blond[nblond];
-#elif defined (__AVX__) || defined (__AVX2__)
-                   __ATTR_ALIGN__(32) T blatd[nblatd];
-                   __ATTR_ALIGN__(32) T blond[nblond];
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                   __ATTR_ALIGN__(16) T blatd[nblatd];
-                   __ATTR_ALIGN__(16) T blond[nblond];
-#else
-                     T blatd[nblatd];
-                     T blond[nblond];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                     T blatd[nblatd];
+ #if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                     T blond[nblond];
+
                    constexpr T * blatd_beg() { return (std::addressof(blatd[0]));} 
                    constexpr T * blond_beg() { return (std::addressof(blond[0]));}
                    constexpr int32_t blatd_size() { return (nblatd);}
@@ -84,18 +92,22 @@ namespace gms {
             template<typename T,int32_t nblatr,int32_t nblonr>
             struct BLatLonrR1x_t {
 #if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64) T blatr[nblatr];
-                   __ATTR_ALIGN__(64) T blonr[nblonr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                   __ATTR_ALIGN__(32) T blatr[nblatr];
-                   __ATTR_ALIGN__(32) T blonr[nblonr];
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                   __ATTR_ALIGN__(16) T blatr[nblatr];
-                   __ATTR_ALIGN__(16) T blonr[nblonr];
-#else
-                   T blatr[nblatr];
-                   T blonr[nblonr];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                   T blatr[nblatr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                   T blonr[nblonr];
+
                    constexpr T * blatr_beg() { return (std::addressof(blatr[0]));} 
                    constexpr T * blonr_beg() { return (std::addressof(blonr[0]));}
                    constexpr int32_t blatd_size() { return (nblatr);}
@@ -107,15 +119,15 @@ namespace gms {
             // Number of ellipsoidal (radar waveform irradiating field) cells for building column
             template<typename T,int32_t nellpb>
             struct EllpbR1x_t {
-#if defined (__AVX512F__)                    
-                  __ATTR_ALIGN__(64) T ellpb[nellpb];
-#elif defined (__AVX__) || defined (__AVX2__)   
-                  __ATTR_ALIGN__(32) T ellpb[nellpb];  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                  __ATTR_ALIGN__(16) T ellpb[nellpb];   
-#else
+                   __ATTR_ALIGN__(16)                  
+#endif
                   T ellpb[nellpb];   
-#endif      
+    
                   constexpr T * ellpb_beg() { return (std::addressof(ellpb[0]));}
                   constexpr int32_t ellpb_size() { return (nellpb);}
             };
@@ -129,19 +141,23 @@ namespace gms {
             template<typename T,int32_t nbpc,
                      int32_t npxb,int32_t npyb>
             struct PxybR1x_t {
-#if defined (__AVX512F__)                    
-                   __ATTR_ALIGN__(64) T pxb[nbpc*npxb];
-                   __ATTR_ALIGN__(64) T pyb[nbpc*npyb];
-#elif defined (__AVX__) || defined (__AVX2__)
-                   __ATTR_ALIGN__(32) T pxb[nbpc*npxb];
-                   __ATTR_ALIGN__(32) T pyb[nbpc*npyb];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                   __ATTR_ALIGN__(16) T pxb[nbpc*npxb];
-                   __ATTR_ALIGN__(16) T pyb[nbpc*npyb];
-#else
-                    T pxb[nbpc*npxb];
-                    T pyb[nbpc*npyb];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                    T pxb[nbpc*npxb];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                    T pyb[nbpc*npyb];
+
                    constexpr T * pxb_beg() { return (std::addressof(pxb[0]));}
                    constexpr T * pyb_beg() { return (std::addressof(pyb[0]));}
                    constexpr int32_t pxb_size() { return (nbpc*npxb);}
@@ -153,23 +169,31 @@ namespace gms {
              // number of streets
             template<typename T,int32_t nstr>
             struct SLWAR1x_t {
-#if defined (__AVX512F__)                    
-                    __ATTR_ALIGN__(64) T lstr[nstr];
-                    __ATTR_ALIGN__(64) T wstr[nstr];
-                    __ATTR_ALIGN__(64) T astr[nstr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                    __ATTR_ALIGN__(32) T lstr[nstr];
-                    __ATTR_ALIGN__(32) T wstr[nstr];
-                    __ATTR_ALIGN__(32) T astr[nstr]; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                    __ATTR_ALIGN__(16) T lstr[nstr];
-                    __ATTR_ALIGN__(16) T wstr[nstr];
-                    __ATTR_ALIGN__(16) T astr[nstr];
-#else
-                     T lstr[nstr];
-                     T wstr[nstr];
-                     T astr[nstr];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                     T lstr[nstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T wstr[nstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T astr[nstr];
+
                     constexpr T * lstr_beg() { return (std::addressof(lstr[0]));}
                     constexpr T * wstr_beg() { return (std::addressof(wstr[0]));}
                     constexpr T * astr_beg() { return (std::addressof(astr[0]));}
@@ -184,19 +208,23 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmstr,int32_t npmstr>
             struct MStrR1x_t {
-#if defined (__AVX512F__)                    
-                    __ATTR_ALIGN__(64) T mstr[nstr*nmstr];
-                    __ATTR_ALIGN__(64) T pmstr[nstr*npmstr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                    __ATTR_ALIGN__(32) T mstr[nstr*nmstr];
-                    __ATTR_ALIGN__(32) T pmstr[nstr*npmstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                    __ATTR_ALIGN__(16) T mstr[nstr*nmstr];
-                    __ATTR_ALIGN__(16) T pmstr[nstr*npmstr];
-#else
+                   __ATTR_ALIGN__(16)                  
+#endif
                      T mstr[nstr*nmstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
                      T pmstr[nstr*npmstr];
-#endif                    
+                    
                     constexpr T * mstr_beg()  { return (std::addressof(mstr[0]));}
                     constexpr T * pmstr_beg() { return (std::addressof(pmstr[0]));}
                     constexpr int32_t mstr_size()  { return (nstr*nmstr);}
@@ -208,15 +236,15 @@ namespace gms {
             // number of streets
             template<int32_t nstr>
             struct CStrIx_t {
-#if defined (__AVX512F__)                    
-                 __ATTR_ALIGN__(64) int32_t cstr[nstr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                 __ATTR_ALIGN__(32) int32_t cstr[nstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                 __ATTR_ALIGN__(16) int32_t cstr[nstr];
-#else
-                 int32_t cstr[nstr];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                 int32_t cstr[nstr];
+
                  constexpr int32_t * cstr_beg() { return (std::addressof(cstr[0]));}
                  constexpr int32_t cstr_size()  { return (nstr);}
             };
@@ -229,23 +257,31 @@ namespace gms {
             template<typename T,int32_t nstr,int32_t npcstr,
                               int32_t natstr,int32_t ntcstr>
             struct CDStrR1x_t {
-#if defined (__AVX512F__)                           
-                    __ATTR_ALIGN__(64) T pcstr[nstr*npcstr];
-                    __ATTR_ALIGN__(64) T atstr[nstr*natstr];
-                    __ATTR_ALIGN__(64) T tcstr[nstr*ntcstr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                    __ATTR_ALIGN__(32) T pcstr[nstr*npcstr];
-                    __ATTR_ALIGN__(32) T atstr[nstr*natstr];
-                    __ATTR_ALIGN__(32) T tcstr[nstr*ntcstr]; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                    __ATTR_ALIGN__(16) T pcstr[nstr*npcstr];
-                    __ATTR_ALIGN__(16) T atstr[nstr*natstr];
-                    __ATTR_ALIGN__(16) T tcstr[nstr*ntcstr]; 
-#else
+                   __ATTR_ALIGN__(16)                  
+#endif
                     T pcstr[nstr*npcstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
                     T atstr[nstr*natstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
                     T tcstr[nstr*ntcstr];
-#endif                  
+                 
                     constexpr T * pcstr_beg() { return (std::addressof(pcstr[0]));}
                     constexpr T * atstr_beg() { return (std::addressof(atstr[0]));}
                     constexpr T * tcstr_beg() { return (std::addressof(tcstr[0]));}
@@ -261,27 +297,39 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmustr,int32_t nepstr> 
             struct MEStr1C1x_t {       
-#if defined (__AVX512F__)             
-                    __ATTR_ALIGN__(64) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(64) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(64) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(64) T epistr[nstr*nepstr];
-#elif defined (__AVX__) || (__AVX2__)
-                    __ATTR_ALIGN__(32) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(32) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(32) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(32) T epistr[nstr*nepstr];
-#elif defined (__SSE__) 
-                    __ATTR_ALIGN__(16) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(16) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(16) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(16) T epistr[nstr*nepstr];
-#else
-                     T murstr[nstr*nmustr];
-                     T muistr[nstr*nmustr];
-                     T eprstr[nstr*nepstr];
-                     T epistr[nstr*nepstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
 #endif
+                     T murstr[nstr*nmustr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T muistr[nstr*nmustr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T eprstr[nstr*nepstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T epistr[nstr*nepstr];
+
                     constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
                     constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
                     constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
@@ -301,27 +349,39 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nmustr,int32_t nepstr>
             struct MEStr2C1x_t {
-#if defined (__AVX512F__)                     
-                    __ATTR_ALIGN__(64) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(64) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(64) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(64) T epistr[nstr*nepstr];  
-#elif defined (__AVX__) || defined (__AVX2__)
-                    __ATTR_ALIGN__(32) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(32) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(32) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(32) T epistr[nstr*nepstr];  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                    __ATTR_ALIGN__(16) T murstr[nstr*nmustr];
-                    __ATTR_ALIGN__(16) T muistr[nstr*nmustr];
-                    __ATTR_ALIGN__(16) T eprstr[nstr*nepstr];
-                    __ATTR_ALIGN__(16) T epistr[nstr*nepstr];  
-#else
-                     T murstr[nstr*nmustr];
-                     T muistr[nstr*nmustr];
-                     T eprstr[nstr*nepstr];
-                     T epistr[nstr*nepstr];  
+                   __ATTR_ALIGN__(16)                  
 #endif
+                     T murstr[nstr*nmustr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T muistr[nstr*nmustr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T eprstr[nstr*nepstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T epistr[nstr*nepstr];  
+
                     constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
                     constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
                     constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
@@ -339,19 +399,23 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nustr,int32_t nvstr>
             struct SCrvR1x_t {
-#if defined (__AVX512F__)                     
-                    __ATTR_ALIGN__(64) T ustr[nstr*nustr];
-                    __ATTR_ALIGN__(64) T vstr[nstr*nvstr];
-#elif defined (__AVX__) || defined (__AVX2__)
-                    __ATTR_ALIGN__(32) T ustr[nstr*nustr];
-                    __ATTR_ALIGN__(32) T vstr[nstr*nvstr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
 #elif defined (__SSE__)
-                    __ATTR_ALIGN__(16) T ustr[nstr*nustr];
-                    __ATTR_ALIGN__(16) T vstr[nstr*nvstr];
-#else
-                     T ustr[nstr*nustr];
-                     T vstr[nstr*nvstr];
+                   __ATTR_ALIGN__(16)                  
 #endif
+                     T ustr[nstr*nustr];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T vstr[nstr*nvstr];
+
                  
             };
             
@@ -366,10 +430,31 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nx,int32_t ny,int32_t,nz>
             struct SNrmR1x_t {
-                    
-                    __ATTR_ALIGN__(64) T nvx[nstr*nx];
-                    __ATTR_ALIGN__(64) T nvy[nstr*ny];
-                    __ATTR_ALIGN__(64) T nvz[nstr*nz]
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                     T nvx[nstr*nx];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T nvy[nstr*ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T nvz[nstr*nz];
+
                     
             };
             
@@ -380,11 +465,25 @@ namespace gms {
             template<typename T,int32_t nstr,
                      int32_t nlon,int32_t nlat>
             struct SIRCDR1x_t {
-                     
-                    __ATTR_ALIGN__(64) T irlon[nstr*nlon];
-                    __ATTR_ALIGN__(64) T irlat[nstr*nlat];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                    T irlon[nstr*nlon];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                    T irlat[nstr*nlat]; 
+ 
                    
-            } 
+            };
             
             
            // latitude   values (rad), per street length (at irradiance point)
@@ -393,9 +492,23 @@ namespace gms {
            template<typename T,int32_t nstr,
                     int32_t nlon,int32_t nlat>
            struct SIRCRR1x_t {
-                    
-                    __ATTR_ALIGN__(64) T irlon[nstr*nlon];
-                    __ATTR_ALIGN__(64) T irlat[nstr*nlat];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                    T irlon[nstr*nlon];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                    T irlat[nstr*nlat]; 
+
            };
            
            
@@ -405,10 +518,23 @@ namespace gms {
             template<typename T,int32_t nbld,
                      int32_t nlon,int32_t nlat>
             struct BIRCDR1x_t {
-                     
-                    __ATTR_ALIGN__(64) T irlon[nbld*nlon]
-                    __ATTR_ALIGN__(64) T irlat[nbld*nlat];
-                    
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                     T irlon[nbld*nlon];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                     T irlat[nbld*nlat]; 
+                   
             };
             
             
@@ -418,9 +544,23 @@ namespace gms {
            template<typename T,int32_t nbld,
                     int32_t nlon,int32_t nlat>
            struct BIRCRR1x_t {
-                    
-                    __ATTR_ALIGN__(64) T irlon[nbld*nlon]
-                    __ATTR_ALIGN__(64) T irlat[nbld*nlat];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                    T irlon[nbld*nlon];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                    T irlat[nbld*nlat];
+
                  
            }; 
            
@@ -428,8 +568,15 @@ namespace gms {
            // Urban area height map (at single building resolution)
            template<typename T,int32_t nx,int32_t ny>
            struct UHMapR1x_t {
-                  
-                  __ATTR_ALIGN__(64) T hmap[nx*ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                  T hmap[nx*ny];
+
                  
            };
            
@@ -437,8 +584,22 @@ namespace gms {
            // Urban area height map (at single building resolution) -- 1st derivative
            template<typename T,int32_t nx,int32_t ny>
            struct UHDxDyR1x_t {
-                  
-                  __ATTR_ALIGN__(64) T hdxdy[nx*ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                 
+                   T hdxdy[nx*ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif
+                   T hdxdy[nx*ny];                 
            };
            
            
@@ -446,9 +607,22 @@ namespace gms {
            // Urban area height map (at single building resolution) -- gradient y-component
            template<typename T,int32_t nx,int32_t ny>
            struct UHGradR1x_t {
-                  
-                  __ATTR_ALIGN__(64) T uhgx[nx];
-                  __ATTR_ALIGN__(64) T uhgy[ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T uhgx[nx];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T uhgy[ny];
            };
            
            
@@ -456,113 +630,204 @@ namespace gms {
            // Smoothing and approximating curve for linearly-piecewise height function (y-coordinate)
            template<typename T,int32_t nx,int32_t ny>
            struct XYSMBHR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T xsmbh[nx];
-                  __ATTR_ALIGN__(64) T ysmbh[ny];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                   T xsmbh[nx];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                   T ysmbh[ny];
            };
            
            
            // Empty space in-between of buildings (per single column) x number columns
            template<int32_t ncols,int32_t nval>
            struct ESBBI1x_t {
-                  
-                 __ATTR_ALIGN__(64) int32_t esbb[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  int32_t esbb[ncols*nval];
            };
            
            
            // An area values of in-between buildings empty spaces (per single column) x number columns
            template<typename T,int32_t ncols,int32_t nval> 
            struct AESBBR1x_t {
-                  
-                  __ATTR_ALIGN__(64) T aesbb[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                   T aesbb[ncols*nval];
            };
            
            
            // An area values of each building (per single building column) x number columns
            template<typename T,int32_t ncols,int32_t nval>
            struct ABCR1x_t {
-                  
-                   __ATTR_ALIGN__(64) T  abc[ncols*nvals];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                   T  abc[ncols*nvals];
            };
            
            
            // Number of south-facing walls (per each column) x number of columns
            template<int32_t ncols>
            struct SWPCI1x_t {
-                  
-                   __ATTR_ALIGN__(64) int32_t swpc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                   int32_t swpc[ncols];
            };
            
            
            // Number of east-facing walls (per each column) x number of columns
            template<int32_t ncols>
            struct EWPCI1x_t {
-                  
-                 __ATTR_ALIGN__(64) int32_t ewpc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 int32_t ewpc[ncols];
            };
            
            
            // Number of west-facing walls (per each column) x number of columns
            template<int32_t ncols>
            struct WWPCI1x_t {
-                   
-                __ATTR_ALIGN__(64) int32_t  wwpc[ncols];
+ #if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 int32_t  wwpc[ncols];
            };
            
            
            // Number of north-facing walls (per each column) x number of columns
            template<int32_t ncols>
            struct NWPCI1x_t {
-                  
-                __ATTR_ALIGN__(64) int32_t  nwpc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t  nwpc[ncols];
            };
            
            
            // Number of building roofs per each column x number of columns
            template<int32_t ncols,int32_t nval>
            struct BRPCI1x_t {
-                  
-                 __ATTR_ALIGN__(64) int32_t brpc; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 int32_t brpc; 
            };
            
            
            //  An area of every building [flat] roof (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct BRAPCR1x_t {
-                  
-                  __ATTR_ALIGN__(64) T brapc[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T brapc[ncols*nval];
            };
            
            
            // Number of angled roof -- south facing roof wall (per each column) x number of columns
            template<int32_t ncols>
            struct SRWCI1x_t {
-                  
-                 __ATTR_ALIGN__(64) int32_t srwc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  int32_t srwc[ncols];
            };
            
            
            // Number of angled roof -- east facing roof wall (per each column) x number of columns
            template<int32_t ncols>
            struct ERWCI1x_t {
-                  
-                  __ATTR_ALIGN__(64) int32_t  erwc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  int32_t  erwc[ncols];
            };
            
            
            // Number of angled roof -- west facing roof wall (per each column)  x number of columns
            template<int32_t ncols>
            struct WRWCI1x_t {
-                  
-                __ATTR_ALIGN__(64) int32_t  wrwc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t  wrwc[ncols];
            };
            
            
            // Number angled roof -- north facing roof wall (per each column) x number of columns
            template<int32_t ncols>
            struct NRWCI1x_t {
-                  
-                __ATTR_ALIGN__(64) int32_t nrwc[ncols];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t nrwc[ncols];
            };
            
            
@@ -570,8 +835,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IDSRWR1x_t {
-                   
-                 __ATTR_ALIGN__(64) T idsrw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T idsrw[ncols*nval];
            };
            
            
@@ -579,8 +850,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IDERWR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T iderw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T iderw[ncols*nval];
            };
            
            
@@ -588,8 +865,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IDWRWR1x_t {
-                
-                  __ATTR_ALIGN__(64) T idwrw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                  T idwrw[ncols*nval];
            };
            
            
@@ -597,8 +880,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IDNRWR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T idnrw[ncols*nval]; 
+ #if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                   T idnrw[ncols*nval]; 
            };
            
            
@@ -606,8 +895,14 @@ namespace gms {
            //  (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IRSRWR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T irsrw[ncols*nval]; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T irsrw[ncols*nval]; 
            };
            
            
@@ -615,8 +910,14 @@ namespace gms {
            //  (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IRERWR1x_t {
-                    
-                   __ATTR_ALIGN__(64) T irerw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                    T irerw[ncols*nval];
            };
            
            
@@ -624,8 +925,14 @@ namespace gms {
            //  (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IRNRWR1x_t {
-                    
-                   __ATTR_ALIGN__(64) T irnrw[ncols*nval]; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                    T irnrw[ncols*nval]; 
            };
            
            
@@ -633,8 +940,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct ISRAR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T isra[ncols*nval];  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T isra[ncols*nval];  
            };
            
            
@@ -642,8 +955,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IWRAR1x_t {
-                    
-                   __ATTR_ALIGN__(64) T iwra[ncols*nval];  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                   T iwra[ncols*nval];  
            };
            
            
@@ -651,8 +970,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct IERAR1x_t {
-                 
-                  __ATTR_ALIGN__(64) T iera[ncols*nval];   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                 
+                  T iera[ncols*nval];   
            };
            
            
@@ -660,8 +985,14 @@ namespace gms {
            // (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct INRAR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T inra[ncols*nval];   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                   T inra[ncols*nval];   
            };
            
            
@@ -669,8 +1000,14 @@ namespace gms {
            // (per each column)  x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct SWUER1x_t {
-                   
-                 __ATTR_ALIGN__(64) T swue[ncols*nval];    
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T swue[ncols*nval];    
           };
           
           
@@ -678,8 +1015,14 @@ namespace gms {
           // (per each column)  x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct EWUER1x_t {
-                   
-                 __ATTR_ALIGN__(64) T ewue[ncols*nval];    
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                 T ewue[ncols*nval];    
           };
           
           
@@ -687,8 +1030,14 @@ namespace gms {
           // (per each column)  x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct WWUER1x_t {
-                  
-                 __ATTR_ALIGN__(64) T wwue[ncols*nval];     
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T wwue[ncols*nval];     
           };
           
           
@@ -696,8 +1045,14 @@ namespace gms {
           // (per each column)  x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct NWUER1x_t {
-                   
-                 __ATTR_ALIGN__(64) T nwue[ncols*nval];       
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T nwue[ncols*nval];       
           };
           
           
@@ -705,16 +1060,28 @@ namespace gms {
                                     // ! -- (per each column) x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct SEWER1x_t {
-                   
-                 __ATTR_ALIGN__(64) T sewe[ncols*nval];     
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                 T sewe[ncols*nval];     
           };
           
           // Shared left edge between the south wall and west wall inclination (rad) 
                                     // ! -- (per each column) x number of columns
           template<typename T,int32_t ncols,int32_t nval>
           struct SWWER1x_t {
-                   
-                 __ATTR_ALIGN__(64) T swwe[ncols*nval];   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T swwe[ncols*nval];   
           };
           
           
@@ -722,8 +1089,14 @@ namespace gms {
                                     // ! -- (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct NWEER1x_t {
-                    
-                  __ATTR_ALIGN__(64) T nwee[ncols*nval];   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                   T nwee[ncols*nval];   
            };
            
            
@@ -731,8 +1104,14 @@ namespace gms {
            // ! -- (per each column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct NWWER1x_t {
-                   
-                  __ATTR_ALIGN__(64) T nwee[ncols*nval];   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T nwee[ncols*nval];   
            };
            
            
@@ -764,32 +1143,56 @@ namespace gms {
            // South walls surface area (for every building, per column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct SWSAR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T swsa[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T swsa[ncols*nval];
            };
            
            
            // East walls surface area (for every building, per column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct EWSAR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T ewsa[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                 T ewsa[ncols*nval];
            };
            
            
            // West walls surface area (for every building, per column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct WWSAR1x_t {
-                   
-                  __ATTR_ALIGN__(64) T wwsa[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T wwsa[ncols*nval];
            };
            
            
            // North walls surface area (for every building, per column) x number of columns
            template<typename T,int32_t ncols,int32_t nval>
            struct NWSAR1x_t {
-                    
-                  __ATTR_ALIGN__(64) T wwsa[ncols*nval]; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                      
+                  T wwsa[ncols*nval]; 
                   T * begin() { return (std::__adressof(wwsa[0]));}
                   constexpr int32_t size() { return (ncols*nval)};  
                  
@@ -797,147 +1200,216 @@ namespace gms {
            
            
            // South walls moist/non moist logical (per column) x number of columns
+           template<int32_t ncols,int32_t nval>
            struct MNMSWB1x_t {
                     
-                   int32_t ncols;
-                   int32_t nval;
-                   bool * __restrict mnmsw; 
+                  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   bool  mnmsw[ncols*nval]; 
            };
            
            
             // East walls moist/non moist logical (per column) x number of columns
+           template<int32_t ncols,int32_t nval>
            struct MNMEWB1x_t {
-                    
-                   int32_t ncols;
-                   int32_t nval;
-                   bool * __restrict mnmew; 
+                                 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   bool  mnmew[ncols*nval]; 
            };
            
            
              // West walls moist/non moist logical (per column) x number of columns
+           template<int32_t ncols,int32_t nval>  
            struct MNMWWB1x_t {
-                    
-                   int32_t ncols;
-                   int32_t nval;
-                   bool * __restrict mnmww; 
+           
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   bool  mnmww[ncols*nval]; 
            };
            
            
              // North walls moist/non moist logical (per column) x number of columns
+           template<int32_t ncols,int32_t nval>  
            struct MNMNWB1x_t {
-                    
-                   int32_t ncols;
-                   int32_t nval;
-                   bool * __restrict mnmnw; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   bool  mnmnw[ncols*nval]; 
            };
            
            
            // ! The values describing the ratio (percentage) of south wall 
                             // ! moisture to dryness (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct MDSWRR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mdswr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   T  mdswr[ncols*nval];
            };
            
            
            // ! The values describing the ratio (percentage) of east wall 
                             // ! moisture to dryness (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct MDEWRR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mdewr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                   T   mdewr[ncols*nval];                 
+                 
+                  
            };
            
            
            //  The values describing the ratio (percentage) of west wall 
                              //! moisture to dryness (per each column) x number of columns
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct MDWWRR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mdwwr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T   mdwwr[ncols*nval];
            };  
            
            
            //  The values describing the ratio (percentage) of north wall 
                              //! moisture to dryness (per each column) x number of columns              
-           template<typename T>
+           template<typename T,int32_t ncols,int32_t nval>
            struct MDNWRR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mdnwr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                  T mdnwr[ncols*nval];
            };   
            
            
            // The logical values of flat roof moistness (being either moist or dry) 
-                              // ! (per column) x number of columns                
+                              // ! (per column) x number of columns    
+          template<int32_t ncols,int32_t nval>            
           struct MDRB1x_t {
                  
-                 int32_t ncols;
-                 int32_t nval;
-                 bool * __restrict mdr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 bool  mdr[ncols*nval];
           }; 
           
           
           // The values describing the ratio (percentage) of flat roof moisture to dryness 
                               // ! (per each column) x number of columns 
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MDRRR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mdrr; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                T   mdrr[ncols*nval]; 
           };
           
           
           // The values describing the surface of moist part of the flat roof 
                                // ! (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPFRR1x_t {
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpfr; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                      
+                 T   mpfr[ncols*nval]; 
           };     
           
           
           // The values describing the surface of dry part of the flat roof 
                                // ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPFRR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpfr; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                      
+                  T   dpfr[ncols*nval]; 
           };   
           
           
           //  The values describing the surface of moist part of the south wall 
                                 // ! (per each column) x number of columns   
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPSWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpsw; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                 T  mpsw[ncols*nval]; 
           };  
           
           
           //  The values describing the surface of dry part of the south wall 
                                //  ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPSWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpsw; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T  dpsw[ncols*nval]; 
           };   
           
           
