@@ -1415,508 +1415,1011 @@ namespace gms {
           
           //  The values describing the surface of moist part of the east wall 
                                 // ! (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPEWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpew; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T mpew[ncols*nval]; 
           };   
           
          // The values describing the surface of dry part of the east wall 
                                 // ! (per each column) x number of columns 
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPEWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpew; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T  dpew[ncols*nval]; 
           };  
           
           
          // The values describing the surface of moist part of the west wall 
                                  //! (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPWWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpww; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                  T mpww[ncols*nval]; 
           }; 
           
           
         //  The values describing the surface of dry part of the west wall 
                                  //! (per each column) x number of columns 
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPWWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpww; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                  T dpww[ncols*nval]; 
           };  
           
           
         // The values describing the surface of moist part of the north wall 
                                  //! (per each column) x number of columns
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct MPNWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpnw; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T  mpnw[ncols*nval]; 
           }; 
           
           
          //  The values describing the surface of dry part of the north wall 
                                 // ! (per each column) x number of columns
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct DPNWR1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpnw; 
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                 T dpnw[ncols*nval]; 
           }; 
           
           
           // The values describing the surface of moist part of the angled south roof wall
                                // ! (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPSARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpsar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T mpsar[ncols*nval];
           };
           
           
           // The values describing the surface of dry part of the angled south roof wall
                                // ! (per each column) x number of columns
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPSARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpsar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                 T dpsar[ncols*nval];
           };
           
           
           // The values describing the surface of moist part of the angled east roof wall
                                // ! (per each column) x number of columns 
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPEARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpear;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                 T  mpear[ncols*nval];
           };
           
           
          // The values describing the surface of dry part of the angled east roof wall
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct DPEARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpear;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                     
+                  T dpear[ncols*nval];
           }; 
           
           
           // The values describing the surface of moist part of the angled west roof wall
                                // ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPWARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpwar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                  T mpwar[ncols*nval];
           }; 
           
           
            // The values describing the surface of dry part of the angled west roof wall
                                // ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPWARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpwar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                  T dpwar[ncols*nval];
           }; 
           
           
            // The values describing the surface of moist part of the angled north roof wall
                                // ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct MPNARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   mpnar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                  T mpnar[ncols*nval];
           }; 
           
           
           // The values describing the surface of dry part of the angled north roof wall
                                // ! (per each column) x number of columns  
-          template<typename T>
+          template<typename T,int32_t ncols,int32_t nval>
           struct DPNARR1x_t {
-                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC1D<T>_t   dpnar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                   T dpnar[ncols*nval];
           }; 
           
           
          // The values describing the complex permittivity of south walls
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CESWC1x_t {
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cesw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T ceswr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T ceswi[ncols*nval];                  
          };
          
          
          // The values describing the complex permeabillity of south walls
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMSWC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmswr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmswi[ncols*nval];                    
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmsw;
          };
          
          
          // The values describing the complex permittivity of west walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CEWWC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cewwr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cewwi[ncols*nval];                   
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   ceww;
          };
          
          
           // The values describing the complex permeability of west walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMWWC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmwwr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmwwi[ncols*nval];                       
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmww;
          };
          
          
           // The values describing the complex permittivity of east walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CEEWC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T ceewr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T ceewi[ncols*nval];                     
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   ceew;
          };
          
          
           // The values describing the complex permeability of east walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMEWC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmew;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmewr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmewi[ncols*nval];                    
+                 
          };
          
          
           // The values describing the complex permittivity of north walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CENWC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cenwr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cenwi[ncols*nval];                       
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cenw;
          };
          
          
           // The values describing the complex permeability of north walls
                                // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMNWC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmnw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmnwr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmnwi[ncols*nval];                      
+                 
          };
          
          
           // The values describing the complex permittivity of south angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CESARC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cesarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cesari[ncols*nval];                        
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cesar;
          };
          
          
          // The values describing the complex permeabillity of south angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMSARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmsar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmsarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmsari[ncols*nval];                      
+                
          };
          
          
          // The values describing the complex permittivity of east angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CEEARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   ceear;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T ceearr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T ceeari[ncols*nval];                        
+                 
          };
          
          
          // The values describing the complex permeabillity of east angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMEARC1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmearr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmeari[ncols*nval];                   
                   
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmear;
          };
          
          
          // The values describing the complex permittivity of west angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CEWARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cewar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cewarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cewari[ncols*nval];                     
+                 
          };
          
          
          // The values describing the complex permeabillity of west angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMWARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmwar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmwarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmwari[ncols*nval];                   
+                 
          };
          
          
           // The values describing the complex permittivity of north angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CENARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cenar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cenarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cenari[ncols*nval];                      
+                 
          };
          
          
          // The values describing the complex permeabillity of north angled roof
                                // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct CMNARC1x_t {
-                  
-                  std::size_t ncols;
-                  std::size_t nval;
-                  DC2D<T>_t   cmnar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T cmnarr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif     
+                  T cmnari[ncols*nval];                   
+                 
          };
          
          
          // The components of south walls normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVSWR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+                
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];
          };
          
          
         // The components of east walls normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVEWR1x_t {
                   
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                 
+                 
          };
          
          
         // The components of west walls normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVWWR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                     
+                 
          };
          
          
         // The components of north walls normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVNWR1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                      
                   
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
          };
          
          
          // The components of each building normal vector
                                     // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVBR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;  
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                      
+                 
          };
          
          
          // The components of each building flat roof normal vector
                                     // ! (per each column) x number of columns 
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVFRR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;   
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                            
+                
          };
          
          
           // The components of south angled roof normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVSARR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                      
+                 
          };
          
          
         // The components of east angled roof normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVEARR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                         
+                 
          };
          
          
         // The components of west angled roof normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVWARR1x_t {
-                  
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                           
+                 
          };
          
          
         // The components of north angled roof normal vector
                                     // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct NVNARR1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif            
+                   T nvx[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                       
+                  T nvy[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T nvz[ncols*nval];                          
                   
-                  std::size_t ncols
-                  std::size_t nval
-                  DC1D<T>_t   nvx;
-                  DC1D<T>_t   nvy;
-                  DC1D<T>_t   nvz;
          };
          
          
          // The values of each south wall height and width
                         // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWSWR1x_t {
                 
-                std::size_t ncols;
-                std::size_t nval;
-                DC1D<T>_t   hsw;
-                DC1D<T>_t   wsw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T  hsw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                T  wsw[ncols*nval];
          };
          
          
           // The values of each east wall height and width
                         // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWEWR1x_t {
-                
-                std::size_t ncols;
-                std::size_t nval;
-                DC1D<T>_t   hew;
-                DC1D<T>_t   wew;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T  hew[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                T  wew[ncols*nval];                
+               
          };
          
          
          // The values of each west wall height and width
                         // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWWWR1x_t {
-                
-                std::size_t ncols;
-                std::size_t nval;
-                DC1D<T>_t   hww;
-                DC1D<T>_t   www;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T  hww[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                T  www[ncols*nval];                
+              
          };
          
          
           // The values of each north wall height and width
                         // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWNWR1x_t {
-                
-                std::size_t ncols;
-                std::size_t nval;
-                DC1D<T>_t   hnw;
-                DC1D<T>_t   wnw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T  hnw[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                T  wnw[ncols*nval];                         
+               
          };
          
          
