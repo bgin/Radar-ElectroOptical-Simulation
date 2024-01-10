@@ -2425,264 +2425,449 @@ namespace gms {
          
          // The values of each flat roof height and width
                         // ! (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWFRR1x_t {
-                
-                std::size_t ncols;
-                std::size_t nval;
-                DC1D<T>_t   hfr;
-                DC1D<T>_t   wfr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T hfr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T wfr[ncols*nval];
          };
          
          
         // The values of each south non-flat roof (either triangular, squared or rectangulart) 
         // height and width (base) (per each column) x number of columns  
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWSNFRR1x_t {
                 
-                std::size_t ncols;
-                std::size_t nval;
-                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
-                DC1D<T>_t   hsnfr;
-                DC1D<T>_t   wsnfr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                T  hsnfr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif 
+                T  wsnfr[ncols*nval];
+                
+                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
          };
          
          
         // The values of each east non-flat roof (either triangular, squared or rectangulart) 
-        // height and width (base) (per each column) x number of columns  
-         template<typename T>
+        // height and width (base) (per each column) x number of columns  [henfr,wenfr]
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWENFRR1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                T  henfr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif 
+                T  wenfr[ncols*nval];
                 
-                std::size_t ncols;
-                std::size_t nval;
-                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
-                DC1D<T>_t   henfr;
-                DC1D<T>_t   wenfr;
-         };
+                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                
+         
+    };
          
          
         // The values of each west non-flat roof (either triangular, squared or rectangulart) 
-        // height and width (base) (per each column) x number of columns  
-         template<typename T>
+        // height and width (base) (per each column) x number of columns  [hwnfr,wwnfr]
+         template<typename T,int32_t ncols,int32_t nval>
          struct HWWNFRR1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                T  hwnfr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif 
+                T  wwnfr[ncols*nval];
                 
-                std::size_t ncols;
-                std::size_t nval;
-                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
-                DC1D<T>_t   hwnfr;
-                DC1D<T>_t   wwnfr;
+                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                          
+              
          };
          
          
         // The values of each north non-flat roof (either triangular, squared or rectangulart) 
-        // height and width (base) (per each column) x number of columns  
+        // height and width (base) (per each column) x number of columns  [hnnfr,wnnfr]
          template<typename T>
          struct HWNNFRR1x_t {
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                T  hwnfr[ncols*nval];
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif 
+                T  wwnfr[ncols*nval];
                 
-                std::size_t ncols;
-                std::size_t nval;
-                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
-                DC1D<T>_t   hnnfr;
-                DC1D<T>_t   wnnfr;
+                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                        
+               
          };
          
          
          // Any kind of metallic structure fixed on the roof, e.g., an wire antenna, cylindrical object (ventillation)
          // or parabollic antenna, or similar type (per each column) x number of columns.
+         template<int32_t ncols,int32_t nval>
          struct BRMSB1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                bool * __restrict want; // a wire antennae
-                bool * __restrict pant; // a parabollic antennae
-                bool * __restrict yant; // yagi type antennae
-                bool * __restrict lpda; // log-periodic dipole array
-                bool * __restrict cant; // cell phone sector bars antennae
-                bool * __restrict cylo; // any kind of cylindrical (ventillation) object
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                bool want[ncols*nval]; // a wire antennae
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                bool pant[ncols*nval]; // a parabollic antennae
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                bool yant[ncols*nval]; // yagi type antennae
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                bool lpda[ncols*nval]; // log-periodic dipole array
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                bool cant[ncols*nval]; // cell phone sector bars antennae
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                bool cylo[ncols*nval]; // any kind of cylindrical (ventillation) object
          };
          
          
          // The number of ventillation objects per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NVOI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict nvo;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t nvo[ncols*nval];
          };
          
          
          // The number of wire antennae per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NWAI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict nwa;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                    
+                int32_t  nwa[ncols*nval];
          };
          
          
           // The number of yagi-antennae per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NYAI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict nya;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                 
+                int32_t  nya[ncols*nval];
          };
          
          
           // The number of log-periodic dipole antennae per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NLPDAI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict nlpda;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                 
+                int32_t  nlpda[ncols*nval];
          };
          
          
           // The number of parabollic antennae per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NPAI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict npa;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t  npa[ncols*nval];
          };
          
          
           // The number of cell-phone antennae per single building roof
          // for every building column.
+         template<int32_t ncols,int32_t nval>
          struct NCPAI1x_t {
                 
-                int32_t ncols;
-                int32_t nval;
-                int32_t * __restrict ncpa;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                int32_t  ncpa[ncols*nval];
          };
          
          
          // The values of RCS for the flat roof of
          // building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSFRR1x_t {
                 
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsfr;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                
+                 T  rcsfr[ncols*nval];
          };
          
          
           // The values of RCS for the south wall of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSSWR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcssw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T rcssw[ncols*nval];
          };
          
          
           
           // The values of RCS for the east wall of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSEWR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsew;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 T rcsew[ncols*nval];
          };
          
          
           
           // The values of RCS for the west wall of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSWWR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsww;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                 T rcsww[ncols*nval];
          };
          
          
           
           // The values of RCS for the north wall of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSNWR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsnw;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T rcsnw[ncols*nval];
          };
          
          
          // The values of RCS for the south angled roof of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSSARR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcssar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                   T rcssar[ncols*nval];
          };
          
          
          // The values of RCS for the south east roof of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSEARR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsear;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T rcsear[ncols*nval];
          };
          
          
          // The values of RCS for the west angled roof of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSWARR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcswar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                  T rcswar[ncols*nval];
          };
          
          
          // The values of RCS for the north angled roof of
          // of every building in the building column.
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct RCSNARR1x_t {
-                
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t   rcsnar;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                  
+                T  rcsnar[ncols*nval];
          };
          
          
          // The values of whole building surface area
          // of every building in building column
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct WBSAR1x_t {
-                 
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t wbsa;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                T wbsa[ncols*nval];
          };
          
          
          // The values of whole building internal volume
          // of every building in building column
-         template<typename T>
+         template<typename T,int32_t ncols,int32_t nval>
          struct WBIVR1x_t {
-                 
-                 std::size_t ncols;
-                 std::size_t nval;
-                 DC1D<T>_t wbiv;
+#if defined (__AVX512F__)                   
+                   __ATTR_ALIGN__(64)                    
+#elif defined (__AVX__) || defined (__AVX2__)                
+                   __ATTR_ALIGN__(32) 
+#elif defined (__SSE__)
+                   __ATTR_ALIGN__(16)                  
+#endif                   
+                 T wbiv[ncols*nval];
          };
          
          
@@ -2693,7 +2878,7 @@ namespace gms {
 
 
 
-}
+}// gms
 
 
 
