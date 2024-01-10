@@ -48,7 +48,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                    int32_t bpr[nbpr];
-
+                   constexpr static int32_t NBPC = nbpc;
+                   constexpr static int32_t NBPR = nbpr;
                    constexpr T * bpc_beg() { return (std::addressof(bpc[0]));} 
                    constexpr T * bpr_beg() { return (std::addressof(bpr[0]));}
                    constexpr int32_t bpc_size() { return (nbpc);}
@@ -77,7 +78,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                      T blond[nblond];
-
+                   constexpr static int32_t NBLATD = nblatd;
+                   constexpr static int32_t NBLOND = nblond;
                    constexpr T * blatd_beg() { return (std::addressof(blatd[0]));} 
                    constexpr T * blond_beg() { return (std::addressof(blond[0]));}
                    constexpr int32_t blatd_size() { return (nblatd);}
@@ -107,7 +109,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                    T blonr[nblonr];
-
+                   constexpr static int32_t NBLATR = nblatr;
+                   constexpr static int32_t NBLONR = nblonr;
                    constexpr T * blatr_beg() { return (std::addressof(blatr[0]));} 
                    constexpr T * blonr_beg() { return (std::addressof(blonr[0]));}
                    constexpr int32_t blatd_size() { return (nblatr);}
@@ -127,7 +130,7 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif
                   T ellpb[nellpb];   
-    
+                  constexpr static int32_t NELLPB = nellpb;
                   constexpr T * ellpb_beg() { return (std::addressof(ellpb[0]));}
                   constexpr int32_t ellpb_size() { return (nellpb);}
             };
@@ -157,7 +160,9 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T pyb[nbpc*npyb];
-
+                   constexpr static int32_t NBPC = nbpc;
+                   constexpr static int32_t NPXB = npxb;
+                   constexpr static int32_t NPYB = npyb;
                    constexpr T * pxb_beg() { return (std::addressof(pxb[0]));}
                    constexpr T * pyb_beg() { return (std::addressof(pyb[0]));}
                    constexpr int32_t pxb_size() { return (nbpc*npxb);}
@@ -193,7 +198,7 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T astr[nstr];
-
+                    constexpr static int32_t NSTR = nstr;
                     constexpr T * lstr_beg() { return (std::addressof(lstr[0]));}
                     constexpr T * wstr_beg() { return (std::addressof(wstr[0]));}
                     constexpr T * astr_beg() { return (std::addressof(astr[0]));}
@@ -224,8 +229,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T pmstr[nstr*npmstr];
-                    
-                    constexpr T * mstr_beg()  { return (std::addressof(mstr[0]));}
+                    constexpr static int32_t NSTR  = nstr;
+                    constexpr static int32_t NMSTR = nmstr;
+                    constexpr static int32_t NPMSTR= npmstr; 
+                     T * mstr_beg()  { return (std::addressof(mstr[0]));}
                     constexpr T * pmstr_beg() { return (std::addressof(pmstr[0]));}
                     constexpr int32_t mstr_size()  { return (nstr*nmstr);}
                     constexpr int32_t pmstr_size() { return (nstr*npmstr);}
@@ -244,7 +251,7 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif
                  int32_t cstr[nstr];
-
+                 constexpr int32_t static NSTR = nstr;
                  constexpr int32_t * cstr_beg() { return (std::addressof(cstr[0]));}
                  constexpr int32_t cstr_size()  { return (nstr);}
             };
@@ -281,7 +288,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T tcstr[nstr*ntcstr];
-                 
+                    constexpr static int32_t NSTR  = mstr;
+                    constexpr static int32_t NPCSTR= npcstr;
+                    constexpr static int32_t NATSTR= natstr;
+                    constexpr static int32_t NTCSTR= ntcstr;
                     constexpr T * pcstr_beg() { return (std::addressof(pcstr[0]));}
                     constexpr T * atstr_beg() { return (std::addressof(atstr[0]));}
                     constexpr T * tcstr_beg() { return (std::addressof(tcstr[0]));}
@@ -329,7 +339,9 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T epistr[nstr*nepstr];
-
+                    constexpr static int32_t NSTR   = nstr;
+                    constexpr static int32_t NMUSTR = nmustr;
+                    constexpr static int32_t NEPSTR = nepstr; 
                     constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
                     constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
                     constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
@@ -381,7 +393,9 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T epistr[nstr*nepstr];  
-
+                    constexpr static int32_t NSTR   = nstr;
+                    constexpr static int32_t NMUSTR = nmustr;
+                    constexpr static int32_t NEPSTR = nepstr;
                     constexpr T * murstr_beg() { return (std::addressof(murstr[0]));}
                     constexpr T * muistr_beg() { return (std::addressof(muistr[0]));}
                     constexpr T * eprstr_beg() { return (std::addressof(eprstr[0]));}
@@ -415,8 +429,13 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T vstr[nstr*nvstr];
-
-                 
+                     constexpr static int32_t NSTR = nstr;
+                     constexpr static int32_t NUSTR= nustr;
+                     constexpr static int32_t NVSTR= nvstr;
+                     constexpr T * ustr_beg() { return (std::addressof(ustr[0]));}
+                     constexpr T * vstr_beg() { return (std::addressof(vstr[0]));}
+                     constexpr int32_t ustr_size() { return (nstr*nustr);}
+                     constexpr int32_t vstr_size() { return (nstr*nvstr);}
             };
             
             
@@ -454,8 +473,16 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T nvz[nstr*nz];
-
-                    
+                    constexpr static int32_t NSTR = nstr;
+                    constexpr static int32_t NX   = nx;
+                    constexpr static int32_t NY   = ny;
+                    constexpr static int32_t NZ   = nz;
+                    constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                    constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                    constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                    constexpr int32_t nvx_size() { return (nstr*nx);}
+                    constexpr int32_t nvy_size() { return (nstr*ny);}
+                    constexpr int32_t nvz_size() { return (nstr*nz);}
             };
             
             
@@ -507,7 +534,10 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif
-                    T irlat[nstr*nlat]; 
+                    T irlat[nstr*nlat];
+                    constexpr static int32_t NSTR = nstr;
+                    constexpr static int32_t NLON = nlon;
+                    constexpr static int32_t NLAT = nlat; 
 
            };
            
@@ -534,7 +564,9 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                      T irlat[nbld*nlat]; 
-                   
+                     constexpr static int32_t NBLD = nbld;
+                     constexpr static int32_t NLON = nlon;
+                     constexpr static int32_t NLAT = nlat;
             };
             
             
@@ -560,7 +592,9 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T irlat[nbld*nlat];
-
+                     constexpr static int32_t NBLD = nbld;
+                     constexpr static int32_t NLON = nlon;
+                     constexpr static int32_t NLAT = nlat;
                  
            }; 
            
@@ -576,7 +610,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif
                   T hmap[nx*ny];
-
+                  constexpr static int32_t NX = nx;
+                  constexpr static int32_t NY = ny;
                  
            };
            
@@ -599,7 +634,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif
-                   T hdxdy[nx*ny];                 
+                   T hdxdy[nx*ny]; 
+                   constexpr static int32_t NX = nx;
+                   constexpr static int32_t NY = ny;                
            };
            
            
@@ -623,6 +660,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   T uhgy[ny];
+                  constexpr static int32_t NX = nx;
+                  constexpr static int32_t NY = ny;
            };
            
            
@@ -646,6 +685,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                    T ysmbh[ny];
+                   constexpr static int32_t NX = nx;
+                   constexpr static int32_t NY = ny;
            };
            
            
@@ -660,6 +701,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   int32_t esbb[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -674,6 +717,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                    T aesbb[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -688,6 +733,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                    T  abc[ncols*nvals];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -702,6 +749,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                    int32_t swpc[ncols];
+                   constexpr static int32_t NCOLS = ncols;
+                   
            };
            
            
@@ -716,6 +765,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                  int32_t ewpc[ncols];
+                 constexpr static int32_t NCOLS = ncols;
+                  
            };
            
            
@@ -730,6 +781,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                  int32_t  wwpc[ncols];
+                 constexpr static int32_t NCOLS = ncols;
+                  
            };
            
            
@@ -744,6 +797,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t  nwpc[ncols];
+                constexpr static int32_t NCOLS = ncols;
+                 
            };
            
            
@@ -757,7 +812,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                 int32_t brpc; 
+                 int32_t brpc[ncols*nval]; 
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -772,6 +829,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   T brapc[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -786,6 +845,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   int32_t srwc[ncols];
+                  constexpr static int32_t NCOLS = ncols;
+                  
            };
            
            
@@ -800,6 +861,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   int32_t  erwc[ncols];
+                  constexpr static int32_t NCOLS = ncols;
+                 
            };
            
            
@@ -814,6 +877,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t  wrwc[ncols];
+                constexpr static int32_t NCOLS = ncols;
+                  
            };
            
            
@@ -828,6 +893,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t nrwc[ncols];
+                constexpr static int32_t NCOLS = ncols;
+                  
            };
            
            
@@ -843,6 +910,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                   T idsrw[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -858,6 +927,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                   T iderw[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -873,6 +944,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                
                   T idwrw[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -888,6 +961,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                    T idnrw[ncols*nval]; 
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -903,6 +978,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                 T irsrw[ncols*nval]; 
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -918,6 +995,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T irerw[ncols*nval];
+                    constexpr static int32_t NCOLS = ncols;
+                    constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -933,6 +1012,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T irnrw[ncols*nval]; 
+                    constexpr static int32_t NCOLS = ncols;
+                    constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -947,7 +1028,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T isra[ncols*nval];  
+                  T isra[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval; 
            };
            
            
@@ -962,7 +1045,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                   T iwra[ncols*nval];  
+                   T iwra[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;  
            };
            
            
@@ -977,7 +1062,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                 
-                  T iera[ncols*nval];   
+                  T iera[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;   
            };
            
            
@@ -992,7 +1079,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                   T inra[ncols*nval];   
+                   T inra[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;   
            };
            
            
@@ -1007,7 +1096,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T swue[ncols*nval];    
+                  T swue[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;  
           };
           
           
@@ -1022,7 +1113,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                 T ewue[ncols*nval];    
+                 T ewue[ncols*nval]; 
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;   
           };
           
           
@@ -1037,7 +1130,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T wwue[ncols*nval];     
+                  T wwue[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;   
           };
           
           
@@ -1052,7 +1147,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T nwue[ncols*nval];       
+                  T nwue[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;     
           };
           
           
@@ -1067,7 +1164,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                 T sewe[ncols*nval];     
+                 T sewe[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;   
           };
           
           // Shared left edge between the south wall and west wall inclination (rad) 
@@ -1081,7 +1180,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T swwe[ncols*nval];   
+                  T swwe[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;  
           };
           
           
@@ -1096,7 +1197,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                   T nwee[ncols*nval];   
+                   T nwee[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval; 
            };
            
            
@@ -1111,7 +1214,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T nwee[ncols*nval];   
+                  T nwee[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval; 
            };
            
            
@@ -1151,6 +1256,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T swsa[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1165,6 +1272,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                  T ewsa[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1179,6 +1288,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T wwsa[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1193,6 +1304,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                      
                   T wwsa[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
                   T * begin() { return (std::__adressof(wwsa[0]));}
                   constexpr int32_t size() { return (ncols*nval)};  
                  
@@ -1212,6 +1325,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                    bool  mnmsw[ncols*nval]; 
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1227,6 +1342,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                    bool  mnmew[ncols*nval]; 
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1241,7 +1358,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                     
-                   bool  mnmww[ncols*nval]; 
+                   bool  mnmww[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval; 
            };
            
            
@@ -1256,6 +1375,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                    bool  mnmnw[ncols*nval]; 
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1271,6 +1392,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                    T  mdswr[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
            };
            
            
@@ -1286,7 +1409,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                    T   mdewr[ncols*nval];                 
-                 
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
                   
            };
            
@@ -1303,6 +1427,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T   mdwwr[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };  
            
            
@@ -1318,6 +1444,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                   T mdnwr[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
            };   
            
            
@@ -1334,6 +1462,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                  bool  mdr[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1349,6 +1479,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                 T   mdrr[ncols*nval]; 
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
           };
           
           
@@ -1365,6 +1497,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                      
                  T   mpfr[ncols*nval]; 
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           };     
           
           
@@ -1380,6 +1514,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                      
                   T   dpfr[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };   
           
           
@@ -1395,6 +1531,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                  T  mpsw[ncols*nval]; 
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           };  
           
           
@@ -1410,6 +1548,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                   T  dpsw[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };   
           
           
@@ -1425,6 +1565,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T mpew[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };   
           
          // The values describing the surface of dry part of the east wall 
@@ -1439,6 +1581,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                   T  dpew[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };  
           
           
@@ -1454,6 +1598,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                   T mpww[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1469,6 +1615,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                   T dpww[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };  
           
           
@@ -1484,6 +1632,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   T  mpnw[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1499,6 +1649,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                  T dpnw[ncols*nval]; 
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1514,6 +1666,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T mpsar[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           };
           
           
@@ -1529,6 +1683,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                  T dpsar[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           };
           
           
@@ -1544,6 +1700,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                  T  mpear[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
           };
           
           
@@ -1559,6 +1717,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                     
                   T dpear[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1574,6 +1734,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                   T mpwar[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1589,6 +1751,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                   T dpwar[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1604,6 +1768,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                   T mpnar[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1619,6 +1785,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                    T dpnar[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
           }; 
           
           
@@ -1642,7 +1810,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T ceswi[ncols*nval];                  
+                  T ceswi[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                  
          };
          
          
@@ -1665,7 +1835,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmswi[ncols*nval];                    
+                  T cmswi[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                  
                   
          };
          
@@ -1689,7 +1861,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cewwi[ncols*nval];                   
+                  T cewwi[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                  
                   
          };
          
@@ -1713,7 +1887,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmwwi[ncols*nval];                       
+                  T cmwwi[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                      
                   
          };
          
@@ -1737,7 +1913,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T ceewi[ncols*nval];                     
+                  T ceewi[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                    
                   
          };
          
@@ -1761,7 +1939,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmewi[ncols*nval];                    
+                  T cmewi[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                  
                  
          };
          
@@ -1785,7 +1965,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cenwi[ncols*nval];                       
+                  T cenwi[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                      
                   
          };
          
@@ -1809,7 +1991,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmnwi[ncols*nval];                      
+                  T cmnwi[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                    
                  
          };
          
@@ -1833,7 +2017,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cesari[ncols*nval];                        
+                  T cesari[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                       
                   
          };
          
@@ -1857,7 +2043,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmsari[ncols*nval];                      
+                  T cmsari[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                    
                 
          };
          
@@ -1881,7 +2069,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T ceeari[ncols*nval];                        
+                  T ceeari[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                      
                  
          };
          
@@ -1905,7 +2095,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmeari[ncols*nval];                   
+                  T cmeari[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                  
                   
          };
          
@@ -1929,7 +2121,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cewari[ncols*nval];                     
+                  T cewari[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                     
                  
          };
          
@@ -1953,7 +2147,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmwari[ncols*nval];                   
+                  T cmwari[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                 
                  
          };
          
@@ -1977,7 +2173,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cenari[ncols*nval];                      
+                  T cenari[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                    
                  
          };
          
@@ -2001,7 +2199,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif     
-                  T cmnari[ncols*nval];                   
+                  T cmnari[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                 
                  
          };
          
@@ -2035,6 +2235,8 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   T nvz[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
          };
          
          
@@ -2066,7 +2268,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                 
+                  T nvz[ncols*nval];   
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;              
                  
          };
          
@@ -2098,7 +2302,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                     
+                  T nvz[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                   
                  
          };
          
@@ -2130,7 +2336,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                      
+                  T nvz[ncols*nval];     
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                 
                   
          };
          
@@ -2162,7 +2370,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                      
+                  T nvz[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                    
                  
          };
          
@@ -2194,7 +2404,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                            
+                  T nvz[ncols*nval];   
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                         
                 
          };
          
@@ -2226,7 +2438,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                      
+                  T nvz[ncols*nval];   
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                   
                  
          };
          
@@ -2258,7 +2472,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                         
+                  T nvz[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                       
                  
          };
          
@@ -2290,7 +2506,9 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                           
+                  T nvz[ncols*nval];  
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                         
                  
          };
          
@@ -2322,8 +2540,15 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                  
-                  T nvz[ncols*nval];                          
-                  
+                  T nvz[ncols*nval]; 
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;                         
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2348,6 +2573,12 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                 T  wsw[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * hsw_beg() { return (std::addressof(hsw[0]));}
+                constexpr int32_t hsw_size() { return (NCOLS*NVAL);}
+                constexpr T * wsw_beg() { return (std::addressof(wsw[0]));}
+                constexpr int32_t wsw_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2370,8 +2601,13 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                T  wew[ncols*nval];                
-               
+                T  wew[ncols*nval];  
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;              
+                constexpr T * hew_beg() { return (std::addressof(hew[0]));}
+                constexpr int32_t hew_size() { return (NCOLS*NVAL);} 
+                constexpr T * wew_beg() { return (std::addressof(wew[0]));}
+                constexpr int32_t wew_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2394,8 +2630,13 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                T  www[ncols*nval];                
-              
+                T  www[ncols*nval];      
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;          
+                constexpr T * hww_beg() { return (std::addressof(hww[0]));}
+                constexpr int32_t hww_size() { return (NCOLS*NVAL);}
+                constexpr T * www_beg() { return (std::addressof(www[0]));}
+                constexpr int32_t www_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2418,7 +2659,13 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                T  wnw[ncols*nval];                         
+                T  wnw[ncols*nval];   
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;  
+                constexpr T * hnw_beg() { return (std::addressof(hnw[0]));}
+                constexpr int32_t hnw_size() { return (NCOLS*NVAL);}
+                constexpr T * wnw_beg() { return (std::addressof(wnw[0]));}
+                constexpr int32_t wnw_size() { return (NCOLS*NVAL);}                    
                
          };
          
@@ -2443,6 +2690,12 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 T wfr[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * hfr_beg() { return (std::addressof(hfr[0]));}
+                constexpr int32_t hfr_size() { return (NCOLS*NVAL);}
+                constexpr T * wfr_beg() { return (std::addressof(wfr[0]));}
+                constexpr int32_t wfr_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2467,8 +2720,13 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif 
                 T  wsnfr[ncols*nval];
-                
-                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * hsnfr_beg() { return (std::addressof(hsnfr[0]));}
+                constexpr int32_t hsnfr_size() { return (NCOLS*NVAL);}
+                constexpr T * wsnfr_beg() { return (std::addressof(wsnfr[0]));}
+                constexpr int32_t wsnfr_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2494,7 +2752,12 @@ namespace gms {
                 T  wenfr[ncols*nval];
                 
                  int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                
-         
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
+                 constexpr T * henfr_beg() { return (std::addressof(henfr[0]));}
+                 constexpr int32_t henfr_size() { return (NCOLS*NVAL);}
+                 constexpr T * wenfr_beg() { return (std::addressof(wenfr[0]));}
+                 constexpr int32_t wenfr_size() { return (NCOLS*NVAL);}
     };
          
          
@@ -2520,7 +2783,12 @@ namespace gms {
                 T  wwnfr[ncols*nval];
                 
                  int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                          
-              
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * hwnfr_beg() { return (std::addressof(hwnfr[0]));}
+                constexpr int32_t hwnfr_size() { return (NCOLS*NVAL);}
+                constexpr T * wwnfr_beg() { return (std::addressof(wwnfr[0]));}
+                constexpr int32_t wwnfr_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2535,7 +2803,7 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                
-                T  hwnfr[ncols*nval];
+                T  hnnfr[ncols*nval];
 #if defined (__AVX512F__)                   
                    __ATTR_ALIGN__(64)                    
 #elif defined (__AVX__) || defined (__AVX2__)                
@@ -2543,10 +2811,15 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif 
-                T  wwnfr[ncols*nval];
+                T  wnnfr[ncols*nval];
                 
-                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                        
-               
+                int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                        
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * hnnfr_beg() { return (std::addressof(hnnfr[0]));}
+                constexpr int32_t hnnfr_size() { return (NCOLS*NVAL);}
+                constexpr T * wnnfr_beg() { return (std::addressof(wnnfr[0]));}
+                constexpr int32_t wnnfr_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2603,6 +2876,20 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                 bool cylo[ncols*nval]; // any kind of cylindrical (ventillation) object
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * want_beg() { return (std::addressof(want[0]));}
+                constexpr int32_t want_size() { return (NCOLS*NVAL);}
+                constexpr T * pant_beg() { return (std::addressof(pant[0]));}
+                constexpr int32_t pant_size() { return (NCOLS*NVAL);}
+                constexpr T * yant_beg() { return (std::addressof(yant[0]));}
+                constexpr int32_t yant_size() { return (NCOLS*NVAL);}
+                constexpr T * lpda_beg() { return (std::addressof(lpda[0]));}
+                constexpr int32_t lpda_size() { return (NCOLS*NVAL);}
+                constexpr T * cant_beg() { return (std::addressof(cant[0]));}
+                constexpr int32_t cant_size() { return (NCOLS*NVAL);}
+                constexpr T * cylo_beg() { return (std::addressof(cylo[0]));}
+                constexpr int32_t cylo_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2619,6 +2906,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t nvo[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * nvo_beg() { return (std::addressof(nvo[0]));}
+                constexpr int32_t nvo_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2635,6 +2926,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                 int32_t  nwa[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * nwa_beg() { return (std::addressof(nwa[0]));}
+                constexpr int32_t nwa_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2651,6 +2946,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                 
                 int32_t  nya[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * nya_beg() { return (std::addressof(nya[0]));}
+                constexpr int32_t nya_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2667,6 +2966,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                 
                 int32_t  nlpda[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * nlpda_beg() { return (std::addressof(nlpda[0]));}
+                constexpr int32_t nlpda_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2683,6 +2986,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t  npa[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * npa_beg() { return (std::addressof(npa[0]));}
+                constexpr int32_t npa_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2699,6 +3006,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 int32_t  ncpa[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * ncpa_beg() { return (std::addressof(ncpa[0]));}
+                constexpr int32_t ncpa_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2715,6 +3026,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                
                  T  rcsfr[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
+                 constexpr T * rcsfr_beg() { return (std::addressof(rcsfr[0]));}
+                 constexpr int32_t rcsfr_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2730,6 +3045,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 T rcssw[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * rcssw_beg() { return (std::addressof(rcssw[0]));}
+                constexpr int32_t rcssw_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2746,6 +3065,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                  T rcsew[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
+                 constexpr T * rcsew_beg() { return (std::addressof(rcsew[0]));}
+                 constexpr int32_t rcsew_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2762,6 +3085,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                  T rcsww[ncols*nval];
+                 constexpr static int32_t NCOLS = ncols;
+                 constexpr static int32_t NVAL  = nval;
+                 constexpr T * rcsww_beg() { return (std::addressof(rcsww[0]));}
+                 constexpr int32_t rcsww_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2778,6 +3105,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 T rcsnw[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * rcsnw_beg() { return (std::addressof(rcsnw[0]));}
+                constexpr int32_t rcsnw_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2793,6 +3124,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                    T rcssar[ncols*nval];
+                   constexpr static int32_t NCOLS = ncols;
+                   constexpr static int32_t NVAL  = nval;
+                   constexpr T * rcssar_beg() { return (std::addressof(rcssar[0]));}
+                   constexpr int32_t rcssar_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2808,6 +3143,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 T rcsear[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * rcsear_beg() { return (std::addressof(rcsear[0]));}
+                constexpr int32_t rcsear_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2823,6 +3162,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                   T rcswar[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
+                  constexpr T * rcswar_beg() { return (std::addressof(rcswar[0]));}
+                  constexpr int32_t rcswar_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2838,6 +3181,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                  
                 T  rcsnar[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * rcsnar_beg() { return (std::addressof(rcsnar[0]));}
+                constexpr int32_t rcsnar_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2853,6 +3200,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                 T wbsa[ncols*nval];
+                constexpr static int32_t NCOLS = ncols;
+                constexpr static int32_t NVAL  = nval;
+                constexpr T * wbsa_beg() { return (std::addressof(wbsa[0]));}
+                constexpr int32_t wbsa_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2868,6 +3219,10 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                   
                  T wbiv[ncols*nval];
+                  constexpr static int32_t NCOLS = ncols;
+                  constexpr static int32_t NVAL  = nval;
+                  constexpr T * wbiv_beg() { return (std::addressof(wbiv[0]));}
+                  constexpr int32_t wbiv_size() { return (NCOLS*NVAL);}
          };
          
          
