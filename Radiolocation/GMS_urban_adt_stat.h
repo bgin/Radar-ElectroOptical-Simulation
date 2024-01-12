@@ -508,7 +508,13 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                    
                     T irlat[nstr*nlat]; 
- 
+                    constexpr static int32_t NSTR   = nstr;
+                    constexpr static int32_t NLON   = nlon;
+                    constexpr static int32_t NLAT   = nlat;
+                    constexpr T * irlon_beg() { return (std::addressof(irlon[0]));}
+                    constexpr int32_t irlon_size() { return (NSTR*NLON);}
+                    constexpr T * irlat_beg() { return (std::addressof(irlat[0]));}
+                    constexpr int32_t irlat_size() { return (NSTR*NLAT);}
                    
             };
             
@@ -538,7 +544,11 @@ namespace gms {
                     constexpr static int32_t NSTR = nstr;
                     constexpr static int32_t NLON = nlon;
                     constexpr static int32_t NLAT = nlat; 
-
+                    constexpr T * irlon_beg() { return (std::addressof(irlon[0]));}
+                    constexpr int32_t irlon_size() { return (NSTR*NLON);}
+                    constexpr T * irlat_beg() { return (std::addressof(irlat[0]));}
+                    constexpr int32_t irlat_size() { return (NSTR*NLAT);}
+                
            };
            
            
@@ -567,6 +577,10 @@ namespace gms {
                      constexpr static int32_t NBLD = nbld;
                      constexpr static int32_t NLON = nlon;
                      constexpr static int32_t NLAT = nlat;
+                     constexpr T * irlon_beg() { return (std::addressof(irlon[0]));}
+                     constexpr int32_t irlon_size() { return (NBLD*NLON);}
+                     constexpr T * irlat_beg() { return (std::addressof(irlat[0]));}
+                     constexpr int32_t irlat_size() { return (NBLD*NLAT);}
             };
             
             
@@ -591,11 +605,14 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                    
-                    T irlat[nbld*nlat];
+                     T irlat[nbld*nlat];
                      constexpr static int32_t NBLD = nbld;
                      constexpr static int32_t NLON = nlon;
                      constexpr static int32_t NLAT = nlat;
-                 
+                     constexpr T * irlon_beg() { return (std::addressof(irlon[0]));}
+                     constexpr int32_t irlon_size() { return (NBLD*NLON);}
+                     constexpr T * irlat_beg() { return (std::addressof(irlat[0]));}
+                     constexpr int32_t irlat_size() { return (NBLD*NLAT);}
            }; 
            
            
@@ -612,7 +629,8 @@ namespace gms {
                   T hmap[nx*ny];
                   constexpr static int32_t NX = nx;
                   constexpr static int32_t NY = ny;
-                 
+                  constexpr T * hmap_beg() { return (std::addressof(hmap[0]));}
+                  constexpr int32_t hmap_size() { return (NX*NY);}
            };
            
            
@@ -627,16 +645,11 @@ namespace gms {
                    __ATTR_ALIGN__(16)                  
 #endif                 
                    T hdxdy[nx*ny];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif
-                   T hdxdy[nx*ny]; 
+
                    constexpr static int32_t NX = nx;
-                   constexpr static int32_t NY = ny;                
+                   constexpr static int32_t NY = ny;  
+                   constexpr T * hdxdy_beg() { return (std::addressof(hdxdy[0]));}
+                   constexpr int32_t hdxdy_size() { return (NX*NY);}              
            };
            
            
@@ -662,6 +675,10 @@ namespace gms {
                   T uhgy[ny];
                   constexpr static int32_t NX = nx;
                   constexpr static int32_t NY = ny;
+                  constexpr T * uhgx_beg() { return (std::addressof(uhgx[0]));}
+                  constexpr int32_t uhgx_size() { return (NX);}
+                  constexpr T * uhgy_beg() { return (std::addressof(uhgy[0]));}
+                  constexpr int32_t uhgy_size() { return (NY);}  
            };
            
            
@@ -687,6 +704,10 @@ namespace gms {
                    T ysmbh[ny];
                    constexpr static int32_t NX = nx;
                    constexpr static int32_t NY = ny;
+                   constexpr T * xsmbh_beg() { return (std::addressof(xsmbh[0]));}
+                   constexpr int32_t xsmbh_size() { return (NX);}
+                   constexpr T * ysmbh_beg() { return (std::addressof(ysmbh[0]));}
+                   constexpr int32_t ysmbh_size() { return (NY);}  
            };
            
            
@@ -703,6 +724,8 @@ namespace gms {
                   int32_t esbb[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr int32_t * esbb_beg() { return (std::addressof(esbb[0]));}
+                  constexpr int32_t esbb_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -719,6 +742,8 @@ namespace gms {
                    T aesbb[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * aesbb_beg() { return (std::addressof(aesbb[0]));}
+                   constexpr int32_t aesbb_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -735,6 +760,8 @@ namespace gms {
                    T  abc[ncols*nvals];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * abc_beg() { return (std::addressof(abc[0]));}
+                   constexpr int32_t abc_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -750,7 +777,8 @@ namespace gms {
 #endif                  
                    int32_t swpc[ncols];
                    constexpr static int32_t NCOLS = ncols;
-                   
+                   constexpr int32_t * swpc_beg() { return (std::addressof(swpc[0]));}
+                   constexpr int32_t swpc_size() { return (NCOLS);}
            };
            
            
@@ -766,7 +794,8 @@ namespace gms {
 #endif                  
                  int32_t ewpc[ncols];
                  constexpr static int32_t NCOLS = ncols;
-                  
+                 constexpr int32_t * ewpc_beg() { return (std::addressof(ewpc[0]));}
+                 constexpr int32_t ewpc_size() { return (NCOLS);} 
            };
            
            
@@ -782,7 +811,8 @@ namespace gms {
 #endif                  
                  int32_t  wwpc[ncols];
                  constexpr static int32_t NCOLS = ncols;
-                  
+                 constexpr int32_t * wwpc_beg() { return (std::addressof(wwpc[0]));}
+                 constexpr int32_t wwpc_size() { return (NCOLS);}
            };
            
            
@@ -798,7 +828,8 @@ namespace gms {
 #endif                  
                 int32_t  nwpc[ncols];
                 constexpr static int32_t NCOLS = ncols;
-                 
+                constexpr int32_t * nwpc_beg() { return (std::addressof(nwpc[0]));}
+                constexpr int32_t nwpc_size() { return (NCOLS);} 
            };
            
            
@@ -815,6 +846,8 @@ namespace gms {
                  int32_t brpc[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr int32_t * brpc_beg() { return (std::addressof(brpc[0]));}
+                 constexpr int32_t brpc_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -831,6 +864,8 @@ namespace gms {
                   T brapc[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * brapc_beg() { return (std::addressof(brapc[0]));}
+                  constexpr int32_t brapc_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -846,7 +881,8 @@ namespace gms {
 #endif                  
                   int32_t srwc[ncols];
                   constexpr static int32_t NCOLS = ncols;
-                  
+                   constexpr int32_t * srwc_beg() { return (std::addressof(srwc[0]));}
+                  constexpr int32_t srwc_size() { return (NCOLS);}
            };
            
            
@@ -862,7 +898,8 @@ namespace gms {
 #endif                  
                   int32_t  erwc[ncols];
                   constexpr static int32_t NCOLS = ncols;
-                 
+                  constexpr int32_t * erwc_beg() { return (std::addressof(erwc[0]));}
+                  constexpr int32_t erwc_size() { return (NCOLS);}
            };
            
            
@@ -878,7 +915,8 @@ namespace gms {
 #endif                  
                 int32_t  wrwc[ncols];
                 constexpr static int32_t NCOLS = ncols;
-                  
+                constexpr int32_t * wrwc_beg() { return (std::addressof(wrwc[0]));}
+                constexpr int32_t wrwc_size() { return (NCOLS);}  
            };
            
            
@@ -894,7 +932,8 @@ namespace gms {
 #endif                  
                 int32_t nrwc[ncols];
                 constexpr static int32_t NCOLS = ncols;
-                  
+                constexpr int32_t * nrwc_beg() { return (std::addressof(nrwc[0]));}
+                constexpr int32_t nrwc_size() { return (NCOLS);}
            };
            
            
@@ -912,6 +951,8 @@ namespace gms {
                   T idsrw[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * idsrw_beg() { return (std::addressof(idsrw[0]));}
+                  constexpr int32_t idsrw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -929,6 +970,8 @@ namespace gms {
                   T iderw[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * iderw_beg() { return (std::addressof(iderw[0]));}
+                  constexpr int32_t iderw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -946,6 +989,8 @@ namespace gms {
                   T idwrw[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * idwrw_beg() { return (std::addressof(idwrw[0]));}
+                  constexpr int32_t idwrw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -963,6 +1008,8 @@ namespace gms {
                    T idnrw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * idnrw_beg() { return (std::addressof(idnrw[0]));}
+                   constexpr int32_t idnrw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -980,6 +1027,8 @@ namespace gms {
                 T irsrw[ncols*nval]; 
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
+                constexpr T * irsrw_beg() { return (std::addressof(irsrw[0]));}
+                constexpr int32_t irsrw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -997,6 +1046,8 @@ namespace gms {
                     T irerw[ncols*nval];
                     constexpr static int32_t NCOLS = ncols;
                     constexpr static int32_t NVAL  = nval;
+                    constexpr T * irerw_beg() { return (std::addressof(irerw[0]));}
+                    constexpr int32_t irerw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1014,6 +1065,8 @@ namespace gms {
                     T irnrw[ncols*nval]; 
                     constexpr static int32_t NCOLS = ncols;
                     constexpr static int32_t NVAL  = nval;
+                    constexpr T * irnrw_beg() { return (std::addressof(irnrw[0]));}
+                    constexpr int32_t irnrw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1031,6 +1084,8 @@ namespace gms {
                   T isra[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval; 
+                  constexpr T * isra_beg() { return (std::addressof(isra[0]));}
+                  constexpr int32_t isra_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1048,6 +1103,8 @@ namespace gms {
                    T iwra[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;  
+                   constexpr T * iwra_beg() { return (std::addressof(iwra[0]));}
+                   constexpr int32_t iwra_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1064,7 +1121,9 @@ namespace gms {
 #endif                 
                   T iera[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
-                  constexpr static int32_t NVAL  = nval;   
+                  constexpr static int32_t NVAL  = nval; 
+                  constexpr T * iera_beg() { return (std::addressof(iera[0]));}
+                  constexpr int32_t iera_size() { return (NCOLS*NVAL);}  
            };
            
            
@@ -1081,7 +1140,9 @@ namespace gms {
 #endif                   
                    T inra[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
-                   constexpr static int32_t NVAL  = nval;   
+                   constexpr static int32_t NVAL  = nval;  
+                   constexpr T * inra_beg() { return (std::addressof(inra[0]));}
+                   constexpr int32_t inra_size() { return (NCOLS*NVAL);} 
            };
            
            
@@ -1098,7 +1159,9 @@ namespace gms {
 #endif                   
                   T swue[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
-                  constexpr static int32_t NVAL  = nval;  
+                  constexpr static int32_t NVAL  = nval; 
+                  constexpr T * swue_beg() { return (std::addressof(swue[0]));}
+                  constexpr int32_t swue_size() { return (NCOLS*NVAL);} 
           };
           
           
@@ -1115,7 +1178,9 @@ namespace gms {
 #endif                   
                  T ewue[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
-                 constexpr static int32_t NVAL  = nval;   
+                 constexpr static int32_t NVAL  = nval;  
+                 constexpr T * ewue_beg() { return (std::addressof(ewue[0]));}
+                 constexpr int32_t ewue_size() { return (NCOLS*NVAL);} 
           };
           
           
@@ -1132,7 +1197,9 @@ namespace gms {
 #endif                  
                   T wwue[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
-                  constexpr static int32_t NVAL  = nval;   
+                  constexpr static int32_t NVAL  = nval;  
+                  constexpr T * wwue_beg() { return (std::addressof(wwue[0]));}
+                  constexpr int32_t wwue_size() { return (NCOLS*NVAL);} 
           };
           
           
@@ -1149,7 +1216,9 @@ namespace gms {
 #endif                   
                   T nwue[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
-                  constexpr static int32_t NVAL  = nval;     
+                  constexpr static int32_t NVAL  = nval;    
+                  constexpr T * mwue_beg() { return (std::addressof(mwue[0]));}
+                  constexpr int32_t mwue_size() { return (NCOLS*NVAL);} 
           };
           
           
@@ -1167,6 +1236,8 @@ namespace gms {
                  T sewe[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;   
+                  constexpr T * sewe_beg() { return (std::addressof(sewe[0]));}
+                  constexpr int32_t sewe_size() { return (NCOLS*NVAL);}
           };
           
           // Shared left edge between the south wall and west wall inclination (rad) 
@@ -1183,6 +1254,8 @@ namespace gms {
                   T swwe[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;  
+                  constexpr T * swwe_beg() { return (std::addressof(swwe[0]));}
+                  constexpr int32_t swwe_size() { return (NCOLS*NVAL);}
           };
           
           
@@ -1200,6 +1273,8 @@ namespace gms {
                    T nwee[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval; 
+                  constexpr T * nwee_beg() { return (std::addressof(nwee[0]));}
+                  constexpr int32_t nwee_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1214,9 +1289,11 @@ namespace gms {
 #elif defined (__SSE__)
                    __ATTR_ALIGN__(16)                  
 #endif                   
-                  T nwee[ncols*nval];  
+                  T nwwe[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval; 
+                  constexpr T * nwwe_beg() { return (std::addressof(nwwe[0]));}
+                  constexpr int32_t nwwe_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1258,6 +1335,8 @@ namespace gms {
                   T swsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * swsa_beg() { return (std::addressof(swsa[0]));}
+                  constexpr int32_t swsa_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1274,6 +1353,8 @@ namespace gms {
                  T ewsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * ewsa_beg() { return (std::addressof(ewsa[0]));}
+                  constexpr int32_t ewsa_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1290,6 +1371,8 @@ namespace gms {
                   T wwsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * wwsa_beg() { return (std::addressof(wwsa[0]));}
+                  constexpr int32_t wwsa_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1306,7 +1389,7 @@ namespace gms {
                   T wwsa[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  T * begin() { return (std::__adressof(wwsa[0]));}
+                  constexpr T * begin() { return (std::addressof(wwsa[0]));}
                   constexpr int32_t size() { return (ncols*nval)};  
                  
            };
@@ -1327,6 +1410,8 @@ namespace gms {
                    bool  mnmsw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * mnmsw_beg() { return (std::addressof(mnmsw[0]));}
+                   constexpr int32_t mnmsw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1344,6 +1429,8 @@ namespace gms {
                    bool  mnmew[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * mnmew_beg() { return (std::addressof(mnmew[0]));}
+                   constexpr int32_t mnmew_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1361,6 +1448,8 @@ namespace gms {
                    bool  mnmww[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval; 
+                   constexpr T * mnmww_beg() { return (std::addressof(mnmww[0]));}
+                   constexpr int32_t mnmww_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1377,6 +1466,8 @@ namespace gms {
                    bool  mnmnw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * mnmnw_beg() { return (std::addressof(mnmnw[0]));}
+                   constexpr int32_t mnmnw_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1394,6 +1485,8 @@ namespace gms {
                    T  mdswr[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * mdswr_beg() { return (std::addressof(mdswr[0]));}
+                   constexpr int32_t mdswr_size() { return (NCOLS*NVAL);}
            };
            
            
@@ -1411,6 +1504,8 @@ namespace gms {
                    T   mdewr[ncols*nval];                 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * mdewr_beg() { return (std::addressof(mdewr[0]));}
+                   constexpr int32_t mdewr_size() { return (NCOLS*NVAL);}
                   
            };
            
@@ -1429,6 +1524,8 @@ namespace gms {
                   T   mdwwr[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mdwwr_beg() { return (std::addressof(mdwwr[0]));}
+                  constexpr int32_t mdwwr_size() { return (NCOLS*NVAL);}
            };  
            
            
@@ -1446,6 +1543,8 @@ namespace gms {
                   T mdnwr[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mdnwr_beg() { return (std::addressof(mdnwr[0]));}
+                  constexpr int32_t mdnwr_size() { return (NCOLS*NVAL);}
            };   
            
            
@@ -1464,6 +1563,8 @@ namespace gms {
                  bool  mdr[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * mdr_beg() { return (std::addressof(mdr[0]));}
+                 constexpr int32_t mdr_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1481,6 +1582,8 @@ namespace gms {
                 T   mdrr[ncols*nval]; 
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
+                constexpr T * mdrr_beg() { return (std::addressof(mdrr[0]));}
+                constexpr int32_t mdrr_size() { return (NCOLS*NVAL);}
           };
           
           
@@ -1499,6 +1602,8 @@ namespace gms {
                  T   mpfr[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * mpfr_beg() { return (std::addressof(mpfr[0]));}
+                 constexpr int32_t mpfr_size() { return (NCOLS*NVAL);}
           };     
           
           
@@ -1516,6 +1621,8 @@ namespace gms {
                   T   dpfr[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpfr_beg() { return (std::addressof(dpfr[0]));}
+                  constexpr int32_t dpfr_size() { return (NCOLS*NVAL);}
           };   
           
           
@@ -1533,6 +1640,8 @@ namespace gms {
                  T  mpsw[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * mpsw_beg() { return (std::addressof(mpsw[0]));}
+                 constexpr int32_t mpsw_size() { return (NCOLS*NVAL);}
           };  
           
           
@@ -1550,6 +1659,8 @@ namespace gms {
                   T  dpsw[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpsw_beg() { return (std::addressof(dpsw[0]));}
+                  constexpr int32_t dpsw_size() { return (NCOLS*NVAL);}
           };   
           
           
@@ -1567,6 +1678,8 @@ namespace gms {
                   T mpew[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpew_beg() { return (std::addressof(mpew[0]));}
+                  constexpr int32_t mpew_size() { return (NCOLS*NVAL);}
           };   
           
          // The values describing the surface of dry part of the east wall 
@@ -1583,6 +1696,8 @@ namespace gms {
                   T  dpew[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpew_beg() { return (std::addressof(dpew[0]));}
+                  constexpr int32_t dpew_size() { return (NCOLS*NVAL);}
           };  
           
           
@@ -1600,6 +1715,8 @@ namespace gms {
                   T mpww[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpww_beg() { return (std::addressof(mpww[0]));}
+                  constexpr int32_t mpww_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1617,6 +1734,8 @@ namespace gms {
                   T dpww[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpww_beg() { return (std::addressof(dpww[0]));}
+                  constexpr int32_t dpww_size() { return (NCOLS*NVAL);}
           };  
           
           
@@ -1634,6 +1753,8 @@ namespace gms {
                   T  mpnw[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpnw_beg() { return (std::addressof(mpnw[0]));}
+                  constexpr int32_t mpnw_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1651,6 +1772,8 @@ namespace gms {
                  T dpnw[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * dpnw_beg() { return (std::addressof(dpnw[0]));}
+                 constexpr int32_t dpnw_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1668,6 +1791,8 @@ namespace gms {
                   T mpsar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpsar_beg() { return (std::addressof(mpsar[0]));}
+                  constexpr int32_t mpsar_size() { return (NCOLS*NVAL);}
           };
           
           
@@ -1685,6 +1810,8 @@ namespace gms {
                  T dpsar[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * dpsar_beg() { return (std::addressof(dpsar[0]));}
+                 constexpr int32_t dpsar_size() { return (NCOLS*NVAL);}
           };
           
           
@@ -1702,6 +1829,8 @@ namespace gms {
                  T  mpear[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
+                 constexpr T * mpear_beg() { return (std::addressof(mpear[0]));}
+                 constexpr int32_t mpear_size() { return (NCOLS*NVAL);}
           };
           
           
@@ -1719,6 +1848,8 @@ namespace gms {
                   T dpear[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpear_beg() { return (std::addressof(dpear[0]));}
+                  constexpr int32_t dpear_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1736,6 +1867,8 @@ namespace gms {
                   T mpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpwar_beg() { return (std::addressof(mpwar[0]));}
+                  constexpr int32_t mpwar_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1753,6 +1886,8 @@ namespace gms {
                   T dpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * dpwar_beg() { return (std::addressof(dpwar[0]));}
+                  constexpr int32_t dpwar_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1770,6 +1905,8 @@ namespace gms {
                   T mpnar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * mpnar_beg() { return (std::addressof(mpnar[0]));}
+                  constexpr int32_t mpnar_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1787,6 +1924,8 @@ namespace gms {
                    T dpnar[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
+                   constexpr T * dpnar_beg() { return (std::addressof(dpnar[0]));}
+                   constexpr int32_t dpnar_size() { return (NCOLS*NVAL);}
           }; 
           
           
@@ -1812,7 +1951,11 @@ namespace gms {
 #endif     
                   T ceswi[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
-                  constexpr static int32_t NVAL  = nval;                  
+                  constexpr static int32_t NVAL  = nval;  
+                  constexpr T * ceswr_beg() { return (std::addressof(ceswr[0]));}
+                  constexpr int32_t ceswr_size() { return (NCOLS*NVAL);}
+                  constexpr T * ceswi_beg() { return (std::addressof(ceswi[0]));}
+                  constexpr int32_t ceswi_size() { return (NCOLS*NVAL);}                
          };
          
          
@@ -1838,7 +1981,10 @@ namespace gms {
                   T cmswi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  
+                  constexpr T * cmswr_beg() { return (std::addressof(cmswr[0]));}
+                  constexpr int32_t cmswr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmswi_beg() { return (std::addressof(cmswi[0]));}
+                  constexpr int32_t cmswi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1864,7 +2010,10 @@ namespace gms {
                   T cewwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  
+                  constexpr T * cewwr_beg() { return (std::addressof(cewwr[0]));}
+                  constexpr int32_t cewwr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cewwi_beg() { return (std::addressof(cewwi[0]));}
+                  constexpr int32_t cewwi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1890,7 +2039,10 @@ namespace gms {
                   T cmwwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                  
+                  constexpr T * cmwwr_beg() { return (std::addressof(cmwwr[0]));}
+                  constexpr int32_t cmwwr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmwwi_beg() { return (std::addressof(cmwwi[0]));}
+                  constexpr int32_t cmwwi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1916,7 +2068,10 @@ namespace gms {
                   T ceewi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  
+                  constexpr T * ceewr_beg() { return (std::addressof(ceewr[0]));}
+                  constexpr int32_t ceewr_size() { return (NCOLS*NVAL);}
+                  constexpr T * ceewi_beg() { return (std::addressof(ceewi[0]));}
+                  constexpr int32_t ceewi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1942,7 +2097,10 @@ namespace gms {
                   T cmewi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                 
+                  constexpr T * cmewr_beg() { return (std::addressof(cmewr[0]));}
+                  constexpr int32_t cmewr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmewi_beg() { return (std::addressof(cmewi[0]));}
+                  constexpr int32_t cmewi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1968,7 +2126,10 @@ namespace gms {
                   T cenwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                  
+                  constexpr T * cenwr_beg() { return (std::addressof(cenwr[0]));}
+                  constexpr int32_t cenwr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cenwi_beg() { return (std::addressof(cenwi[0]));}
+                  constexpr int32_t cenwi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -1994,7 +2155,10 @@ namespace gms {
                   T cmnwi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                 
+                  constexpr T * cmnwr_beg() { return (std::addressof(cmnwr[0]));}
+                  constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmnwi_beg() { return (std::addressof(cmnwi[0]));}
+                  constexpr int32_t cmnwi_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2020,7 +2184,10 @@ namespace gms {
                   T cesari[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                       
-                  
+                  constexpr T * cesarr_beg() { return (std::addressof(cesarr[0]));}
+                  constexpr int32_t cesarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cesari_beg() { return (std::addressof(cesari[0]));}
+                  constexpr int32_t cesari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2046,7 +2213,10 @@ namespace gms {
                   T cmsari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                
+                  constexpr T * cmsarr_beg() { return (std::addressof(cmsarr[0]));}
+                  constexpr int32_t cmsarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmsari_beg() { return (std::addressof(cmsari[0]));}
+                  constexpr int32_t cmsari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2072,7 +2242,10 @@ namespace gms {
                   T ceeari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                 
+                  constexpr T * ceearr_beg() { return (std::addressof(ceearr[0]));}
+                  constexpr int32_t ceearr_size() { return (NCOLS*NVAL);}
+                  constexpr T * ceeari_beg() { return (std::addressof(ceeari[0]));}
+                  constexpr int32_t ceeari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2098,7 +2271,10 @@ namespace gms {
                   T cmeari[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  
+                  constexpr T * cmearr_beg() { return (std::addressof(cmearr[0]));}
+                  constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmeari_beg() { return (std::addressof(cmeari[0]));}
+                  constexpr int32_t cmeari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2124,7 +2300,10 @@ namespace gms {
                   T cewari[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                     
-                 
+                  constexpr T * cewarr_beg() { return (std::addressof(cewarr[0]));}
+                  constexpr int32_t cewarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cewari_beg() { return (std::addressof(cewari[0]));}
+                  constexpr int32_t cewari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2150,7 +2329,10 @@ namespace gms {
                   T cmwari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                 
+                  constexpr T * cmwarr_beg() { return (std::addressof(cmwarr[0]));}
+                  constexpr int32_t cwnarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmwari_beg() { return (std::addressof(cmwari[0]));}
+                  constexpr int32_t cmwari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2176,7 +2358,10 @@ namespace gms {
                   T cenari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                 
+                  constexpr T * cenarr_beg() { return (std::addressof(cenarr[0]));}
+                  constexpr int32_t cenarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cenari_beg() { return (std::addressof(cenari[0]));}
+                  constexpr int32_t cenari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2202,7 +2387,10 @@ namespace gms {
                   T cmnari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                 
+                  constexpr T * cmnarr_beg() { return (std::addressof(cmnarr[0]));}
+                  constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
+                  constexpr T * cmnari_beg() { return (std::addressof(cmnari[0]));}
+                  constexpr int32_t cmnari_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2237,6 +2425,12 @@ namespace gms {
                   T nvz[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2271,7 +2465,12 @@ namespace gms {
                   T nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;              
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2305,7 +2504,12 @@ namespace gms {
                   T nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                   
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2339,7 +2543,12 @@ namespace gms {
                   T nvz[ncols*nval];     
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                  
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2373,7 +2582,12 @@ namespace gms {
                   T nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2407,7 +2621,12 @@ namespace gms {
                   T nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                         
-                
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2441,7 +2660,12 @@ namespace gms {
                   T nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                   
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2475,7 +2699,12 @@ namespace gms {
                   T nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                       
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
@@ -2509,7 +2738,12 @@ namespace gms {
                   T nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                         
-                 
+                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
+                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
          
