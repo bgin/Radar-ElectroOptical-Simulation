@@ -1410,7 +1410,7 @@ namespace gms {
                    bool  mnmsw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
-                   constexpr T * mnmsw_beg() { return (std::addressof(mnmsw[0]));}
+                   constexpr bool * mnmsw_beg() { return (std::addressof(mnmsw[0]));}
                    constexpr int32_t mnmsw_size() { return (NCOLS*NVAL);}
            };
            
@@ -1429,7 +1429,7 @@ namespace gms {
                    bool  mnmew[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
-                   constexpr T * mnmew_beg() { return (std::addressof(mnmew[0]));}
+                   constexpr bool * mnmew_beg() { return (std::addressof(mnmew[0]));}
                    constexpr int32_t mnmew_size() { return (NCOLS*NVAL);}
            };
            
@@ -1448,7 +1448,7 @@ namespace gms {
                    bool  mnmww[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval; 
-                   constexpr T * mnmww_beg() { return (std::addressof(mnmww[0]));}
+                   constexpr bool * mnmww_beg() { return (std::addressof(mnmww[0]));}
                    constexpr int32_t mnmww_size() { return (NCOLS*NVAL);}
            };
            
@@ -1466,7 +1466,7 @@ namespace gms {
                    bool  mnmnw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
-                   constexpr T * mnmnw_beg() { return (std::addressof(mnmnw[0]));}
+                   constexpr bool * mnmnw_beg() { return (std::addressof(mnmnw[0]));}
                    constexpr int32_t mnmnw_size() { return (NCOLS*NVAL);}
            };
            
@@ -1563,7 +1563,7 @@ namespace gms {
                  bool  mdr[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * mdr_beg() { return (std::addressof(mdr[0]));}
+                 constexpr bool * mdr_beg() { return (std::addressof(mdr[0]));}
                  constexpr int32_t mdr_size() { return (NCOLS*NVAL);}
           }; 
           
