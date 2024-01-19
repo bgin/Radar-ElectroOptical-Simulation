@@ -1228,17 +1228,12 @@ namespace gms {
                                  //! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
           struct DPWWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                  T dpww[ncols*nval]; 
+                 
+                   __ATTR_ALIGN__(16) __m128 dpww[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * dpww_beg() { return (std::addressof(dpww[0]));}
+                  constexpr __m128 * __restrict dpww_beg() { return (std::addressof(dpww[0]));}
+                  float * __restrict dpww_fptr() { return ((float* __restrict)&dpww[0]);} 
                   constexpr int32_t dpww_size() { return (NCOLS*NVAL);}
           };  
           
@@ -1247,17 +1242,12 @@ namespace gms {
                                  //! (per each column) x number of columns
          template<int32_t ncols,int32_t nval>
          struct MPNWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T  mpnw[ncols*nval]; 
+              
+                   __ATTR_ALIGN__(16) __m128  mpnw[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * mpnw_beg() { return (std::addressof(mpnw[0]));}
+                  constexpr __m128 * __restrict mpnw_beg() { return (std::addressof(mpnw[0]));}
+                  float * __restrict mpnw_fptr() { return ((float* __restrict)&mpnw[0]);} 
                   constexpr int32_t mpnw_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1266,17 +1256,12 @@ namespace gms {
                                 // ! (per each column) x number of columns
          template<int32_t ncols,int32_t nval>
          struct DPNWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                 T dpnw[ncols*nval]; 
+                
+                 __ATTR_ALIGN__(16) __m128  dpnw[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * dpnw_beg() { return (std::addressof(dpnw[0]));}
+                 constexpr __m128 * __restrict dpnw_beg() { return (std::addressof(dpnw[0]));}
+                 float * __restrict dpnw_fptr() { return ((float* __restrict)&dpnw[0]);} 
                  constexpr int32_t dpnw_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1285,17 +1270,12 @@ namespace gms {
                                // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
           struct MPSARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                     
-                  T mpsar[ncols*nval];
+                  
+                  __ATTR_ALIGN__(16) __m128 mpsar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * mpsar_beg() { return (std::addressof(mpsar[0]));}
+                  constexpr __m128 * __restrict mpsar_beg() { return (std::addressof(mpsar[0]));}
+                  float * __restrict mpsar_fptr() { return ((float* __restrict)&mpsar[0]);} 
                   constexpr int32_t mpsar_size() { return (NCOLS*NVAL);}
           };
           
@@ -1304,17 +1284,12 @@ namespace gms {
                                // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
           struct DPSARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                 T dpsar[ncols*nval];
+                  
+                 __ATTR_ALIGN__(16) __m128  dpsar[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * dpsar_beg() { return (std::addressof(dpsar[0]));}
+                 constexpr __m128 * __restrict dpsar_beg() { return (std::addressof(dpsar[0]));}
+                 float * __restrict dpsar_fptr() { return ((float* __restrict)&dpsar[0]);} 
                  constexpr int32_t dpsar_size() { return (NCOLS*NVAL);}
           };
           
@@ -1323,17 +1298,12 @@ namespace gms {
                                // ! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
           struct MPEARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                     
-                 T  mpear[ncols*nval];
+                   
+                 __ATTR_ALIGN__(16) __m128  mpear[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * mpear_beg() { return (std::addressof(mpear[0]));}
+                 constexpr __m128 * __restrict mpear_beg() { return (std::addressof(mpear[0]));}
+                 float * __restrict mpear_fptr() { return ((float* __restrict)&mpear[0]);} 
                  constexpr int32_t mpear_size() { return (NCOLS*NVAL);}
           };
           
@@ -1342,17 +1312,12 @@ namespace gms {
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
          struct DPEARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                     
-                  T dpear[ncols*nval];
+                 
+                  __ATTR_ALIGN__(16) __m128 dpear[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * dpear_beg() { return (std::addressof(dpear[0]));}
+                  constexpr __m128 * __restrict dpear_beg() { return (std::addressof(dpear[0]));}
+                  float * __restrict dpear_fptr() { return ((float* __restrict)&dpear[0]);} 
                   constexpr int32_t dpear_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1361,17 +1326,12 @@ namespace gms {
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
           struct MPWARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                  T mpwar[ncols*nval];
+                  
+                   __ATTR_ALIGN__(16) __m128 mpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * mpwar_beg() { return (std::addressof(mpwar[0]));}
+                  constexpr __m128 * __restrict mpwar_beg() { return (std::addressof(mpwar[0]));}
+                  float * __restrict mpwar_fptr() { return ((float* __restrict)&mpwar[0]);} 
                   constexpr int32_t mpwar_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1380,17 +1340,12 @@ namespace gms {
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
           struct DPWARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                  T dpwar[ncols*nval];
+              
+                   __ATTR_ALIGN__(16) __m128 dpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * dpwar_beg() { return (std::addressof(dpwar[0]));}
+                  constexpr __m128 * __restrict dpwar_beg() { return (std::addressof(dpwar[0]));}
+                  float * __restrict dpwar_fptr() { return ((float* __restrict)&dpwar[0]);} 
                   constexpr int32_t dpwar_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1399,17 +1354,12 @@ namespace gms {
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
           struct MPNARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                  T mpnar[ncols*nval];
+                
+                   __ATTR_ALIGN__(16) __m128 mpnar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * mpnar_beg() { return (std::addressof(mpnar[0]));}
+                  constexpr __m128 * __restrict mpnar_beg() { return (std::addressof(mpnar[0]));}
+                  float * __restrict mpnar_fptr() { return ((float* __restrict)&mpnar[0]);} 
                   constexpr int32_t mpnar_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1418,17 +1368,12 @@ namespace gms {
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
           struct DPNARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                   T dpnar[ncols*nval];
+               
+                   __ATTR_ALIGN__(16) __m128 dpnar[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
-                   constexpr T * dpnar_beg() { return (std::addressof(dpnar[0]));}
+                   constexpr __m128 * __restrict dpnar_beg() { return (std::addressof(dpnar[0]));}
+                   float * __restrict dpnar_fptr() { return ((float* __restrict)&dpnar[0]);} 
                    constexpr int32_t dpnar_size() { return (NCOLS*NVAL);}
           }; 
           
@@ -1438,27 +1383,17 @@ namespace gms {
          template<int32_t ncols,int32_t nval>
          struct CESWC1x_t {
                   
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T ceswr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T ceswi[ncols*nval];
+                
+                  __ATTR_ALIGN__(16) __m128 ceswr[ncols*nval];
+ 
+                  __ATTR_ALIGN__(16) __m128 ceswi[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;  
-                  constexpr T * ceswr_beg() { return (std::addressof(ceswr[0]));}
+                  constexpr __m128 * __restrict ceswr_beg() { return (std::addressof(ceswr[0]));}
+                  float * __restrict ceswr_fptr() { return ((float* __restrict)&ceswr[0]);} 
                   constexpr int32_t ceswr_size() { return (NCOLS*NVAL);}
-                  constexpr T * ceswi_beg() { return (std::addressof(ceswi[0]));}
+                  constexpr __m128 * __restrict ceswi_beg() { return (std::addressof(ceswi[0]));}
+                  float * __restrict ceswi_fptr() { return ((float* __restrict)&ceswi[0]);} 
                   constexpr int32_t ceswi_size() { return (NCOLS*NVAL);}                
          };
          
@@ -1467,27 +1402,17 @@ namespace gms {
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
          struct CMSWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmswr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmswi[ncols*nval];  
+           
+                  __ATTR_ALIGN__(16) __m128 cmswr[ncols*nval];
+ 
+                  __ATTR_ALIGN__(16) __m128 cmswi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  constexpr T * cmswr_beg() { return (std::addressof(cmswr[0]));}
+                  constexpr __m128 * __restrict cmswr_beg() { return (std::addressof(cmswr[0]));}
+                  float * __restrict cmswr_fptr() { return ((float* __restrict)&ceswr[0]);} 
                   constexpr int32_t cmswr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmswi_beg() { return (std::addressof(cmswi[0]));}
+                  constexpr __m128 * __restrict  cmswi_beg() { return (std::addressof(cmswi[0]));}
+                  float * __restrict cmswi_fptr() { return ((float* __restrict)&cmswi[0]);} 
                   constexpr int32_t cmswi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1496,27 +1421,17 @@ namespace gms {
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
          struct CEWWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cewwr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cewwi[ncols*nval]; 
+                 
+                  __ATTR_ALIGN__(16) __m128 cewwr[ncols*nval];
+
+                  __ATTR_ALIGN__(16) __m128 cewwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  constexpr T * cewwr_beg() { return (std::addressof(cewwr[0]));}
+                  constexpr __128 *  __restrict cewwr_beg() { return (std::addressof(cewwr[0]));}
+                  float * __restrict cewwr_fptr() { return ((float* __restrict)&cewwr[0]);} 
                   constexpr int32_t cewwr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cewwi_beg() { return (std::addressof(cewwi[0]));}
+                  constexpr __m128 * __restrict cewwi_beg() { return (std::addressof(cewwi[0]));}
+                  float * __restrict cewwi_fptr() { return ((float* __restrict)&cewwi[0]);} 
                   constexpr int32_t cewwi_size() { return (NCOLS*NVAL);}
          };
          
