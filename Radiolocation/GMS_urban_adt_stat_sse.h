@@ -886,7 +886,7 @@ namespace gms {
            // Shared right edge between the north wall and east wall inclination (rad) 
                                     // ! -- (per each column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct NWEER1x_t {
+           struct SSENWEER1x_t {
                
                    __ATTR_ALIGN__(16) __m128 nwee[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
@@ -900,7 +900,7 @@ namespace gms {
            // Shared right edge between the north wall and west wall inclination (rad) 
            // ! -- (per each column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct NWWER1x_t {
+           struct SSENWWER1x_t {
               
                    __ATTR_ALIGN__(16) __m128 nwwe[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
@@ -913,7 +913,7 @@ namespace gms {
            
            // Simple cell-based mesh
            template<int32_t nL>
-           struct CellMeshR1x_t {
+           struct SSECellMeshR1x_t {
                   
                   // Coordinates (x,y,z) of the center
                   // of Lth cell.
@@ -938,7 +938,7 @@ namespace gms {
            
            // South walls surface area (for every building, per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct SWSAR1x_t {
+           struct SSESWSAR1x_t {
                 
                    __ATTR_ALIGN__(16) __m128 swsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -951,7 +951,7 @@ namespace gms {
            
            // East walls surface area (for every building, per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct EWSAR1x_t {
+           struct SSEEWSAR1x_t {
                   
                    __ATTR_ALIGN__(16) __m128 ewsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -964,7 +964,7 @@ namespace gms {
            
            // West walls surface area (for every building, per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct WWSAR1x_t {
+           struct SSEWWSAR1x_t {
                  
                   __ATTR_ALIGN__(16) __m128  wwsa[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -977,7 +977,7 @@ namespace gms {
            
            // North walls surface area (for every building, per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct NWSAR1x_t {
+           struct SSENWSAR1x_t {
                      
                   __ATTR_ALIGN__(16) __m128 nwsa[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -991,7 +991,7 @@ namespace gms {
            
            // South walls moist/non moist logical (per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct MNMSWB1x_t {
+           struct SSEMNMSWB1x_t {
                     
             
             
@@ -1005,7 +1005,7 @@ namespace gms {
            
             // East walls moist/non moist logical (per column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct MNMEWB1x_t {
+           struct SSEMNMEWB1x_t {
                                  
                     
                    bool  mnmew[ncols*nval]; 
@@ -1018,7 +1018,7 @@ namespace gms {
            
              // West walls moist/non moist logical (per column) x number of columns
            template<int32_t ncols,int32_t nval>  
-           struct MNMWWB1x_t {
+           struct SSEMNMWWB1x_t {
            
                      
                    bool  mnmww[ncols*nval];
@@ -1031,7 +1031,7 @@ namespace gms {
            
              // North walls moist/non moist logical (per column) x number of columns
            template<int32_t ncols,int32_t nval>  
-           struct MNMNWB1x_t {
+           struct SSEMNMNWB1x_t {
                      
                    bool  mnmnw[ncols*nval]; 
                    constexpr static int32_t NCOLS = ncols;
@@ -1044,7 +1044,7 @@ namespace gms {
            // ! The values describing the ratio (percentage) of south wall 
                             // ! moisture to dryness (per each column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct MDSWRR1x_t {
+           struct SSEMDSWRR1x_t {
                  
                     __ATTR_ALIGN__(16) __m128  mdswr[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
@@ -1058,7 +1058,7 @@ namespace gms {
            // ! The values describing the ratio (percentage) of east wall 
                             // ! moisture to dryness (per each column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct MDEWRR1x_t {
+           struct SSEMDEWRR1x_t {
                     
                     __ATTR_ALIGN__(16) __m128    mdewr[ncols*nval];                 
                    constexpr static int32_t NCOLS = ncols;
@@ -1073,7 +1073,7 @@ namespace gms {
            //  The values describing the ratio (percentage) of west wall 
                              //! moisture to dryness (per each column) x number of columns
            template<int32_t ncols,int32_t nval>
-           struct MDWWRR1x_t {
+           struct SSEMDWWRR1x_t {
                     
                    __ATTR_ALIGN__(16) __m128    mdwwr[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1087,7 +1087,7 @@ namespace gms {
            //  The values describing the ratio (percentage) of north wall 
                              //! moisture to dryness (per each column) x number of columns              
            template<int32_t ncols,int32_t nval>
-           struct MDNWRR1x_t {
+           struct SSEMDNWRR1x_t {
                 
                    __ATTR_ALIGN__(16) __m128 mdnwr[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1101,7 +1101,7 @@ namespace gms {
            // The logical values of flat roof moistness (being either moist or dry) 
                               // ! (per column) x number of columns    
           template<int32_t ncols,int32_t nval>            
-          struct MDRB1x_t {
+          struct SSEMDRB1x_t {
                  
                  
                  bool  mdr[ncols*nval];
@@ -1115,7 +1115,7 @@ namespace gms {
           // The values describing the ratio (percentage) of flat roof moisture to dryness 
                               // ! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
-          struct MDRRR1x_t {
+          struct SSEMDRRR1x_t {
              
                 __ATTR_ALIGN__(16) __m128   mdrr[ncols*nval]; 
                 constexpr static int32_t NCOLS = ncols;
@@ -1129,7 +1129,7 @@ namespace gms {
           // The values describing the surface of moist part of the flat roof 
                                // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
-          struct MPFRR1x_t {
+          struct SSEMPFRR1x_t {
                  
         
                  __ATTR_ALIGN__(16) __m128    mpfr[ncols*nval]; 
@@ -1144,7 +1144,7 @@ namespace gms {
           // The values describing the surface of dry part of the flat roof 
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct DPFRR1x_t {
+          struct SSEDPFRR1x_t {
                  
                    __ATTR_ALIGN__(16) __m128  dpfr[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1158,7 +1158,7 @@ namespace gms {
           //  The values describing the surface of moist part of the south wall 
                                 // ! (per each column) x number of columns   
           template<int32_t ncols,int32_t nval>
-          struct MPSWR1x_t {
+          struct SSEMPSWR1x_t {
                 
                   __ATTR_ALIGN__(16) __m128   mpsw[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
@@ -1172,7 +1172,7 @@ namespace gms {
           //  The values describing the surface of dry part of the south wall 
                                //  ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct DPSWR1x_t {
+          struct SSEDPSWR1x_t {
                
                    __ATTR_ALIGN__(16) __m128  dpsw[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1186,7 +1186,7 @@ namespace gms {
           //  The values describing the surface of moist part of the east wall 
                                 // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
-          struct MPEWR1x_t {
+          struct SSEMPEWR1x_t {
                    
                    __ATTR_ALIGN__(16) __m128 mpew[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1199,7 +1199,7 @@ namespace gms {
          // The values describing the surface of dry part of the east wall 
                                 // ! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
-          struct DPEWR1x_t {
+          struct SSEDPEWR1x_t {
                  
                   __ATTR_ALIGN__(16) __m128  dpew[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1213,7 +1213,7 @@ namespace gms {
          // The values describing the surface of moist part of the west wall 
                                  //! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
-          struct MPWWR1x_t {
+          struct SSEMPWWR1x_t {
                  
                    __ATTR_ALIGN__(16) __m128  mpww[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1227,7 +1227,7 @@ namespace gms {
         //  The values describing the surface of dry part of the west wall 
                                  //! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
-          struct DPWWR1x_t {
+          struct SSEDPWWR1x_t {
                  
                    __ATTR_ALIGN__(16) __m128 dpww[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1241,7 +1241,7 @@ namespace gms {
         // The values describing the surface of moist part of the north wall 
                                  //! (per each column) x number of columns
          template<int32_t ncols,int32_t nval>
-         struct MPNWR1x_t {
+         struct SSEMPNWR1x_t {
               
                    __ATTR_ALIGN__(16) __m128  mpnw[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
@@ -1255,7 +1255,7 @@ namespace gms {
          //  The values describing the surface of dry part of the north wall 
                                 // ! (per each column) x number of columns
          template<int32_t ncols,int32_t nval>
-         struct DPNWR1x_t {
+         struct SSEDPNWR1x_t {
                 
                  __ATTR_ALIGN__(16) __m128  dpnw[ncols*nval]; 
                  constexpr static int32_t NCOLS = ncols;
@@ -1269,7 +1269,7 @@ namespace gms {
           // The values describing the surface of moist part of the angled south roof wall
                                // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
-          struct MPSARR1x_t {
+          struct SSEMPSARR1x_t {
                   
                   __ATTR_ALIGN__(16) __m128 mpsar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1283,7 +1283,7 @@ namespace gms {
           // The values describing the surface of dry part of the angled south roof wall
                                // ! (per each column) x number of columns
           template<int32_t ncols,int32_t nval>
-          struct DPSARR1x_t {
+          struct SSEDPSARR1x_t {
                   
                  __ATTR_ALIGN__(16) __m128  dpsar[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
@@ -1297,7 +1297,7 @@ namespace gms {
           // The values describing the surface of moist part of the angled east roof wall
                                // ! (per each column) x number of columns 
           template<int32_t ncols,int32_t nval>
-          struct MPEARR1x_t {
+          struct SSEMPEARR1x_t {
                    
                  __ATTR_ALIGN__(16) __m128  mpear[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
@@ -1311,7 +1311,7 @@ namespace gms {
          // The values describing the surface of dry part of the angled east roof wall
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct DPEARR1x_t {
+         struct SSEDPEARR1x_t {
                  
                   __ATTR_ALIGN__(16) __m128 dpear[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1325,7 +1325,7 @@ namespace gms {
           // The values describing the surface of moist part of the angled west roof wall
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct MPWARR1x_t {
+          struct SSEMPWARR1x_t {
                   
                    __ATTR_ALIGN__(16) __m128 mpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1339,7 +1339,7 @@ namespace gms {
            // The values describing the surface of dry part of the angled west roof wall
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct DPWARR1x_t {
+          struct SSEDPWARR1x_t {
               
                    __ATTR_ALIGN__(16) __m128 dpwar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1353,7 +1353,7 @@ namespace gms {
            // The values describing the surface of moist part of the angled north roof wall
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct MPNARR1x_t {
+          struct SSEMPNARR1x_t {
                 
                    __ATTR_ALIGN__(16) __m128 mpnar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
@@ -1367,7 +1367,7 @@ namespace gms {
           // The values describing the surface of dry part of the angled north roof wall
                                // ! (per each column) x number of columns  
           template<int32_t ncols,int32_t nval>
-          struct DPNARR1x_t {
+          struct SSEDPNARR1x_t {
                
                    __ATTR_ALIGN__(16) __m128 dpnar[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
@@ -1381,7 +1381,7 @@ namespace gms {
          // The values describing the complex permittivity of south walls
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CESWC1x_t {
+         struct SSECESWC1x_t {
                   
                 
                   __ATTR_ALIGN__(16) __m128 ceswr[ncols*nval];
@@ -1401,7 +1401,7 @@ namespace gms {
          // The values describing the complex permeabillity of south walls
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CMSWC1x_t {
+         struct SSECMSWC1x_t {
            
                   __ATTR_ALIGN__(16) __m128 cmswr[ncols*nval];
  
@@ -1420,7 +1420,7 @@ namespace gms {
          // The values describing the complex permittivity of west walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CEWWC1x_t {
+         struct SSECEWWC1x_t {
                  
                   __ATTR_ALIGN__(16) __m128 cewwr[ncols*nval];
 
@@ -1439,28 +1439,18 @@ namespace gms {
           // The values describing the complex permeability of west walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CMWWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmwwr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmwwi[ncols*nval]; 
+         struct SSECMWWC1x_t {
+            
+                  __ATTR_ALIGN__(16) __m128 cmwwr[ncols*nval];
+     
+                  __ATTR_ALIGN__(16) __m128 cmwwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                  constexpr T * cmwwr_beg() { return (std::addressof(cmwwr[0]));}
+                  constexpr __m128 * __restrict cmwwr_beg() { return (std::addressof(cmwwr[0]));}
+                  float * __restrict cmwwr_fptr() { return ((float* __restrict)&cmwwr[0]);} 
                   constexpr int32_t cmwwr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmwwi_beg() { return (std::addressof(cmwwi[0]));}
+                  constexpr __m128 * __restrict cmwwi_beg() { return (std::addressof(cmwwi[0]));}
+                  float * __restrict cmwwi_fptr() { return ((float* __restrict)&cmwwi[0]);} 
                   constexpr int32_t cmwwi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1468,28 +1458,18 @@ namespace gms {
           // The values describing the complex permittivity of east walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CEEWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T ceewr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T ceewi[ncols*nval]; 
+         struct SSECEEWC1x_t {
+               
+                  __ATTR_ALIGN__(16) __m128  ceewr[ncols*nval];
+ 
+                  __ATTR_ALIGN__(16) __m128  ceewi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  constexpr T * ceewr_beg() { return (std::addressof(ceewr[0]));}
+                  constexpr __m128 * __restrict ceewr_beg() { return (std::addressof(ceewr[0]));}
+                  float * __restrict ceewr_fptr() { return ((float* __restrict)&ceewr[0]);} 
                   constexpr int32_t ceewr_size() { return (NCOLS*NVAL);}
-                  constexpr T * ceewi_beg() { return (std::addressof(ceewi[0]));}
+                  constexpr __m128 * __restrict ceewi_beg() { return (std::addressof(ceewi[0]));}
+                  float * __restrict ceewi_fptr() { return ((float* __restrict)&ceewi[0]);} 
                   constexpr int32_t ceewi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1497,28 +1477,18 @@ namespace gms {
           // The values describing the complex permeability of east walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CMEWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmewr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmewi[ncols*nval];  
+         struct SSECMEWC1x_t {
+                      
+                  __ATTR_ALIGN__(16) __m128  cmewr[ncols*nval];
+
+                  __ATTR_ALIGN__(16) __m128  cmewi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  constexpr T * cmewr_beg() { return (std::addressof(cmewr[0]));}
+                  constexpr __m128 * __restrict cmewr_beg() { return (std::addressof(cmewr[0]));}
+                  float * __restrict cmewr_fptr() { return ((float* __restrict)&cmewr[0]);} 
                   constexpr int32_t cmewr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmewi_beg() { return (std::addressof(cmewi[0]));}
+                  constexpr __m128 * __restrict cmewi_beg() { return (std::addressof(cmewi[0]));}
+                  float * __restrict cmewi_fptr() { return ((float* __restrict)&cmewi[0]);} 
                   constexpr int32_t cmewi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1526,28 +1496,18 @@ namespace gms {
           // The values describing the complex permittivity of north walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CENWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cenwr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cenwi[ncols*nval]; 
+         struct SSECENWC1x_t {
+              
+                  __ATTR_ALIGN__(16) __m128  cenwr[ncols*nval];
+   
+                  __ATTR_ALIGN__(16) __m128  cenwi[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                  constexpr T * cenwr_beg() { return (std::addressof(cenwr[0]));}
+                  constexpr __m128 * __restrict cenwr_beg() { return (std::addressof(cenwr[0]));}
+                  float * __restrict cenwr_fptr() { return ((float* __restrict)&cenwr[0]);} 
                   constexpr int32_t cenwr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cenwi_beg() { return (std::addressof(cenwi[0]));}
+                  constexpr __m128 * __restrict cenwi_beg() { return (std::addressof(cenwi[0]));}
+                  float * __restrict cenwi_fptr() { return ((float* __restrict)&cenwi[0]);} 
                   constexpr int32_t cenwi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1555,28 +1515,18 @@ namespace gms {
           // The values describing the complex permeability of north walls
                                // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct CMNWC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmnwr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmnwi[ncols*nval];  
+         struct SSECMNWC1x_t {
+                      
+                  __ATTR_ALIGN__(16) __m128  cmnwr[ncols*nval];
+  
+                  __ATTR_ALIGN__(16) __m128 cmnwi[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  constexpr T * cmnwr_beg() { return (std::addressof(cmnwr[0]));}
+                  constexpr __m128 * __restrict cmnwr_beg() { return (std::addressof(cmnwr[0]));}
+                  float * __restrict cmnwr_fptr() { return ((float* __restrict)&cmnwr[0]);} 
                   constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmnwi_beg() { return (std::addressof(cmnwi[0]));}
+                  constexpr __m128 * __restrict cmnwi_beg() { return (std::addressof(cmnwi[0]));}
+                  float * __restrict cmnwi_fptr() { return ((float* __restrict)&cmnwi[0]);} 
                   constexpr int32_t cmnwi_size() { return (NCOLS*NVAL);}
          };
          
@@ -1584,28 +1534,18 @@ namespace gms {
           // The values describing the complex permittivity of south angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CESARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cesarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cesari[ncols*nval]; 
+         struct SSECESARC1x_t {
+               
+                  __ATTR_ALIGN__(16) __m128 cesarr[ncols*nval];
+
+                  __ATTR_ALIGN__(16) __m128 cesari[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                       
-                  constexpr T * cesarr_beg() { return (std::addressof(cesarr[0]));}
+                  constexpr __m128 * __restrict cesarr_beg() { return (std::addressof(cesarr[0]));}
+                  float * __restrict cesarr_fptr() { return ((float* __restrict)&cesarr[0]);} 
                   constexpr int32_t cesarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cesari_beg() { return (std::addressof(cesari[0]));}
+                  constexpr __m128 * __restrict cesari_beg() { return (std::addressof(cesari[0]));}
+                  float * __restrict cesari_fptr() { return ((float* __restrict)&cesari[0]);} 
                   constexpr int32_t cesari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1613,28 +1553,18 @@ namespace gms {
          // The values describing the complex permeabillity of south angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CMSARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmsarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmsari[ncols*nval];  
+         struct SSECMSARC1x_t {
+                    
+                  __ATTR_ALIGN__(16) __m128  cmsarr[ncols*nval];
+    
+                  __ATTR_ALIGN__(16) __m128 cmsari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  constexpr T * cmsarr_beg() { return (std::addressof(cmsarr[0]));}
+                  constexpr __m128 * __restrict cmsarr_beg() { return (std::addressof(cmsarr[0]));}
+                  float * __restrict cmsarr_fptr() { return ((float* __restrict)&cmsarr[0]);} 
                   constexpr int32_t cmsarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmsari_beg() { return (std::addressof(cmsari[0]));}
+                  constexpr __m128 * __restrict cmsari_beg() { return (std::addressof(cmsari[0]));}
+                  float * __restrict cmsari_fptr() { return ((float* __restrict)&cmsari[0]);} 
                   constexpr int32_t cmsari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1642,28 +1572,18 @@ namespace gms {
          // The values describing the complex permittivity of east angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CEEARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T ceearr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T ceeari[ncols*nval];  
+         struct SSECEEARC1x_t {
+                  
+                  __ATTR_ALIGN__(16) __m128 ceearr[ncols*nval];
+   
+                  __ATTR_ALIGN__(16) __m128 ceeari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                      
-                  constexpr T * ceearr_beg() { return (std::addressof(ceearr[0]));}
+                  constexpr __m128 * __restrict ceearr_beg() { return (std::addressof(ceearr[0]));}
+                  float * __restrict ceearr_fptr() { return ((float* __restrict)&ceearr[0]);} 
                   constexpr int32_t ceearr_size() { return (NCOLS*NVAL);}
-                  constexpr T * ceeari_beg() { return (std::addressof(ceeari[0]));}
+                  constexpr __m128 * __restrict ceeari_beg() { return (std::addressof(ceeari[0]));}
+                   float * __restrict ceeari_fptr() { return ((float* __restrict)&ceeari[0]);} 
                   constexpr int32_t ceeari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1671,28 +1591,18 @@ namespace gms {
          // The values describing the complex permeabillity of east angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CMEARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmearr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmeari[ncols*nval]; 
+         struct SSECMEARC1x_t {
+                   
+                   __ATTR_ALIGN__(16) __m128 cmearr[ncols*nval];
+   
+                   __ATTR_ALIGN__(16) __m128 cmeari[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                  
-                  constexpr T * cmearr_beg() { return (std::addressof(cmearr[0]));}
+                  constexpr __m128 * __restrict cmearr_beg() { return (std::addressof(cmearr[0]));}
+                  float * __restrict cmearr_fptr() { return ((float* __restrict)&cmearr[0]);} 
                   constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmeari_beg() { return (std::addressof(cmeari[0]));}
+                  constexpr __m128 * __restrict cmeari_beg() { return (std::addressof(cmeari[0]));}
+                  float * __restrict cmeari_fptr() { return ((float* __restrict)&cmeari[0]);} 
                   constexpr int32_t cmeari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1700,28 +1610,18 @@ namespace gms {
          // The values describing the complex permittivity of west angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CEWARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cewarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cewari[ncols*nval];
+         struct SSECEWARC1x_t {
+                    
+                  __ATTR_ALIGN__(16) __m128 cewarr[ncols*nval];
+  
+                  __ATTR_ALIGN__(16) __m128 cewari[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                     
-                  constexpr T * cewarr_beg() { return (std::addressof(cewarr[0]));}
+                  constexpr  __m128 * __restrict cewarr_beg() { return (std::addressof(cewarr[0]));}
+                  float * __restrict cewarr_fptr() { return ((float* __restrict)&cewarr[0]);} 
                   constexpr int32_t cewarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cewari_beg() { return (std::addressof(cewari[0]));}
+                  constexpr __m128 * __restrict cewari_beg() { return (std::addressof(cewari[0]));}
+                  float * __restrict cewari_fptr() { return ((float* __restrict)&cewari[0]);} 
                   constexpr int32_t cewari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1729,28 +1629,18 @@ namespace gms {
          // The values describing the complex permeabillity of west angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CMWARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmwarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmwari[ncols*nval];  
+         struct SSECMWARC1x_t {
+                    
+                   __ATTR_ALIGN__(16) __m128 cmwarr[ncols*nval];
+  
+                   __ATTR_ALIGN__(16) __m128 cmwari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                  constexpr T * cmwarr_beg() { return (std::addressof(cmwarr[0]));}
-                  constexpr int32_t cwnarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmwari_beg() { return (std::addressof(cmwari[0]));}
+                  constexpr __m128 * __restrict cmwarr_beg() { return (std::addressof(cmwarr[0]));}
+                   float * __restrict cmwarr_fptr() { return ((float* __restrict)&cmwarr[0]);} 
+                  constexpr int32_t cmwarr_size() { return (NCOLS*NVAL);}
+                  constexpr __m128 * __restrict cmwari_beg() { return (std::addressof(cmwari[0]));}
+                   float * __restrict cmwari_fptr() { return ((float* __restrict)&cmwari[0]);} 
                   constexpr int32_t cmwari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1758,28 +1648,18 @@ namespace gms {
           // The values describing the complex permittivity of north angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CENARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cenarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cenari[ncols*nval];  
+         struct SSECENARC1x_t {
+                   
+                   __ATTR_ALIGN__(16) __m128 cenarr[ncols*nval];
+    
+                   __ATTR_ALIGN__(16) __m128 cenari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  constexpr T * cenarr_beg() { return (std::addressof(cenarr[0]));}
+                  constexpr __m128 * __restrict cenarr_beg() { return (std::addressof(cenarr[0]));}
+                   float * __restrict cenarr_fptr() { return ((float* __restrict)&cenarr[0]);} 
                   constexpr int32_t cenarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cenari_beg() { return (std::addressof(cenari[0]));}
+                  constexpr __m128 * __restrict cenari_beg() { return (std::addressof(cenari[0]));}
+                   float * __restrict cenari_fptr() { return ((float* __restrict)&cenari[0]);} 
                   constexpr int32_t cenari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1787,28 +1667,18 @@ namespace gms {
          // The values describing the complex permeabillity of north angled roof
                                // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct CMNARC1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T cmnarr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif     
-                  T cmnari[ncols*nval];  
+         struct SSECMNARC1x_t {
+                     
+                   __ATTR_ALIGN__(16) __m128 cmnarr[ncols*nval];
+
+                   __ATTR_ALIGN__(16) __m128 cmnari[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                  constexpr T * cmnarr_beg() { return (std::addressof(cmnarr[0]));}
+                  constexpr __m128 * __restrict cmnarr_beg() { return (std::addressof(cmnarr[0]));}
+                  float * __restrict cmnarr_fptr() { return ((float* __restrict)&cmnarr[0]);} 
                   constexpr int32_t cmnarr_size() { return (NCOLS*NVAL);}
-                  constexpr T * cmnari_beg() { return (std::addressof(cmnari[0]));}
+                  constexpr __m128 * __restrict cmnari_beg() { return (std::addressof(cmnari[0]));}
+                  float * __restrict cmnari_fptr() { return ((float* __restrict)&cmnari[0]);} 
                   constexpr int32_t cmnari_size() { return (NCOLS*NVAL);}
          };
          
@@ -1816,39 +1686,24 @@ namespace gms {
          // The components of south walls normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVSWR1x_t {
+         struct SSENVSWR1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];
+     
+                   __ATTR_ALIGN__(16) __m128 nvx[ncols*nval];
+                   
+                   __ATTR_ALIGN__(16) __m128 nvy[ncols*nval];
+              
+                   __ATTR_ALIGN__(16) __m128 nvz[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -1856,39 +1711,24 @@ namespace gms {
         // The components of east walls normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVEWR1x_t {
+         struct SSENVEWR1x_t {
                   
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];   
+   
+                   __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                    
+                    __ATTR_ALIGN__(16) __m128 nvy[ncols*nval];
+                
+                    __ATTR_ALIGN__(16) __m128 nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;              
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -1896,38 +1736,23 @@ namespace gms {
         // The components of west walls normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVWWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];  
+         struct SSENVWWR1x_t {
+        
+                 __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                       
+                 __ATTR_ALIGN__(16) __m128  nvy[ncols*nval];
+                 
+                 __ATTR_ALIGN__(16) __m128  nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                   
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -1935,38 +1760,23 @@ namespace gms {
         // The components of north walls normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVNWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];     
+         struct SSENVNWR1x_t {
+           
+                  __ATTR_ALIGN__(16) __m128 nvx[ncols*nval];
+                      
+                  __ATTR_ALIGN__(16) __m128 nvy[ncols*nval];
+                
+                  __ATTR_ALIGN__(16) __m128 nvz[ncols*nval];     
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                 
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                   float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                   float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                   float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -1974,38 +1784,23 @@ namespace gms {
          // The components of each building normal vector
                                     // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct NVBR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];  
+         struct SSENVBR1x_t {
+    
+                   __ATTR_ALIGN__(16) __m128 nvx[ncols*nval];
+                     
+                   __ATTR_ALIGN__(16) __m128 nvy[ncols*nval];
+              
+                   __ATTR_ALIGN__(16) __m128 nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                    
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2013,38 +1808,23 @@ namespace gms {
          // The components of each building flat roof normal vector
                                     // ! (per each column) x number of columns 
          template<int32_t ncols,int32_t nval>
-         struct NVFRR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];   
+         struct SSENVFRR1x_t {
+        
+                 __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                    
+                 __ATTR_ALIGN__(16) __m128  nvy[ncols*nval];
+             
+                 __ATTR_ALIGN__(16) __m128  nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                         
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                   float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                   float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                   float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2052,38 +1832,23 @@ namespace gms {
           // The components of south angled roof normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVSARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];   
+         struct SSENVSARR1x_t {
+        
+                 __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                      
+                 __ATTR_ALIGN__(16) __m128  nvy[ncols*nval];
+                 
+                 __ATTR_ALIGN__(16) __m128  nvz[ncols*nval];   
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                   
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                     float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                     float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                     float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2091,38 +1856,23 @@ namespace gms {
         // The components of east angled roof normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVEARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];  
+         struct SSENVEARR1x_t {
+
+                 __ATTR_ALIGN__(16) __m128   nvx[ncols*nval];
+                   
+                 __ATTR_ALIGN__(16) __m128   nvy[ncols*nval];
+                
+                 __ATTR_ALIGN__(16) __m128   nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                       
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                    float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                    float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                    float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2130,38 +1880,23 @@ namespace gms {
         // The components of west angled roof normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVWARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval];  
+         struct SSENVWARR1x_t {
+       
+                   __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                       
+                   __ATTR_ALIGN__(16) __m128  nvy[ncols*nval];
+                 
+                   __ATTR_ALIGN__(16) __m128  nvz[ncols*nval];  
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                         
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2169,38 +1904,23 @@ namespace gms {
         // The components of north angled roof normal vector
                                     // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct NVNARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif            
-                   T nvx[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                       
-                  T nvy[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T nvz[ncols*nval]; 
+         struct SSENVNARR1x_t {
+          
+                  __ATTR_ALIGN__(16) __m128  nvx[ncols*nval];
+                     
+                  __ATTR_ALIGN__(16) __m128  nvy[ncols*nval];
+               
+                  __ATTR_ALIGN__(16) __m128  nvz[ncols*nval]; 
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;                         
-                  constexpr T * nvx_beg() { return (std::addressof(nvx[0]));}
+                  constexpr __m128 * __restrict nvx_beg() { return (std::addressof(nvx[0]));}
+                  float * __restrict nvx_fptr() { return ((float* __restrict)&nvx[0]);} 
                   constexpr int32_t nvx_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvy_beg() { return (std::addressof(nvy[0]));}
+                  constexpr __m128 * __restrict nvy_beg() { return (std::addressof(nvy[0]));}
+                  float * __restrict nvy_fptr() { return ((float* __restrict)&nvy[0]);} 
                   constexpr int32_t nvy_size() { return (NCOLS*NVAL);}
-                  constexpr T * nvz_beg() { return (std::addressof(nvz[0]));}
+                  constexpr __m128 * __restrict nvz_beg() { return (std::addressof(nvz[0]));}
+                  float * __restrict nvz_fptr() { return ((float* __restrict)&nvz[0]);} 
                   constexpr int32_t nvz_size() { return (NCOLS*NVAL);}
          };
          
@@ -2208,29 +1928,19 @@ namespace gms {
          // The values of each south wall height and width
                         // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWSWR1x_t {
+         struct SSEHWSWR1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                T  hsw[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                T  wsw[ncols*nval];
+               
+                __ATTR_ALIGN__(16) __m128   hsw[ncols*nval];
+                 
+                __ATTR_ALIGN__(16) __m128  wsw[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * hsw_beg() { return (std::addressof(hsw[0]));}
+                constexpr __m128 * __restrict hsw_beg() { return (std::addressof(hsw[0]));}
+                float * __restrict hsw_fptr() { return ((float* __restrict)&hsw[0]);} 
                 constexpr int32_t hsw_size() { return (NCOLS*NVAL);}
-                constexpr T * wsw_beg() { return (std::addressof(wsw[0]));}
+                constexpr __m128 * __restrict wsw_beg() { return (std::addressof(wsw[0]));}
+                float * __restrict wsw_fptr() { return ((float* __restrict)&wsw[0]);} 
                 constexpr int32_t wsw_size() { return (NCOLS*NVAL);}
          };
          
@@ -2238,28 +1948,18 @@ namespace gms {
           // The values of each east wall height and width
                         // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWEWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                T  hew[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                T  wew[ncols*nval];  
+         struct SSEHWEWR1x_t {
+                 
+                __ATTR_ALIGN__(16) __m128   hew[ncols*nval];
+                  
+                __ATTR_ALIGN__(16) __m128   wew[ncols*nval];  
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;              
-                constexpr T * hew_beg() { return (std::addressof(hew[0]));}
+                constexpr __m128 * __restrict hew_beg() { return (std::addressof(hew[0]));}
+                float * __restrict hew_fptr() { return ((float* __restrict)&hew[0]);} 
                 constexpr int32_t hew_size() { return (NCOLS*NVAL);} 
-                constexpr T * wew_beg() { return (std::addressof(wew[0]));}
+                constexpr __m128 * __restrict wew_beg() { return (std::addressof(wew[0]));}
+                float * __restrict wew_fptr() { return ((float* __restrict)&wew[0]);} 
                 constexpr int32_t wew_size() { return (NCOLS*NVAL);}
          };
          
@@ -2267,28 +1967,18 @@ namespace gms {
          // The values of each west wall height and width
                         // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWWWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                T  hww[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                T  www[ncols*nval];      
+         struct SSEHWWWR1x_t {
+                 
+                __ATTR_ALIGN__(16) __m128  hww[ncols*nval];
+                  
+                __ATTR_ALIGN__(16) __m128  www[ncols*nval];      
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;          
-                constexpr T * hww_beg() { return (std::addressof(hww[0]));}
+                constexpr __m128 * __restrict hww_beg() { return (std::addressof(hww[0]));}
+                float * __restrict hww_fptr() { return ((float* __restrict)&hww[0]);} 
                 constexpr int32_t hww_size() { return (NCOLS*NVAL);}
-                constexpr T * www_beg() { return (std::addressof(www[0]));}
+                constexpr __m128 * __restrict www_beg() { return (std::addressof(www[0]));}
+                float * __restrict www_fptr() { return ((float* __restrict)&www[0]);} 
                 constexpr int32_t www_size() { return (NCOLS*NVAL);}
          };
          
@@ -2296,28 +1986,18 @@ namespace gms {
           // The values of each north wall height and width
                         // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWNWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                T  hnw[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                T  wnw[ncols*nval];   
+         struct SSEHWNWR1x_t {
+              
+                __ATTR_ALIGN__(16) __m128     hnw[ncols*nval];
+                   
+                __ATTR_ALIGN__(16) __m128    wnw[ncols*nval];   
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;  
-                constexpr T * hnw_beg() { return (std::addressof(hnw[0]));}
+                constexpr __m128 * __restrict hnw_beg() { return (std::addressof(hnw[0]));}
+                 float * __restrict hnw_fptr() { return ((float* __restrict)&hnw[0]);} 
                 constexpr int32_t hnw_size() { return (NCOLS*NVAL);}
-                constexpr T * wnw_beg() { return (std::addressof(wnw[0]));}
+                constexpr __m128 * __restrict wnw_beg() { return (std::addressof(wnw[0]));}
+                 float * __restrict wnw_fptr() { return ((float* __restrict)&wnw[0]);} 
                 constexpr int32_t wnw_size() { return (NCOLS*NVAL);}                    
                
          };
@@ -2326,28 +2006,18 @@ namespace gms {
          // The values of each flat roof height and width
                         // ! (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWFRR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T hfr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T wfr[ncols*nval];
+         struct SSEHWFRR1x_t {
+            
+               __ATTR_ALIGN__(16) __m128  hfr[ncols*nval];
+             
+               __ATTR_ALIGN__(16) __m128  wfr[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * hfr_beg() { return (std::addressof(hfr[0]));}
+                constexpr __m128 * __restrict hfr_beg() { return (std::addressof(hfr[0]));}
+                float * __restrict hfr_fptr() { return ((float* __restrict)&hfr[0]);} 
                 constexpr int32_t hfr_size() { return (NCOLS*NVAL);}
-                constexpr T * wfr_beg() { return (std::addressof(wfr[0]));}
+                constexpr __m128 * __restrict wfr_beg() { return (std::addressof(wfr[0]));}
+                float * __restrict wfr_fptr() { return ((float* __restrict)&wfr[0]);} 
                 constexpr int32_t wfr_size() { return (NCOLS*NVAL);}
          };
          
@@ -2355,30 +2025,20 @@ namespace gms {
         // The values of each south non-flat roof (either triangular, squared or rectangulart) 
         // height and width (base) (per each column) x number of columns  
          template<int32_t ncols,int32_t nval>
-         struct HWSNFRR1x_t {
+         struct SSEHWSNFRR1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                
-                T  hsnfr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif 
-                T  wsnfr[ncols*nval];
+          
+                __ATTR_ALIGN__(16) __m128   hsnfr[ncols*nval];
+
+                __ATTR_ALIGN__(16) __m128  wsnfr[ncols*nval];
                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * hsnfr_beg() { return (std::addressof(hsnfr[0]));}
+                constexpr __m128 * __restrict hsnfr_beg() { return (std::addressof(hsnfr[0]));}
+                float * __restrict hsnfr_fptr() { return ((float* __restrict)&hsnfr[0]);} 
                 constexpr int32_t hsnfr_size() { return (NCOLS*NVAL);}
-                constexpr T * wsnfr_beg() { return (std::addressof(wsnfr[0]));}
+                constexpr __m128 * __restrict wsnfr_beg() { return (std::addressof(wsnfr[0]));}
+                float * __restrict wsnfr_fptr() { return ((float* __restrict)&wsnfr[0]);} 
                 constexpr int32_t wsnfr_size() { return (NCOLS*NVAL);}
          };
          
@@ -2386,30 +2046,20 @@ namespace gms {
         // The values of each east non-flat roof (either triangular, squared or rectangulart) 
         // height and width (base) (per each column) x number of columns  [henfr,wenfr]
          template<int32_t ncols,int32_t nval>
-         struct HWENFRR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                
-                T  henfr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif 
-                T  wenfr[ncols*nval];
+         struct SSEHWENFRR1x_t {
+           
+                __ATTR_ALIGN__(16) __m128   henfr[ncols*nval];
+
+                __ATTR_ALIGN__(16) __m128   wenfr[ncols*nval];
                 
                  int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * henfr_beg() { return (std::addressof(henfr[0]));}
+                 constexpr __m128 * __restrict henfr_beg() { return (std::addressof(henfr[0]));}
+                 float * __restrict henfr_fptr() { return ((float* __restrict)&henfr[0]);} 
                  constexpr int32_t henfr_size() { return (NCOLS*NVAL);}
-                 constexpr T * wenfr_beg() { return (std::addressof(wenfr[0]));}
+                 constexpr __m128 * __restrict wenfr_beg() { return (std::addressof(wenfr[0]));}
+                 float * __restrict wenfr_fptr() { return ((float* __restrict)&wenfr[0]);} 
                  constexpr int32_t wenfr_size() { return (NCOLS*NVAL);}
     };
          
@@ -2417,30 +2067,20 @@ namespace gms {
         // The values of each west non-flat roof (either triangular, squared or rectangulart) 
         // height and width (base) (per each column) x number of columns  [hwnfr,wwnfr]
          template<int32_t ncols,int32_t nval>
-         struct HWWNFRR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                
-                T  hwnfr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif 
-                T  wwnfr[ncols*nval];
+         struct SSEHWWNFRR1x_t {
+           
+                __ATTR_ALIGN__(16) __m128   hwnfr[ncols*nval];
+
+                __ATTR_ALIGN__(16) __m128   wwnfr[ncols*nval];
                 
                  int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                          
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * hwnfr_beg() { return (std::addressof(hwnfr[0]));}
+                constexpr __m128 * __restrict hwnfr_beg() { return (std::addressof(hwnfr[0]));}
+                float * __restrict hwnfr_fptr() { return ((float* __restrict)&hwnfr[0]);} 
                 constexpr int32_t hwnfr_size() { return (NCOLS*NVAL);}
-                constexpr T * wwnfr_beg() { return (std::addressof(wwnfr[0]));}
+                constexpr __m128 * __restrict wwnfr_beg() { return (std::addressof(wwnfr[0]));}
+                float * __restrict wwnfr_fptr() { return ((float* __restrict)&wwnfr[0]);} 
                 constexpr int32_t wwnfr_size() { return (NCOLS*NVAL);}
          };
          
@@ -2448,30 +2088,20 @@ namespace gms {
         // The values of each north non-flat roof (either triangular, squared or rectangulart) 
         // height and width (base) (per each column) x number of columns  [hnnfr,wnnfr]
          template<typename T>
-         struct HWNNFRR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                
-                T  hnnfr[ncols*nval];
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif 
-                T  wnnfr[ncols*nval];
+         struct SSEHWNNFRR1x_t {
+       
+               __ATTR_ALIGN__(16) __m128   hnnfr[ncols*nval];
+
+               __ATTR_ALIGN__(16) __m128   wnnfr[ncols*nval];
                 
                 int32_t     type; // 0 triangular roof , 1 squared roof , 2 reactangular roof                        
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * hnnfr_beg() { return (std::addressof(hnnfr[0]));}
+                constexpr __m128 * __restrict hnnfr_beg() { return (std::addressof(hnnfr[0]));}
+                float * __restrict hnnfr_fptr() { return ((float* __restrict)&hnnfr[0]);} 
                 constexpr int32_t hnnfr_size() { return (NCOLS*NVAL);}
-                constexpr T * wnnfr_beg() { return (std::addressof(wnnfr[0]));}
+                constexpr __m128 * __restrict wnnfr_beg() { return (std::addressof(wnnfr[0]));}
+                float * __restrict wnnfr_fptr() { return ((float* __restrict)&wnnfr[0]);} 
                 constexpr int32_t wnnfr_size() { return (NCOLS*NVAL);}
          };
          
@@ -2479,69 +2109,33 @@ namespace gms {
          // Any kind of metallic structure fixed on the roof, e.g., an wire antenna, cylindrical object (ventillation)
          // or parabollic antenna, or similar type (per each column) x number of columns.
          template<int32_t ncols,int32_t nval>
-         struct BRMSB1x_t {
+         struct SSEBRMSB1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
+          
                 bool want[ncols*nval]; // a wire antennae
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
+                 
                 bool pant[ncols*nval]; // a parabollic antennae
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
+             
                 bool yant[ncols*nval]; // yagi type antennae
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
+                
                 bool lpda[ncols*nval]; // log-periodic dipole array
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
+                 
                 bool cant[ncols*nval]; // cell phone sector bars antennae
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
+                
                 bool cylo[ncols*nval]; // any kind of cylindrical (ventillation) object
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * want_beg() { return (std::addressof(want[0]));}
+                constexpr bool * want_beg() { return (std::addressof(want[0]));}
                 constexpr int32_t want_size() { return (NCOLS*NVAL);}
-                constexpr T * pant_beg() { return (std::addressof(pant[0]));}
+                constexpr bool * pant_beg() { return (std::addressof(pant[0]));}
                 constexpr int32_t pant_size() { return (NCOLS*NVAL);}
-                constexpr T * yant_beg() { return (std::addressof(yant[0]));}
+                constexpr bool * yant_beg() { return (std::addressof(yant[0]));}
                 constexpr int32_t yant_size() { return (NCOLS*NVAL);}
-                constexpr T * lpda_beg() { return (std::addressof(lpda[0]));}
+                constexpr bool * lpda_beg() { return (std::addressof(lpda[0]));}
                 constexpr int32_t lpda_size() { return (NCOLS*NVAL);}
-                constexpr T * cant_beg() { return (std::addressof(cant[0]));}
+                constexpr bool * cant_beg() { return (std::addressof(cant[0]));}
                 constexpr int32_t cant_size() { return (NCOLS*NVAL);}
-                constexpr T * cylo_beg() { return (std::addressof(cylo[0]));}
+                constexpr bool * cylo_beg() { return (std::addressof(cylo[0]));}
                 constexpr int32_t cylo_size() { return (NCOLS*NVAL);}
          };
          
@@ -2549,19 +2143,13 @@ namespace gms {
          // The number of ventillation objects per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NVOI1x_t {
+         struct SSENVOI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                int32_t nvo[ncols*nval];
+                 
+                __ATTR_ALIGN__(16) __m128i nvo[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nvo_beg() { return (std::addressof(nvo[0]));}
+                constexpr __m128i * __restrict nvo_beg() { return (std::addressof(nvo[0]));}
                 constexpr int32_t nvo_size() { return (NCOLS*NVAL);}
          };
          
@@ -2569,19 +2157,13 @@ namespace gms {
          // The number of wire antennae per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NWAI1x_t {
+         struct SSENWAI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                    
-                int32_t  nwa[ncols*nval];
+                 
+                __ATTR_ALIGN__(16) __m128i  nwa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nwa_beg() { return (std::addressof(nwa[0]));}
+                constexpr __m128i * __restrict nwa_beg() { return (std::addressof(nwa[0]));}
                 constexpr int32_t nwa_size() { return (NCOLS*NVAL);}
          };
          
@@ -2589,19 +2171,13 @@ namespace gms {
           // The number of yagi-antennae per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NYAI1x_t {
+         struct SSENYAI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                 
-                int32_t  nya[ncols*nval];
+                
+                __ATTR_ALIGN__(16) __m128i  nya[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nya_beg() { return (std::addressof(nya[0]));}
+                constexpr __m128i * __restrict nya_beg() { return (std::addressof(nya[0]));}
                 constexpr int32_t nya_size() { return (NCOLS*NVAL);}
          };
          
@@ -2609,19 +2185,13 @@ namespace gms {
           // The number of log-periodic dipole antennae per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NLPDAI1x_t {
+         struct SSENLPDAI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                 
-                int32_t  nlpda[ncols*nval];
+              
+                __ATTR_ALIGN__(16) __m128i  nlpda[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nlpda_beg() { return (std::addressof(nlpda[0]));}
+                constexpr __m128i * __restrict nlpda_beg() { return (std::addressof(nlpda[0]));}
                 constexpr int32_t nlpda_size() { return (NCOLS*NVAL);}
          };
          
@@ -2629,19 +2199,13 @@ namespace gms {
           // The number of parabollic antennae per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NPAI1x_t {
+         struct SSENPAI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                int32_t  npa[ncols*nval];
+              
+                __ATTR_ALIGN__(16)  __m128i  npa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * npa_beg() { return (std::addressof(npa[0]));}
+                constexpr __m128 * __restrict npa_beg() { return (std::addressof(npa[0]));}
                 constexpr int32_t npa_size() { return (NCOLS*NVAL);}
          };
          
@@ -2649,19 +2213,13 @@ namespace gms {
           // The number of cell-phone antennae per single building roof
          // for every building column.
          template<int32_t ncols,int32_t nval>
-         struct NCPAI1x_t {
+         struct SSENCPAI1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                int32_t  ncpa[ncols*nval];
+               
+                __ATTR_ALIGN__(16) __m128i  ncpa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * ncpa_beg() { return (std::addressof(ncpa[0]));}
+                constexpr __m128i * __restrict ncpa_beg() { return (std::addressof(ncpa[0]));}
                 constexpr int32_t ncpa_size() { return (NCOLS*NVAL);}
          };
          
@@ -2669,19 +2227,14 @@ namespace gms {
          // The values of RCS for the flat roof of
          // building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSFRR1x_t {
+         struct SSERCSFRR1x_t {
                 
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                
-                 T  rcsfr[ncols*nval];
+            
+                 __ATTR_ALIGN__(16) __m128  rcsfr[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * rcsfr_beg() { return (std::addressof(rcsfr[0]));}
+                 constexpr __m128 * __restrict rcsfr_beg() { return (std::addressof(rcsfr[0]));}
+                 float * __restrict rcsfr_fptr() { return ((float* __restrict)&rcsfr[0]);} 
                  constexpr int32_t rcsfr_size() { return (NCOLS*NVAL);}
          };
          
@@ -2689,18 +2242,13 @@ namespace gms {
           // The values of RCS for the south wall of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSSWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T rcssw[ncols*nval];
+         struct SSERCSSWR1x_t {
+                
+                __ATTR_ALIGN__(16) __m128 rcssw[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * rcssw_beg() { return (std::addressof(rcssw[0]));}
+                constexpr __m128 * __restrict rcssw_beg() { return (std::addressof(rcssw[0]));}
+                float * __restrict rcssw_fptr() { return ((float* __restrict)&rcssw[0]);} 
                 constexpr int32_t rcssw_size() { return (NCOLS*NVAL);}
          };
          
@@ -2710,17 +2258,12 @@ namespace gms {
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
          struct RCSEWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                 T rcsew[ncols*nval];
+                 
+                 __ATTR_ALIGN__(16) __m128  rcsew[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * rcsew_beg() { return (std::addressof(rcsew[0]));}
+                 constexpr __m128 * __restrict rcsew_beg() { return (std::addressof(rcsew[0]));}
+                 float * __restrict rcsew_fptr() { return ((float* __restrict)&rcsew[0]);} 
                  constexpr int32_t rcsew_size() { return (NCOLS*NVAL);}
          };
          
@@ -2729,18 +2272,13 @@ namespace gms {
           // The values of RCS for the west wall of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSWWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                 T rcsww[ncols*nval];
+         struct SSERCSWWR1x_t {
+               
+                 __ATTR_ALIGN__(16) __m128  rcsww[ncols*nval];
                  constexpr static int32_t NCOLS = ncols;
                  constexpr static int32_t NVAL  = nval;
-                 constexpr T * rcsww_beg() { return (std::addressof(rcsww[0]));}
+                 constexpr __m128 * __restrict rcsww_beg() { return (std::addressof(rcsww[0]));}
+                 float * __restrict rcsww_fptr() { return ((float* __restrict)&rcsww[0]);} 
                  constexpr int32_t rcsww_size() { return (NCOLS*NVAL);}
          };
          
@@ -2749,18 +2287,13 @@ namespace gms {
           // The values of RCS for the north wall of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSNWR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T rcsnw[ncols*nval];
+         struct SSERCSNWR1x_t {
+                 
+                 __ATTR_ALIGN__(16) __m128  rcsnw[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * rcsnw_beg() { return (std::addressof(rcsnw[0]));}
+                constexpr __m128 * __restrict rcsnw_beg() { return (std::addressof(rcsnw[0]));}
+                float * __restrict rcsnw_fptr() { return ((float* __restrict)&rcsnw[0]);} 
                 constexpr int32_t rcsnw_size() { return (NCOLS*NVAL);}
          };
          
@@ -2768,18 +2301,13 @@ namespace gms {
          // The values of RCS for the south angled roof of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSSARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                   T rcssar[ncols*nval];
+         struct SSERCSSARR1x_t {
+                 
+                    __ATTR_ALIGN__(16) __m128  rcssar[ncols*nval];
                    constexpr static int32_t NCOLS = ncols;
                    constexpr static int32_t NVAL  = nval;
-                   constexpr T * rcssar_beg() { return (std::addressof(rcssar[0]));}
+                   constexpr __m128 * __restrict rcssar_beg() { return (std::addressof(rcssar[0]));}
+                    float * __restrict rcssar_fptr() { return ((float* __restrict)&rcssar[0]);} 
                    constexpr int32_t rcssar_size() { return (NCOLS*NVAL);}
          };
          
@@ -2787,18 +2315,13 @@ namespace gms {
          // The values of RCS for the south east roof of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSEARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T rcsear[ncols*nval];
+         struct SSERCSEARR1x_t {
+                 
+                __ATTR_ALIGN__(16) __m128 rcsear[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * rcsear_beg() { return (std::addressof(rcsear[0]));}
+                constexpr __m128 * __restrict rcsear_beg() { return (std::addressof(rcsear[0]));}
+                 float * __restrict rcsear_fptr() { return ((float* __restrict)&rcsear[0]);} 
                 constexpr int32_t rcsear_size() { return (NCOLS*NVAL);}
          };
          
@@ -2806,18 +2329,13 @@ namespace gms {
          // The values of RCS for the west angled roof of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSWARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                  T rcswar[ncols*nval];
+         struct SSERCSWARR1x_t {
+               
+                  __ATTR_ALIGN__(16) __m128 rcswar[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * rcswar_beg() { return (std::addressof(rcswar[0]));}
+                  constexpr __m128 * __restrict rcswar_beg() { return (std::addressof(rcswar[0]));}
+                   float * __restrict rcswar_fptr() { return ((float* __restrict)&rcswar[0]);} 
                   constexpr int32_t rcswar_size() { return (NCOLS*NVAL);}
          };
          
@@ -2825,18 +2343,12 @@ namespace gms {
          // The values of RCS for the north angled roof of
          // of every building in the building column.
          template<int32_t ncols,int32_t nval>
-         struct RCSNARR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                  
-                T  rcsnar[ncols*nval];
+         struct SSERCSNARR1x_t {
+         
+                __ATTR_ALIGN__(16) __m128 rcsnar[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * rcsnar_beg() { return (std::addressof(rcsnar[0]));}
+                constexpr __m128 * __restrict rcsnar_beg() { return (std::addressof(rcsnar[0]));}
                 constexpr int32_t rcsnar_size() { return (NCOLS*NVAL);}
          };
          
@@ -2844,18 +2356,13 @@ namespace gms {
          // The values of whole building surface area
          // of every building in building column
          template<int32_t ncols,int32_t nval>
-         struct WBSAR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                T wbsa[ncols*nval];
+         struct SSEWBSAR1x_t {
+               
+                __ATTR_ALIGN__(16) __m128 wbsa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * wbsa_beg() { return (std::addressof(wbsa[0]));}
+                constexpr __m128 * __restrict wbsa_beg() { return (std::addressof(wbsa[0]));}
+                 float * __restrict wbsa_fptr() { return ((float* __restrict)&wbsa[0]);} 
                 constexpr int32_t wbsa_size() { return (NCOLS*NVAL);}
          };
          
@@ -2863,18 +2370,13 @@ namespace gms {
          // The values of whole building internal volume
          // of every building in building column
          template<int32_t ncols,int32_t nval>
-         struct WBIVR1x_t {
-#if defined (__AVX512F__)                   
-                   __ATTR_ALIGN__(64)                    
-#elif defined (__AVX__) || defined (__AVX2__)                
-                   __ATTR_ALIGN__(32) 
-#elif defined (__SSE__)
-                   __ATTR_ALIGN__(16)                  
-#endif                   
-                 T wbiv[ncols*nval];
+         struct SSEWBIVR1x_t {
+               
+                  __ATTR_ALIGN__(16) __m128 wbiv[ncols*nval];
                   constexpr static int32_t NCOLS = ncols;
                   constexpr static int32_t NVAL  = nval;
-                  constexpr T * wbiv_beg() { return (std::addressof(wbiv[0]));}
+                  constexpr __m128 * __restrict wbiv_beg() { return (std::addressof(wbiv[0]));}
+                  float * __restrict wbiv_fptr() { return ((float* __restrict)&wbiv[0]);} 
                   constexpr int32_t wbiv_size() { return (NCOLS*NVAL);}
          };
          
