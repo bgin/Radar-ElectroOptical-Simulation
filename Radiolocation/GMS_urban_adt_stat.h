@@ -3112,17 +3112,17 @@ namespace gms {
                 bool cylo[ncols*nval]; // any kind of cylindrical (ventillation) object
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * want_beg() { return (std::addressof(want[0]));}
+                constexpr bool * want_beg() { return (std::addressof(want[0]));}
                 constexpr int32_t want_size() { return (NCOLS*NVAL);}
-                constexpr T * pant_beg() { return (std::addressof(pant[0]));}
+                constexpr bool * pant_beg() { return (std::addressof(pant[0]));}
                 constexpr int32_t pant_size() { return (NCOLS*NVAL);}
-                constexpr T * yant_beg() { return (std::addressof(yant[0]));}
+                constexpr bool * yant_beg() { return (std::addressof(yant[0]));}
                 constexpr int32_t yant_size() { return (NCOLS*NVAL);}
-                constexpr T * lpda_beg() { return (std::addressof(lpda[0]));}
+                constexpr bool * lpda_beg() { return (std::addressof(lpda[0]));}
                 constexpr int32_t lpda_size() { return (NCOLS*NVAL);}
-                constexpr T * cant_beg() { return (std::addressof(cant[0]));}
+                constexpr bool * cant_beg() { return (std::addressof(cant[0]));}
                 constexpr int32_t cant_size() { return (NCOLS*NVAL);}
-                constexpr T * cylo_beg() { return (std::addressof(cylo[0]));}
+                constexpr bool * cylo_beg() { return (std::addressof(cylo[0]));}
                 constexpr int32_t cylo_size() { return (NCOLS*NVAL);}
          };
          
@@ -3142,7 +3142,7 @@ namespace gms {
                 int32_t nvo[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nvo_beg() { return (std::addressof(nvo[0]));}
+                constexpr int32_t * nvo_beg() { return (std::addressof(nvo[0]));}
                 constexpr int32_t nvo_size() { return (NCOLS*NVAL);}
          };
          
@@ -3162,7 +3162,7 @@ namespace gms {
                 int32_t  nwa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nwa_beg() { return (std::addressof(nwa[0]));}
+                constexpr int32_t * nwa_beg() { return (std::addressof(nwa[0]));}
                 constexpr int32_t nwa_size() { return (NCOLS*NVAL);}
          };
          
@@ -3182,7 +3182,7 @@ namespace gms {
                 int32_t  nya[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nya_beg() { return (std::addressof(nya[0]));}
+                constexpr int32_t * nya_beg() { return (std::addressof(nya[0]));}
                 constexpr int32_t nya_size() { return (NCOLS*NVAL);}
          };
          
@@ -3202,7 +3202,7 @@ namespace gms {
                 int32_t  nlpda[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * nlpda_beg() { return (std::addressof(nlpda[0]));}
+                constexpr int32_t * nlpda_beg() { return (std::addressof(nlpda[0]));}
                 constexpr int32_t nlpda_size() { return (NCOLS*NVAL);}
          };
          
@@ -3222,7 +3222,7 @@ namespace gms {
                 int32_t  npa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * npa_beg() { return (std::addressof(npa[0]));}
+                constexpr int32_t * npa_beg() { return (std::addressof(npa[0]));}
                 constexpr int32_t npa_size() { return (NCOLS*NVAL);}
          };
          
@@ -3242,7 +3242,7 @@ namespace gms {
                 int32_t  ncpa[ncols*nval];
                 constexpr static int32_t NCOLS = ncols;
                 constexpr static int32_t NVAL  = nval;
-                constexpr T * ncpa_beg() { return (std::addressof(ncpa[0]));}
+                constexpr int32_t * ncpa_beg() { return (std::addressof(ncpa[0]));}
                 constexpr int32_t ncpa_size() { return (NCOLS*NVAL);}
          };
          
