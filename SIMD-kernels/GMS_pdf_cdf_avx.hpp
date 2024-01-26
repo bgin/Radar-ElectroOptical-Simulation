@@ -2665,7 +2665,7 @@ namespace gms {
 			   pdf                 = _mm256_mask_blend_pd(m1,_0,_0);
 			   m2                  = _mm256_cmp_pd_mask(x,t1,_CMP_LE_OQ);
 
-                           const __m256d tmp1  = _mm256_exp(_mm256_mul_pd(b,
+                           const __m256d tmp1  = _mm256_exp_pd(_mm256_mul_pd(b,
 			                                              _mm256_cos_pd(
 								                _mm256_sub_pd(x,a))));
                            
@@ -2696,12 +2696,12 @@ namespace gms {
 			   m1                  = _mm256_cmp_pd_mask(x,t0,_CMP_LT_OQ);
 			   pdf                 = _mm256_mask_blend_pd(m1,_0,_0);
 			   m2                  = _mm256_cmp_pd_mask(x,t1,_CMP_LE_OQ);
-                           const __m256 tmp1  = _mm256_exp(_mm256_mul_pd(b,
+                           const __m256 tmp1  = _mm256_exp_ps(_mm256_mul_pd(b,
 			                                              _mm256_cos_pd(
 								                _mm256_sub_pd(x,a))));
                            
 			   pdf                 = _mm256_mask_blend_pd(m2,_0,_mm256_div_pd(tmp1,
-			                                              _mm256_mul_pd(_2pi,bessesl_i0_ymm4r8(b))));
+			                                              _mm256_mul_pd(_2pi,bessesl_i0_ymm8r4(b))));
 			   return (pdf);
 		   }
 
@@ -3005,7 +3005,7 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline           
                       __m256
-		      rayleigh_mean_zmmr16r4(const __m256d a) {
+		      rayleigh_mean_ymm8r4(const __m256d a) {
 
                           const __m256 hpi =  _mm256_set1_ps(0.5f*3.14159265358979323846264338328f);
 			  __m256 mean;
