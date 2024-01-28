@@ -1204,7 +1204,394 @@ namespace gms {
 			   bessel_i1            = value
 			   return (bessel_i1);
 		    }
+		    
+		  
+		  
+/*
 
+       !*****************************************************************************80
+!
+!! NORMAL_01_CDF evaluates the Normal 01 CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    10 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    AG Adams,
+!    Algorithm 39,
+!    Areas Under the Normal Curve,
+!    Computer Journal,
+!    Volume 12, pages 197-198, 1969.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      normal_01_cdf_zmm8r8(const __m512d x) {
+		          
+		          __m512d a1 = _mm512_set1_pd(0.398942280444e+00);
+		          __m512d a2 = _mm512_set1_pd(0.399903438504e+00);
+		          __m512d a3 = _mm512_set1_pd(5.75885480458e+00);
+                          __m512d a4 = _mm512_set1_pd(29.8213557808e+00);
+                          __m512d a5 = _mm512_set1_pd(2.62433121679e+00);
+                          __m512d a6 = _mm512_set1_pd(48.6959930692e+00);
+                          __m512d a7 = _mm512_set1_pd(5.92885724438e+00);
+                          __m512d b0 = _mm512_set1_pd(0.398942280385e+00);
+                          __m512d b1 = _mm512_set1_pd(3.8052e-08);
+                          __m512d b2 = _mm512_set1_pd(1.00000615302e+00);
+                          __m512d b3 = _mm512_set1_pd(3.98064794e-04);
+                          __m512d b4 = _mm512_set1_pd(1.98615381364e+00);
+                          __m512d b5 = _mm512_set1_pd(0.151679116635e+00);
+                          __m512d b6 = _mm512_set1_pd(5.29330324926e+00);
+                          __m512d b7 = _mm512_set1_pd(4.8385912808e+00);
+                          __m512d b8 = _mm512_set1_pd(15.1508972451e+00);
+                          __m512d b9 = _mm512_set1_pd(0.742380924027e+00);
+                          __m512d b10= _mm512_set1_pd(30.789933034e+00);
+                          __m512d b11= _mm512_set1_pd(3.99019417011e+00);
+                          __m512d C1 = _mm512_set1_pd(1.0);
+                          __m512d C128 = _mm512_set1_pd(1.28);
+                          __m512d C05  = _mm512_set1_pd(0.5);
+                          __m512d C127 = _mm512_set1_pd(12.7);
+                          __m512d absx,y,q,cdf,t0,t1;
+                          __mmask8 m0,m1,m2;
+                          m2   = _mm512_cmp_pd_mask(x,_mm512_setzero_pd(),_CMP_LT_OQ);
+                          absx = _mm512_abs_pd(x);
+                          m0   = _mm512_cmp_pd_mask(x,C128,_CMP_LE_OQ);
+                          y    = _mm512_mul_pd(C05,
+                                        _mm512_mul_pd(x,x));
+                          m1   = _mm512_cmp_pd_mask(x,C127,_CMP_LE_OQ);
+                          if(m0) {
+                             register __m512d ya3;
+                             register __m512d ya5a6
+                             register __m512d ya7;
+                             register __m512d a2y;
+                             ya7   = _mm512_add_pd(y,a7);
+                             ya5a6 = _mm512_add_pd(y,_mm512_add_pd(a5,a6));
+                             a2y   = _mm512_mul_pd(a2,y);
+                             ya3a4 = _mm512_sub_pd(_mm512_add_pd(y,a3),a4);
+                             q     = _mm512_sub_pd(a1,
+                                           _mm512_div_pd(a2y,
+                                                  _mm512_div_pd(ya3a4,
+                                                        _mm512_div_pd(ya5a6,ya7))));
+                          }
+                          else if(m1) {
+                             register __m512d expmy;
+                             register __m512d absb1;
+                             register __m512d absb3;
+                             register __m512d absb5;
+                             register __m512d absb7;
+                             register __m512d absb9;
+                             register __m512d absb11;
+#if (USE_SLEEF_LIB) == 1                          
+                             expmy = _mm512_mul_pd(xexp(negate_zmm8r8(y)),b0);
+#else
+                             expmy = _mm512_mul_pd(_mm512_exp_pd(negate_zmm8r8(y)),b0); 
+#endif 
+                             absb1 = _mm512_sub_pd(absx,b1);
+                             absb3 = _mm512_add_pd(absx,b3);
+                             absb5 = _mm512_sub_pd(absx,b5);
+                             absb7 = _mm512_add_pd(absx,b7);
+                             absb9 = _mm512_add_pd(absx,b9);
+                             absb11= _mm512_add_pd(absx,b11);
+                             t0    = (absb1+b2/(absb3+b4/(absb5+b6/(absb7-b8/(absb9+b10/(absb11))))));
+                             q     = _mm512_div_pd(expmy,t0);
+                          }
+                          else {
+                             q = _mm512_setzero_pd();
+                          }
+                          
+                          cdf = _mm512_mask_blend_pd(m2,_mm512_sub_pd(C1,q),q);
+                          return (cdf);
+		    }
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+		      normal_01_cdf_zmm16r4(const __m512 x) {
+		          
+		          __m512 a1 = _mm512_set1_ps(0.398942280444f);
+		          __m512 a2 = _mm512_set1_ps(0.399903438504f);
+		          __m512 a3 = _mm512_set1_ps(5.75885480458f);
+                          __m512 a4 = _mm512_set1_ps(29.8213557808f);
+                          __m512 a5 = _mm512_set1_ps(2.62433121679f);
+                          __m512 a6 = _mm512_set1_ps(48.6959930692f);
+                          __m512 a7 = _mm512_set1_ps(5.92885724438f);
+                          __m512 b0 = _mm512_set1_ps(0.398942280385f);
+                          __m512 b1 = _mm512_set1_ps(3.8052e-08f);
+                          __m512 b2 = _mm512_set1_ps(1.00000615302f);
+                          __m512 b3 = _mm512_set1_ps(3.98064794e-04f);
+                          __m512 b4 = _mm512_set1_ps(1.98615381364f);
+                          __m512 b5 = _mm512_set1_ps(0.151679116635f);
+                          __m512 b6 = _mm512_set1_ps(5.29330324926f);
+                          __m512 b7 = _mm512_set1_ps(4.8385912808f);
+                          __m512 b8 = _mm512_set1_ps(15.1508972451f);
+                          __m512 b9 = _mm512_set1_ps(0.742380924027f);
+                          __m512 b10= _mm512_set1_ps(30.789933034f);
+                          __m512 b11= _mm512_set1_ps(3.99019417011f);
+                          __m512 C1 = _mm512_set1_ps(1.0);
+                          __m512 C128 = _mm512_set1_ps(1.28f);
+                          __m512 C05  = _mm512_set1_ps(0.5f);
+                          __m512 C127 = _mm512_set1_ps(12.7f);
+                          __m512 absx,y,q,cdf,t0;
+                          __mmask16 m0,m1,m2;
+                          m2   = _mm512_cmp_ps_mask(x,_mm512_setzero_pd(),_CMP_LT_OQ);
+                          absx = _mm512_abs_ps(x);
+                          m0   = _mm512_cmp_ps_mask(x,C128,_CMP_LE_OQ);
+                          y    = _mm512_mul_ps(C05,
+                                        _mm512_mul_ps(x,x));
+                          m1   = _mm512_cmp_ps_mask(x,C127,_CMP_LE_OQ);
+                          if(m0) {
+                             register __m512 ya3;
+                             register __m512 ya5a6
+                             register __m512 ya7;
+                             register __m512 a2y;
+                             ya7   = _mm512_add_ps(y,a7);
+                             ya5a6 = _mm512_add_ps(y,_mm512_add_ps(a5,a6));
+                             a2y   = _mm512_mul_ps(a2,y);
+                             ya3a4 = _mm512_sub_ps(_mm512_add_ps(y,a3),a4);
+                             q     = _mm512_sub_ps(a1,
+                                           _mm512_div_ps(a2y,
+                                                  _mm512_div_ps(ya3a4,
+                                                        _mm512_div_ps(ya5a6,ya7))));
+                          }
+                          else if(m1) {
+                             register __m512 expmy;
+                             register __m512 absb1;
+                             register __m512 absb3;
+                             register __m512 absb5;
+                             register __m512 absb7;
+                             register __m512 absb9;
+                             register __m512 absb11;
+#if (USE_SLEEF_LIB) == 1                          
+                             expmy = _mm512_mul_ps(xexpf(negate_zmm16r4(y)),b0);
+#else
+                             expmy = _mm512_mul_ps(_mm512_exp_ps(negate_zmm16r4(y)),b0); 
+#endif 
+                             absb1 = _mm512_sub_ps(absx,b1);
+                             absb3 = _mm512_add_ps(absx,b3);
+                             absb5 = _mm512_sub_ps(absx,b5);
+                             absb7 = _mm512_add_ps(absx,b7);
+                             absb9 = _mm512_add_ps(absx,b9);
+                             absb11= _mm512_add_ps(absx,b11);
+                             t0    = (absb1+b2/(absb3+b4/(absb5+b6/(absb7-b8/(absb9+b10/(absb11))))));
+                             q     = _mm512_div_ps(expmy,t0);
+                          }
+                          else {
+                             q = _mm512_setzero_ps();
+                          }
+                          
+                          cdf = _mm512_mask_blend_ps(m2,_mm512_sub_ps(C1,q),q);
+                          return (cdf);
+		    }
+		    
+		    
+/*
+!*****************************************************************************80
+!
+!! GAMMA_INC computes the incomplete Gamma function.
+!
+!  Discussion:
+!
+!    GAMMA_INC(P,       0) = 0,
+!    GAMMA_INC(P,Infinity) = 1.
+!
+!    GAMMA_INC(P,X) = Integral ( 0 <= T <= X ) T**(P-1) EXP(-T) DT / GAMMA(P).
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    01 May 2001
+!
+!  Author:
+!
+!    Original FORTRAN77 version by B L Shea.
+!    FORTRAN90 version by John Burkardt
+!
+!  Reference:
+!
+!    BL Shea,
+!    Chi-squared and Incomplete Gamma Integral,
+!    Algorithm AS239,
+!    Applied Statistics,
+!    Volume 37, Number 3, 1988, pages 466-473.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) P, the exponent parameter.
+!    0.0D+00 < P.
+!
+!    Input, real ( kind = 8 ) X, the integral limit parameter.
+!    If X is less than or equal to 0, GAMMA_INC is returned as 0.
+!
+!    Output, real ( kind = 8 ) GAMMA_INC, the value of the function.
+!
+*/	
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+                      gamma_incomplete_zmm8r8(const __m512d p,
+                                              const __m512d x) {
+                                              
+                            const __m512d exp_arg_min = _mm512_set1_pd(-88.0e+00);
+                            const __m512d overflow    = _mm512_set1_pd(1.0e+37);
+                            const __m512d plimit      = _mm512_set1_pd(1000.0e+00);
+                            const __m512d tol         = _mm512_set1_pd(1.0e-7);
+                            const __m512d xbig        = _mm512_set1_pd(1.0e+8);
+                            const __m512d C0          = _mm512_setzero_pd();
+                            const __m512d C0333333333 = _mm512_set1_pd(0.3333333333333333333333);
+                            const __m512d C1          = _mm512_set1_pd(1.0);
+                            const __m512d C2          = _mm512_set1_pd(2.0);
+                            const __m512d C3          = _mm512_set1_pd(3.0);
+                            const __m512d C9          = _mm512_set1_pd(9.0);
+                            __m512d cdf,arg,b,c;
+                            __m512d pn1,pn2,pn3,pn4;
+                            __m512d pn5,pn6,rn,t0,t1;
+                            __m512d gaminc;
+                            __mmask8 m0,m1;
+                            m0 = _mm512_cmp_pd_mask(plimit,p,_CMP_LT_OQ);
+                            if(m0) {
+                               __m512d sqrp,xp,_9p1,t0,t1;
+                               xp     = _mm512_div_pd(x,p);
+                               _9p1   = _mm512_fmsub_pd(C9,p,C1);
+                               sqrp   = _mm512_mul_pd(C3,_mm512_sqrt_pd(p));
+                               t0     = _mm512_pow_pd(xp,C0333333333);
+                               t1     = _mm512_add_pd(t0,
+                                            _mm512_div_pd(C1,_9p1));
+                               pn1    = _mm512_mul_pd(sqrp,t1);
+                               gaminc = normal_01_cdf_zmm8r8(pn1);
+                               return (gaminc);
+                            }   
+                            m0 = _mm512_cmp_pd_mask(x,C1,_CMP_LE_OQ);
+                            m1 = _mm512_cmp_pd_mask(x,p,_CMP_LT_OQ);
+                            if(m0 || m1) {
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlog(x);
+#else
+                               t0  = _mm512_log_pd(x);
+#endif                               
+                               t1  = gamma_log_zmm8r8(_mm512_add_pd(p,C1));
+                               arg = _mm512_fmsub_pd(p,t0,_mm512_sub_pd(x,t1));
+                               c   = C1;
+                               gaminc = C1;
+                               a   = p; 
+                               while(true) {
+                                    a      = _mm512_add_pd(a,C1);
+                                    c      = _mm512_mul_pd(c,_mm512_div_pd(x,a));
+                                    gaminc = _mm512_add_pd(gaminc,c);
+                                    m0     = _mm512_cmp_pd_mask(c,tol,_CMP_LE_OQ);
+                                    if(m0) break;
+                               }
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlog(x);
+#else
+                               t0  = _mm512_log_pd(x);
+#endif                         
+                               arg = _mm512_add_pd(arg,t0);  
+                               m1  = _mm512_cmp_pd_mask(exp_arg_min,arg,_CMP_LE_OQ);
+#if (USE_SLEEF_LIB) == 1 
+                               gaminc = _mm512_mask_blend_pd(m1,C0,xexp(arg));  
+#else
+                               gaminc = _mm512_mask_blend_pd(m1,C0,_mm512_exp_pd(arg));  
+#endif                                  
+                           } 
+                           else {
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlog(x);
+#else
+                               t0  = _mm512_log_pd(x);
+#endif                               
+                               t1  = gamma_log_zmm8r8(p);
+                               arg = _mm512_fmsub_pd(p,t0,_mm512_sub_pd(x,t1));                               
+                               a   = _mm512_sub_pd(C1,p);
+                               b   = _mm512_add_pd(a,_mm512_add_pd(x,C1));
+                               c   = C0;
+                               pn1 = C1;
+                               pn2 = x;
+                               pn3 = _mm512_add_pd(x,C1);
+                               pn4 = _mm512_mul_pd(x,b);
+                               gaminc = _mm512_div_pd(pn3,pn4);
+                               while(true) {
+                                   a = _mm512_add_pd(a,C1);
+                                   b = _mm512_add_pd(b,C2);
+                                   c = _mm512_add_pd(c,C1);
+                                   pn5 = _mm512_fmsub_pd(b,pn3,
+                                                     _mm512_mul_pd(a,
+                                                           _mm512_mul_pd(c,pn1)));
+                                   pn6 = _mm512_fmsub_pd(b,pn4,
+                                                     _mm512_mul_pd(a,
+                                                           _mm512_mul_pd(c,pn2)));
+                                   if(_mm512_cmp_pd_mask(C0,_mm512_abs_pd(pn6),
+                                                                       _CMP_LT_OQ)) {
+                                        rn = _mm512_div_pd(pn5,pn6);
+                                        t0 = _mm512_abs_pd(_mm512_sub_pd(gaminc,rn));
+                                        t1 = _mm512_min_pd(tol,_mm512_mul_pd(tol,rn));
+                                        if(_mm512_cmp_pd_mask(t0,t1,_CMP_LE_OQ)) {
+#if (USE_SLEEF_LIB) == 1 
+                                           arg  = _mm512_add_pd(arg,xlog(gaminc));
+#else
+                                           arg  = _mm512_add_pd(_mm512_log_pd(gaminc));
+#endif       
+                                           m1   = _mm512_cmp_pd_mask(exp_arg_min,arg,_CMP_LE_OQ);
+#if (USE_SLEEF_LIB) == 1 
+                                           gaminc = _mm512_mask_blend_pd(m1,C1,_mm512_sub_pd(C1,xexp(arg)));
+#else
+                                           gaminc = _mm512_mask_blend_pd(m1,C1,_mm512_sub_pd(C1,
+                                                                                        _mm512_exp_pd(arg)));
+#endif       
+                                           return (gaminc);                               
+                                        }    
+                                        gaminc = rn;                               
+                                   }
+                                   pn1 = pn3;
+                                   pn2 = pn4;
+                                   pn3 = pn5;
+                                   pn4 = pn6;
+                                   if(_mm512_cmp_pd_mask(overflow,
+                                                   _mm512_abs_pd(pn5),_CMP_LE_OQ)) {
+                                      t0 = _mm512_div_pd(C1,overflow);
+                                      pn1= _mm512_mul_pd(pn1,t0);
+                                      pn2= _mm512_mul_pd(pn2,t0);
+                                      pn3= _mm512_mul_pd(pn3,t0);
+                                      pn4= _mm512_mul_pd(pn4,t0);               
+                                   }
+                               }
+                           } 
+                           
+                           return (gaminc);                   
+                   }
 
 		    
 
@@ -3249,7 +3636,350 @@ namespace gms {
 
                           return (rayleigh_invcdf_zmm16r4(rand,a));
 		     }
+		     
+		     
+      /*
+         !*****************************************************************************80
+!
+!! CAUCHY_CDF evaluates the Cauchy CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    01 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+! 
+      */
+      
+        	      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d    
+                      cauchy_cdf_zmm8r8(const __m512d x,
+                                        const __m512d a,
+                                        const __m512d b) {
+                        
+                         const __m512d C314159265358979323846264 = 
+                                               __m512_set1_pd(3.14159265358979323846264);
+                         const __m512d C05 = _mm512_set1_pd(0.5);
+                         register __m512d cdf,y,t0,t1;
+                         t0 = _mm512_sub_pd(x,a);
+#if (USE_SLEEF_LIB) == 1
+                         t1 = _mm512_div_pd(xatan2(t0,b),
+                                     C314159265358979323846264);
+#else
+                         t1 = _mm512_div_pd(_mm512_atan2_pd(t0,b),
+                                     C314159265358979323846264);
+#endif                  
+                         cdf = _mm512_add_pd(C05,t1);
+                         return (cdf);  
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512    
+                      cauchy_cdf_zmm16r4(const __m512 x,
+                                         const __m512 a,
+                                         const __m512 b) {
+                        
+                         const __m512 C314159265358979323846264 = 
+                                               __m512_set1_ps(3.14159265358979323846264f);
+                         const __m512 C05 = _mm512_set1_ps(0.5f);
+                         register __m512 cdf,y,t0,t1;
+                         t0 = _mm512_sub_ps(x,a);
+#if (USE_SLEEF_LIB) == 1
+                         t1 = _mm512_div_ps(xatan2f(t0,b),
+                                     C314159265358979323846264);
+#else
+                         t1 = _mm512_div_ps(_mm512_atan2_ps(t0,b),
+                                     C314159265358979323846264);
+#endif                  
+                         cdf = _mm512_add_ps(C05,t1);
+                         return (cdf);  
+                    }
+                    
+                    
+/*
+ !*****************************************************************************80
+!
+!! CAUCHY_CDF_INV inverts the Cauchy CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    21 September 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument.
+!
+*/     
 
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      cauchy_cdf_inv_zmm8r8(const __m512d a,
+                                            const __m512d b,
+                                            const __m512d x) {
+                           
+                         const __m512d C314159265358979323846264 = 
+                                               __m512_set1_pd(3.14159265358979323846264);
+                         const __m512d C05 = _mm512_set1_pd(0.5);    
+                         register __m512d cdf,t0,t1;
+                         t0 = _mm512_mul_pd(C314159265358979323846264,
+                                            _mm512_sub_pd(cdf,C05));
+#if (USE_SLEEF_LIB) == 1
+                         t1 = xtan(t0);
+#else
+                         t1 = _mm512_tan_pd(t0);
+#endif                                      
+                         cdf = _mm512_fmadd_pd(a,b,t1);
+                         return (cdf);
+                   }    
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+                      cauchy_cdf_inv_zmm16r4(const __m512 a,
+                                            const __m512 b,
+                                            const __m512 x) {
+                           
+                         const __m512 C314159265358979323846264 = 
+                                               __m512_set1_pd(3.14159265358979323846264f);
+                         const __m512 C05 = _mm512_set1_ps(0.5);    
+                         register __m512 cdf,t0,t1;
+                         t0 = _mm512_mul_ps(C314159265358979323846264,
+                                            _mm512_sub_ps(cdf,C05));
+#if (USE_SLEEF_LIB) == 1
+                         t1 = xtanf(t0);
+#else
+                         t1 = _mm512_tan_ps(t0);
+#endif                                      
+                         cdf = _mm512_fmadd_ps(a,b,t1);
+                         return (cdf);
+                   }  
+                   
+                   
+/*
+  !*****************************************************************************80
+!
+!! CAUCHY_PDF evaluates the Cauchy PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B;X) = 1 / ( PI * B * ( 1 + ( ( X - A ) / B )^2 ) )
+!
+!    The Cauchy PDF is also known as the Breit-Wigner PDF.  It
+!    has some unusual properties.  In particular, the integrals for the
+!    expected value and higher order moments are "singular", in the
+!    sense that the limiting values do not exist.  A result can be
+!    obtained if the upper and lower limits of integration are set
+!    equal to +T and -T, and the limit as T=>INFINITY is taken, but
+!    this is a very weak and unreliable sort of limit.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    09 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!
+*/       
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d  
+                      cauchy_pdf_zmm8r8(const __m512d x,
+                                         const __m512d a,
+                                         const __m512d b) {
+                           
+                         const __m512d C314159265358979323846264 = 
+                                               __m512_set1_pd(3.14159265358979323846264);
+                         const __m512d C1 = _mm512_set1_pd(1.0);
+                         register __m512d pdf,t0,t1,y,pib;
+                         y   = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+                         pib = _mm512_mul_pd(C314159265358979323846264,b);
+                         t0  = _mm512_fmadd_pd(y,y,C1);
+                         t1  = _mm512_mul_pd(pib,t0);
+                         pdf = _mm512_div_pd(C1,t1);
+                         return (pdf);                     
+                   }
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512 
+                      cauchy_pdf_zmm16r4(const __m512 x,
+                                         const __m512 a,
+                                         const __m512 b) {
+                           
+                         const __m512 C314159265358979323846264 = 
+                                               __m512_set1_ps(3.14159265358979323846264f);
+                         const __m512 C1 = _mm512_set1_ps(1.0);
+                         register __m512 pdf,t0,t1,y,pib;
+                         y   = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+                         pib = _mm512_mul_ps(C314159265358979323846264,b);
+                         t0  = _mm512_fmadd_ps(y,y,C1);
+                         t1  = _mm512_mul_ps(pib,t0);
+                         pdf = _mm512_div_ps(C1,t1);
+                         return (pdf);                     
+                   }
+                   
+/*
+   !*****************************************************************************80
+!
+!! CAUCHY_SAMPLE samples the Cauchy PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    11 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF.
+!
+*/            
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      cauchy_sample_zmm8r8(const __m512d a,
+                                           const __m512d b) {
+                         __m512d cdf;
+			 svrng_engine_t engine;
+			 svrng_distribution_t uniform;
+			 uint32_t seed    = 0U;
+			 int32_t result   = -9999;
+			 int32_t err      = -9999;
+			 result           = _rdrand32_step(&seed);
+			 if(!result) seed = 1043915199U;
+			 engine           = svrng_new_mt19937_engine(seed);
+			 err              = svrng_get_status();
+			 if(err!=SVRNG_STATUS_OK) {
+                            const __m512d nan = _mm512_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			    return (nan);
+			 }
+			 uniform          = svrng_new_normal_distribution_double(0.0,1.0);
+			 const double * __restrict ptr = (const double*)(&svrng_generate8_double(engine,uniform));
+			 cdf              = cauchy_cdf_inv_zmm8r8(_mm512_loadu_pd(&ptr[0]));
+			 svrng_delete_engine(engine);
+			 return (cdf);                 
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512 
+                      cauchy_sample_zmm16r4(const __m512 a,
+                                            const __m512 b) {
+                         __m512 cdf;
+			 svrng_engine_t engine;
+			 svrng_distribution_t uniform;
+			 uint32_t seed    = 0U;
+			 int32_t result   = -9999;
+			 int32_t err      = -9999;
+			 result           = _rdrand32_step(&seed);
+			 if(!result) seed = 1043915199U;
+			 engine           = svrng_new_mt19937_engine(seed);
+			 err              = svrng_get_status();
+			 if(err!=SVRNG_STATUS_OK) {
+                            const __m512 nan = _mm512_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			    return (nan);
+			 }
+			 uniform          = svrng_new_normal_distribution_float(0.0f,1.0f);
+			 const float * __restrict ptr = (const float*)(&svrng_generate16_float(engine,uniform));
+			 cdf              = cauchy_cdf_inv_zmm16r4(_mm512_loadu_ps(&ptr[0]));
+			 svrng_delete_engine(engine);
+			 return (cdf);                 
+                    }
+                    
+                    
+                    
+                   
 
 
       } //math
