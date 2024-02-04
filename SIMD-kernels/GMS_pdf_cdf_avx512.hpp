@@ -1592,6 +1592,145 @@ namespace gms {
                            
                            return (gaminc);                   
                    }
+                   
+#include <limits>
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+                      gamma_incomplete_zmm16r4(const __m512 p,
+                                              const __m512 x) {
+                                              
+                            const __m512 exp_arg_min = _mm512_set1_ps(-88.0e+00f);
+                            const __m512 overflow    = _mm512_set1_ps(std::numeric_limits<float>::max());
+                            const __m512 plimit      = _mm512_set1_ps(1000.0e+00f);
+                            const __m512 tol         = _mm512_set1_ps(1.0e-7f);
+                            const __m512 xbig        = _mm512_set1_ps(1.0e+8f);
+                            const __m512 C0          = _mm512_setzero_ps();
+                            const __m512 C0333333333 = _mm512_set1_ps(0.3333333333333333333333f);
+                            const __m512 C1          = _mm512_set1_ps(1.0f);
+                            const __m512 C2          = _mm512_set1_ps(2.0f);
+                            const __m512 C3          = _mm512_set1_ps(3.0f);
+                            const __m512 C9          = _mm512_set1_ps(9.0f);
+                            __m512 cdf,arg,b,c;
+                            __m512 pn1,pn2,pn3,pn4;
+                            __m512 pn5,pn6,rn,t0,t1;
+                            __m512 gaminc;
+                            __mmask16 m0,m1;
+                            m0 = _mm512_cmp_ps_mask(plimit,p,_CMP_LT_OQ);
+                            if(m0) {
+                               __m512 sqrp,xp,_9p1,t0,t1;
+                               xp     = _mm512_div_ps(x,p);
+                               _9p1   = _mm512_fmsub_ps(C9,p,C1);
+                               sqrp   = _mm512_mul_ps(C3,_mm512_sqrt_ps(p));
+                               t0     = _mm512_pow_ps(xp,C0333333333);
+                               t1     = _mm512_add_ps(t0,
+                                            _mm512_div_ps(C1,_9p1));
+                               pn1    = _mm512_mul_ps(sqrp,t1);
+                               gaminc = normal_01_cdf_zmm16r4(pn1);
+                               return (gaminc);
+                            }   
+                            m0 = _mm512_cmp_ps_mask(x,C1,_CMP_LE_OQ);
+                            m1 = _mm512_cmp_ps_mask(x,p,_CMP_LT_OQ);
+                            if(m0 || m1) {
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlogf(x);
+#else
+                               t0  = _mm512_log_ps(x);
+#endif                               
+                               t1  = gamma_log_zmm16r4(_mm512_add_ps(p,C1));
+                               arg = _mm512_fmsub_ps(p,t0,_mm512_sub_ps(x,t1));
+                               c   = C1;
+                               gaminc = C1;
+                               a   = p; 
+                               while(true) {
+                                    a      = _mm512_add_ps(a,C1);
+                                    c      = _mm512_mul_ps(c,_mm512_div_ps(x,a));
+                                    gaminc = _mm512_add_ps(gaminc,c);
+                                    m0     = _mm512_cmp_ps_mask(c,tol,_CMP_LE_OQ);
+                                    if(m0) break;
+                               }
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlogf(x);
+#else
+                               t0  = _mm512_log_ps(x);
+#endif                         
+                               arg = _mm512_add_ps(arg,t0);  
+                               m1  = _mm512_cmp_ps_mask(exp_arg_min,arg,_CMP_LE_OQ);
+#if (USE_SLEEF_LIB) == 1 
+                               gaminc = _mm512_mask_blend_ps(m1,C0,xexpf(arg));  
+#else
+                               gaminc = _mm512_mask_blend_ps(m1,C0,_mm512_exp_ps(arg));  
+#endif                                  
+                           } 
+                           else {
+#if (USE_SLEEF_LIB) == 1 
+                               t0  = xlogf(x);
+#else
+                               t0  = _mm512_log_ps(x);
+#endif                               
+                               t1  = gamma_log_zmm16r4(p);
+                               arg = _mm512_fmsub_ps(p,t0,_mm512_sub_ps(x,t1));                               
+                               a   = _mm512_sub_ps(C1,p);
+                               b   = _mm512_add_ps(a,_mm512_add_ps(x,C1));
+                               c   = C0;
+                               pn1 = C1;
+                               pn2 = x;
+                               pn3 = _mm512_add_ps(x,C1);
+                               pn4 = _mm512_mul_ps(x,b);
+                               gaminc = _mm512_div_ps(pn3,pn4);
+                               while(true) {
+                                   a = _mm512_add_ps(a,C1);
+                                   b = _mm512_add_ps(b,C2);
+                                   c = _mm512_add_ps(c,C1);
+                                   pn5 = _mm512_fmsub_ps(b,pn3,
+                                                     _mm512_mul_ps(a,
+                                                           _mm512_mul_ps(c,pn1)));
+                                   pn6 = _mm512_fmsub_ps(b,pn4,
+                                                     _mm512_mul_ps(a,
+                                                           _mm512_mul_ps(c,pn2)));
+                                   if(_mm512_cmp_ps_mask(C0,_mm512_abs_ps(pn6),
+                                                                       _CMP_LT_OQ)) {
+                                        rn = _mm512_div_ps(pn5,pn6);
+                                        t0 = _mm512_abs_ps(_mm512_sub_ps(gaminc,rn));
+                                        t1 = _mm512_min_ps(tol,_mm512_mul_ps(tol,rn));
+                                        if(_mm512_cmp_ps_mask(t0,t1,_CMP_LE_OQ)) {
+#if (USE_SLEEF_LIB) == 1 
+                                           arg  = _mm512_add_ps(arg,xlogf(gaminc));
+#else
+                                           arg  = _mm512_add_ps(_mm512_log_ps(gaminc));
+#endif       
+                                           m1   = _mm512_cmp_ps_mask(exp_arg_min,arg,_CMP_LE_OQ);
+#if (USE_SLEEF_LIB) == 1 
+                                           gaminc = _mm512_mask_blend_ps(m1,C1,_mm512_sub_ps(C1,xexp(arg)));
+#else
+                                           gaminc = _mm512_mask_blend_ps(m1,C1,_mm512_sub_ps(C1,
+                                                                                        _mm512_exp_ps(arg)));
+#endif       
+                                           return (gaminc);                               
+                                        }    
+                                        gaminc = rn;                               
+                                   }
+                                   pn1 = pn3;
+                                   pn2 = pn4;
+                                   pn3 = pn5;
+                                   pn4 = pn6;
+                                   if(_mm512_cmp_ps_mask(overflow,
+                                                   _mm512_abs_ps(pn5),_CMP_LE_OQ)) {
+                                      t0 = _mm512_div_ps(C1,overflow);
+                                      pn1= _mm512_mul_ps(pn1,t0);
+                                      pn2= _mm512_mul_ps(pn2,t0);
+                                      pn3= _mm512_mul_ps(pn3,t0);
+                                      pn4= _mm512_mul_ps(pn4,t0);               
+                                   }
+                               }
+                           } 
+                           
+                           return (gaminc);                   
+                   }
 
 		    
 
@@ -2745,6 +2884,210 @@ namespace gms {
 
                          return (weibull_discr_icdf_zmm8r8(vrand,a,b));
 		    }
+		    
+		    
+/*
+       !*****************************************************************************80
+!
+!! R8_GAMMA evaluates Gamma(X) for a real argument.
+!
+!  Discussion:
+!
+!    This routine calculates the gamma function for a real argument X.
+!
+!    Computation is based on an algorithm outlined in reference 1.
+!    The program uses rational functions that approximate the gamma
+!    function to at least 20 significant decimal digits.  Coefficients
+!    for the approximation over the interval (1,2) are unpublished.
+!    Those for the approximation for 12 <= X are from reference 2.
+!
+!  Modified:
+!
+!    11 February 2008
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody, Laura Stoltz.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody,
+!    An Overview of Software Development for Special Functions,
+!    in Numerical Analysis Dundee, 1975,
+!    edited by GA Watson,
+!    Lecture Notes in Mathematics 506,
+!    Springer, 1976.
+!
+!    John Hart, Ward Cheney, Charles Lawson, Hans Maehly,
+!    Charles Mesztenyi, John Rice, Henry Thatcher,
+!    Christoph Witzgall,
+!    Computer Approximations,
+!    Wiley, 1968,
+!    LC: QA297.C64.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the function.
+!
+!    Output, real ( kind = 8 ) R8_GAMMA, the value of the function.
+!  
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      gamma_zmm8r8(const __m512d x) {
+                         
+                         __ATTR_ALIGN__(64) const __m512d  c[7] = {
+                                        _mm512_set1_pd(-1.910444077728e-03), 
+                                        _mm512_set1_pd(8.4171387781295e-04), 
+                                        _mm512_set1_pd(-5.952379913043012e-04), 
+                                        _mm512_set1_pd(7.93650793500350248e-04),
+                                        _mm512_set1_pd(-2.777777777777681622553e-03),
+                                        _mm512_set1_pd(8.333333333333333331554247e-02),
+                                        _mm512_set1_pd(5.7083835261e-03)};
+                        __ATTR_ALIGN__(64) const __m512d  p[8]  = {
+                                        _mm512_set1_pd(-1.71618513886549492533811e+00),
+                                        _mm512_set1_pd(2.47656508055759199108314e+01),
+                                        _mm512_set1_pd(-3.79804256470945635097577e+02),
+                                        _mm512_set1_pd(6.29331155312818442661052e+02),
+                                        _mm512_set1_pd(8.66966202790413211295064e+02), 
+                                        _mm512_set1_pd(-3.14512729688483675254357e+04), 
+                                        _mm512_set1_pd(-3.61444134186911729807069e+04),
+                                        _mm512_set1_pd(6.64561438202405440627855e+04)};          
+                       __ATTR_ALIGN__(64) const __m512d  q[8]   = {
+                                        _mm512_set1_pd(-3.08402300119738975254353e+01), 
+                                        _mm512_set1_pd(3.15350626979604161529144e+02),
+                                        _mm512_set1_pd(-1.01515636749021914166146e+03),
+                                        _mm512_set1_pd(-3.10777167157231109440444e+03),
+                                        _mm512_set1_pd(2.25381184209801510330112e+04),
+                                        _mm512_set1_pd(4.75584627752788110767815e+03),
+                                        _mm512_set1_pd(-1.34659959864969306392456e+05),
+                                        _mm512_set1_pd(1.15132259675553483497211e+05)};
+                       __m512d C31415926535897932384626434 = 
+                                        _mm512_set1_pd(3.1415926535897932384626434e+00);
+                       __m512d eps                         =
+                                        _mm512_set1_pd(2.22e-16);
+                       __m512d one                         =
+                                        _mm512_set1_pd(1.0);
+                       __m512d half                        =
+                                        _mm512_set1_pd(0.5);
+                       __m512d sqrtpi                      =
+                                        _mm512_set1_pd(0.9189385332046727417803297e+00);
+                       __m512d twelve                      = 
+                                        _mm512_set1_pd(12.0);
+                       __m512d two                         =
+                                        _mm512_set1_pd(2.0);
+                       __m512d xbig                        =
+                                        _mm512_set1_pd(171.624);
+                       __m512d xinf                        =
+                                        _mm512_set1_pd(1.0e+30);
+                       __m512d xminin                      =
+                                        _mm512_set1_pd(2.23e-308);
+                         
+                    }
+		    
+		
+/*
+  !*****************************************************************************80
+!
+!! WEIBULL_PDF evaluates the Weibull PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B,C;X) = ( C / B ) * ( ( X - A ) / B )**( C - 1 )
+!     * EXP ( - ( ( X - A ) / B )**C ).
+!
+!    The Weibull PDF is also known as the Frechet PDF.
+!
+!    WEIBULL_PDF(A,B,1;X) is the Exponential PDF.
+!
+!    WEIBULL_PDF(0,1,2;X) is the Rayleigh PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    12 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+! 
+*/
+
+
+          
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d	 
+                      weibull_pdf_zmm8r8(const __m512d x,
+                                         const __m512d a,
+                                         const __m512d b,
+                                         const __m512d c) {
+                        
+                         register __m512d C1 = _mm512_set1_pd(1.0);
+                         register __m512d y,t0,pow1,t1,exp;
+                         register __m512d pdf;
+                         t0 = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+                         pow1 = _mm512_pow_pd(t0,_mm512_sub_pd(c,C1));
+#if (USE_SLEEF_LIB) == 1
+                         exp  = xexp(_mm512_pow_pd(y,c));
+#else
+                         exp  = _mm512_exp_pd(_mm512_pow_pd(y,c));
+#endif                   
+                         t1   = _mm512_div_pd(c,b);
+                         pdf  = _mm512_div_pd(_mm512_mul_pd(t1,pow1),exp); 
+                         return (pdf);     
+                   }
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512	 
+                      weibull_pdf_zmm16r4(const __m512 x,
+                                         const __m512 a,
+                                         const __m512 b,
+                                         const __m512 c) {
+                        
+                         register __m512 C1 = _mm512_set1_ps(1.0);
+                         register __m512 y,t0,pow1,t1,exp;
+                         register __m512 pdf;
+                         t0 = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+                         pow1 = _mm512_pow_ps(t0,_mm512_sub_ps(c,C1));
+#if (USE_SLEEF_LIB) == 1
+                         exp  = xexp(_mm512_pow_ps(y,c));
+#else
+                         exp  = _mm512_exp_ps(_mm512_pow_ps(y,c));
+#endif                   
+                         t1   = _mm512_div_ps(c,b);
+                         pdf  = _mm512_div_ps(_mm512_mul_ps(t1,pow1),exp); 
+                         return (pdf);     
+                   }
 
 
 /*
@@ -3976,10 +4319,70 @@ namespace gms {
 			 svrng_delete_engine(engine);
 			 return (cdf);                 
                     }
+#if 0                    
+!*****************************************************************************80
+!
+!! MAXWELL_CDF evaluates the Maxwell CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    0.0D+00 <= X
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0 < A.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!                    
+#endif
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      maxwell_cdf_zmm8r8(const __m512d x,
+                                         const __m512d a) {
+                         
+                         const __m512d C15 = _mm512_set1_pd(1.5);
+                         register __m512d x2,cdf;
+                         x2 = _mm512_div_pd(x,a);
+                         cdf = gamma_inc_zmm8r8(C15,x2);
+                         return (cdf);                      
+                    }      
                     
                     
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512 
+                      maxwell_cdf_zmm16r4(const __m512 x,
+                                         const __m512 a) {
+                         
+                         const __m512 C15 = _mm512_set1_ps(1.5f);
+                         register __m512 x2,cdf;
+                         x2 = _mm512_div_ps(x,a);
+                         cdf = gamma_inc_zmm16r4(C15,x2);
+                         return (cdf);                      
+                    }   
                     
-                   
+
 
 
       } //math
