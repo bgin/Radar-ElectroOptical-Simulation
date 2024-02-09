@@ -553,7 +553,171 @@ namespace gms {
 		  }
 
 
-		  
+/*
+!*****************************************************************************80
+!
+!! GAMMA_INC computes the incomplete Gamma function.
+!
+!  Discussion:
+!
+!    GAMMA_INC(P,       0) = 0,
+!    GAMMA_INC(P,Infinity) = 1.
+!
+!    GAMMA_INC(P,X) = Integral ( 0 <= T <= X ) T**(P-1) EXP(-T) DT / GAMMA(P).
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    01 May 2001
+!
+!  Author:
+!
+!    Original FORTRAN77 version by B L Shea.
+!    FORTRAN90 version by John Burkardt
+!
+!  Reference:
+!
+!    BL Shea,
+!    Chi-squared and Incomplete Gamma Integral,
+!    Algorithm AS239,
+!    Applied Statistics,
+!    Volume 37, Number 3, 1988, pages 466-473.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) P, the exponent parameter.
+!    0.0D+00 < P.
+!
+!    Input, real ( kind = 8 ) X, the integral limit parameter.
+!    If X is less than or equal to 0, GAMMA_INC is returned as 0.
+!
+!    Output, real ( kind = 8 ) GAMMA_INC, the value of the function.
+!
+*/	
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+                      gamma_incomplete_ymm4r8(const __m256d p,
+                                              const __m256d x) {
+                                              
+                            const __m256d exp_arg_min = _mm256_set1_pd(-88.0e+00);
+                            const __m256d overflow    = _mm256_set1_pd(1.0e+37);
+                            const __m256d plimit      = _mm256_set1_pd(1000.0e+00);
+                            const __m256d tol         = _mm256_set1_pd(1.0e-7);
+                            const __m256d xbig        = _mm256_set1_pd(1.0e+8);
+                            const __m256d C0          = _mm256_setzero_pd();
+                            const __m256d C0333333333 = _mm256_set1_pd(0.3333333333333333333333);
+                            const __m256d C1          = _mm256_set1_pd(1.0);
+                            const __m256d C2          = _mm256_set1_pd(2.0);
+                            const __m256d C3          = _mm256_set1_pd(3.0);
+                            const __m256d C9          = _mm256_set1_pd(9.0);
+                            __m256d cdf,arg,b,c;
+                            __m256d pn1,pn2,pn3,pn4;
+                            __m256d pn5,pn6,rn,t0,t1;
+                            __m256d gaminc;
+                            __mmask8 m0,m1;
+                            m0 = _mm256_cmp_pd_mask(plimit,p,_CMP_LT_OQ);
+                            if(m0) {
+                               __m256d sqrp,xp,_9p1,t0,t1;
+                               xp     = _mm256_div_pd(x,p);
+                               _9p1   = _mm256_fmsub_pd(C9,p,C1);
+                               sqrp   = _mm256_mul_pd(C3,_mm256_sqrt_pd(p));
+                               t0     = _mm256_pow_pd(xp,C0333333333);
+                               t1     = _mm256_add_pd(t0,
+                                            _mm256_div_pd(C1,_9p1));
+                               pn1    = _mm256_mul_pd(sqrp,t1);
+                               gaminc = normal_01_cdf_ymm4r8(pn1);
+                               return (gaminc);
+                            }   
+                            m0 = _mm256_cmp_pd_mask(x,C1,_CMP_LE_OQ);
+                            m1 = _mm256_cmp_pd_mask(x,p,_CMP_LT_OQ);
+                            if(m0 || m1) {
+
+                               t0  = _mm256_log_pd(x);
+                          
+                               t1  = gamma_log_ymm4r8(_mm256_add_pd(p,C1));
+                               arg = _mm256_fmsub_pd(p,t0,_mm256_sub_pd(x,t1));
+                               c   = C1;
+                               gaminc = C1;
+                               a   = p; 
+                               while(true) {
+                                    a      = _mm256_add_pd(a,C1);
+                                    c      = _mm256_mul_pd(c,_mm256_div_pd(x,a));
+                                    gaminc = _mm256_add_pd(gaminc,c);
+                                    m0     = _mm256_cmp_pd_mask(c,tol,_CMP_LE_OQ);
+                                    if(m0) break;
+                               }
+
+                               t0  = _mm256_log_pd(x);
+                               arg = _mm256_add_pd(arg,t0);  
+                               m1  = _mm256_cmp_pd_mask(exp_arg_min,arg,_CMP_LE_OQ);
+                               gaminc = _mm256_mask_blend_pd(m1,C0,_mm256_exp_pd(arg));  
+                                
+                           } 
+                           else {
+
+                               t0  = _mm256_log_pd(x);
+                             
+                               t1  = gamma_log_ymm4r8(p);
+                               arg = _mm256_fmsub_pd(p,t0,_mm256_sub_pd(x,t1));                               
+                               a   = _mm256_sub_pd(C1,p);
+                               b   = _mm256_add_pd(a,_mm256_add_pd(x,C1));
+                               c   = C0;
+                               pn1 = C1;
+                               pn2 = x;
+                               pn3 = _mm256_add_pd(x,C1);
+                               pn4 = _mm256_mul_pd(x,b);
+                               gaminc = _mm256_div_pd(pn3,pn4);
+                               while(true) {
+                                   a = _mm256_add_pd(a,C1);
+                                   b = _mm256_add_pd(b,C2);
+                                   c = _mm256_add_pd(c,C1);
+                                   pn5 = _mm256_fmsub_pd(b,pn3,
+                                                     _mm256_mul_pd(a,
+                                                           _mm256_mul_pd(c,pn1)));
+                                   pn6 = _mm256_fmsub_pd(b,pn4,
+                                                     _mm256_mul_pd(a,
+                                                           _mm256_mul_pd(c,pn2)));
+                                   if(_mm256_cmp_pd_mask(C0,_mm256_abs_pd(pn6),
+                                                                       _CMP_LT_OQ)) {
+                                        rn = _mm256_div_pd(pn5,pn6);
+                                        t0 = _mm256_abs_pd(_mm256_sub_pd(gaminc,rn));
+                                        t1 = _mm256_min_pd(tol,_mm256_mul_pd(tol,rn));
+                                        if(_mm256_cmp_pd_mask(t0,t1,_CMP_LE_OQ)) {
+                                           arg  = _mm256_add_pd(_mm256_log_pd(gaminc));       
+                                           m1   = _mm256_cmp_pd_mask(exp_arg_min,arg,_CMP_LE_OQ);
+                                           gaminc = _mm256_mask_blend_pd(m1,C1,_mm256_sub_pd(C1,
+                                                                                    _mm256_exp_pd(arg)));
+      
+                                           return (gaminc);                               
+                                        }    
+                                        gaminc = rn;                               
+                                   }
+                                   pn1 = pn3;
+                                   pn2 = pn4;
+                                   pn3 = pn5;
+                                   pn4 = pn6;
+                                   if(_mm256_cmp_pd_mask(overflow,
+                                                   _mm256_abs_pd(pn5),_CMP_LE_OQ)) {
+                                      t0 = _mm256_div_pd(C1,overflow);
+                                      pn1= _mm256_mul_pd(pn1,t0);
+                                      pn2= _mm256_mul_pd(pn2,t0);
+                                      pn3= _mm256_mul_pd(pn3,t0);
+                                      pn4= _mm256_mul_pd(pn4,t0);               
+                                   }
+                               }
+                           } 
+                           
+                           return (gaminc);                   
+                   }		  
 
 
 /*
@@ -1891,7 +2055,7 @@ namespace gms {
                              register __m256 absb9;
                              register __m256 absb11;
 
-                             expmy = _mm256_mul_ps(_mm256_exp_ps(negate_zmm16r4(y)),b0); 
+                             expmy = _mm256_mul_ps(_mm256_exp_ps(negate_ymm8r4(y)),b0); 
                              absb1 = _mm256_sub_ps(absx,b1);
                              absb3 = _mm256_add_ps(absx,b3);
                              absb5 = _mm256_sub_ps(absx,b5);
