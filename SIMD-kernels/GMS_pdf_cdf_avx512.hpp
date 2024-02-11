@@ -2931,7 +2931,8 @@ namespace gms {
 !    Input, real ( kind = 8 ) X, the argument of the function.
 !
 !    Output, real ( kind = 8 ) R8_GAMMA, the value of the function.
-!  
+!    Important notice: ******For argument interval: 2.0<=x<12.0 there is a scalarization in form
+!    of 8 scalar for-loops*******!!
 */
 
 
@@ -2969,7 +2970,7 @@ namespace gms {
                                         _mm512_set1_pd(4.75584627752788110767815e+03),
                                         _mm512_set1_pd(-1.34659959864969306392456e+05),
                                         _mm512_set1_pd(1.15132259675553483497211e+05)};
-                       __m512d C31415926535897932384626434 = 
+                       __m512d pi                          = 
                                         _mm512_set1_pd(3.1415926535897932384626434e+00);
                        __m512d eps                         =
                                         _mm512_set1_pd(2.22e-16);
@@ -2989,10 +2990,438 @@ namespace gms {
                                         _mm512_set1_pd(1.0e+30);
                        __m512d xminin                      =
                                         _mm512_set1_pd(2.23e-308);
+                       
+                       __m512d zero                        =
+                                        _mm512_setzero_pd();
+                       register __m512d res,sum,xden,xnum;
+                       register __m512d y,y1,ysq,z,fact;
+                       register __m512i n;
+                       
+                       bool     parity;
+                       parity = false;
+                       y      = x;
+                       // Negative argument
+                       if(_mm512_cmp_pd_mask(y,zero,_CMP_LE_OQ)) {
+                          register __m512d t0,t1;
+                          y  = negate_zmm8r8(x);
+                          y1 = _mm512_castsi512_pd(_mm512_cvtt_roundpd_epu64(y,_MM_FROUND_NO_EXC));
+                          res= _mm512_sub_pd(y,y1);
+                          if(_mm512_cmp_pd_mask(res,zero,_CMP_NEQ_OQ)) {
+                            
+                             t0 = _mm512_mul_pd(_mm512_mul_pd(y1,half),two);
+                             t1 = _mm512_castsi512_pd(_mm512_cvtt_roundpd_epu64(t0,_MM_FROUND_NO_EXC));
+                             if(_mm512_cmp_pd_mask(y1,t1,_CMP_NEQ_OQ)) parity = true;
+#if (USE_SLEEF_LIB) == 1
+                             t0 = xsin(_mm512_mul_pd(pi,res));
+#else
+                             t0 = _mm512_sin_pd(_mm512_mul_pd(pi,res));
+#endif                             
+                             fact = _mm512_div_pd(negate_zmm8r8(pi),t0);
+                             y    = _mm512_add_pd(y,one);
+                          }
+                          else {
+                             res = xinf;
+                             return (res);
+                          }
+                       }
+                       // Positive argument
+                       if(_mm512_cmp_pd_mask(y,eps,_CMP_LT_OQ)) {
+                          __mmask8 m;
+                          m = _mm512_cmp_pd_mask(xminin,y,_CMP_LE_OQ);
+                          res = _mm512_mask_blend_pd(m,xinf,_mm512_div_pd(one,y));
+                          return (res);
+                       }
+                  }
+                  else if(_mm512_cmp_pd_mask(y,twelve,_CMP_LT_OQ)) {
+                          y1 = y;
+                          // 0.0 < argument < 1.0.
+                          if(_mm512_cmp_pd_mask(y,one,_CMP_LT_OQ)) {
+                             z = y;
+                             y = _mm512_add_pd(y,one);
+                          }
+                          else {
+                             //!  1.0 < argument < 12.0.
+                             //!  Reduce argument if necessary.
+                             n = _mm512_sub_epi64(mm512_castpd_si512(y),
+                                                  _mm512_set1_epi64(1LL));
+                             y = _mm512_sub_pd(y,_mm512_castsi512_pd(n));
+                             z = _mm512_sub_pd(y,one);
+                          }
+                          //  Evaluate approximation for 1.0 < argument < 2.0.
+                          xnum = zero;
+                          xden = one;
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[0]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[0]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[1]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[1]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[2]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[2]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[3]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[3]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[4]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[4]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[5]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[5]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[6]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[7]);
+                          xnum = _mm512_mul_pd(_mm512_add_pd(xnum,p[7]),z);
+                          xden = _mm512_fmadd_pd(xden,z,q[7]);
+                          res  = _mm512_add_pd(_mm512_div_pd(xnum,xden),one);
+                          // Adjust result for case  0.0 < argument < 1.0.
+                          if(_mm512_cmp_pd_mask(y1,y,_CMP_LT_OQ)) 
+                             res = _mm512_div_pd(res,y1);
+                          else if(_mm512_cmp_pd_mask(y,y1,_CMP_LT_OQ)) {
+                          //  Important notice: ******For argument interval: 2.0<=x<12.0 there is a scalarization in form
+                          //  of 8 scalar for-loops*******!!
+                             __ATTR_ALIGN__(64) int64_t sn[8];
+                             __ATTR_ALIGN__(64) double  sres[8];
+                             __ATTR_ALIGN__(64) double  sy[8];
+                             __ATTR_ALIGN__(64) double  sone[8];
+                             int64_t i;
+                             _mm512_store_si512(&sn[0],n);
+                             _mm512_store_pd(&sres[0],res);
+                             _mm512_store_pd(&sy[0],y);
+                             _mm512_store_pd(&sone[0],one);
+                             for(i=0; i != sn[0]; ++i) {
+                                 sres[0] *= sy[0];
+                                 sy[0]   += sone[0];
+                             }
+                             for(i=0; i != sn[1]; ++i) {
+                                 sres[1] *= sy[1];
+                                 sy[1]   += sone[1];
+                             }
+                             for(i=0; i != sn[2]; ++i) {
+                                 sres[2] *= sy[2];
+                                 sy[2]   += sone[2];
+                             }
+                             for(i=0; i != sn[3]; ++i) {
+                                 sres[3] *= sy[3];
+                                 sy[3]   += sone[3];
+                             }
+                             for(i=0; i != sn[4]; ++i) {
+                                 sres[4] *= sy[4];
+                                 sy[4]   += sone[4];
+                             }
+                             for(i=0; i != sn[5]; ++i) {
+                                 sres[5] *= sy[5];
+                                 sy[5]   += sone[5];
+                             }
+                             for(i=0; i != sn[6]; ++i) {
+                                 sres[6] *= sy[6];
+                                 sy[6]   += sone[6];
+                             }
+                             for(i=0; i != sn[7]; ++i) {
+                                 sres[7] *= sy[7];
+                                 sy[7]   += sone[7];
+                             }
+                             res = _mm512_load_pd(&sres[0]);
+                             y   = _mm512_load_pd(&sy[0]);
+                          }
+                          
+                       }
+                       else {
+                            //  Evaluate for 12.0 <= argument.
+                            if(_mm512_cmp_pd_mask(y,xbig,_CMP_LE_OQ)) {
+                               ysq = _mm512_mul_pd(y,y);
+                               sum = c[6];
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[0]);
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[1]);
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[2]);
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[3]);
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[4]);
+                               sum = _mm512_add_pd(_mm512_div_pd(sum,ysq),c[5]);
+                               sum = _mm512_sub_pd(_mm512_div_pd(sum,y),
+                                                   _mm512_add_pd(y,sqrtpi));
+#if (USE_SLEEF_LIB) == 1
+                               sum = _mm512_mul_pd(_mm512_add_pd(sum,
+                                                         _mm512_sub_pd(y,half),xlog(y)));
+                               res = xexp(sum);
+#else
+                               sum = _mm512_mul_pd(_mm512_add_pd(sum,
+                                                         _mm512_sub_pd(y,half),_mm512_log_pd(y)));
+                               res = _mm512_exp_pd(sum);
+#endif
+
+                                                    
+                            }
+                            else {
+                               res = xinf;
+                               return (res);
+                            }
+                       }
+                       // !  Final adjustments and return.
+                       if(parity) res = negate_zmm8r8(res);
+                       if(_mm512_cmp_pd_mask(fact,one,_CMP_NEQ_OQ)) res = _mm512_div_pd(fact,res);
+                       return (res);
+                  }
+                  
+                  
+/*
+!*****************************************************************************80
+!
+!! STUDENT_PDF evaluates the central Student T PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B,C;X) = Gamma ( (C+1)/2 ) /
+!      ( Gamma ( C / 2 ) * Sqrt ( PI * C )
+!      * ( 1 + ((X-A)/B)^2/C )^(C + 1/2 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 November 2005
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, shape parameters of the PDF,
+!    used to transform the argument X to a shifted and scaled
+!    value Y = ( X - A ) / B.  It is required that B be nonzero.
+!    For the standard distribution, A = 0 and B = 1.
+!
+!    Input, real ( kind = 8 ) C, is usually called the number of
+!    degrees of freedom of the distribution.  C is typically an
+!    integer, but that is not essential.  It is required that
+!    C be strictly positive.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+*/
+
+
+          
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      student_pdf_zmm8r8(const __m512d x,
+                                         const __m512d a,
+                                         const __m512d b,
+                                         const __m512d c) {
                          
-                    }
-		    
-		
+                         __m512d C314159265358979323846264 = 
+                                           _mm512_set1_pd(3.14159265358979323846264);   
+                         __m512d C1 = _mm512_set1_pd(1.0);
+                         __m512d C05= _mm512_set1_pd(0.5);  
+                         __m512d C2 = _mm512_set1_pd(2.0); 
+                         register __m512d y,t0,t1,t2,t3;
+                         register __m512d r8g1,r8g2,pdf;
+                         t0   = _mm512_mul_pd(C05,_mm512_add_pd(c,C1));
+                         y    = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+                         r8g1 = gamma_zmm8r8(t0);
+                         t1   = _mm512_fmadd_pd(C2,c,C1);
+                         t2   = _mm512_add_pd(_mm512_div_pd(_mm512_mul_pd(y,y),c),C1);
+                         t0   = _mm512_pow_pd(t2,t1); //used
+                         r8g2 = gamma_zmm8r8(_mm512_mul_pd(C05,c));
+                         y    = _mm512_sqrt_pd(_mm512_mul_pd(C314159265358979323846264,c));
+                         t3   = _mm512_mul_pd(y,_mm512_mul_pd(r8g2,t0));
+                         pdf  = _mm512_div_pd(r8g1,t3);
+                         return (pdf);
+                   }
+  
+/*                 
+!*****************************************************************************80
+!
+!! STUDENT_VARIANCE returns the variance of the central Student T PDF.
+!
+!  Discussion:
+!
+!    The variance is not defined unless 2 < C.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 November 2005
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, shape parameters of the PDF,
+!    used to transform the argument X to a shifted and scaled
+!    value Y = ( X - A ) / B.  It is required that B be nonzero.
+!    For the standard distribution, A = 0 and B = 1.
+!
+!    Input, real ( kind = 8 ) C, is usually called the number of
+!    degrees of freedom of the distribution.  C is typically an
+!    integer, but that is not essential.  It is required that
+!    C be strictly positive.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!
+*/  
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d 
+                      student_variance_zmm8r8(const __m512d a,
+                                              const __m512d b,
+                                              const __m512d c) {
+                                              
+                          __m512d C2 = _mm512_set1_pd(2.0);     
+                          register __m512d bb,t1;
+                          register __m512d var;
+                          bb = _mm512_mul_pd(b,b);
+                          t1 = _mm512_sub_pd(c,C2);
+                          var= _mm512_mul_pd(bb,_mm512_div_pd(c,t1));
+                          return (var);                    
+                    }   
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+                      student_variance_zmm16r4(const __m512 a,
+                                              const __m512 b,
+                                              const __m512 c) {
+                                              
+                          __m512 C2 = _mm512_set1_ps(2.0f);     
+                          register __m512 bb,t1;
+                          register __m512 var;
+                          bb = _mm512_mul_ps(b,b);
+                          t1 = _mm512_sub_ps(c,C2);
+                          var= _mm512_mul_ps(bb,_mm512_div_ps(c,t1));
+                          return (var);                    
+                    }   
+                    
+                    
+/*
+     !*****************************************************************************80
+!
+!! TRIGAMMA calculates the TriGamma function.
+!
+!  Discussion:
+!
+!    TriGamma(x) = d^2 log ( Gamma ( x ) ) / dx^2.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 January 2000
+!
+!  Author:
+!
+!    FORTRAN77 original version by B Schneider
+!    FORTRAN90 version by John Burkardt
+!
+!  Reference:
+!
+!    BE Schneider,
+!    Algorithm AS 121:
+!    Trigamma Function,
+!    Applied Statistics,
+!    Volume 27, Number 1, page 97-99, 1978.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the trigamma function.
+!    0 < X.
+!
+!    Output, real ( kind = 8 ) TRIGAMMA, the value of the
+!    trigamma function at X.
+!     
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512d
+                      trigamma_zmm8r8(const __m512d x) {
+                         
+                         __m512d a  = _mm512_setzero_pd();
+                         __m512d C1 = _mm512_set1_pd(1.0);
+                         __m512d C05=_mm512_set1_pd(0.5);
+                         __m512d b  = _mm512_set1_pd(5.0);
+                         __m512d b2 = _mm512_set1_pd(1.0/6.0);
+                         __m512d b4 = _mm512_set1_pd(-1.0/30.0);
+                         __m512d b6 = _mm512_set1_pd(1.0/42.0);
+                         __m512d b8 = _mm512_set1_pd(-1.0/30.0);
+                         register __m512d y,z,t0,t1;
+                         register __m512d trig;
+                         
+                         if(_mm512_cmp_pd_mask(x,a,_CMP_LE_OQ)) {
+                            trig = _mm512_div_pd(C1,_mm512_mul_pd(x,x));
+                         }
+                         else {
+                            z = x;
+                            trig = a;
+                            while(_mm512_cmp_pd_mask(z,b,_CMP_LT_OQ)) {
+                                  trig = _mm512_add_pd(_mm512_div_pd(C1,
+                                                         _mm512_mul_pd(z,z)))
+                                  z    = _mm512_add_pd(z,C1);
+                            }
+                            y    = _mm512_div_pd(C1,_mm512_mul_pd(z,z));
+                            trig = trig+C05*y+(C1+y*(b2+y*(b4+y*(b6+y*b8))))/z; 
+                         }
+                         return (trig);
+                    } 
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+                      trigamma_zmm16r4(const __m512 x) {
+                         
+                         __m512 a  = _mm512_setzero_ps();
+                         __m512 C1 = _mm512_set1_ps(1.0f);
+                         __m512 C05=_mm512_set1_ps(0.5f);
+                         __m512 b  = _mm512_set1_ps(5.0f);
+                         __m512 b2 = _mm512_set1_ps(1.0f/6.0f);
+                         __m512 b4 = _mm512_set1_ps(-1.0f/30.0f);
+                         __m512 b6 = _mm512_set1_ps(1.0f/42.0f);
+                         __m512 b8 = _mm512_set1_ps(-1.0f/30.0f);
+                         register __m512 y,z,t0,t1;
+                         register __m512 trig;
+                         
+                         if(_mm512_cmp_ps_mask(x,a,_CMP_LE_OQ)) {
+                            trig = _mm512_div_ps(C1,_mm512_mul_ps(x,x));
+                         }
+                         else {
+                            z = x;
+                            trig = a;
+                            while(_mm512_cmp_ps_mask(z,b,_CMP_LT_OQ)) {
+                                  trig = _mm512_add_ps(_mm512_div_ps(C1,
+                                                         _mm512_mul_ps(z,z)))
+                                  z    = _mm512_add_ps(z,C1);
+                            }
+                            y    = _mm512_div_ps(C1,_mm512_mul_ps(z,z));
+                            trig = trig+C05*y+(C1+y*(b2+y*(b4+y*(b6+y*b8))))/z; 
+                         }
+                         return (trig);
+                    } 
+
+	
 /*
   !*****************************************************************************80
 !
