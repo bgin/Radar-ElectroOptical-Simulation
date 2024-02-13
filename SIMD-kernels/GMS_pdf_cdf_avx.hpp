@@ -598,6 +598,7 @@ namespace gms {
 !
 */	
 
+#include <limits>
 
                       __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
@@ -717,7 +718,129 @@ namespace gms {
                            } 
                            
                            return (gaminc);                   
+                   }	
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+                      gamma_incomplete_ymm8r4(const __m256 p,
+                                              const __m256 x) {
+                                              
+                            const __m256 exp_arg_min = _mm256_set1_ps(-88.0e+00);
+                            const __m256 overflow    = _mm256_set1_ps(std::numeric_limits<float>::max());
+                            const __m256 plimit      = _mm256_set1_ps(1000.0e+00);
+                            const __m256 tol         = _mm256_set1_ps(1.0e-7f);
+                            const __m256 xbig        = _mm256_set1_ps(1.0e+8f);
+                            const __m256 C0          = _mm256_setzero_ps();
+                            const __m256 C0333333333 = _mm256_set1_ps(0.3333333333333333333333f);
+                            const __m256 C1          = _mm256_set1_ps(1.0);
+                            const __m256 C2          = _mm256_set1_ps(2.0);
+                            const __m256 C3          = _mm256_set1_ps(3.0);
+                            const __m256 C9          = _mm256_set1_ps(9.0);
+                            __m256 cdf,arg,b,c;
+                            __m256 pn1,pn2,pn3,pn4;
+                            __m256 pn5,pn6,rn,t0,t1;
+                            __m256 gaminc;
+                            __mmask8 m0,m1;
+                            m0 = _mm256_cmp_ps_mask(plimit,p,_CMP_LT_OQ);
+                            if(m0) {
+                               __m256 sqrp,xp,_9p1,t0,t1;
+                               xp     = _mm256_div_ps(x,p);
+                               _9p1   = _mm256_fmsub_ps(C9,p,C1);
+                               sqrp   = _mm256_mul_ps(C3,_mm256_sqrt_pd(p));
+                               t0     = _mm256_pow_ps(xp,C0333333333);
+                               t1     = _mm256_add_ps(t0,
+                                            _mm256_div_ps(C1,_9p1));
+                               pn1    = _mm256_mul_ps(sqrp,t1);
+                               gaminc = normal_01_cdf_ymm8r4(pn1);
+                               return (gaminc);
+                            }   
+                            m0 = _mm256_cmp_ps_mask(x,C1,_CMP_LE_OQ);
+                            m1 = _mm256_cmp_ps_mask(x,p,_CMP_LT_OQ);
+                            if(m0 || m1) {
+
+                               t0  = _mm256_log_ps(x);
+                          
+                               t1  = gamma_log_ymm8r4(_mm256_add_ps(p,C1));
+                               arg = _mm256_fmsub_ps(p,t0,_mm256_sub_ps(x,t1));
+                               c   = C1;
+                               gaminc = C1;
+                               a   = p; 
+                               while(true) {
+                                    a      = _mm256_add_ps(a,C1);
+                                    c      = _mm256_mul_ps(c,_mm256_div_ps(x,a));
+                                    gaminc = _mm256_add_ps(gaminc,c);
+                                    m0     = _mm256_cmp_ps_mask(c,tol,_CMP_LE_OQ);
+                                    if(m0) break;
+                               }
+
+                               t0  = _mm256_log_ps(x);
+                               arg = _mm256_add_ps(arg,t0);  
+                               m1  = _mm256_cmp_ps_mask(exp_arg_min,arg,_CMP_LE_OQ);
+                               gaminc = _mm256_mask_blend_ps(m1,C0,_mm256_exp_pd(arg));  
+                                
+                           } 
+                           else {
+
+                               t0  = _mm256_log_ps(x);
+                             
+                               t1  = gamma_log_ymm8r4(p);
+                               arg = _mm256_fmsub_ps(p,t0,_mm256_sub_pd(x,t1));                               
+                               a   = _mm256_sub_ps(C1,p);
+                               b   = _mm256_add_ps(a,_mm256_add_pd(x,C1));
+                               c   = C0;
+                               pn1 = C1;
+                               pn2 = x;
+                               pn3 = _mm256_add_ps(x,C1);
+                               pn4 = _mm256_mul_ps(x,b);
+                               gaminc = _mm256_div_ps(pn3,pn4);
+                               while(true) {
+                                   a = _mm256_add_ps(a,C1);
+                                   b = _mm256_add_ps(b,C2);
+                                   c = _mm256_add_ps(c,C1);
+                                   pn5 = _mm256_fmsub_ps(b,pn3,
+                                                     _mm256_mul_ps(a,
+                                                           _mm256_mul_ps(c,pn1)));
+                                   pn6 = _mm256_fmsub_ps(b,pn4,
+                                                     _mm256_mul_ps(a,
+                                                           _mm256_mul_ps(c,pn2)));
+                                   if(_mm256_cmp_ps_mask(C0,_mm256_abs_ps(pn6),
+                                                                       _CMP_LT_OQ)) {
+                                        rn = _mm256_div_ps(pn5,pn6);
+                                        t0 = _mm256_abs_ps(_mm256_sub_ps(gaminc,rn));
+                                        t1 = _mm256_min_ps(tol,_mm256_mul_ps(tol,rn));
+                                        if(_mm256_cmp_ps_mask(t0,t1,_CMP_LE_OQ)) {
+                                           arg  = _mm256_add_ps(_mm256_log_pd(gaminc));       
+                                           m1   = _mm256_cmp_ps_mask(exp_arg_min,arg,_CMP_LE_OQ);
+                                           gaminc = _mm256_mask_blend_ps(m1,C1,_mm256_sub_ps(C1,
+                                                                                    _mm256_exp_ps(arg)));
+      
+                                           return (gaminc);                               
+                                        }    
+                                        gaminc = rn;                               
+                                   }
+                                   pn1 = pn3;
+                                   pn2 = pn4;
+                                   pn3 = pn5;
+                                   pn4 = pn6;
+                                   if(_mm256_cmp_ps_mask(overflow,
+                                                   _mm256_abs_ps(pn5),_CMP_LE_OQ)) {
+                                      t0 = _mm256_div_ps(C1,overflow);
+                                      pn1= _mm256_mul_ps(pn1,t0);
+                                      pn2= _mm256_mul_ps(pn2,t0);
+                                      pn3= _mm256_mul_ps(pn3,t0);
+                                      pn4= _mm256_mul_ps(pn4,t0);               
+                                   }
+                               }
+                           } 
+                           
+                           return (gaminc);                   
                    }		  
+	  
 
 
 /*
@@ -3778,7 +3901,71 @@ namespace gms {
                          pdf = _mm256_div_ps(C1,t1);
                          return (pdf);                     
                    }
-                                      
+                   
+                  
+/*
+ !*****************************************************************************80
+!
+!! MAXWELL_CDF evaluates the Maxwell CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    0.0D+00 <= X
+!
+!    Input, real ( kind = 8 ) A, the parameter of the PDF.
+!    0 < A.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!                    
+*/
+
+
+                
+                       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d 
+                      maxwell_cdf_ymm4r8(const __m256d x,
+                                         const __m256d a) {
+                         
+                         const __m256d C15 = _mm256_set1_pd(1.5);
+                         register __m256d x2,cdf;
+                         x2 = _mm256_div_pd(x,a);
+                         cdf = gamma_incomplete_ymm4r8(C15,x2);
+                         return (cdf);                      
+                    }      
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256 
+                      maxwell_cdf_ymm8r4(const __m256 x,
+                                         const __m256 a) {
+                         
+                         const __m256 C15 = _mm256_set1_ps(1.5f);
+                         register __m256 x2,cdf;
+                         x2 = _mm256_div_ps(x,a);
+                         cdf = gamma_incomplete_ymm8r4(C15,x2);
+                         return (cdf);                      
+                    }                           
                    
                                        
                     
