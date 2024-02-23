@@ -3519,7 +3519,7 @@ namespace gms {
                           else {
                              //!  1.0 < argument < 12.0.
                              //!  Reduce argument if necessary.
-                             n = _mm512_sub_epi32(mm512_castps_si512(y),
+                             n = _mm512_sub_epi32(_mm512_castps_si512(y),
                                                   _mm512_set1_epi32(1));
                              y = _mm512_sub_ps(y,_mm512_castsi512_ps(n));
                              z = _mm512_sub_ps(y,one);
