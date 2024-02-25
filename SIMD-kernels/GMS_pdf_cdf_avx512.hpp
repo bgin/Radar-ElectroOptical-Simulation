@@ -126,15 +126,16 @@ namespace gms {
 			   //    __builtin_expect(_mm512_cmp_pd_mask(x,xbig,_CMP_GT_OQ),0)) {
                            //    return (huge);
 			   // }
- 
-                         __ATTR_ALIGN__(64) const __m512d c[7] = { _mm512_set1_pd(-1.910444077728E-03),
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512d c[7] = { _mm512_set1_pd(-1.910444077728E-03),
 			                                     _mm512_set1_pd(8.4171387781295E-04),
                                                              _mm512_set1_pd(-5.952379913043012E-04), 
                                                              _mm512_set1_pd(7.93650793500350248E-04), 
                                                              _mm512_set1_pd(-2.777777777777681622553E-03), 
                                                              _mm512_set1_pd(8.333333333333333331554247E-02), 
                                                              _mm512_set1_pd(5.7083835261E-03)};
-			 __ATTR_ALIGN__(64) const __m512d p1[8] = {_mm512_set1_pd(4.945235359296727046734888E+00), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512d p1[8] = {_mm512_set1_pd(4.945235359296727046734888E+00), 
                                                              _mm512_set1_pd(2.018112620856775083915565E+02), 
                                                              _mm512_set1_pd(2.290838373831346393026739E+03), 
                                                              _mm512_set1_pd(1.131967205903380828685045E+04),
@@ -142,7 +143,8 @@ namespace gms {
                                                              _mm512_set1_pd(3.848496228443793359990269E+04), 
                                                              _mm512_set1_pd(2.637748787624195437963534E+04), 
                                                              _mm512_set1_pd(7.225813979700288197698961E+03)};
-			 __ATTR_ALIGN__(64) const __m512d p2[8] = {_mm512_set1_pd(4.974607845568932035012064E+00), 
+                         __attribute__((section(".rodata")))                                    
+			 __ATTR_ALIGN__(64) static __m512d p2[8] = {_mm512_set1_pd(4.974607845568932035012064E+00), 
                                                              _mm512_set1_pd(5.424138599891070494101986E+02), 
                                                              _mm512_set1_pd(1.550693864978364947665077E+04), 
                                                              _mm512_set1_pd(1.847932904445632425417223E+05), 
@@ -150,7 +152,8 @@ namespace gms {
                                                              _mm512_set1_pd(3.338152967987029735917223E+06), 
                                                              _mm512_set1_pd(5.106661678927352456275255E+06), 
                                                              _mm512_set1_pd(3.074109054850539556250927E+06)};
-			 __ATTR_ALIGN__(64) const __m512d p4[8] = {_mm512_set1_pd(1.474502166059939948905062E+04), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512d p4[8] = {_mm512_set1_pd(1.474502166059939948905062E+04), 
                                                              _mm512_set1_pd(2.426813369486704502836312E+06), 
                                                              _mm512_set1_pd(1.214755574045093227939592E+08), 
                                                              _mm512_set1_pd(2.663432449630976949898078E+09), 
@@ -158,7 +161,8 @@ namespace gms {
                                                              _mm512_set1_pd(1.702665737765398868392998E+11), 
                                                              _mm512_set1_pd(4.926125793377430887588120E+11), 
                                                              _mm512_set1_pd(5.606251856223951465078242E+11)};
-                         __ATTR_ALIGN__(64) const __m512d q1[8] = {_mm512_set1_pd(6.748212550303777196073036E+01), 
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512d q1[8] = {_mm512_set1_pd(6.748212550303777196073036E+01), 
                                                              _mm512_set1_pd(1.113332393857199323513008E+03), 
                                                              _mm512_set1_pd(7.738757056935398733233834E+03), 
                                                              _mm512_set1_pd(2.763987074403340708898585E+04), 
@@ -166,7 +170,8 @@ namespace gms {
                                                              _mm512_set1_pd(6.161122180066002127833352E+04), 
                                                              _mm512_set1_pd(3.635127591501940507276287E+04), 
                                                              _mm512_set1_pd(8.785536302431013170870835E+03)};
-			 __ATTR_ALIGN__(64) const __m512d q2[8] = {_mm512_set1_pd(1.830328399370592604055942E+02),
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512d q2[8] = {_mm512_set1_pd(1.830328399370592604055942E+02),
                                                              _mm512_set1_pd(7.765049321445005871323047E+03), 
                                                              _mm512_set1_pd(1.331903827966074194402448E+05),
                                                              _mm512_set1_pd(1.136705821321969608938755E+06), 
@@ -174,7 +179,8 @@ namespace gms {
                                                              _mm512_set1_pd(1.346701454311101692290052E+07), 
                                                              _mm512_set1_pd(1.782736530353274213975932E+07), 
                                                              _mm512_set1_pd(9.533095591844353613395747E+06)};
-			 __ATTR_ALIGN__(64) const __m512d q4[8] = {_mm512_set1_pd(2.690530175870899333379843E+03), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512d q4[8] = {_mm512_set1_pd(2.690530175870899333379843E+03), 
                                                              _mm512_set1_pd(6.393885654300092398984238E+05), 
                                                              _mm512_set1_pd(4.135599930241388052042842E+07), 
                                                              _mm512_set1_pd(1.120872109616147941376570E+09), 
@@ -347,15 +353,16 @@ namespace gms {
 			  //     __builtin_expect(_mm512_cmp_ps_mask(x,xbig,_CMP_GT_OQ),0)) {
                           //     return (huge);
 			  //  }
- 
-                         __ATTR_ALIGN__(64) const __m512 c[7] = { _mm512_set1_ps(-1.910444077728E-03),
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512 c[7] = { _mm512_set1_ps(-1.910444077728E-03),
 			                                     _mm512_set1_ps(8.4171387781295E-04),
                                                              _mm512_set1_ps(-5.952379913043012E-04), 
                                                              _mm512_set1_ps(7.93650793500350248E-04), 
                                                              _mm512_set1_ps(-2.777777777777681622553E-03), 
                                                              _mm512_set1_ps(8.333333333333333331554247E-02), 
                                                              _mm512_set1_ps(5.7083835261E-03)};
-			 __ATTR_ALIGN__(64) const __m512 p1[8] = {_mm512_set1_ps(4.945235359296727046734888E+00), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512 p1[8] = {_mm512_set1_ps(4.945235359296727046734888E+00), 
                                                              _mm512_set1_ps(2.018112620856775083915565E+02), 
                                                              _mm512_set1_ps(2.290838373831346393026739E+03), 
                                                              _mm512_set1_ps(1.131967205903380828685045E+04),
@@ -363,7 +370,8 @@ namespace gms {
                                                              _mm512_set1_ps(3.848496228443793359990269E+04), 
                                                              _mm512_set1_ps(2.637748787624195437963534E+04), 
                                                              _mm512_set1_ps(7.225813979700288197698961E+03)};
-			 __ATTR_ALIGN__(64) const __m512 p2[8] = {_mm512_set1_ps(4.974607845568932035012064E+00), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512 p2[8] = {_mm512_set1_ps(4.974607845568932035012064E+00), 
                                                              _mm512_set1_ps(5.424138599891070494101986E+02), 
                                                              _mm512_set1_ps(1.550693864978364947665077E+04), 
                                                              _mm512_set1_ps(1.847932904445632425417223E+05), 
@@ -371,7 +379,8 @@ namespace gms {
                                                              _mm512_set1_ps(3.338152967987029735917223E+06), 
                                                              _mm512_set1_ps(5.106661678927352456275255E+06), 
                                                              _mm512_set1_ps(3.074109054850539556250927E+06)};
-			 __ATTR_ALIGN__(64) const __m512 p4[8] = {_mm512_set1_ps(1.474502166059939948905062E+04), 
+                         __attribute__((section(".rodata")))                                    
+			 __ATTR_ALIGN__(64) static __m512 p4[8] = {_mm512_set1_ps(1.474502166059939948905062E+04), 
                                                              _mm512_set1_ps(2.426813369486704502836312E+06), 
                                                              _mm512_set1_ps(1.214755574045093227939592E+08), 
                                                              _mm512_set1_ps(2.663432449630976949898078E+09), 
@@ -379,7 +388,8 @@ namespace gms {
                                                              _mm512_set1_ps(1.702665737765398868392998E+11), 
                                                              _mm512_set1_ps(4.926125793377430887588120E+11), 
                                                              _mm512_set1_ps(5.606251856223951465078242E+11)};
-                         __ATTR_ALIGN__(64) const __m512 q1[8] = {_mm512_set1_ps(6.748212550303777196073036E+01), 
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512 q1[8] = {_mm512_set1_ps(6.748212550303777196073036E+01), 
                                                              _mm512_set1_ps(1.113332393857199323513008E+03), 
                                                              _mm512_set1_ps(7.738757056935398733233834E+03), 
                                                              _mm512_set1_ps(2.763987074403340708898585E+04), 
@@ -387,7 +397,8 @@ namespace gms {
                                                              _mm512_set1_ps(6.161122180066002127833352E+04), 
                                                              _mm512_set1_ps(3.635127591501940507276287E+04), 
                                                              _mm512_set1_ps(8.785536302431013170870835E+03)};
-			 __ATTR_ALIGN__(64) const __m512 q2[8] = {_mm512_set1_ps(1.830328399370592604055942E+02),
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512 q2[8] = {_mm512_set1_ps(1.830328399370592604055942E+02),
                                                              _mm512_set1_ps(7.765049321445005871323047E+03), 
                                                              _mm512_set1_ps(1.331903827966074194402448E+05),
                                                              _mm512_set1_ps(1.136705821321969608938755E+06), 
@@ -395,7 +406,8 @@ namespace gms {
                                                              _mm512_set1_ps(1.346701454311101692290052E+07), 
                                                              _mm512_set1_ps(1.782736530353274213975932E+07), 
                                                              _mm512_set1_ps(9.533095591844353613395747E+06)};
-			 __ATTR_ALIGN__(64) const __m512 q4[8] = {_mm512_set1_ps(2.690530175870899333379843E+03), 
+                         __attribute__((section(".rodata")))
+			 __ATTR_ALIGN__(64) static __m512 q4[8] = {_mm512_set1_ps(2.690530175870899333379843E+03), 
                                                              _mm512_set1_ps(6.393885654300092398984238E+05), 
                                                              _mm512_set1_ps(4.135599930241388052042842E+07), 
                                                              _mm512_set1_ps(1.120872109616147941376570E+09), 
@@ -1411,6 +1423,419 @@ namespace gms {
 		    
 		    
 /*
+    !*****************************************************************************80
+!
+!! R8POLY_VALUE evaluates an R8POLY
+!
+!  Discussion:
+!
+!    For sanity's sake, the value of N indicates the NUMBER of
+!    coefficients, or more precisely, the ORDER of the polynomial,
+!    rather than the DEGREE of the polynomial.  The two quantities
+!    differ by 1, but cause a great deal of confusion.
+!
+!    Given N and A, the form of the polynomial is:
+!
+!      p(x) = a(1) + a(2) * x + ... + a(n-1) * x^(n-2) + a(n) * x^(n-1)
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    13 August 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, integer ( kind = 4 ) N, the order of the polynomial.
+!
+!    Input, real ( kind = 8 ) A(N), the coefficients of the polynomial.
+!    A(1) is the constant term.
+!
+!    Input, real ( kind = 8 ) X, the point at which the polynomial is
+!    to be evaluated.
+!
+!    Output, real ( kind = 8 ) R8POLY_VALUE, the value of the polynomial at X.
+!     
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      vpoly_eval_zmm8r8(const int32_t n,
+		                        const __m512d * __restrict __ATTR_ALIGN__(64) a,
+		                        const __m512d x) {
+		         
+		         register __m512d vpoly;
+		         vpoly = _mm512_load_pd(&a[n]);
+		         for(int32_t i=n; i != 0; --i) {
+		             register __m512d t0 = a[i];
+		             vpoly = _mm512_fmadd_pd(vpoly,x,t0);   
+		         }  
+		         return (vpoly);              
+		    }
+		    
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+		      vpoly_eval_zmm16r4(const int32_t n,
+		                        const __m512 * __restrict __ATTR_ALIGN__(64) a,
+		                        const __m512 x) {
+		         
+		         register __m512 vpoly;
+		         vpoly = _mm512_load_ps(&a[n]);
+		         for(int32_t i=n; i != 0; --i) {
+		             register __m512 t0 = a[i];
+		             vpoly = _mm512_fmadd_ps(vpoly,x,t0);   
+		         }  
+		         return (vpoly);              
+		    }
+		    
+		    
+/*
+      !*****************************************************************************80
+!
+!! NORMAL_01_CDF_INV inverts the standard normal CDF.
+!
+!  Discussion:
+!
+!    The result is accurate to about 1 part in 10**16.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 June 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by Michael Wichura.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    Michael Wichura,
+!    Algorithm AS241:
+!    The Percentage Points of the Normal Distribution,
+!    Applied Statistics,
+!    Volume 37, Number 3, pages 477-484, 1988.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) P, the value of the cumulative probability
+!    densitity function.  0 < P < 1.  If P is outside this range, an
+!    "infinite" value will be returned.
+!
+!    Output, real ( kind = 8 ) X, the normal deviate value
+!    with the property that the probability of a standard normal deviate being
+!    less than or equal to the value is P.    
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d    
+		      normal_01_cdf_inv_zmm8r8(const __m512d p) {
+		            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512d  a[8] = {
+		                     _mm512_set1_pd(3.3871328727963666080e+00),
+                                     _mm512_set1_pd(1.3314166789178437745e+02),
+                                     _mm512_set1_pd(1.9715909503065514427e+03),
+                                     _mm512_set1_pd(1.3731693765509461125e+04),
+                                     _mm512_set1_pd(4.5921953931549871457e+04),
+                                     _mm512_set1_pd(6.7265770927008700853e+04),
+                                     _mm512_set1_pd(3.3430575583588128105e+04),
+                                     _mm512_set1_pd(2.5090809287301226727e+03)};   
+                            __attribute__((section(".rodata")))  
+		            __ATTR_ALIGN__(64) static __m512d   b[8] = {
+		                      _mm512_set1_pd(1.0e+00),
+                                      _mm512_set1_pd(4.2313330701600911252e+01),
+                                      _mm512_set1_pd(6.8718700749205790830e+02),
+                                      _mm512_set1_pd(5.3941960214247511077e+03),
+                                      _mm512_set1_pd(2.1213794301586595867e+04),
+                                      _mm512_set1_pd(3.9307895800092710610e+04),
+                                      _mm512_set1_pd(2.8729085735721942674e+04),
+                                      _mm512_set1_pd(5.2264952788528545610e+03)}; 
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512d   c[8] = {
+		                      _mm512_set1_pd(1.42343711074968357734e+00),
+                                      _mm512_set1_pd(4.63033784615654529590e+00),
+                                      _mm512_set1_pd(5.76949722146069140550e+00),
+                                      _mm512_set1_pd(3.64784832476320460504e+00),
+                                      _mm512_set1_pd(1.27045825245236838258e+00),
+                                      _mm512_set1_pd(2.41780725177450611770e-01),
+                                      _mm512_set1_pd(2.27238449892691845833e-02),
+                                      _mm512_set1_pd(7.74545014278341407640e-04)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512d   d[8] = {
+                                      _mm512_set1_pd(1.0e+00),
+                                      _mm512_set1_pd(2.05319162663775882187e+00),
+                                      _mm512_set1_pd(1.67638483018380384940e+00),
+                                      _mm512_set1_pd(6.89767334985100004550e-01),
+                                      _mm512_set1_pd(1.48103976427480074590e-01),
+                                      _mm512_set1_pd(1.51986665636164571966e-02),
+                                      _mm512_set1_pd(5.47593808499534494600e-04),
+                                      _mm512_set1_pd(1.05075007164441684324e-09)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512d   e[8] = {
+                                      _mm512_set1_pd(6.65790464350110377720e+00),
+                                      _mm512_set1_pd(5.46378491116411436990e+00),
+                                      _mm512_set1_pd(1.78482653991729133580e+00),
+                                      _mm512_set1_pd(2.96560571828504891230e-01),
+                                      _mm512_set1_pd(2.65321895265761230930e-02),
+                                      _mm512_set1_pd(1.24266094738807843860e-03),
+                                      _mm512_set1_pd(2.71155556874348757815e-05),
+                                      _mm512_set1_pd(2.01033439929228813265e-07)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512d   f[8] = {
+                                      _mm512_set1_pd(1.0e+00),
+                                      _mm512_set1_pd(5.99832206555887937690e-01),
+                                      _mm512_set1_pd(1.36929880922735805310e-01),
+                                      _mm512_set1_pd(1.48753612908506148525e-02),
+                                      _mm512_set1_pd(7.86869131145613259100e-04), 
+                                      _mm512_set1_pd(1.84631831751005468180e-05),
+                                      _mm512_set1_pd(1.42151175831644588870e-07),
+                                      _mm512_set1_pd(2.04426310338993978564e-15)};
+                          __m512d const1 = _mm512_set1_pd(0.180625e+00);
+                          __m512d const2 = _mm512_set1_pd(1.6e+00);
+                          __m512d split1 = _mm512_set1_pd(0.425e+00);
+                          __m512d split2 = _mm512_set1_pd(5.0e+00);
+                          __m512d C0     = _mm512_setzero_pd();
+                          __m512d C1     = _mm512_set1_pd(1.0);
+                          __m512d C05    = _mm512_set1_pd(0.5);
+                          register __m512d q,r,t0,t1;
+                          register __m512d x;
+                          q = _mm512_sub_pd(p,C05);
+                          if(_mm512_cmp_pd_mask(q,split1,_CMP_LE_OQ)) {
+                             r = _mm512_sub_pd(const1,_mm512_mul_pd(q,q));
+                             t0= vpoly_eval_zmm8r8(8,a,r);
+                             t1= vpoly_eval_zmm8r8(8,b,r);
+                             x = _mm512_div_pd(_mm512_mul_pd(q,t0),t1);
+                          } 
+                          else {
+                             const __mmask8 m = _mm512_cmp_pd_mask(q,C0,_CMP_LT_OQ);
+                             r                = _mm512_mask_blend_pd(m,_mm512_sub_pd(C1,p),p);
+                             if(_mm512_cmp_pd_mask(r,C0,_CMP_LE_OQ)) {
+                                x = _mm512_set1_pd(std::numeric_limits<double>::max());
+                             }
+                             else {
+#if (USE_SLEEF_LIB) == 1     
+                                r = _mm512_sqrt_pd(negate_zmm8r8(xlog(r)));
+#else
+                                r = _mm512_sqrt_pd(negate_zmm8r8(_mm512_log_pd(r)));
+#endif                         
+                                const __mmask8 m = _mm512_cmp_pd_mask(r,split2,_CMP_LE_OQ);
+                                r                = _mm512_mask_blend_pd(m,_mm512_sub_pd(r,split2),
+                                                                          _mm512_sub_pd(r,const2));
+                                t0               = _mm512_div_pd(vpoly_eval_zmm8r8(8,c,r),
+                                                                 vpoly_eval_zmm8r8(8,d,r));
+                                t1               = _mm512_div_pd(vpoly_eval_zmm8r8(8,e,r),
+                                                                 vpoly_eval_zmm8r8(8,f,r));
+                                x                = _mm512_mask_blend_pd(m,t1,t0);      
+                             }
+                             if(_mm512_cmp_pd_mask(q,C0,_CMP_LT_OQ)) x = negate_zmm8r8(x);
+                          }
+                          return (x);
+                          
+		    }
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512    
+		      normal_01_cdf_inv_zmm16r4(const __m512 p) {
+		            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512  a[8] = {
+		                     _mm512_set1_ps(3.3871328727963666080e+00f),
+                                     _mm512_set1_ps(1.3314166789178437745e+02f),
+                                     _mm512_set1_ps(1.9715909503065514427e+03f),
+                                     _mm512_set1_ps(1.3731693765509461125e+04f),
+                                     _mm512_set1_ps(4.5921953931549871457e+04f),
+                                     _mm512_set1_ps(6.7265770927008700853e+04f),
+                                     _mm512_set1_ps(3.3430575583588128105e+04f),
+                                     _mm512_set1_ps(2.5090809287301226727e+03f)};   
+                            __attribute__((section(".rodata")))  
+		            __ATTR_ALIGN__(64) static __m512   b[8] = {
+		                      _mm512_set1_ps(1.0e+00),
+                                      _mm512_set1_ps(4.2313330701600911252e+01f),
+                                      _mm512_set1_ps(6.8718700749205790830e+02f),
+                                      _mm512_set1_ps(5.3941960214247511077e+03f),
+                                      _mm512_set1_ps(2.1213794301586595867e+04f),
+                                      _mm512_set1_ps(3.9307895800092710610e+04f),
+                                      _mm512_set1_ps(2.8729085735721942674e+04f),
+                                      _mm512_set1_ps(5.2264952788528545610e+03f)}; 
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512   c[8] = {
+		                      _mm512_set1_ps(1.42343711074968357734e+00f),
+                                      _mm512_set1_ps(4.63033784615654529590e+00f),
+                                      _mm512_set1_ps(5.76949722146069140550e+00f),
+                                      _mm512_set1_ps(3.64784832476320460504e+00f),
+                                      _mm512_set1_ps(1.27045825245236838258e+00f),
+                                      _mm512_set1_ps(2.41780725177450611770e-01f),
+                                      _mm512_set1_ps(2.27238449892691845833e-02f),
+                                      _mm512_set1_ps(7.74545014278341407640e-04f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512   d[8] = {
+                                      _mm512_set1_ps(1.0e+00),
+                                      _mm512_set1_ps(2.05319162663775882187e+00f),
+                                      _mm512_set1_ps(1.67638483018380384940e+00f),
+                                      _mm512_set1_ps(6.89767334985100004550e-01f),
+                                      _mm512_set1_ps(1.48103976427480074590e-01f),
+                                      _mm512_set1_ps(1.51986665636164571966e-02f),
+                                      _mm512_set1_ps(5.47593808499534494600e-04f),
+                                      _mm512_set1_ps(1.05075007164441684324e-09f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512   e[8] = {
+                                      _mm512_set1_ps(6.65790464350110377720e+00f),
+                                      _mm512_set1_ps(5.46378491116411436990e+00f),
+                                      _mm512_set1_ps(1.78482653991729133580e+00f),
+                                      _mm512_set1_ps(2.96560571828504891230e-01f),
+                                      _mm512_set1_ps(2.65321895265761230930e-02f),
+                                      _mm512_set1_ps(1.24266094738807843860e-03f),
+                                      _mm512_set1_ps(2.71155556874348757815e-05f),
+                                      _mm512_set1_ps(2.01033439929228813265e-07f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512   f[8] = {
+                                      _mm512_set1_ps(1.0e+00),
+                                      _mm512_set1_ps(5.99832206555887937690e-01f),
+                                      _mm512_set1_ps(1.36929880922735805310e-01f),
+                                      _mm512_set1_ps(1.48753612908506148525e-02f),
+                                      _mm512_set1_ps(7.86869131145613259100e-04f), 
+                                      _mm512_set1_ps(1.84631831751005468180e-05f),
+                                      _mm512_set1_ps(1.42151175831644588870e-07f),
+                                      _mm512_set1_ps(2.04426310338993978564e-15f)};
+                          __m512 const1 = _mm512_set1_ps(0.180625e+00f);
+                          __m512 const2 = _mm512_set1_ps(1.6e+00f);
+                          __m512 split1 = _mm512_set1_ps(0.425e+00f);
+                          __m512 split2 = _mm512_set1_ps(5.0e+00f);
+                          __m512 C0     = _mm512_setzero_ps();
+                          __m512 C1     = _mm512_set1_ps(1.0f);
+                          __m512 C05    = _mm512_set1_ps(0.5f);
+                          register __m512 q,r,t0,t1;
+                          register __m512 x;
+                          q = _mm512_sub_ps(p,C05);
+                          if(_mm512_cmp_ps_mask(q,split1,_CMP_LE_OQ)) {
+                             r = _mm512_sub_ps(const1,_mm512_mul_ps(q,q));
+                             t0= vpoly_eval_zmm16r4(8,a,r);
+                             t1= vpoly_eval_zmm16r4(8,b,r);
+                             x = _mm512_div_ps(_mm512_mul_ps(q,t0),t1);
+                          } 
+                          else {
+                             const __mmask16 m = _mm512_cmp_ps_mask(q,C0,_CMP_LT_OQ);
+                             r                = _mm512_mask_blend_ps(m,_mm512_sub_ps(C1,p),p);
+                             if(_mm512_cmp_ps_mask(r,C0,_CMP_LE_OQ)) {
+                                x = _mm512_set1_pd(std::numeric_limits<float>::max());
+                             }
+                             else {
+#if (USE_SLEEF_LIB) == 1     
+                                r = _mm512_sqrt_ps(negate_zmm16r4(xlogf(r)));
+#else
+                                r = _mm512_sqrt_ps(negate_zmm16r4(_mm512_log_ps(r)));
+#endif                         
+                                const __mmask16 m = _mm512_cmp_ps_mask(r,split2,_CMP_LE_OQ);
+                                r                = _mm512_mask_blend_ps(m,_mm512_sub_ps(r,split2),
+                                                                          _mm512_sub_ps(r,const2));
+                                t0               = _mm512_div_ps(vpoly_eval_zmm16r4(8,c,r),
+                                                                 vpoly_eval_zmm16r4(8,d,r));
+                                t1               = _mm512_div_ps(vpoly_eval_zmm16r4(8,e,r),
+                                                                 vpoly_eval_zmm16r4(8,f,r));
+                                x                = _mm512_mask_blend_ps(m,t1,t0);      
+                             }
+                             if(_mm512_cmp_ps_mask(q,C0,_CMP_LT_OQ)) x = negate_zmm16r4(x);
+                          }
+                          return (x);
+                          
+		    }
+		    
+		    
+/*
+           !*****************************************************************************80
+!
+!! NORMAL_CDF_INV inverts the Normal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    23 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument.
+! 
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 		   
+		      normal_cdf_inv_zmm8r8(const __m512d cdf,
+		                            const __m512d a,
+		                            const __m512d b) {
+		          
+		          register __m512d x2;
+		          register __m512d x;
+		          x2 = normal_01_cdf_inv_zmm8r8(cdf);
+		          x  = _mm512_add_pd(a,_mm512_mul_pd(b,x2));
+		          return (x);      
+		   }
+		   
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 		   
+		      normal_cdf_inv_zmm16r4(const __m512 cdf,
+		                            const __m512 a,
+		                            const __m512 b) {
+		          
+		          register __m512 x2;
+		          register __m512 x;
+		          x2 = normal_01_cdf_inv_zmm16r4(cdf);
+		          x  = _mm512_add_ps(a,_mm512_mul_ps(b,x2));
+		          return (x);      
+		   }
+		    
+/*
 !*****************************************************************************80
 !
 !! GAMMA_INC computes the incomplete Gamma function.
@@ -1734,6 +2159,78 @@ namespace gms {
                    
                    
 /*
+ !*****************************************************************************80
+!
+!! GAMMA_CDF evaluates the Gamma CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      gamma_cdf_zmm8r8(const __m512d x,
+		                       const __m512d a,
+		                       const __m512d b,
+		                       const __m512d c) {
+		      
+		          register __m512d x2,p2;
+		          register __m512d cdf;
+		          p2 = c;
+		          x2 = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+		          cdf= gamma_incomplete_zmm8r8(p2,x2);
+		          return (cdf);                  
+		    }
+		    
+		    
+		    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      gamma_cdf_zmm16r4(const __m512 x,
+		                       const __m512 a,
+		                       const __m512 b,
+		                       const __m512 c) {
+		      
+		          register __m512 x2,p2;
+		          register __m512 cdf;
+		          p2 = c;
+		          x2 = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+		          cdf= gamma_incomplete_zmm16r4(p2,x2);
+		          return (cdf);                  
+		    }
+		    
+         
+                   
+/*
    !*****************************************************************************80
 !
 !! CHI_CDF evaluates the Chi CDF.
@@ -1807,6 +2304,79 @@ namespace gms {
 		         return (cdf);               
 		   }
 		   
+	
+/*
+      !*****************************************************************************80
+!
+!! CHI_SQUARE_CDF evaluates the Chi squared CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    10 October 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the value of the random deviate.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the distribution, usually
+!    the number of degrees of freedom.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      chi_square_cdf_zmm8r8(const __m512d x,
+		                            const __m512d a) {
+		          
+		          const __m512d C05 = _mm512_set1_pd(0.5);
+		          const __m512d C1  = _mm512_set1_pd(1.0);
+		          register __m512d x2,a2,b2,c2;
+		          register __m512d cdf;
+		          a2 =  _mm512_setzero_pd();
+		          x2 =  _mm512_mul_pd(C05,C1);
+		          b2 =  C1;
+		          c2 =  _mm512_mul_pd(C05,a);
+		          cdf=  gamma_cdf_zmm8r8(x2,a2,b2,c2);
+		          return (cdf);                   
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      chi_square_cdf_zmm16r4(const __m512 x,
+		                             const __m512 a) {
+		          
+		          const __m512 C05 = _mm512_set1_ps(0.5f);
+		          const __m512 C1  = _mm512_set1_ps(1.0f);
+		          register __m512 x2,a2,b2,c2;
+		          register __m512 cdf;
+		          a2 =  _mm512_setzero_ps();
+		          x2 =  _mm512_mul_ps(C05,C1);
+		          b2 =  C1;
+		          c2 =  _mm512_mul_ps(C05,a);
+		          cdf=  gamma_cdf_zmm16r4(x2,a2,b2,c2);
+		          return (cdf);                   
+		     }
+		     
 		   
 /*
     !*****************************************************************************80
