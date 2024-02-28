@@ -2097,7 +2097,7 @@ namespace gms {
                              register __m256d absb9;
                              register __m256d absb11;
 
-                             expmy = _mm256_mul_pd(_mm256_exp_pd(negate_zmm8r8(y)),b0); 
+                             expmy = _mm256_mul_pd(_mm256_exp_pd(negate_ymm4r8(y)),b0); 
                              absb1 = _mm256_sub_pd(absx,b1);
                              absb3 = _mm256_add_pd(absx,b3);
                              absb5 = _mm256_sub_pd(absx,b5);
@@ -4407,7 +4407,7 @@ namespace gms {
                              t1 = _mm256_castsi256_pd(_mm256_cvttpd_epu64(t0));
                              if(_mm256_cmp_pd_mask(y1,t1,_CMP_NEQ_OQ)) parity = true;
                              t0 = _mm256_sin_pd(_mm256_mul_pd(pi,res));
-                             fact = _mm256_div_pd(negate_zmm8r8(pi),t0);
+                             fact = _mm256_div_pd(negate_ymm4r8(pi),t0);
                              y    = _mm256_add_pd(y,one);
                           }
                           else {
@@ -4736,6 +4736,293 @@ namespace gms {
                        if(_mm256_cmp_ps_mask(fact,one,_CMP_NEQ_OQ)) res = _mm256_div_ps(fact,res);
                        return (res);
                   }
+                  
+                  
+ /*                 
+!*****************************************************************************80
+!
+!! STUDENT_VARIANCE returns the variance of the central Student T PDF.
+!
+!  Discussion:
+!
+!    The variance is not defined unless 2 < C.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 November 2005
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, shape parameters of the PDF,
+!    used to transform the argument X to a shifted and scaled
+!    value Y = ( X - A ) / B.  It is required that B be nonzero.
+!    For the standard distribution, A = 0 and B = 1.
+!
+!    Input, real ( kind = 8 ) C, is usually called the number of
+!    degrees of freedom of the distribution.  C is typically an
+!    integer, but that is not essential.  It is required that
+!    C be strictly positive.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!
+*/  
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d 
+                      student_variance_ymm4r8(const __m256d a,
+                                              const __m256d b,
+                                              const __m256d c) {
+                                              
+                          __m256d C2 = _mm256_set1_pd(2.0);     
+                          register __m256d bb,t1;
+                          register __m256d var;
+                          bb = _mm256_mul_pd(b,b);
+                          t1 = _mm256_sub_pd(c,C2);
+                          var= _mm256_mul_pd(bb,_mm256_div_pd(c,t1));
+                          return (var);                    
+                    }   
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256
+                      student_variance_ymm8r4(const __m256 a,
+                                              const __m256 b,
+                                              const __m256 c) {
+                                              
+                          __m256 C2 = _mm256_set1_ps(2.0f);     
+                          register __m256 bb,t1;
+                          register __m256 var;
+                          bb = _mm256_mul_ps(b,b);
+                          t1 = _mm256_sub_ps(c,C2);
+                          var= _mm256_mul_ps(bb,_mm256_div_ps(c,t1));
+                          return (var);                    
+                    }   
+                    
+                    
+/*
+  !*****************************************************************************80
+!
+!! WEIBULL_PDF evaluates the Weibull PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B,C;X) = ( C / B ) * ( ( X - A ) / B )**( C - 1 )
+!     * EXP ( - ( ( X - A ) / B )**C ).
+!
+!    The Weibull PDF is also known as the Frechet PDF.
+!
+!    WEIBULL_PDF(A,B,1;X) is the Exponential PDF.
+!
+!    WEIBULL_PDF(0,1,2;X) is the Rayleigh PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    12 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+! 
+*/
+
+
+          
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d	 
+                      weibull_pdf_ymm4r8(const __m256d x,
+                                         const __m256d a,
+                                         const __m256d b,
+                                         const __m256d c) {
+                        
+                         register __m256d C1 = _mm256_set1_pd(1.0);
+                         register __m256d y,t0,pow1,t1,exp;
+                         register __m256d pdf;
+                         t0 = _mm256_div_pd(_mm256_sub_pd(x,a),b);
+                         pow1 = _mm256_pow_pd(t0,_mm256_sub_pd(c,C1));
+                         exp  = _mm256_exp_pd(_mm256_pow_pd(y,c));
+                         t1   = _mm256_div_pd(c,b);
+                         pdf  = _mm256_div_pd(_mm256_mul_pd(t1,pow1),exp); 
+                         return (pdf);     
+                   }
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256	 
+                      weibull_pdf_ymm8r4(const __m256 x,
+                                         const __m256 a,
+                                         const __m256 b,
+                                         const __m256 c) {
+                        
+                         register __m256 C1 = _mm256_set1_ps(1.0f);
+                         register __m256 y,t0,pow1,t1,exp;
+                         register __m256 pdf;
+                         t0 = _mm256_div_ps(_mm256_sub_ps(x,a),b);
+                         pow1 = _mm256_pow_ps(t0,_mm256_sub_ps(c,C1));
+                         exp  = _mm256_exp_ps(_mm256_pow_ps(y,c));
+                         t1   = _mm256_div_ps(c,b);
+                         pdf  = _mm256_div_ps(_mm256_mul_ps(t1,pow1),exp); 
+                         return (pdf);     
+                   }
+                    
+                    
+ /*
+     !*****************************************************************************80
+!
+!! TRIGAMMA calculates the TriGamma function.
+!
+!  Discussion:
+!
+!    TriGamma(x) = d^2 log ( Gamma ( x ) ) / dx^2.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 January 2000
+!
+!  Author:
+!
+!    FORTRAN77 original version by B Schneider
+!    FORTRAN90 version by John Burkardt
+!
+!  Reference:
+!
+!    BE Schneider,
+!    Algorithm AS 121:
+!    Trigamma Function,
+!    Applied Statistics,
+!    Volume 27, Number 1, page 97-99, 1978.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the trigamma function.
+!    0 < X.
+!
+!    Output, real ( kind = 8 ) TRIGAMMA, the value of the
+!    trigamma function at X.
+!     
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d
+                      trigamma_ymm4r8(const __m256d x) {
+                         
+                         __m256d a  = _mm256_setzero_pd();
+                         __m256d C1 = _mm256_set1_pd(1.0);
+                         __m256d C05=_mm256_set1_pd(0.5);
+                         __m256d b  = _mm256_set1_pd(5.0);
+                         __m256d b2 = _mm256_set1_pd(1.0/6.0);
+                         __m256d b4 = _mm256_set1_pd(-1.0/30.0);
+                         __m256d b6 = _mm256_set1_pd(1.0/42.0);
+                         __m256d b8 = _mm256_set1_pd(-1.0/30.0);
+                         register __m256d y,z,t0,t1;
+                         register __m256d trig;
+                         
+                         if(_mm256_cmp_pd_mask(x,a,_CMP_LE_OQ)) {
+                            trig = _mm256_div_pd(C1,_mm256_mul_pd(x,x));
+                         }
+                         else {
+                            z = x;
+                            trig = a;
+                            while(_mm256_cmp_pd_mask(z,b,_CMP_LT_OQ)) {
+                                  trig = _mm256_add_pd(_mm256_div_pd(C1,
+                                                         _mm256_mul_pd(z,z)))
+                                  z    = _mm256_add_pd(z,C1);
+                            }
+                            y    = _mm256_div_pd(C1,_mm256_mul_pd(z,z));
+                            trig = trig+C05*y+(C1+y*(b2+y*(b4+y*(b6+y*b8))))/z; 
+                         }
+                         return (trig);
+                    } 
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256
+                      trigamma_ymm8r4(const __m256 x) {
+                         
+                         __m256 a  = _mm256_setzero_ps();
+                         __m256 C1 = _mm256_set1_ps(1.0f);
+                         __m256 C05=_mm256_set1_ps(0.5f);
+                         __m256 b  = _mm256_set1_ps(5.0f);
+                         __m256 b2 = _mm256_set1_ps(1.0f/6.0f);
+                         __m256 b4 = _mm256_set1_ps(-1.0f/30.0f);
+                         __m256 b6 = _mm256_set1_ps(1.0f/42.0f);
+                         __m256 b8 = _mm256_set1_ps(-1.0f/30.0f);
+                         register __m256 y,z,t0,t1;
+                         register __m256 trig;
+                         
+                         if(_mm256_cmp_ps_mask(x,a,_CMP_LE_OQ)) {
+                            trig = _mm256_div_ps(C1,_mm256_mul_ps(x,x));
+                         }
+                         else {
+                            z = x;
+                            trig = a;
+                            while(_mm256_cmp_ps_mask(z,b,_CMP_LT_OQ)) {
+                                  trig = _mm256_add_ps(_mm256_div_ps(C1,
+                                                         _mm256_mul_ps(z,z)))
+                                  z    = _mm256_add_ps(z,C1);
+                            }
+                            y    = _mm256_div_ps(C1,_mm256_mul_ps(z,z));
+                            trig = trig+C05*y+(C1+y*(b2+y*(b4+y*(b6+y*b8))))/z; 
+                         }
+                         return (trig);
+                    } 
+                    
+                    
+                    
+                   
+                                     
                   
 
       } //math
