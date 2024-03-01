@@ -3778,8 +3778,8 @@ namespace gms {
 		      static inline           
                       __m512d 
                       gamma_zmm8r8(const __m512d x) {
-                         
-                         __ATTR_ALIGN__(64) const __m512d  c[7] = {
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512d  c[7] = {
                                         _mm512_set1_pd(-1.910444077728e-03), 
                                         _mm512_set1_pd(8.4171387781295e-04), 
                                         _mm512_set1_pd(-5.952379913043012e-04), 
@@ -3787,7 +3787,8 @@ namespace gms {
                                         _mm512_set1_pd(-2.777777777777681622553e-03),
                                         _mm512_set1_pd(8.333333333333333331554247e-02),
                                         _mm512_set1_pd(5.7083835261e-03)};
-                        __ATTR_ALIGN__(64) const __m512d  p[8]  = {
+                        __attribute__((section(".rodata")))
+                        __ATTR_ALIGN__(64) static __m512d  p[8]  = {
                                         _mm512_set1_pd(-1.71618513886549492533811e+00),
                                         _mm512_set1_pd(2.47656508055759199108314e+01),
                                         _mm512_set1_pd(-3.79804256470945635097577e+02),
@@ -3795,8 +3796,9 @@ namespace gms {
                                         _mm512_set1_pd(8.66966202790413211295064e+02), 
                                         _mm512_set1_pd(-3.14512729688483675254357e+04), 
                                         _mm512_set1_pd(-3.61444134186911729807069e+04),
-                                        _mm512_set1_pd(6.64561438202405440627855e+04)};          
-                       __ATTR_ALIGN__(64) const __m512d  q[8]   = {
+                                        _mm512_set1_pd(6.64561438202405440627855e+04)};
+                       __attribute__((section(".rodata")))          
+                       __ATTR_ALIGN__(64) static __m512d  q[8]   = {
                                         _mm512_set1_pd(-3.08402300119738975254353e+01), 
                                         _mm512_set1_pd(3.15350626979604161529144e+02),
                                         _mm512_set1_pd(-1.01515636749021914166146e+03),
@@ -3998,8 +4000,8 @@ namespace gms {
 		      static inline           
                       __m512 
                       gamma_zmm16r4(const __m512 x) {
-                         
-                         __ATTR_ALIGN__(64) const __m512  c[7] = {
+                         __attribute__((section(".rodata")))
+                         __ATTR_ALIGN__(64) static __m512  c[7] = {
                                         _mm512_set1_ps(-1.910444077728e-03f), 
                                         _mm512_set1_ps(8.4171387781295e-04f), 
                                         _mm512_set1_ps(-5.952379913043012e-04f), 
@@ -4007,7 +4009,8 @@ namespace gms {
                                         _mm512_set1_ps(-2.777777777777681622553e-03f),
                                         _mm512_set1_ps(8.333333333333333331554247e-02f),
                                         _mm512_set1_ps(5.7083835261e-03f)};
-                        __ATTR_ALIGN__(64) const __m512  p[8]  = {
+                        __attribute__((section(".rodata")))
+                        __ATTR_ALIGN__(64) static __m512  p[8]  = {
                                         _mm512_set1_ps(-1.71618513886549492533811e+00f),
                                         _mm512_set1_ps(2.47656508055759199108314e+01f),
                                         _mm512_set1_ps(-3.79804256470945635097577e+02f),
@@ -4015,8 +4018,9 @@ namespace gms {
                                         _mm512_set1_ps(8.66966202790413211295064e+02f), 
                                         _mm512_set1_ps(-3.14512729688483675254357e+04f), 
                                         _mm512_set1_ps(-3.61444134186911729807069e+04f),
-                                        _mm512_set1_ps(6.64561438202405440627855e+04f)};          
-                       __ATTR_ALIGN__(64) const __m512  q[8]   = {
+                                        _mm512_set1_ps(6.64561438202405440627855e+04f)}; 
+                       __attribute__((section(".rodata")))         
+                       __ATTR_ALIGN__(64) static __m512  q[8]   = {
                                         _mm512_set1_ps(-3.08402300119738975254353e+01f), 
                                         _mm512_set1_ps(3.15350626979604161529144e+02f),
                                         _mm512_set1_ps(-1.01515636749021914166146e+03f),
@@ -5054,8 +5058,8 @@ namespace gms {
 		      __m512d owen_tfunc_zmm8r8(const __m512d h,
 		                                const __m512d a) {
 		             
-		             
-		             __ATTR_ALIGN__(64) const __m512d  weight[10] = {
+		             __attribute__((section(".rodata")))
+		             __ATTR_ALIGN__(64) static __m512d  weight[10] = {
 		                                _mm512_set1_pd(0.666713443086881375935688098933e-01),
                                                 _mm512_set1_pd(0.149451349150580593145776339658e+00),
                                                 _mm512_set1_pd(0.219086362515982043995534934228e+00),
@@ -5066,7 +5070,8 @@ namespace gms {
                                                 _mm512_set1_pd(0.219086362515982043995534934228e+00),
                                                 _mm512_set1_pd(0.149451349150580593145776339658e+00), 
                                                 _mm512_set1_pd(0.666713443086881375935688098933e-01)};
-		            __ATTR_ALIGN__(64) const __m512d  xtab[10] = {
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512d  xtab[10] = {
 		                                _mm512_set1_pd(-0.973906528517171720077964012084e+00),
                                                 _mm512_set1_pd(-0.865063366688984510732096688423e+00),
                                                 _mm512_set1_pd(-0.679409568299024406234327365115e+00), 
@@ -5237,8 +5242,8 @@ namespace gms {
 		      __m512 owen_tfunc_zmm16r4(const __m512 h,
 		                                const __m512 a) {
 		             
-		             
-		             __ATTR_ALIGN__(64) const __m512  weight[10] = {
+		             __attribute__((section(".rodata")))
+		             __ATTR_ALIGN__(64) static __m512  weight[10] = {
 		                                _mm512_set1_ps(0.666713443086881375935688098933e-01f),
                                                 _mm512_set1_ps(0.149451349150580593145776339658e+00f),
                                                 _mm512_set1_ps(0.219086362515982043995534934228e+00f),
@@ -5249,7 +5254,8 @@ namespace gms {
                                                 _mm512_set1_ps(0.219086362515982043995534934228e+00f),
                                                 _mm512_set1_ps(0.149451349150580593145776339658e+00f), 
                                                 _mm512_set1_ps(0.666713443086881375935688098933e-01f)};
-		            __ATTR_ALIGN__(64) const __m512  xtab[10] = {
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(64) static __m512  xtab[10] = {
 		                                _mm512_set1_ps(-0.973906528517171720077964012084e+00f),
                                                 _mm512_set1_ps(-0.865063366688984510732096688423e+00f),
                                                 _mm512_set1_ps(-0.679409568299024406234327365115e+00f), 
