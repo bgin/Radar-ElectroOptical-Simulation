@@ -1430,6 +1430,610 @@ namespace gms {
 		    }
 		    
 		    
+		    
+/*
+   !*****************************************************************************80
+!
+!! RECIPROCAL_CDF evaluates the Reciprocal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+		      reciprocal_cdf_zmm8r8(const __m512d x,
+		                            const __m512d a,
+		                            const __m512d b) {
+		          
+		          register __m512d ax,ab,l1,l2;
+		          register __m512d cdf;       
+		          ax = _mm512_div_pd(a,x);
+#if (USE_SLEEF_LIB) == 1   
+                          l1 = xlog(ax);
+#else
+                          l1 = _mm512_log_pd(ax);
+#endif		                         
+                          ab = _mm512_div_pd(a,b);
+#if (USE_SLEEF_LIB) == 1 
+                          l2 = xlog(ab);
+#else
+                          l2 = _mm512_log_pd(ab);
+#endif                          
+                          cdf= _mm512_div_pd(l1,l2);
+                          return (cdf);
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      reciprocal_cdf_zmm16r4(const __m512 x,
+		                             const __m512 a,
+		                             const __m512 b) {
+		          
+		          register __m512 ax,ab,l1,l2;
+		          register __m512 cdf;       
+		          ax = _mm512_div_ps(a,x);
+#if (USE_SLEEF_LIB) == 1   
+                          l1 = xlogf(ax);
+#else
+                          l1 = _mm512_log_ps(ax);
+#endif		                         
+                          ab = _mm512_div_ps(a,b);
+#if (USE_SLEEF_LIB) == 1 
+                          l2 = xlogf(ab);
+#else
+                          l2 = _mm512_log_ps(ab);
+#endif                          
+                          cdf= _mm512_div_ps(l1,l2);
+                          return (cdf);
+		     }
+		     
+		     
+/*
+      !*****************************************************************************80
+!
+!! RECIPROCAL_CDF_INV inverts the Reciprocal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument of the CDF.
+!             
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 		     
+		      reciprocal_cdf_inv_zmm8r8(const __m512d cdf,
+		                                const __m512d a,
+		                                const __m512d b) {
+		         
+		           register __m512d C1 = _mm512_set1_pd(1.0);
+		           register __m512d pow1,pow2,cdf1;
+		           register __m512d inv;
+		           cdf1 = _mm512_sub_pd(cdf,C1);
+		           pow2 = _mm512_pow_pd(b,cdf);
+		           pow1 = _mm512_pow_pd(a,cdf1);
+		           inv  = _mm512_div_pd(pow2,pow1);
+		           return (inv);                          
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512		     
+		      reciprocal_cdf_inv_zmm16r4(const __m512 cdf,
+		                                const __m512 a,
+		                                const __m512 b) {
+		         
+		           register __m512 C1 = _mm512_set1_ps(1.0f);
+		           register __m512 pow1,pow2,cdf1;
+		           register __m512 inv;
+		           cdf1 = _mm512_sub_ps(cdf,C1);
+		           pow2 = _mm512_pow_ps(b,cdf);
+		           pow1 = _mm512_pow_ps(a,cdf1);
+		           inv  = _mm512_div_ps(pow2,pow1);
+		           return (inv);                          
+		     }
+		     
+		     
+/*
+    !*****************************************************************************80
+!
+!! RECIPROCAL_MEAN returns the mean of the Reciprocal PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.
+!    
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+		      reciprocal_mean_zmm8r8(const __m512d a,
+		                             const __m512d b) {
+		           
+		           register __m512d ab,amb,l1;
+		           register __m512d mean;
+		           amb = _mm512_sub_pd(a,b);
+		           ab  = _mm512_div_pd(a,b);
+#if (USE_SLEEF_LIB) == 1  
+                           l1  = xlog(ab);
+#else
+                           l1  = _mm512_log_pd(ab);
+#endif		                                  
+                           mean= _mm512_div_pd(amb,l1);
+                           return (mean);
+		     }	 
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      reciprocal_mean_zmm16r4(const __m512 a,
+		                             const __m512 b) {
+		           
+		           register __m512 ab,amb,l1;
+		           register __m512 mean;
+		           amb = _mm512_sub_ps(a,b);
+		           ab  = _mm512_div_ps(a,b);
+#if (USE_SLEEF_LIB) == 1  
+                           l1  = xlogf(ab);
+#else
+                           l1  = _mm512_log_ps(ab);
+#endif		                                  
+                           mean= _mm512_div_ps(amb,l1);
+                           return (mean);
+		     }	 
+		     
+		     
+/*
+        !*****************************************************************************80
+!
+!! RECIPROCAL_PDF evaluates the Reciprocal PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B;X) = 1.0D+00 / ( X * LOG ( B / A ) )
+!    for 0.0D+00 <= X
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!         
+*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+		      reciprocal_pdf_zmm8r8(    const __m512d x,
+		                                const __m512d a,
+		                                const __m512d b) {
+		          
+		          register __m512d C1 = _mm512_set1_pd(1.0);
+		          register __m512d ba,l1;
+		          register __m512d pdf;
+		          ba = _mm512_div_pd(b,a);
+#if (USE_SLEEF_LIB) == 1  
+                          l1 = _mm512_mul_pd(x,xlog(ba));
+#else
+                          l1 = _mm512_mul_pd(x,_mm512_log_pd(ba));
+#endif		         
+                          pdf= _mm512_div_pd(C1,l1);
+                          return (pdf);                            
+		    }
+		    
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+		      reciprocal_pdf_zmm16r4(    const __m512 x,
+		                                const __m512 a,
+		                                const __m512 b) {
+		          
+		          register __m512 C1 = _mm512_set1_ps(1.0f);
+		          register __m512 ba,l1;
+		          register __m512 pdf;
+		          ba = _mm512_div_ps(b,a);
+#if (USE_SLEEF_LIB) == 1  
+                          l1 = _mm512_mul_ps(x,xlogf(ba));
+#else
+                          l1 = _mm512_mul_ps(x,_mm512_log_ps(ba));
+#endif		         
+                          pdf= _mm512_div_ps(C1,l1);
+                          return (pdf);                            
+		    }
+		    
+		    
+/*
+         !*****************************************************************************80
+!
+!! RECIPROCAL_SAMPLE samples the Reciprocal PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF. 
+*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+                      reciprocal_sample_zmm8r8(const __m512i seed,
+                                               const __m512d a,
+                                               const __m512d b) {
+                           
+                           register __m512d C1 = _mm512_set1_pd(1.0);
+                           register __m512d pow1,pow2,arg,cdf;
+                           register __m512d sample;
+                           cdf = uniform_01_zmm8r8(seed);
+                           arg = _mm512_sub_pd(cdf,C1);
+                           pow1= _mm512_pow_pd(b,cdf);
+                           pow2= _mm512_pow_pd(a,arg);
+                           sample = _mm512_div_pd(pow1,pow2);
+                           return (sample);                          
+                    }
+                    
+                    
+/*
+     !*****************************************************************************80
+!
+!! RECIPROCAL_VARIANCE returns the variance of the Reciprocal PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!       
+*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+                      reciprocal_var_zmm8r8(const __m512d a,
+                                            const __m512d b) {
+                        
+                           register __m512d C2 = _mm512_set1_pd(2.0);
+                           register __m512d ab,amb,dd,dm2,dp2,t0;
+                           register var;
+                           ab  = _mm512_div_pd(a,b);
+                           amb = _mm512_sub_pd(a,b);
+#if (USE_SLEEF_LIB) == 1  
+                           d   = xlog(ab);
+#else
+                           d   = _mm512_log_pd(ab);
+#endif                                             
+                           dd  = _mm512_mul_pd(C2,_mm512_mul_pd(d,d));
+                           dm2 = _mm512_mul_pd(a,_mm512_sub_pd(d,C2));
+                           dp2 = _mm512_mul_pd(b,_mm512_add_pd(d,C2));
+                           t0  = _mm512_fmadd_pd(amb,dm2,dp2);
+                           var = _mm512_div_pd(t0,dd);
+                           return (var);    
+                     }
+                     
+                     
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+                      reciprocal_var_zmm16r4(const __m512 a,
+                                            const __m512 b) {
+                        
+                           register __m512 C2 = _mm512_set1_ps(2.0f);
+                           register __m512 ab,amb,dd,dm2,dp2,t0;
+                           register var;
+                           ab  = _mm512_div_ps(a,b);
+                           amb = _mm512_sub_ps(a,b);
+#if (USE_SLEEF_LIB) == 1  
+                           d   = xlogf(ab);
+#else
+                           d   = _mm512_log_ps(ab);
+#endif                                             
+                           dd  = _mm512_mul_ps(C2,_mm512_mul_ps(d,d));
+                           dm2 = _mm512_mul_ps(a,_mm512_sub_ps(d,C2));
+                           dp2 = _mm512_mul_ps(b,_mm512_add_ps(d,C2));
+                           t0  = _mm512_fmadd_ps(amb,dm2,dp2);
+                           var = _mm512_div_ps(t0,dd);
+                           return (var);    
+                     }
+                     
+                     
+/*
+      !*****************************************************************************80
+!
+!! SECH returns the hyperbolic secant.
+!
+!  Discussion:
+!
+!    SECH ( X ) = 1.0D+00 / COSH ( X ) = 2.0D+00 / ( EXP ( X ) + EXP ( - X ) )
+!
+!    SECH is not a built-in function in FORTRAN, and occasionally it
+!    is handier, or more concise, to be able to refer to it directly
+!    rather than through its definition in terms of the sine function.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument.
+!
+!    Output, real ( kind = 8 ) SECH, the hyperbolic secant of X.
+!   
+*/
+
+          
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d
+                      sech_zmm8r8(const __m512d x) {
+                          
+                          register __m512d C1 = _mm512_set1_pd(1.0);
+                          register __m512d csh;
+                          register __m512d sch;
+#if (USE_SLEEF_LIB) == 1  
+                          csh = xcosh(x);
+#else
+                          csh = _mm512_cosh_pd(x);
+#endif                          
+                          sch = _mm512_div_pd(C1,csh);
+                          return (sch);
+                      }
+                      
+                      
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+                      sech_zmm16r4(const __m512 x) {
+                          
+                          register __m512 C1 = _mm512_set1_ps(1.0f);
+                          register __m512 csh;
+                          register __m512 sch;
+#if (USE_SLEEF_LIB) == 1  
+                          csh = xcoshf(x);
+#else
+                          csh = _mm512_cosh_ps(x);
+#endif                          
+                          sch = _mm512_div_ps(C1,csh);
+                          return (sch);
+                      }
+                      
+                      
+/*
+        !*****************************************************************************80
+!
+!! SECH_CDF evaluates the Hyperbolic Secant CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameter of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!    
+*/   
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d                     
+                      sech_cdf_zmm8r8(const __m512d x,
+                                      const __m512d a,
+                                      const __m512d b) {
+                         
+                          register __m512d C2 = _mm512_set1_pd(2.0);
+                          register __m512d C031830988618379067153777 = 
+                                                _mm512_set1_pd(0.31830988618379067153777);
+                          register __m512d y,expy,atn;
+                          register __m512d cdf;
+                          y = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+#if (USE_SLEEF_LIB) == 1 
+                          atn = xatan(xexp(y));
+#else
+                          atn = _mm512_atan_pd(_mm512_exp_pd(y));
+#endif                                           
+                          cdf = _mm512_mul_pd(C2,_mm512_mul_pd(atn,
+                                                 C031830988618379067153777));
+                          return (cdf);
+                     }
+                     
+                     
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512                     
+                      sech_cdf_zmm16r4(const __m512 x,
+                                      const __m512 a,
+                                      const __m512 b) {
+                         
+                          register __m512 C2 = _mm512_set1_ps(2.0f);
+                          register __m512 C031830988618379067153777 = 
+                                                _mm512_set1_pd(0.31830988618379067153777f);
+                          register __m512 y,expy,atn;
+                          register __m512 cdf;
+                          y = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+#if (USE_SLEEF_LIB) == 1 
+                          atn = xatanf(xexpf(y));
+#else
+                          atn = _mm512_atan_ps(_mm512_exp_ps(y));
+#endif                                           
+                          cdf = _mm512_mul_ps(C2,_mm512_mul_ps(atn,
+                                                 C031830988618379067153777));
+                          return (cdf);
+                     }
+                      
 /*
     !*****************************************************************************80
 !
@@ -1842,7 +2446,247 @@ namespace gms {
 		          x  = _mm512_add_ps(a,_mm512_mul_ps(b,x2));
 		          return (x);      
 		   }
-		    
+		   
+		
+/*
+       !*****************************************************************************80
+!
+!! NORMAL_01_PDF evaluates the Normal 01 PDF.
+!
+!  Discussion:
+!
+!    The Normal 01 PDF is also called the "Standard Normal" PDF, or
+!    the Normal PDF with 0 mean and variance 1.
+!
+!    PDF(X) = exp ( - 0.5 * X^2 ) / sqrt ( 2 * PI )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    04 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF. 
+*/
+
+  
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      normal_01_pdf_zmm8r8(const __m512d x) {
+		         
+		          register __m512d C039894228040143267793995 = 
+		                                   _mm512_set1_pd(0.39894228040143267793995);
+		          register __m512d C05 = _mm512_set1_pd(-0.5);
+		          register __m512d earg,pdf;
+		          earg = _mm512_mul_pd(C05,_mm512_mul_pd(x,x));
+#if (USE_SLEEF_LIB) == 1 
+                          pdf  = _mm512_mul_pd(xexp(earg),C039894228040143267793995);
+#else
+                          pdf  = _mm512_mul_pd(_mm512_exp_pd(earg),C039894228040143267793995);
+#endif                         		   
+                          return (pdf);
+		     }  
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      normal_01_pdf_zmm16r4(const __m512 x) {
+		         
+		          register __m512 C039894228040143267793995 = 
+		                                   _mm512_set1_ps(0.39894228040143267793995f);
+		          register __m512 C05 = _mm512_set1_ps(-0.5f);
+		          register __m512 earg,pdf;
+		          earg = _mm512_mul_ps(C05,_mm512_mul_ps(x,x));
+#if (USE_SLEEF_LIB) == 1 
+                          pdf  = _mm512_mul_ps(xexpf(earg),C039894228040143267793995);
+#else
+                          pdf  = _mm512_mul_ps(_mm512_exp_ps(earg),C039894228040143267793995);
+#endif                         		   
+                          return (pdf);
+		     }  
+		     
+		     
+/*
+      !*****************************************************************************80
+!
+!! R8_UNIFORM_01 returns a unit pseudorandom R8.
+!
+!  Discussion:
+!
+!    An R8 is a real ( kind = 8 ) value.
+!
+!    For now, the input quantity SEED is an integer ( kind = 4 ) variable.
+!
+!    This routine implements the recursion
+!
+!      seed = 16807 * seed mod ( 2**31 - 1 )
+!      r8_uniform_01 = seed / ( 2**31 - 1 )
+!
+!    The integer arithmetic never requires more than 32 bits,
+!    including a sign bit.
+!
+!    If the initial seed is 12345, then the first three computations are
+!
+!      Input     Output      R8_UNIFORM_01
+!      SEED      SEED
+!
+!         12345   207482415  0.096616
+!     207482415  1790989824  0.833995
+!    1790989824  2035175616  0.947702
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 July 2006
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Paul Bratley, Bennett Fox, Linus Schrage,
+!    A Guide to Simulation,
+!    Springer Verlag, pages 201-202, 1983.
+!
+!    Pierre L'Ecuyer,
+!    Random Number Generation,
+!    in Handbook of Simulation,
+!    edited by Jerry Banks,
+!    Wiley Interscience, page 95, 1998.
+!
+!    Bennett Fox,
+!    Algorithm 647:
+!    Implementation and Relative Efficiency of Quasirandom
+!    Sequence Generators,
+!    ACM Transactions on Mathematical Software,
+!    Volume 12, Number 4, pages 362-376, 1986.
+!
+!    Peter Lewis, Allen Goodman, James Miller
+!    A Pseudo-Random Number Generator for the System/360,
+!    IBM Systems Journal,
+!    Volume 8, pages 136-143, 1969.
+!
+!  Parameters:
+!
+!    Input/output, integer ( kind = 4 ) SEED, the "seed" value, which should
+!    NOT be 0. On output, SEED has been updated.
+!
+!    Output, real ( kind = 8 ) R8_UNIFORM_01, a new pseudorandom variate,
+!    strictly between 0 and 1   
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+		      uniform_01_zmm8r8( __m512i & seed) {
+		         
+		         register __m512i C127773 = _mm512_set1_epi32(127773);
+		         register __m512i C16807  = _mm512_set1_epi32(16807);
+		         register __m512i C2836   = _mm512_set1_epi32(2836);
+		         register __m512d C4656612875 = _mm512_set1_pd(4.656612875e-10);
+		         register __m512i k,t0,t1;
+		         register __m512d uni01;
+		         k  = _mm512_div_epi32(seed,C127773);
+		         t0 = _mm512_mul_epi32(k,C2836);
+		         t1 = _mm512_sub_epi32(seed,_mm512_mul_epi32(k,C127773));
+		         seed = _mm512_mul_epi32(C16807,_mm512sub_epi32(t1,t0));
+		         if(_mm512_cmp_epi32_mask(seed,_mm512_setzero_epi32(),_CMP_LT_OQ)) 
+		            seed = _mm512_add_epi32(seed,_mm512_set1_epi32(2147483647));
+		         uni01   = _mm512_mul_pd(_mm512_castsi512_pd(seed),C4656612875);
+		         return (uni01);
+		     }
+		     
+		     
+/*
+ !*****************************************************************************80
+!
+!! R8_UNIFORM returns a scaled pseudorandom R8.
+!
+!  Discussion:
+!
+!    An R8 is a real ( kind = 8 ) value.
+!
+!    For now, the input quantity SEED is an integer ( kind = 4 ) variable.
+!
+!    The pseudorandom number should be uniformly distributed
+!    between A and B.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 July 2006
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the limits of the interval.
+!
+!    Input/output, integer ( kind = 4 ) SEED, the "seed" value, which should
+!    NOT be 0.  On output, SEED has been updated.
+!
+!    Output, real ( kind = 8 ) R8_UNIFORM, a number strictly between A and B.
+!
+*/	
+
+ 
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+	              uniform_zmm8r8(const __m512d a,
+	                             const __m512d b,
+	                             __m512i & seed) {
+	                             
+	                 register __m512i C127773 = _mm512_set1_epi32(127773);
+		         register __m512i C16807  = _mm512_set1_epi32(16807);
+		         register __m512i C2836   = _mm512_set1_epi32(2836);
+		         register __m512d C4656612875 = _mm512_set1_pd(4.656612875e-10);
+		         register __m512i k,t0,t1;
+		         register __m512d uni,diff;
+		         k  = _mm512_div_epi32(seed,C127773);
+		         t0 = _mm512_mul_epi32(k,C2836);
+		         t1 = _mm512_sub_epi32(seed,_mm512_mul_epi32(k,C127773));
+		         seed = _mm512_mul_epi32(C16807,_mm512sub_epi32(t1,t0));
+		         if(_mm512_cmp_epi32_mask(seed,_mm512_setzero_epi32(),_CMP_LT_OQ)) 
+		            seed = _mm512_add_epi32(seed,_mm512_set1_epi32(2147483647));
+		         diff    = _mm512_add_pd(_mm512_sub_pd(b,a));
+		         uni     = _mm512_mul_pd(diff,_mm512_mul_pd(_mm512_castsi512_pd(seed),C4656612875);
+		         return (uni);             
+	            }
 /*
 !*****************************************************************************80
 !
