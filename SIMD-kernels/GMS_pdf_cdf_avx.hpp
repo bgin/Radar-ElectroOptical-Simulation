@@ -851,7 +851,357 @@ namespace gms {
                            } 
                            
                            return (gaminc);                   
-                   }		  
+                   }	
+                   
+                   
+
+       /*
+    !*****************************************************************************80
+!
+!! R8POLY_VALUE evaluates an R8POLY
+!
+!  Discussion:
+!
+!    For sanity's sake, the value of N indicates the NUMBER of
+!    coefficients, or more precisely, the ORDER of the polynomial,
+!    rather than the DEGREE of the polynomial.  The two quantities
+!    differ by 1, but cause a great deal of confusion.
+!
+!    Given N and A, the form of the polynomial is:
+!
+!      p(x) = a(1) + a(2) * x + ... + a(n-1) * x^(n-2) + a(n) * x^(n-1)
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    13 August 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, integer ( kind = 4 ) N, the order of the polynomial.
+!
+!    Input, real ( kind = 8 ) A(N), the coefficients of the polynomial.
+!    A(1) is the constant term.
+!
+!    Input, real ( kind = 8 ) X, the point at which the polynomial is
+!    to be evaluated.
+!
+!    Output, real ( kind = 8 ) R8POLY_VALUE, the value of the polynomial at X.
+!     
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+		      vpoly_eval_ymm4r8(const int32_t n,
+		                        const __m256d * __restrict __ATTR_ALIGN__(32) a,
+		                        const __m256d x) {
+		         
+		         register __m256d vpoly;
+		         vpoly = _mm256_load_pd(&a[n]);
+		         for(int32_t i=n; i != 0; --i) {
+		             register __m256d t0 = a[i];
+		             vpoly = _mm256_fmadd_pd(vpoly,x,t0);   
+		         }  
+		         return (vpoly);              
+		    }
+		    
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256  
+		      vpoly_eval_ymm8r4(const int32_t n,
+		                        const __m256 * __restrict __ATTR_ALIGN__(32) a,
+		                        const __m256 x) {
+		         
+		         register __m256 vpoly;
+		         vpoly = _mm256_load_ps(&a[n]);
+		         for(int32_t i=n; i != 0; --i) {
+		             register __m256 t0 = a[i];
+		             vpoly = _mm256_fmadd_ps(vpoly,x,t0);   
+		         }  
+		         return (vpoly);              
+		    }	 
+		    
+		   
+		   
+/*
+
+       !*****************************************************************************80
+!
+!! NORMAL_01_CDF_INV inverts the standard normal CDF.
+!
+!  Discussion:
+!
+!    The result is accurate to about 1 part in 10**16.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 June 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by Michael Wichura.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    Michael Wichura,
+!    Algorithm AS241:
+!    The Percentage Points of the Normal Distribution,
+!    Applied Statistics,
+!    Volume 37, Number 3, pages 477-484, 1988.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) P, the value of the cumulative probability
+!    densitity function.  0 < P < 1.  If P is outside this range, an
+!    "infinite" value will be returned.
+!
+!    Output, real ( kind = 8 ) X, the normal deviate value
+!    with the property that the probability of a standard normal deviate being
+!    less than or equal to the value is P.    
+
+*/ 
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d    
+		      normal_01_cdf_inv_ymm4r8(const __m256d p) {
+		            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(32) static __m256d  a[8] = {
+		                     _mm256_set1_pd(3.3871328727963666080e+00),
+                                     _mm256_set1_pd(1.3314166789178437745e+02),
+                                     _mm256_set1_pd(1.9715909503065514427e+03),
+                                     _mm256_set1_pd(1.3731693765509461125e+04),
+                                     _mm256_set1_pd(4.5921953931549871457e+04),
+                                     _mm256_set1_pd(6.7265770927008700853e+04),
+                                     _mm256_set1_pd(3.3430575583588128105e+04),
+                                     _mm256_set1_pd(2.5090809287301226727e+03)};   
+                            __attribute__((section(".rodata")))  
+		            __ATTR_ALIGN__(32) static __m256d   b[8] = {
+		                      _mm256_set1_pd(1.0e+00),
+                                      _mm256_set1_pd(4.2313330701600911252e+01),
+                                      _mm256_set1_pd(6.8718700749205790830e+02),
+                                      _mm256_set1_pd(5.3941960214247511077e+03),
+                                      _mm256_set1_pd(2.1213794301586595867e+04),
+                                      _mm256_set1_pd(3.9307895800092710610e+04),
+                                      _mm256_set1_pd(2.8729085735721942674e+04),
+                                      _mm256_set1_pd(5.2264952788528545610e+03)}; 
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(32) static __m256d   c[8] = {
+		                      _mm256_set1_pd(1.42343711074968357734e+00),
+                                      _mm256_set1_pd(4.63033784615654529590e+00),
+                                      _mm256_set1_pd(5.76949722146069140550e+00),
+                                      _mm256_set1_pd(3.64784832476320460504e+00),
+                                      _mm256_set1_pd(1.27045825245236838258e+00),
+                                      _mm256_set1_pd(2.41780725177450611770e-01),
+                                      _mm256_set1_pd(2.27238449892691845833e-02),
+                                      _mm256_set1_pd(7.74545014278341407640e-04)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256d   d[8] = {
+                                      _mm256_set1_pd(1.0e+00),
+                                      _mm256_set1_pd(2.05319162663775882187e+00),
+                                      _mm256_set1_pd(1.67638483018380384940e+00),
+                                      _mm256_set1_pd(6.89767334985100004550e-01),
+                                      _mm256_set1_pd(1.48103976427480074590e-01),
+                                      _mm256_set1_pd(1.51986665636164571966e-02),
+                                      _mm256_set1_pd(5.47593808499534494600e-04),
+                                      _mm256_set1_pd(1.05075007164441684324e-09)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256d   e[8] = {
+                                      _mm256_set1_pd(6.65790464350110377720e+00),
+                                      _mm256_set1_pd(5.46378491116411436990e+00),
+                                      _mm256_set1_pd(1.78482653991729133580e+00),
+                                      _mm256_set1_pd(2.96560571828504891230e-01),
+                                      _mm256_set1_pd(2.65321895265761230930e-02),
+                                      _mm256_set1_pd(1.24266094738807843860e-03),
+                                      _mm256_set1_pd(2.71155556874348757815e-05),
+                                      _mm256_set1_pd(2.01033439929228813265e-07)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256d   f[8] = {
+                                      _mm256_set1_pd(1.0e+00),
+                                      _mm256_set1_pd(5.99832206555887937690e-01),
+                                      _mm256_set1_pd(1.36929880922735805310e-01),
+                                      _mm256_set1_pd(1.48753612908506148525e-02),
+                                      _mm256_set1_pd(7.86869131145613259100e-04), 
+                                      _mm256_set1_pd(1.84631831751005468180e-05),
+                                      _mm256_set1_pd(1.42151175831644588870e-07),
+                                      _mm256_set1_pd(2.04426310338993978564e-15)};
+                          __m256d const1 = _mm256_set1_pd(0.180625e+00);
+                          __m256d const2 = _mm256_set1_pd(1.6e+00);
+                          __m256d split1 = _mm256_set1_pd(0.425e+00);
+                          __m256d split2 = _mm256_set1_pd(5.0e+00);
+                          __m256d C0     = _mm256_setzero_pd();
+                          __m256d C1     = _mm256_set1_pd(1.0);
+                          __m256d C05    = _mm256_set1_pd(0.5);
+                          register __m256d q,r,t0,t1;
+                          register __m256d x;
+                          q = _mm256_sub_pd(p,C05);
+                          if(_mm256_cmp_pd_mask(q,split1,_CMP_LE_OQ)) {
+                             r = _mm256_sub_pd(const1,_mm256_mul_pd(q,q));
+                             t0= vpoly_eval_ymm4r8(8,a,r);
+                             t1= vpoly_eval_ymm4r8(8,b,r);
+                             x = _mm256_div_pd(_mm256_mul_pd(q,t0),t1);
+                          } 
+                          else {
+                             const __mmask8 m = _mm256_cmp_pd_mask(q,C0,_CMP_LT_OQ);
+                             r                = _mm256_mask_blend_pd(m,_mm256_sub_pd(C1,p),p);
+                             if(_mm256_cmp_pd_mask(r,C0,_CMP_LE_OQ)) {
+                                x = _mm256_set1_pd(std::numeric_limits<double>::max());
+                             }
+                             else {
+
+                                r = _mm256_sqrt_pd(negate_ymm4r8(_mm256_log_pd(r)));
+                        
+                                const __mmask8 m = _mm256_cmp_pd_mask(r,split2,_CMP_LE_OQ);
+                                r                = _mm256_mask_blend_pd(m,_mm256_sub_pd(r,split2),
+                                                                          _mm256_sub_pd(r,const2));
+                                t0               = _mm256_div_pd(vpoly_eval_ymm4r8(8,c,r),
+                                                                 vpoly_eval_ymm4r8(8,d,r));
+                                t1               = _mm256_div_pd(vpoly_eval_ymm4r8(8,e,r),
+                                                                 vpoly_eval_ymm4r8(8,f,r));
+                                x                = _mm256_mask_blend_pd(m,t1,t0);      
+                             }
+                             if(_mm256_cmp_pd_mask(q,C0,_CMP_LT_OQ)) x = negate_ymm4r8(x);
+                          }
+                          return (x);
+                          
+		    }
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256    
+		      normal_01_cdf_inv_ymm8r4(const __m256 p) {
+		            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(32) static __m256  a[8] = {
+		                     _mm256_set1_ps(3.3871328727963666080e+00f),
+                                     _mm256_set1_ps(1.3314166789178437745e+02f),
+                                     _mm256_set1_ps(1.9715909503065514427e+03f),
+                                     _mm256_set1_ps(1.3731693765509461125e+04f),
+                                     _mm256_set1_ps(4.5921953931549871457e+04f),
+                                     _mm256_set1_ps(6.7265770927008700853e+04f),
+                                     _mm256_set1_ps(3.3430575583588128105e+04f),
+                                     _mm256_set1_ps(2.5090809287301226727e+03f)};   
+                            __attribute__((section(".rodata")))  
+		            __ATTR_ALIGN__(32) static __m256   b[8] = {
+		                      _mm256_set1_ps(1.0e+00),
+                                      _mm256_set1_ps(4.2313330701600911252e+01f),
+                                      _mm256_set1_ps(6.8718700749205790830e+02f),
+                                      _mm256_set1_ps(5.3941960214247511077e+03f),
+                                      _mm256_set1_ps(2.1213794301586595867e+04f),
+                                      _mm256_set1_ps(3.9307895800092710610e+04f),
+                                      _mm256_set1_ps(2.8729085735721942674e+04f),
+                                      _mm256_set1_ps(5.2264952788528545610e+03f)}; 
+                            __attribute__((section(".rodata")))
+		            __ATTR_ALIGN__(32) static __m256   c[8] = {
+		                      _mm256_set1_ps(1.42343711074968357734e+00f),
+                                      _mm256_set1_ps(4.63033784615654529590e+00f),
+                                      _mm256_set1_ps(5.76949722146069140550e+00f),
+                                      _mm256_set1_ps(3.64784832476320460504e+00f),
+                                      _mm256_set1_ps(1.27045825245236838258e+00f),
+                                      _mm256_set1_ps(2.41780725177450611770e-01f),
+                                      _mm256_set1_ps(2.27238449892691845833e-02f),
+                                      _mm256_set1_ps(7.74545014278341407640e-04f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256   d[8] = {
+                                      _mm256_set1_ps(1.0e+00),
+                                      _mm256_set1_ps(2.05319162663775882187e+00f),
+                                      _mm256_set1_ps(1.67638483018380384940e+00f),
+                                      _mm256_set1_ps(6.89767334985100004550e-01f),
+                                      _mm256_set1_ps(1.48103976427480074590e-01f),
+                                      _mm256_set1_ps(1.51986665636164571966e-02f),
+                                      _mm256_set1_ps(5.47593808499534494600e-04f),
+                                      _mm256_set1_ps(1.05075007164441684324e-09f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256   e[8] = {
+                                      _mm256_set1_ps(6.65790464350110377720e+00f),
+                                      _mm256_set1_ps(5.46378491116411436990e+00f),
+                                      _mm256_set1_ps(1.78482653991729133580e+00f),
+                                      _mm256_set1_ps(2.96560571828504891230e-01f),
+                                      _mm256_set1_ps(2.65321895265761230930e-02f),
+                                      _mm256_set1_ps(1.24266094738807843860e-03f),
+                                      _mm256_set1_ps(2.71155556874348757815e-05f),
+                                      _mm256_set1_ps(2.01033439929228813265e-07f)};
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(32) static __m256   f[8] = {
+                                      _mm256_set1_ps(1.0e+00),
+                                      _mm256_set1_ps(5.99832206555887937690e-01f),
+                                      _mm256_set1_ps(1.36929880922735805310e-01f),
+                                      _mm256_set1_ps(1.48753612908506148525e-02f),
+                                      _mm256_set1_ps(7.86869131145613259100e-04f), 
+                                      _mm256_set1_ps(1.84631831751005468180e-05f),
+                                      _mm256_set1_ps(1.42151175831644588870e-07f),
+                                      _mm256_set1_ps(2.04426310338993978564e-15f)};
+                          __m256 const1 = _mm256_set1_ps(0.180625e+00f);
+                          __m256 const2 = _mm256_set1_ps(1.6e+00f);
+                          __m256 split1 = _mm256_set1_ps(0.425e+00f);
+                          __m256 split2 = _mm256_set1_ps(5.0e+00f);
+                          __m256 C0     = _mm256_setzero_ps();
+                          __m256 C1     = _mm256_set1_ps(1.0f);
+                          __m256 C05    = _mm256_set1_ps(0.5f);
+                          register __m256 q,r,t0,t1;
+                          register __m256 x;
+                          q = _mm256_sub_ps(p,C05);
+                          if(_mm256_cmp_ps_mask(q,split1,_CMP_LE_OQ)) {
+                             r = _mm256_sub_ps(const1,_mm256_mul_ps(q,q));
+                             t0= vpoly_eval_ymm8r4(8,a,r);
+                             t1= vpoly_eval_ymm8r4(8,b,r);
+                             x = _mm256_div_ps(_mm256_mul_ps(q,t0),t1);
+                          } 
+                          else {
+                             const __mmask16 m = _mm256_cmp_ps_mask(q,C0,_CMP_LT_OQ);
+                             r                = _mm256_mask_blend_ps(m,_mm256_sub_ps(C1,p),p);
+                             if(_mm256_cmp_ps_mask(r,C0,_CMP_LE_OQ)) {
+                                x = _mm256_set1_pd(std::numeric_limits<float>::max());
+                             }
+                             else {
+
+                                r = _mm256_sqrt_ps(negate_zmm16r4(_mm256_log_ps(r)));
+                       
+                                const __mmask8 m = _mm256_cmp_ps_mask(r,split2,_CMP_LE_OQ);
+                                r                = _mm256_mask_blend_ps(m,_mm256_sub_ps(r,split2),
+                                                                          _mm256_sub_ps(r,const2));
+                                t0               = _mm256_div_ps(vpoly_eval_ymm8r4(8,c,r),
+                                                                 vpoly_eval_ymm8r4(8,d,r));
+                                t1               = _mm256_div_ps(vpoly_eval_ymm8r4(8,e,r),
+                                                                 vpoly_eval_ymm8r4(8,f,r));
+                                x                = _mm256_mask_blend_ps(m,t1,t0);      
+                             }
+                             if(_mm256_cmp_ps_mask(q,C0,_CMP_LT_OQ)) x = negate_ymm8r4(x);
+                          }
+                          return (x);
+                          
+		    }
+		    
+		    
 	  
 
 
