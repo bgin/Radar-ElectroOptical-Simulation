@@ -977,7 +977,8 @@ namespace gms {
 		      static inline
 		      __m512d bessel_i1_zmm8r8(const __m512d arg) {
 
-                           __ATTR_ALIGN__(64) const __m512d  p[15] = {_mm512_set1_pd(-1.9705291802535139930E-19), 
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512d  p[15] = {_mm512_set1_pd(-1.9705291802535139930E-19), 
                                                                       _mm512_set1_pd(-6.5245515583151902910E-16), 
                                                                       _mm512_set1_pd(-1.1928788903603238754E-12), 
                                                                       _mm512_set1_pd(-1.4831904935994647675E-09), 
@@ -992,7 +993,8 @@ namespace gms {
                                                                       _mm512_set1_pd(-6.9876779648010090070E+12), 
                                                                       _mm512_set1_pd(-1.7732037840791591320E+14), 
                                                                       _mm512_set1_pd(-1.4577180278143463643E+15)};
-			   __ATTR_ALIGN__(64) const __m512d pp[8]  = {_mm512_set1_pd(-6.0437159056137600000E-02), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512d pp[8]  = {_mm512_set1_pd(-6.0437159056137600000E-02), 
                                                                       _mm512_set1_pd(4.5748122901933459000E-01), 
                                                                       _mm512_set1_pd(-4.2843766903304806403E-01), 
                                                                       _mm512_set1_pd(9.7356000150886612134E-02), 
@@ -1000,12 +1002,14 @@ namespace gms {
                                                                       _mm512_set1_pd(-3.6395264712121795296E-04), 
                                                                       _mm512_set1_pd(1.6258661867440836395E-05), 
                                                                       _mm512_set1_pd(-3.6347578404608223492E-07)};
-			   __ATTR_ALIGN__(64) const __m512d q[5]   = {_mm512_set1_pd(-4.0076864679904189921E+03), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512d q[5]   = {_mm512_set1_pd(-4.0076864679904189921E+03), 
                                                                       _mm512_set1_pd(7.4810580356655069138E+06), 
                                                                       _mm512_set1_pd(-8.0059518998619764991E+09), 
                                                                       _mm512_set1_pd(4.8544714258273622913E+12), 
                                                                       _mm512_set1_pd(-1.3218168307321442305E+15)};
-			   __ATTR_ALIGN__(64) const __m512d qq[6]  = {_mm512_set1_pd(-3.8806586721556593450E+00), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512d qq[6]  = {_mm512_set1_pd(-3.8806586721556593450E+00), 
                                                                       _mm512_set1_pd(3.2593714889036996297E+00), 
                                                                       _mm512_set1_pd(-8.5017476463217924408E-01), 
                                                                       _mm512_set1_pd(7.4212010813186530069E-02), 
@@ -1106,7 +1110,8 @@ namespace gms {
 		      static inline
 		      __m512 bessel_i1_zmm16r4(const __m512 arg) {
 
-                           __ATTR_ALIGN__(64) const __m512  p[15] = {_mm512_set1_ps(-1.9705291802535139930E-19f), 
+                           __attribute__((section(".rodata")))
+                           __ATTR_ALIGN__(64) static __m512  p[15] = {_mm512_set1_ps(-1.9705291802535139930E-19f), 
                                                                       _mm512_set1_ps(-6.5245515583151902910E-16f), 
                                                                       _mm512_set1_ps(-1.1928788903603238754E-12f), 
                                                                       _mm512_set1_ps(-1.4831904935994647675E-09f), 
@@ -1121,7 +1126,8 @@ namespace gms {
                                                                       _mm512_set1_ps(-6.9876779648010090070E+12f), 
                                                                       _mm512_set1_ps(-1.7732037840791591320E+14f), 
                                                                       _mm512_set1_ps(-1.4577180278143463643E+15f)};
-			   __ATTR_ALIGN__(64) const __m512 pp[8]  = {_mm512_set1_ps(-6.0437159056137600000E-02f), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512 pp[8]  = {_mm512_set1_ps(-6.0437159056137600000E-02f), 
                                                                       _mm512_set1_ps(4.5748122901933459000E-01f), 
                                                                       _mm512_set1_ps(-4.2843766903304806403E-01f), 
                                                                       _mm512_set1_ps(9.7356000150886612134E-02f), 
@@ -1129,12 +1135,14 @@ namespace gms {
                                                                       _mm512_set1_ps(-3.6395264712121795296E-04f), 
                                                                       _mm512_set1_ps(1.6258661867440836395E-05f), 
                                                                       _mm512_set1_ps(-3.6347578404608223492E-07f)};
-			   __ATTR_ALIGN__(64) const __m512 q[5]   = {_mm512_set1_ps(-4.0076864679904189921E+03f), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512 q[5]   = {_mm512_set1_ps(-4.0076864679904189921E+03f), 
                                                                       _mm512_set1_ps(7.4810580356655069138E+06f), 
                                                                       _mm512_set1_ps(-8.0059518998619764991E+09f), 
                                                                       _mm512_set1_ps(4.8544714258273622913E+12f), 
                                                                       _mm512_set1_ps(-1.3218168307321442305E+15f)};
-			   __ATTR_ALIGN__(64) const __m512 qq[6]  = {_mm512_set1_ps(-3.8806586721556593450E+00f), 
+                           __attribute__((section(".rodata")))
+			   __ATTR_ALIGN__(64) static __m512 qq[6]  = {_mm512_set1_ps(-3.8806586721556593450E+00f), 
                                                                       _mm512_set1_ps(3.2593714889036996297E+00f), 
                                                                       _mm512_set1_ps(-8.5017476463217924408E-01f), 
                                                                       _mm512_set1_ps(7.4212010813186530069E-02f), 
@@ -1430,6 +1438,98 @@ namespace gms {
 		    }
 		    
 		    
+		    
+/*
+          !*****************************************************************************80
+!
+!! NORMAL_01_SAMPLE samples the standard normal probability distribution.
+!
+!  Discussion:
+!
+!    The standard normal probability distribution function (PDF) has
+!    mean 0 and standard deviation 1.
+!
+!    The Box-Muller method is used, which is efficient, but
+!    generates two values at a time.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 February 2002
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random number
+!    generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the standard normal PDF.
+!
+*/
+	
+	
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d   	    
+		      normal_01_sample_zmm8r8(__m512i & seed) {
+		           
+		           __m512d CN20 = _mm512_set1_pd(-2.0);
+		           __m512d C628318530717958647692529  = 
+		                                    _mm512_set1_pd(6.28318530717958647692529);
+		           __m512d C00  = _mm512_setzero_pd();
+		           register __m512d r1,r2,s,c,t0,t1,arg;
+		           register __m512d x;
+		           static __m512d y = _mm512_setzero_pd();
+		           static int32_t used = -1;
+		           if(used == -1) used = 0;
+		           
+		           if((used%2)==0) {
+		           
+		                 while(true) {
+		                    r1 = uniform_01_zmm8r8(seed);
+		                    if(_mm512_cmp_pd_mask(r1,C00,_CMP_NE_OQ)) break;
+		               }
+		               r2 = uniform_01_zmm8r8(seed);
+		               arg= _mm512_mul_pd(r2,C628318530717958647692529)
+#if (USE_SLEEF_LIB) == 1       
+                               t0 = _mm512_mul_pd(CN20,xlog(r1));
+                               c  = xcos(arg);
+                               s  = xsin(arg);	
+#else
+                               t0 = _mm512_mul_pd(CN20,_mm512_log_pd(r1));
+                               c  = _mm512_cos_pd(arg);
+                               s  = _mm512_sin_pd(arg);
+#endif                           	               
+                               x  = _mm512_mul_pd(_mm512_sqrt_pd(t0),c);
+                               y  = _mm512_mul_pd(_mm512_sqrt_pd(t0),s);
+		           }
+		           else {
+		               x = y;
+		           }
+		           used += 1;
+		           return (x);
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  	    
+		      normal_01_sample_zmm16r4(__m512i & seed) {
+		          
+		          return (_mm512_castpd_ps(normal_01_sample_zmm8r8(seed)));
+		      }
 		    
 /*
    !*****************************************************************************80
@@ -1778,7 +1878,7 @@ namespace gms {
 		      __ATTR_ALIGN__(32)
 		      static inline
 		      __m512d
-                      reciprocal_sample_zmm8r8(const __m512i seed,
+                      reciprocal_sample_zmm8r8( __m512i & seed,
                                                const __m512d a,
                                                const __m512d b) {
                            
@@ -1791,6 +1891,20 @@ namespace gms {
                            pow2= _mm512_pow_pd(a,arg);
                            sample = _mm512_div_pd(pow1,pow2);
                            return (sample);                          
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+                      reciprocal_sample_zmm16r4( __m512i & seed,
+                                               const __m512 a,
+                                               const __m512 b) {
+                         
+                         return (_mm512_castpd_ps(reciprocal_sample_zmm8r8(seed,a,b)));                          
                     }
                     
                     
@@ -2033,7 +2147,314 @@ namespace gms {
                                                  C031830988618379067153777));
                           return (cdf);
                      }
-                      
+                     
+                     
+/*
+         !*****************************************************************************80
+!
+!! SECH_CDF_INV inverts the Hyperbolic Secant CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument of the CDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      sech_cdf_inv_zmm8r8(const __m512d cdf,
+		                          const __m512d a,
+		                          const __m512d b) {
+		          
+		           register __m512d C157079632679489661923132 = 
+		                                 _mm512_set1_pd(1.57079632679489661923132);
+		           register __m512d targ,ab,tan,log;
+		           register __m512d x;
+		           ab   = _mm512_add_pd(a,b);
+		           targ = _mm512_mul_pd(cdf,C157079632679489661923132);
+#if (USE_SLEEF_LIB) == 1 
+                           tan  = xtan(targ);
+                           log  = xlog(tan);
+#else
+                           tan  = _mm512_tan_pd(targ);
+                           log  = _mm512_log_pd(tan);
+#endif		                           
+                           x    = _mm512_mul_pd(log,ab);
+                           return (x);
+		     }     
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+		      sech_cdf_inv_zmm16r4(const __m512 cdf,
+		                          const __m512 a,
+		                          const __m512 b) {
+		          
+		           register __m512 C157079632679489661923132 = 
+		                                 _mm512_set1_pd(1.57079632679489661923132f);
+		           register __m512 targ,ab,tan,log;
+		           register __m512 x;
+		           ab   = _mm512_add_ps(a,b);
+		           targ = _mm512_mul_ps(cdf,C157079632679489661923132);
+#if (USE_SLEEF_LIB) == 1 
+                           tan  = xtanf(targ);
+                           log  = xlogf(tan);
+#else
+                           tan  = _mm512_tan_ps(targ);
+                           log  = _mm512_log_ps(tan);
+#endif		                           
+                           x    = _mm512_mul_ps(log,ab);
+                           return (x);
+		     }    
+		     
+		     
+/*
+       !*****************************************************************************80
+!
+!! SECH_PDF evaluates the Hypebolic Secant PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B;X) = sech ( ( X - A ) / B ) / ( PI * B )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!   
+*/ 
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+                      sech_pdf_zmm8r8(const __m512d x
+                                      const __m512d a,
+                                      const __m512d b) {
+                          
+                          
+                          register __m512d C314159265358979323846264 = 
+                                                           _mm512_set1_pd(3.14159265358979323846264);
+                          register __m512d y,pib,sech;
+                          pib = _mm512_mul_pd(b,C314159265358979323846264);
+                          y   = _mm512_div_pd(_mm512_sub_pd(x,a),b);
+                          sech= sech_zmm8r8(y);
+                          pdf = _mm512_div_pd(sech,pib);
+                          return (pdf);                
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+                      sech_pdf_zmm16r4(const __m512 x
+                                      const __m512 a,
+                                      const __m512 b) {
+                          
+                          
+                          register __m512 C314159265358979323846264 = 
+                                                           _mm512_set1_pd(3.14159265358979323846264f);
+                          register __m512 y,pib,sech;
+                          pib = _mm512_mul_ps(b,C314159265358979323846264);
+                          y   = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+                          sech= sech_zmm16r4(y);
+                          pdf = _mm512_div_ps(sech,pib);
+                          return (pdf);                
+                    }
+                    
+                    
+/*
+   !*****************************************************************************80
+!
+!! SECH_SAMPLE samples the Hyperbolic Secant PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+                      sech_sample_zmm8r8(const __m512d a,
+                                         const __m512d b,
+                                         const __m512i & seed) {
+                        
+                          register __m512d C157079632679489661923132 = 
+		                                 _mm512_set1_pd(1.57079632679489661923132);
+                          register __m512d cdf,ab,targ,tan,log;
+                          register __m512d sample;
+                          ab   = _mm512_add_pd(a,b);
+                          cdf  = uniform_01_zmm8r8(seed);
+                          targ = _mm512_mul_pd(cdf,C157079632679489661923132);
+                                   
+#if (USE_SLEEF_LIB) == 1 
+                          tan = xtan(targ);
+                          log = xlog(tan);
+#else
+                          tan = _mm512_tan_pd(targ);
+                          log = _mm512_log_pd(tan);
+#endif
+                          sample = _mm512_mul_pd(ab,log);
+                          return (sample);                                       
+                     } 
+                     
+                     
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512
+                      sech_sample_zmm16r4(const __m512d a,
+                                         const __m512d b,
+                                         const __m512i & seed) {
+                         
+                          register __m512 sample;
+                          sample = _mm512_castpd_ps(sech_sample_zmm8r8(a,b,seed));
+                          return (sample);                   
+                     }
+                     
+                     
+/*
+              !*****************************************************************************80
+!
+!! SECH_VARIANCE returns the variance of the Hyperbolic Secant PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) VARIANCE, the variance of the PDF.
+!
+*/
+
+             
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d    
+                      sech_variance_zmm8r8(const __m512d a,
+                                           const __m512d b) {
+                          
+                            register __m512d C314159265358979323846264 = 
+                                                           _mm512_set1_pd(3.14159265358979323846264);
+                            register __m512d C025 = _mm512_set1_pd(0.25);
+                            register __m512d pib,pow;
+                            register __m512d var;
+                            pib = _mm512_mul_pd(b,C314159265358979323846264);
+                            pow = _mm512_mul_pd(pib,pib);
+                            var = _mm512_mul_pd(C025,pow);
+                            return (var);                   
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512   
+                      sech_variance_zmm16r4(const __m512 a,
+                                           const __m512 b) {
+                          
+                            register __m512 C314159265358979323846264 = 
+                                                           _mm512_set1_pd(3.14159265358979323846264f);
+                            register __m512 C025 = _mm512_set1_pd(0.25f);
+                            register __m512 pib,pow;
+                            register __m512 var;
+                            pib = _mm512_mul_ps(b,C314159265358979323846264);
+                            pow = _mm512_mul_ps(pib,pib);
+                            var = _mm512_mul_ps(C025,pow);
+                            return (var);                   
+                    }
+
 /*
     !*****************************************************************************80
 !
@@ -2623,6 +3044,17 @@ namespace gms {
 		     }
 		     
 		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      uniform_01_zmm16r4( __m512i & seed) {
+		            
+		            return (_mm512_castpd_ps(uniform_01_zmm8r8(seed)));
+		      }
+		     
 /*
  !*****************************************************************************80
 !
@@ -2686,6 +3118,20 @@ namespace gms {
 		         diff    = _mm512_add_pd(_mm512_sub_pd(b,a));
 		         uni     = _mm512_mul_pd(diff,_mm512_mul_pd(_mm512_castsi512_pd(seed),C4656612875);
 		         return (uni);             
+	            }
+	            
+	            
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+	              uniform_zmm16r4(const __m512d a,
+	                              const __m512d b,
+	                              __m512i & seed) {
+	                   
+	                   return (_mm512_castpd_ps(uniform_zmm8r8(a,b,seed)));                 
 	            }
 /*
 !*****************************************************************************80
@@ -3470,10 +3916,100 @@ namespace gms {
 								               gamma_log_zmm8r8(b)),
 			return (beta);						                     gamma_log_zmm8r8(ab)));
 		    }
+		    
+
+/*
+     !*****************************************************************************80
+!
+!! BETA_SAMPLE samples the Beta PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    William Kennedy, James Gentle,
+!    Algorithm BN,
+!    Statistical Computing,
+!    Dekker, 1980.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A,
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF. 
+*/
                  
 
-
-
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+                      beta_sample_zmm8r8(const __m512d a,
+                                         const __m512d b,
+                                         __m512i & seed) {
+                         
+                          __m512d C1 = _mm512_set1_pd(1.0);
+                          __m512d C2 = _mm512_set1_pd(2.0);
+                          __m512d C05= _mm512_set1_pd(0.5);
+                          register __m512d mu,stdev,test,u,y;
+                          register __m512d a1,b1,ab2,l0,l1,l2,t0;
+                          register __m512d t1,t2,t3;
+                          register __m512d x;
+                          ab2 = _mm512_sub_pd(_mm512_add_pd(a,b),C2);
+                          a1  = _mm512_sub_pd(a,C1);
+                          b1  = _mm512_sub_pd(b,C1);
+                          mu  = _mm512_div_pd(a1,ab2);
+                          stdev = _mm512_div_pd(C05,_mm512_sqrt_pd(ab2));
+                          while(true) {
+                              
+                              y = normal_01_sample_zmm8r8(seed);
+                              x = _mm512_add_pd(mu,_mm512_mul_pd(stdev,y));
+                              if(_mm512_cmp_pd_mask(x,_mm512_setzero_pd(),_CMP_LT_OQ) || 
+                                 _mm512_cmp_pd_mask(C1,x,_CMP_LT_OQ)) continue;
+                              t0= _mm512_mul_pd(C05,_mm512_mul_pd(y,y));
+                              u = uniform_01_zmm8r8(seed);
+#if (USE_SLEEF_LIB) == 1    
+                              l0 = xlog(_mm512_div_pd(x,a1));
+                              t1 = _mm512_mul_pd(a1,l0);
+                              l1 = xlog(_mm512_div_pd(_mm512_sub_pd(C1,x),b1));
+                              t2 = _mm512_mul_pd(b1,l1);
+                              l2 = _mm512_add_pd(xlog(ab2),t0); 
+                              t3 = _mm512_mul_pd(ab2,l2);
+                              test = _mm512_add_pd(t1,_mm512_add_pd(t2,t3));
+#else
+                              l0 = _mm512_log_pd(_mm512_div_pd(x,a1));
+                              t1 = _mm512_mul_pd(a1,l0);
+                              l1 = _mm512_log_pd(_mm512_div_pd(_mm512_sub_pd(C1,x),b1));
+                              t2 = _mm512_mul_pd(b1,l1);
+                              l2 = _mm512_add_pd(_mm512_log_pd(ab2),t0); 
+                              t3 = _mm512_mul_pd(ab2,l2);
+                              test = _mm512_add_pd(t1,_mm512_add_pd(t2,t3));
+#endif                      
+#if (USE_SLEEF_LIB) == 1  
+                              if(_mm512_cmp_pd_mask(xlog(u),test,_CMP_LE_OQ)) break;
+#else
+                              if(_mm512_cmp_pd_mask(_mm512_log_pd(u),test,_CMP_LE_OQ)) break;
+#endif                                     
+                          }  
+                          return (x);                 
+                    }
 
 
 
