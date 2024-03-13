@@ -1202,7 +1202,291 @@ namespace gms {
 		    }
 		    
 		    
+/*
+       !*****************************************************************************80
+!
+!! RECIPROCAL_CDF evaluates the Reciprocal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
+
+
+               
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+		      reciprocal_cdf_ymm4r8(const __m256d x,
+		                            const __m256d a,
+		                            const __m256d b) {
+		          
+		          register __m256d ax,ab,l1,l2;
+		          register __m256d cdf;       
+		          ax = _mm256_div_pd(a,x);
+                          l1 = _mm256_log_pd(ax);
+	                  ab = _mm256_div_pd(a,b);
+                          l2 = _mm256_log_pd(ab);
+                          cdf= _mm256_div_pd(l1,l2);
+                          return (cdf);
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+		      reciprocal_cdf_ymm8r4(const __m256 x,
+		                             const __m256 a,
+		                             const __m256 b) {
+		          
+		          register __m256 ax,ab,l1,l2;
+		          register __m256 cdf;       
+		          ax = _mm256_div_ps(a,x);
+                          l1 = _mm256_log_ps(ax);
+	                  ab = _mm256_div_ps(a,b);
+                          l2 = _mm256_log_ps(ab);
+                          cdf= _mm256_div_ps(l1,l2);
+                          return (cdf);
+		     }
+		     
+		     
+/*
+          !*****************************************************************************80
+!
+!! RECIPROCAL_CDF_INV inverts the Reciprocal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument of the CDF.
+!                      
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 		     
+		      reciprocal_cdf_inv_ymm4r8(const __m256d cdf,
+		                                const __m256d a,
+		                                const __m256d b) {
+		         
+		           register __m256d C1 = _mm256_set1_pd(1.0);
+		           register __m256d pow1,pow2,cdf1;
+		           register __m256d inv;
+		           cdf1 = _mm256_sub_pd(cdf,C1);
+		           pow2 = _mm256_pow_pd(b,cdf);
+		           pow1 = _mm256_pow_pd(a,cdf1);
+		           inv  = _mm256_div_pd(pow2,pow1);
+		           return (inv);                          
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256		     
+		      reciprocal_cdf_inv_ymm8r4(const __m256 cdf,
+		                                const __m256 a,
+		                                const __m256 b) {
+		         
+		           register __m256 C1 = _mm256_set1_ps(1.0f);
+		           register __m256 pow1,pow2,cdf1;
+		           register __m256 inv;
+		           cdf1 = _mm256_sub_ps(cdf,C1);
+		           pow2 = _mm256_pow_ps(b,cdf);
+		           pow1 = _mm256_pow_ps(a,cdf1);
+		           inv  = _mm256_div_ps(pow2,pow1);
+		           return (inv);                          
+		     }
+		     
+		     
+		     
+/*
+     !*****************************************************************************80
+!
+!! RECIPROCAL_MEAN returns the mean of the Reciprocal PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.
+!    
+*/
+		         
 	  
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+		      reciprocal_mean_ymm4r8(const __m256d a,
+		                             const __m256d b) {
+		           
+		           register __m256d ab,amb,l1;
+		           register __m256d mean;
+		           amb = _mm256_sub_pd(a,b);
+		           ab  = _mm256_div_pd(a,b);
+                           l1  = _mm256_log_pd(ab);
+	                   mean= _mm256_div_pd(amb,l1);
+                           return (mean);
+		     }	 
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+		      reciprocal_mean_ymm8r4(const __m256 a,
+		                             const __m256 b) {
+		           
+		           register __m256 ab,amb,l1;
+		           register __m256 mean;
+		           amb = _mm256_sub_ps(a,b);
+		           ab  = _mm256_div_ps(a,b);
+                           l1  = _mm256_log_ps(ab);
+		           mean= _mm256_div_ps(amb,l1);
+                           return (mean);
+		     }	 
+		     
+		     
+/*
+           !*****************************************************************************80
+!
+!! RECIPROCAL_PDF evaluates the Reciprocal PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B;X) = 1.0D+00 / ( X * LOG ( B / A ) )
+!    for 0.0D+00 <= X
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A <= B.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!                
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d
+		      reciprocal_pdf_ymm4r8(    const __m256d x,
+		                                const __m256d a,
+		                                const __m256d b) {
+		          
+		          register __m256d C1 = _mm256_set1_pd(1.0);
+		          register __m256d ba,l1;
+		          register __m256d pdf;
+		          ba = _mm256_div_pd(b,a);
+                          l1 = _mm256_mul_pd(x,_mm256_log_pd(ba));
+	                  pdf= _mm256_div_pd(C1,l1);
+                          return (pdf);                            
+		    }
+		    
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+		      reciprocal_pdf_ymm8r4(    const __m256 x,
+		                                const __m256 a,
+		                                const __m256 b) {
+		          
+		          register __m256 C1 = _mm256_set1_ps(1.0f);
+		          register __m256 ba,l1;
+		          register __m256 pdf;
+		          ba = _mm256_div_ps(b,a);
+                          l1 = _mm256_mul_ps(x,_mm256_log_ps(ba));
+	                  pdf= _mm256_div_ps(C1,l1);
+                          return (pdf);                            
+		    }
+		    
+		     
 
 
 /*
