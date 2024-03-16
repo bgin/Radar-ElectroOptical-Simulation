@@ -3133,6 +3133,358 @@ namespace gms {
 	                   
 	                   return (_mm512_castpd_ps(uniform_zmm8r8(a,b,seed)));                 
 	            }
+	            
+	            
+/*
+                BRADFORD_CDF evaluates the Bradford CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/	
+
+          
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+		      bradford_cdf_zmm8r8(const __m512d x,
+		                          const __m512d a,
+		                          const __m512d b,
+		                          const __m512d c) {
+		          
+		            register __m512d C1 = _mm5122_set1_pd(1.0);
+		            register __m512d cp1,xa,ba,ratio,l0,l1;
+		            register __m512d cdf;
+		            cp1 = _mm512_add_pd(c,C1);
+		            xa  = _mm512_sub_pd(x,a);
+		            ba  = _mm512_sub_pd(b,a);
+#if (USE_SLEEF_LIB) == 1 
+                            l1  = xlog(cp1);
+#else
+                            l1  = _mm512_log_pd(cp1);
+#endif		                             
+                            ratio = _mm512_div_pd(_mm512_mul_pd(c,xa),ba);
+#if (USE_SLEEF_LIB) == 1 
+                            l0  = xlog(_mm512_add_pd(C1,ratio));
+#else
+                            l0  = _mm512_log_pd(_mm512_add_pd(C1,ratio));
+#endif         
+                            cdf = _mm512_div_pd(l0,l1);
+                            return (cdf);                   
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      bradford_cdf_zmm16r4(const __m512 x,
+		                          const __m512 a,
+		                          const __m512 b,
+		                          const __m512 c) {
+		          
+		            register __m512 C1 = _mm512_set1_ps(1.0f);
+		            register __m512 cp1,xa,ba,ratio,l0,l1;
+		            register __m512 cdf;
+		            cp1 = _mm512_add_ps(c,C1);
+		            xa  = _mm512_sub_ps(x,a);
+		            ba  = _mm512_sub_ps(b,a);
+#if (USE_SLEEF_LIB) == 1 
+                            l1  = xlogf(cp1);
+#else
+                            l1  = _mm512_log_ps(cp1);
+#endif		                             
+                            ratio = _mm512_div_ps(_mm512_mul_ps(c,xa),ba);
+#if (USE_SLEEF_LIB) == 1 
+                            l0  = xlogf(_mm512_add_ps(C1,ratio));
+#else
+                            l0  = _mm512_log_ps(_mm512_add_ps(C1,ratio));
+#endif         
+                            cdf = _mm512_div_ps(l0,l1);
+                            return (cdf);                   
+		     }
+		     
+		     
+/*
+          !*****************************************************************************80
+!
+!! BRADFORD_CDF_INV inverts the Bradford CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument of the CDF.
+!
+*/	
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d 
+		      bradford_cdf_inv_zmm8r8(const __m512d cdf,
+		                              const __m512d a,
+		                              const __m512d b,
+		                              const __m512d c) {
+		        
+		          register __m512d C1 = _mm512_set1_pd(1.0);
+		          register __m512d ba,cp1,pow,t0;
+		          register __m512d x;
+		                	        
+		              ba  = _mm512_sub_pd(b,a);
+		              cp1 = _mm512_add_pd(c,C1);
+		              pow = _mm512_sub_pd(_mm512_pow_pd(C1,cdf),C1);
+		              t0  = _mm512_div_pd(pow,c);
+		              x   = _mm512_mul_pd(_mm512_add_pd(a,ba),t0);
+		              return (x);
+		         		                     
+		    }	
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+		      bradford_cdf_inv_zmm16r4(const __m512 cdf,
+		                               const __m512 a,
+		                               const __m512 b,
+		                               const __m512 c) {
+		        
+		          register __m512 C1 = _mm512_set1_ps(1.0f);
+		          register __m512 ba,cp1,pow,t0;
+		          register __m512 x;
+		          
+		              ba  = _mm512_sub_ps(b,a);
+		              cp1 = _mm512_add_ps(c,C1);
+		              pow = _mm512_sub_ps(_mm512_pow_ps(C1,cdf),C1);
+		              t0  = _mm512_div_ps(pow,c);
+		              x   = _mm512_mul_ps(_mm512_add_ps(a,ba),t0);
+		              return (x);
+		                		                     
+		    }	
+		    
+		    
+/*
+         !*****************************************************************************80
+!
+!! BRADFORD_MEAN returns the mean of the Bradford PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.
+!
+*/  
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      bradford_mean_zmm8r8(const __m512d a,
+		                           const __m512d b,
+		                           const __m512d c) {
+		       
+		         register __m512d C1 = _mm512_set1_pd(1.0);
+		         register __m512d t1,t2,cp1,cba,acb,l0,l1;
+		         register __m512d mean;
+		         cp1  = _mm512_add_pd(c,C1);
+		         cba  = _mm512_mul_pd(c,_mm512_sub_pd(b,a));
+		         acb  = _mm512_sub_pd(_mm512_mul_pd(a,c1),b);
+#if (USE_SLEEF_LIB) == 1 
+                         l0   = xlog(cp1);
+#else 
+                         l0   = _mm512_log_pd(cp1);
+#endif
+                         t2   = _mm512_mul_pd(c,l0);
+                         t1   = _mm512_mul_pd(l0,acb);
+                         mean = _mm512_div_pd(_mm512_add_pd(cba,t1),t2);
+                         return (mean);   		                                  
+		   }
+		   
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+		      bradford_mean_zmm16r4(const __m512 a,
+		                           const __m512 b,
+		                           const __m512 c) {
+		       
+		         register __m512 C1 = _mm512_set1_ps(1.0f);
+		         register __m512 t1,t2,cp1,cba,acb,l0,l1;
+		         register __m512 mean;
+		         cp1  = _mm512_add_ps(c,C1);
+		         cba  = _mm512_mul_ps(c,_mm512_sub_ps(b,a));
+		         acb  = _mm512_sub_ps(_mm512_mul_ps(a,c1),b);
+#if (USE_SLEEF_LIB) == 1 
+                         l0   = xlogf(cp1);
+#else 
+                         l0   = _mm512_log_ps(cp1);
+#endif
+                         t2   = _mm512_mul_ps(c,l0);
+                         t1   = _mm512_mul_ps(l0,acb);
+                         mean = _mm512_div_ps(_mm512_add_ps(cba,t1),t2);
+                         return (mean);   		                                  
+		   }
+		   
+		   
+/*
+	     BRADFORD_PDF evaluates the Bradford PDF.
+!
+!  Discussion:
+!
+!    The formula is:
+!
+!      PDF(A,B,C;X) =
+!        C / ( ( C * ( X - A ) + B - A ) * log ( C + 1 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.          
+*/	   
+            
+                 
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512d  
+		      bradford_pdf_zmm8r8(const __m512d a,
+		                           const __m512d b,
+		                           const __m512d c) {
+		          
+		           register __m512d C1 = _mm512_set1_pd(1.0);
+		           register __m512d l0,c1p,xa,ba,t0,t1;
+		           register __m512d pdf;
+		           c1p = _mm512_add_pd(c,C1);
+		           xa  = _mm512_sub_pd(x,a);
+		           ba  = _mm512_sub_pd(b,a);
+#if (USE_SLEEF_LIB) == 1 
+                         l0   = xlog(cp1);
+#else 
+                         l0   = _mm512_log_pd(cp1);
+#endif		
+                         t0   = _mm512_fmadd_pd(c,xa,ba);
+                         t1   = _mm512_mul_pd(t0,l0);
+                         pdf  = _mm512_div_pd(c,t1);
+                         return (pdf);                              
+		    }
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512  
+		      bradford_pdf_zmm16r4(const __m512 a,
+		                           const __m512 b,
+		                           const __m512 c) {
+		          
+		           register __m512 C1 = _mm512_set1_ps(1.0f);
+		           register __m512 l0,c1p,xa,ba,t0,t1;
+		           register __m512 pdf;
+		           c1p = _mm512_add_ps(c,C1);
+		           xa  = _mm512_sub_ps(x,a);
+		           ba  = _mm512_sub_ps(b,a);
+#if (USE_SLEEF_LIB) == 1 
+                         l0   = xlogf(cp1);
+#else 
+                         l0   = _mm512_log_ps(cp1);
+#endif		
+                         t0   = _mm512_fmadd_ps(c,xa,ba);
+                         t1   = _mm512_mul_ps(t0,l0);
+                         pdf  = _mm512_div_ps(c,t1);
+                         return (pdf);                              
+		    }
+            
+            
 /*
 !*****************************************************************************80
 !
@@ -4010,7 +4362,23 @@ namespace gms {
                           }  
                           return (x);                 
                     }
-
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m512 
+                      beta_sample_zmm16r4(const __m512d a,
+                                          const __m512d b,
+                                          __m512i & seed) {
+                        
+                         register __m512 sample;
+                         sample = _mm512_castpd_ps(beta_sample_zmm8r8(a,b,seed));
+                         return (sample);                      
+                   }
+ 
 
 
 
