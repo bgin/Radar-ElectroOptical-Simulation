@@ -3525,7 +3525,7 @@ namespace gms {
 !
 */
 
-#include "GMS_rotations_avx2_helpers.hpp" // fmod
+#include "GMS_rotations_sse_helpers.hpp" // fmod
 
 
                       __ATTR_REGCALL__
@@ -3562,7 +3562,7 @@ namespace gms {
 			__m128d arg,cdf,cn,p,r,s,sn,u,v,y,z,uprv,erfx;
 			//  Convert the angle (X - A) modulo 2 PI to the range ( 0, 2 * PI ).
 			z    = b;
-			u    = _mm_castps_pd(_fmod_xmm4r4(_mm_castpd_ps(_mm_add_pd(xsa,pi)),
+			u    = _mm_castps_pd(fmod_xmm2r8(_mm_castpd_ps(_mm_add_pd(xsa,pi)),
 			                                           _mm_castpd_ps(_2pi)));
 			uprv = u;
 			const __mmask8 m = _mm_cmp_pd_mask(u,_0,_CMP_LT_OQ);
@@ -3688,9 +3688,9 @@ namespace gms {
 			   const __m128 t9 = _mm_set1_ps(83.5f);
 			   c                = _mm_mul_ps(t0,z);
 			   v                = _mm_sub_ps(c,c1);
-			   const __m128d tmp1 = _mm_sub_ps(_mm_add_ps(v,t3),c);
-			   const __m128d tmp2 = _mm_div_ps(t1,_mm_div_ps(t2,tmp1));
-			   const __m128d tmp3 = _mm_add_ps(_mm_sub_ps(tmp2,t4),c);
+			   const __m128 tmp1 = _mm_sub_ps(_mm_add_ps(v,t3),c);
+			   const __m128 tmp2 = _mm_div_ps(t1,_mm_div_ps(t2,tmp1));
+			   const __m128 tmp3 = _mm_add_ps(_mm_sub_ps(tmp2,t4),c);
 			   r                  = _mm_sqrt_ps(_mm_div_ps(tmp3,t5));
 
 			   z                  = _mm_mul_ps(_mm_sin_ps(
@@ -3935,7 +3935,7 @@ namespace gms {
             
  			 while(true) {
                                
-                              const double * __restrict ptr = (const double*)(&svrng_generate4_double(engine,uniform));
+                              const double * __restrict ptr = (const double*)(&svrng_generate2_double(engine,uniform));
                               u1                            = _mm_loadu_pd(&ptr[0]);
 
                               z                             = _mm_cos_pd(_mm_mul_pd(pi,u1));
@@ -3950,7 +3950,7 @@ namespace gms {
 			      if(_mm_cmp_mask_pd(c,t1,_CMP_LE_OQ)) break;
 			 }
 			 const double * __restrict ptr2 =
-			                    (const double*)(&svrng_generate4_double(engine,uniform));
+			                    (const double*)(&svrng_generate2_double(engine,uniform));
 			 u3                             = _mm_loadu_pd(&ptr2[0]);
 		         t2                             = xmm2r8_sign_xmm2r8(_1,_mm_sub_pd(u3,_1_2));
 			 x                              = _mm_fmadd_pd(t2,_mm_acos_pd(f),a);
@@ -4001,7 +4001,7 @@ namespace gms {
             
  			 while(true) {
                                
-                              const float * __restrict ptr = (const float*)(&svrng_generate8_float(engine,uniform));
+                              const float * __restrict ptr = (const float*)(&svrng_generate4_float(engine,uniform));
                               u1                            = _mm_loadu_ps(&ptr[0]);
 
                               z                             = _mm_cos_ps(_mm_mul_ps(pi,u1));
@@ -4016,7 +4016,7 @@ namespace gms {
 			      if(_mm_cmp_mask_ps(c,t1,_CMP_LE_OQ)) break;
 			 }
 			 const float * __restrict ptr2 =
-			                    (const float*)(&svrng_generate8_float(engine,uniform));
+			                    (const float*)(&svrng_generate4_float(engine,uniform));
 			 u3                             = _mm_loadu_ps(&ptr2[0]);
 		         t2                             = xmm4r4_sign_xmm4r4(_1,_mm_sub_ps(u3,_1_2));
 			 x                              = _mm_fmadd_ps(t2,_mm_acos_ps(f),a);
@@ -4071,7 +4071,7 @@ namespace gms {
 			   __m128d t0,t1,t2,t3,pdf;
 			   const __mmask8 m  = _mm_cmp_pd_mask(x,_0,_CMP_LT_OQ);
 			   t0                = _mm_mul_pd(a,a);
-			   t1                = xmm2r8_negate(_mm_div_pd(_mm_mul_pd(x,x),
+			   t1                = negate_xmm2r8(_mm_div_pd(_mm_mul_pd(x,x),
 			                                                   _mm_add_pd(t0,t0)));
 			   t2                = _mm_div_pd(x,t0);
 			   t3               = _mm_mul_pd(t2,_mm_exp_pd(t1));
@@ -4093,7 +4093,7 @@ namespace gms {
 			   __m128 t0,t1,t2t3,pdf;
 			   const __mmask8 m  = _mm_cmp_ps_mask(x,_0,_CMP_LT_OQ);
 			   t0                = _mm_mul_ps(a,a);
-			   t1                = xmm4r4_negate(_mm_div_ps(_mm_mul_ps(x,x),
+			   t1                = negate_xmm4r4(_mm_div_ps(_mm_mul_ps(x,x),
 			                                                   _mm_add_ps(t0,t0)));
 			   t2                = _mm_div_ps(x,t0);
 			   t3                = _mm_mul_ps(t2,_mm_exp_ps(t1));
@@ -4275,7 +4275,7 @@ namespace gms {
 			 const __m128d _1 = _mm_setzero_pd(1.0);
 			 __m128d cdf,t0,t1;
 			 t0              = _mm_mul_pd(_2,_mm_mul_pd(a,a));
-			 t1              = xmm2r8_negate(_mm_mul_pd(x,x));
+			 t1              = negate_xmm2r8(_mm_mul_pd(x,x));
 			 cdf             = _mm_sub_pd(_1,
 			                             _mm_exp_pd(_mm_div_pd(t1,t0)));
                          return (cdf);
@@ -4295,7 +4295,7 @@ namespace gms {
 			 const __m128 _1 = _mm_setzero_ps(1.0f);
 			 __m128 cdf,t0,t1;
 			 t0              = _mm_mul_pd(_2,_mm_mul_ps(a,a));
-			 t1              = xmm4r4_negate(_mm_mul_ps(x,x));
+			 t1              = negate_xmm4r4(_mm_mul_ps(x,x));
 			 cdf             = _mm_sub_ps(_1,
 			                             _mm_exp_ps(_mm_div_ps(t1,t0)));
                          return (cdf);
@@ -4367,7 +4367,7 @@ namespace gms {
                                         const __m128d b) {
                         
                          const __m128d C314159265358979323846264 = 
-                                               __m128_set1_pd(3.14159265358979323846264);
+                                               _mm_set1_pd(3.14159265358979323846264);
                          const __m128d C05 = _mm_set1_pd(0.5);
                          register __m128d cdf,y,t0,t1;
                          t0 = _mm_sub_pd(x,a);
@@ -4389,7 +4389,7 @@ namespace gms {
                                          const __m128 b) {
                         
                          const __m128 C314159265358979323846264 = 
-                                               __m128_set1_ps(3.14159265358979323846264f);
+                                               _mm_set1_ps(3.14159265358979323846264f);
                          const __m128 C05 = _mm_set1_ps(0.5f);
                          register __m128 cdf,y,t0,t1;
                          t0 = _mm_sub_ps(x,a);
@@ -4686,7 +4686,7 @@ namespace gms {
 		                                const __m128d a) {
 		             
 		             __attribute__((section(".rodata")))
-		             __ATTR_ALIGN__(32) static __m128d  weight[10] = {
+		             __ATTR_ALIGN__(16) static __m128d  weight[10] = {
 		                                _mm_set1_pd(0.666713443086881375935688098933e-01),
                                                 _mm_set1_pd(0.149451349150580593145776339658e+00),
                                                 _mm_set1_pd(0.219086362515982043995534934228e+00),
@@ -4698,7 +4698,7 @@ namespace gms {
                                                 _mm_set1_pd(0.149451349150580593145776339658e+00), 
                                                 _mm_set1_pd(0.666713443086881375935688098933e-01)};
                            __attribute__((section(".rodata")))
-		            __ATTR_ALIGN__(32) static __m128d  xtab[10] = {
+		            __ATTR_ALIGN__(16) static __m128d  xtab[10] = {
 		                                _mm_set1_pd(-0.973906528517171720077964012084e+00),
                                                 _mm_set1_pd(-0.865063366688984510732096688423e+00),
                                                 _mm_set1_pd(-0.679409568299024406234327365115e+00), 
@@ -4815,11 +4815,11 @@ namespace gms {
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      static inline  
-		      __m128 owen_tfunc_zmm16r4(const __m128 h,
+		      __m128 owen_tfunc_xmm4r4(const __m128 h,
 		                                const __m128 a) {
 		             
 		             __attribute__((section(".rodata")))
-		             __ATTR_ALIGN__(32) static __m128  weight[10] = {
+		             __ATTR_ALIGN__(16) static __m128  weight[10] = {
 		                                _mm_set1_ps(0.666713443086881375935688098933e-01f),
                                                 _mm_set1_ps(0.149451349150580593145776339658e+00f),
                                                 _mm_set1_ps(0.219086362515982043995534934228e+00f),
@@ -4831,7 +4831,7 @@ namespace gms {
                                                 _mm_set1_ps(0.149451349150580593145776339658e+00f), 
                                                 _mm_set1_ps(0.666713443086881375935688098933e-01f)};
                             __attribute__((section(".rodata")))
-		            __ATTR_ALIGN__(32) static __m128  xtab[10] = {
+		            __ATTR_ALIGN__(16) static __m128  xtab[10] = {
 		                                _mm_set1_ps(-0.973906528517171720077964012084e+00f),
                                                 _mm_set1_ps(-0.865063366688984510732096688423e+00f),
                                                 _mm_set1_ps(-0.679409568299024406234327365115e+00f), 
@@ -4999,7 +4999,7 @@ namespace gms {
                       __m128d 
                       gamma_xmm2r8(const __m128d x) {
                          __attribute__((section(".rodata")))
-                         __ATTR_ALIGN__(64) static __m128d  c[7] = {
+                         __ATTR_ALIGN__(16) static __m128d  c[7] = {
                                         _mm_set1_pd(-1.910444077728e-03), 
                                         _mm_set1_pd(8.4171387781295e-04), 
                                         _mm_set1_pd(-5.952379913043012e-04), 
@@ -5008,7 +5008,7 @@ namespace gms {
                                         _mm_set1_pd(8.333333333333333331554247e-02),
                                         _mm_set1_pd(5.7083835261e-03)};
                         __attribute__((section(".rodata")))
-                        __ATTR_ALIGN__(64) static __m128d  p[8]  = {
+                        __ATTR_ALIGN__(16) static __m128d  p[8]  = {
                                         _mm_set1_pd(-1.71618513886549492533811e+00),
                                         _mm_set1_pd(2.47656508055759199108314e+01),
                                         _mm_set1_pd(-3.79804256470945635097577e+02),
@@ -5018,7 +5018,7 @@ namespace gms {
                                         _mm_set1_pd(-3.61444134186911729807069e+04),
                                         _mm_set1_pd(6.64561438202405440627855e+04)};   
                        __attribute__((section(".rodata")))       
-                       __ATTR_ALIGN__(64) static __m128d  q[8]   = {
+                       __ATTR_ALIGN__(16) static __m128d  q[8]   = {
                                         _mm_set1_pd(-3.08402300119738975254353e+01), 
                                         _mm_set1_pd(3.15350626979604161529144e+02),
                                         _mm_set1_pd(-1.01515636749021914166146e+03),
@@ -5061,12 +5061,12 @@ namespace gms {
                        if(_mm_cmp_pd_mask(y,zero,_CMP_LE_OQ)) {
                           register __m128d t0,t1;
                           y  = negate_xmm2r8(x);
-                          y1 = _mm_castsi256_pd(_mm_cvttpd_epu64(y));
+                          y1 = _mm_castsi_pd(_mm_cvttpd_epu64(y));
                           res= _mm_sub_pd(y,y1);
                           if(_mm_cmp_pd_mask(res,zero,_CMP_NEQ_OQ)) {
                             
                              t0 = _mm_mul_pd(_mm_mul_pd(y1,half),two);
-                             t1 = _mm_castsi256_pd(_mm_cvttpd_epu64(t0));
+                             t1 = _mm_castsi_pd(_mm_cvttpd_epu64(t0));
                              if(_mm_cmp_pd_mask(y1,t1,_CMP_NEQ_OQ)) parity = true;
                              t0 = _mm_sin_pd(_mm_mul_pd(pi,res));
                              fact = _mm_div_pd(negate_xmm2r8(pi),t0);
@@ -5095,9 +5095,9 @@ namespace gms {
                           else {
                              //!  1.0 < argument < 12.0.
                              //!  Reduce argument if necessary.
-                             n = _mm_sub_epi64(mm256_castpd_si256(y),
+                             n = _mm_sub_epi64(mm_castpd_si128(y),
                                                   _mm_set1_epi64(1LL));
-                             y = _mm_sub_pd(y,_mm_castsi256_pd(n));
+                             y = _mm_sub_pd(y,_mm_castsi128_pd(n));
                              z = _mm_sub_pd(y,one);
                           }
                           //  Evaluate approximation for 1.0 < argument < 2.0.
@@ -5126,12 +5126,12 @@ namespace gms {
                           else if(_mm_cmp_pd_mask(y,y1,_CMP_LT_OQ)) {
                           //  Important notice: ******For argument interval: 2.0<=x<12.0 there is a scalarization in form
                           //  of 8 scalar for-loops*******!!
-                             __ATTR_ALIGN__(32) int64_t sn[4];
-                             __ATTR_ALIGN__(32) double  sres[4];
-                             __ATTR_ALIGN__(32) double  sy[4];
-                             __ATTR_ALIGN__(32) double  sone[4];
+                             __ATTR_ALIGN__(16) int64_t sn[2];
+                             __ATTR_ALIGN__(16) double  sres[2];
+                             __ATTR_ALIGN__(16) double  sy[2];
+                             __ATTR_ALIGN__(16) double  sone[2];
                              int64_t i;
-                             _mm_store_si256(&sn[0],n);
+                             _mm_store_si128(&sn[0],n);
                              _mm_store_pd(&sres[0],res);
                              _mm_store_pd(&sy[0],y);
                              _mm_store_pd(&sone[0],one);
@@ -5143,14 +5143,7 @@ namespace gms {
                                  sres[1] *= sy[1];
                                  sy[1]   += sone[1];
                              }
-                             for(i=0; i != sn[2]; ++i) {
-                                 sres[2] *= sy[2];
-                                 sy[2]   += sone[2];
-                             }
-                             for(i=0; i != sn[3]; ++i) {
-                                 sres[3] *= sy[3];
-                                 sy[3]   += sone[3];
-                             }
+                           
                             
                              res = _mm_load_pd(&sres[0]);
                              y   = _mm_load_pd(&sy[0]);
@@ -5195,7 +5188,7 @@ namespace gms {
                       __m128 
                       gamma_xmm4r4(const __m128 x) {
                          __attribute__((section(".rodata")))
-                         __ATTR_ALIGN__(64) static __m128  c[7] = {
+                         __ATTR_ALIGN__(16) static __m128  c[7] = {
                                         _mm_set1_ps(-1.910444077728e-03f), 
                                         _mm_set1_ps(8.4171387781295e-04f), 
                                         _mm_set1_ps(-5.952379913043012e-04f), 
@@ -5204,7 +5197,7 @@ namespace gms {
                                         _mm_set1_ps(8.333333333333333331554247e-02f),
                                         _mm_set1_ps(5.7083835261e-03f)};
                         __attribute__((section(".rodata")))
-                        __ATTR_ALIGN__(64) static __m128  p[8]  = {
+                        __ATTR_ALIGN__(16) static __m128  p[8]  = {
                                         _mm_set1_ps(-1.71618513886549492533811e+00f),
                                         _mm_set1_ps(2.47656508055759199108314e+01f),
                                         _mm_set1_ps(-3.79804256470945635097577e+02f),
@@ -5214,7 +5207,7 @@ namespace gms {
                                         _mm_set1_ps(-3.61444134186911729807069e+04f),
                                         _mm_set1_ps(6.64561438202405440627855e+04f)}; 
                        __attribute__((section(".rodata")))         
-                       __ATTR_ALIGN__(64) static __m128  q[8]   = {
+                       __ATTR_ALIGN__(16) static __m128  q[8]   = {
                                         _mm_set1_ps(-3.08402300119738975254353e+01f), 
                                         _mm_set1_ps(3.15350626979604161529144e+02f),
                                         _mm_set1_ps(-1.01515636749021914166146e+03f),
@@ -5257,15 +5250,15 @@ namespace gms {
                        if(_mm_cmp_ps_mask(y,zero,_CMP_LE_OQ)) {
                           register __m128 t0,t1;
                           y  = negate_xmm4r4(x);
-                          y1 = _mm_castsi256_ps(_mm_cvttps_epu32(y));
+                          y1 = _mm_castsi128_ps(_mm_cvttps_epu32(y));
                           res= _mm_sub_ps(y,y1);
                           if(_mm_cmp_ps_mask(res,zero,_CMP_NEQ_OQ)) {
                             
                              t0 = _mm_mul_ps(_mm_mul_ps(y1,half),two);
-                             t1 = _mm_castsi256_ps(_mm_cvttps_epu32(t0));
+                             t1 = _mm_castsi128_ps(_mm_cvttps_epu32(t0));
                              if(_mm_cmp_ps_mask(y1,t1,_CMP_NEQ_OQ)) parity = true;
                              t0 = _mm_sin_ps(_mm_mul_ps(pi,res));
-                             fact = _mm_div_ps(negate_zmm16r4(pi),t0);
+                             fact = _mm_div_ps(negate_xmm4r4(pi),t0);
                              y    = _mm_add_ps(y,one);
                           }
                           else {
@@ -5291,9 +5284,9 @@ namespace gms {
                           else {
                              //!  1.0 < argument < 12.0.
                              //!  Reduce argument if necessary.
-                             n = _mm_sub_epi32(_mm_castps_si256(y),
+                             n = _mm_sub_epi32(_mm_castps_si128(y),
                                                   _mm_set1_epi32(1));
-                             y = _mm_sub_ps(y,_mm_castsi256_ps(n));
+                             y = _mm_sub_ps(y,_mm_castsi128_ps(n));
                              z = _mm_sub_ps(y,one);
                           }
                           //  Evaluate approximation for 1.0 < argument < 2.0.
@@ -5322,12 +5315,12 @@ namespace gms {
                           else if(_mm_cmp_ps_mask(y,y1,_CMP_LT_OQ)) {
                           //  Important notice: ******For argument interval: 2.0<=x<12.0 there is a scalarization in form
                           //  of 8 scalar for-loops*******!!
-                             __ATTR_ALIGN__(32) int32_t sn[8];
-                             __ATTR_ALIGN__(32) float  sres[8];
-                             __ATTR_ALIGN__(32) float  sy[8];
-                             __ATTR_ALIGN__(32) float  sone[8];
+                             __ATTR_ALIGN__(16) int32_t sn[4];
+                             __ATTR_ALIGN__(16) float  sres[4];
+                             __ATTR_ALIGN__(16) float  sy[4];
+                             __ATTR_ALIGN__(16) float  sone[4];
                              int32_t i;
-                             _mm_store_si256(&sn[0],n);
+                             _mm_store_si128(&sn[0],n);
                              _mm_store_ps(&sres[0],res);
                              _mm_store_ps(&sy[0],y);
                              _mm_store_ps(&sone[0],one);
@@ -5347,22 +5340,7 @@ namespace gms {
                                  sres[3] *= sy[3];
                                  sy[3]   += sone[3];
                              }
-                             for(i=0; i != sn[4]; ++i) {
-                                 sres[4] *= sy[4];
-                                 sy[4]   += sone[4];
-                             }
-                             for(i=0; i != sn[5]; ++i) {
-                                 sres[5] *= sy[5];
-                                 sy[5]   += sone[5];
-                             }
-                             for(i=0; i != sn[6]; ++i) {
-                                 sres[6] *= sy[6];
-                                 sy[6]   += sone[6];
-                             }
-                             for(i=0; i != sn[7]; ++i) {
-                                 sres[7] *= sy[7];
-                                 sy[7]   += sone[7];
-                             }
+                            
                               
                              res = _mm_load_ps(&sres[0]);
                              y   = _mm_load_ps(&sy[0]);
