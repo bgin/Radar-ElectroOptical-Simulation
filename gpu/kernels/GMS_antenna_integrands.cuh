@@ -39,7 +39,30 @@ using namespace cuda::std;
     
 // Integrand: (2-69)
    
-   
+      struct Intf269 {
+      
+          __device__ float
+          operator()(const float M,
+                     const float u,
+                     const float x,
+                     const float L) {
+            
+            constexpr float pi = 3.14159265358979323846264f;
+            float MM,uu,piu,_2xL;
+            float chtrm,cost1,cost2,sqr;
+            float value;
+            MM   = M*M;
+            piu  = pi*u;
+            cost1= cosf(piu);
+            uu   = u*u;
+            _2xL = (2.0f*x)/L;
+            sqr  = sqrtf(MM-uu);
+            chtrm= coshf(pi*sqr);
+            cost2= cosf(piu*_2xL);
+            value= (chtrm-cost1)*cost2;
+            return (value);
+        }
+   };
 
       
    
