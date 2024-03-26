@@ -1487,7 +1487,239 @@ namespace gms {
 		    }
 		    
 		     
+/*
+ 
+    !*****************************************************************************80
+!
+!! CHI_CDF evaluates the Chi CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0 < B,
+!    0 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!                
+   
+*/
 
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d
+		      chi_cdf_ymm4r8(const __m256d x,
+		                     const __m256d a,
+		                     const __m256d b,
+		                     const __m256d c) {
+		       
+		         const __m256d C05 = _mm256_set1_pd(0.5);
+		         __m256d p2,x2,y;
+		         __m256d cdf;
+		         y  = _mm256_div_pd(_mm256_sub_pd(x,a),b);
+		         x2 = _mm256_mul_pd(C05,_mm256_mul_pd(y,y));
+		         p2 = _mm256_mul_pd(C05,c);
+		         cdf= gamma_incomplete_ymm4r8(p2,x2);
+		         return (cdf);               
+		   }
+		   
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+		      chi_cdf_ymm8r4(const __m256 x,
+		                      const __m256 a,
+		                      const __m256 b,
+		                      const __m256 c) {
+		       
+		         const __m256 C05 = _mm256_set1_ps(0.5f);
+		         __m256 p2,x2,y;
+		         __m256 cdf;
+		         y  = _mm256_div_ps(_mm256_sub_ps(x,a),b);
+		         x2 = _mm256_mul_ps(C05,_mm256_mul_ps(y,y));
+		         p2 = _mm256_mul_ps(C05,c);
+		         cdf= gamma_incomplete_ymm8r4(p2,x2);
+		         return (cdf);               
+		   }
+		   
+		 
+/*
+   
+     !*****************************************************************************80
+!
+!! CHI_SQUARE_CDF evaluates the Chi squared CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    10 October 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the value of the random deviate.
+!
+!    Input, real ( kind = 8 ) A, the parameter of the distribution, usually
+!    the number of degrees of freedom.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d
+		      chi_square_cdf_ymm4r8(const __m256d x,
+		                            const __m256d a) {
+		          
+		          const __m256d C05 = _mm256_set1_pd(0.5);
+		          const __m256d C1  = _mm256_set1_pd(1.0);
+		          register __m256d x2,a2,b2,c2;
+		          register __m256d cdf;
+		          a2 =  _mm256_setzero_pd();
+		          x2 =  _mm256_mul_pd(C05,C1);
+		          b2 =  C1;
+		          c2 =  _mm256_mul_pd(C05,a);
+		          cdf=  gamma_cdf_ymm4r8(x2,a2,b2,c2);
+		          return (cdf);                   
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+		      chi_square_cdf_ymm8r4(const __m256 x,
+		                             const __m256 a) {
+		          
+		          const __m256 C05 = _mm256_set1_ps(0.5f);
+		          const __m256 C1  = _mm256_set1_ps(1.0f);
+		          register __m256 x2,a2,b2,c2;
+		          register __m256 cdf;
+		          a2 =  _mm256_setzero_ps();
+		          x2 =  _mm256_mul_ps(C05,C1);
+		          b2 =  C1;
+		          c2 =  _mm256_mul_ps(C05,a);
+		          cdf=  gamma_cdf_ymm8r4(x2,a2,b2,c2);
+		          return (cdf);                   
+		     }
+		     
+		     
+/*
+    
+       !*****************************************************************************80
+!
+!! CHI_MEAN returns the mean of the Chi PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    31 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0 < B,
+!    0 < C.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean value.
+!   
+
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d
+                      chi_mean_ymm4r8(const __m256d a,
+                                      const __m256d b,
+                                      const __m256d c) {
+                          
+                          const __m256d C05 = _mm256_set1_pd(0.5);
+                          const __m256d C1  = _mm256_set1_pd(1.0);
+                          const __m256d C2  = _mm256_set1_pd(2.0);
+                          const __m256d C141421356237309504880169 = 
+                                              _mm256_set1_pd(1.41421356237309504880169);
+                          register __m256d g0,g1,arg,t0;
+                          register __m256d mean;
+                          arg = _mm256_mul_pd(C05,_mm256_add_pd(c,C1));
+                          g0  = gamma_ymm4r8(arg);
+                          t0  = _mm256_mul_pd(C141421356237309504880169,b);
+                          g1  = gamma_ymm4r8(_mm256_mul_pd(C05,c));
+                          mean= _mm256_add_pd(a,_mm256_div_pd(_mm256_mul_pd(t0,g0),g1));
+                          return (mean);
+                    }	
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+                      chi_mean_ymm8r4(const __m256 a,
+                                      const __m256 b,
+                                      const __m256 c) {
+                          
+                          const __m256 C05 = _mm256_set1_ps(0.5f);
+                          const __m256 C1  = _mm256_set1_ps(1.0f);
+                          const __m256 C2  = _mm256_set1_ps(2.0f);
+                          const __m256 C141421356237309504880169 = 
+                                              _mm256_set1_ps(1.41421356237309504880169f);
+                          register __m256 g0,g1,arg,t0;
+                          register __m256 mean;
+                          arg = _mm256_mul_ps(C05,_mm256_add_pd(c,C1));
+                          g0  = gamma_ymm8r4(arg);
+                          t0  = _mm256_mul_ps(C141421356237309504880169,b);
+                          g1  = gamma_ymm8r4(_mm256_mul_ps(C05,c));
+                          mean= _mm256_add_ps(a,_mm256_div_ps(_mm256_mul_ps(t0,g0),g1));
+                          return (mean);
+                    }	   
+                    
+		      
+        
 
 /*
  !*****************************************************************************80
@@ -2197,7 +2429,76 @@ namespace gms {
                  
 
 
+/*
+ !*****************************************************************************80
+!
+!! GAMMA_CDF evaluates the Gamma CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 January 2000
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0.0D+00 < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+*/
 
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d
+		      gamma_cdf_ymm4r8(const __m256d x,
+		                       const __m256d a,
+		                       const __m256d b,
+		                       const __m256d c) {
+		      
+		          register __m256d x2,p2;
+		          register __m256d cdf;
+		          p2 = c;
+		          x2 = _mm256_div_pd(_mm256_sub_pd(x,a),b);
+		          cdf= gamma_incomplete_ymm4r8(p2,x2);
+		          return (cdf);                  
+		    }
+		    
+		    
+		    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+		      gamma_cdf_ymm8r4(const __m256 x,
+		                       const __m256 a,
+		                       const __m256 b,
+		                       const __m256 c) {
+		      
+		          register __m256 x2,p2;
+		          register __m256 cdf;
+		          p2 = c;
+		          x2 = _mm256_div_ps(_mm256_sub_ps(x,a),b);
+		          cdf= gamma_incomplete_ymm8r4(p2,x2);
+		          return (cdf);                  
+		    }
 
 
 
