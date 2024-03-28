@@ -3156,6 +3156,342 @@ namespace gms {
 		    }
 		    
 		    
+/*
+
+      BRADFORD_CDF evaluates the Bradford CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the CDF.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) CDF, the value of the CDF.
+!
+
+*/
+		    
+        
+        	      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+		      bradford_cdf_ymm4r8(const __m256d x,
+		                          const __m256d a,
+		                          const __m256d b,
+		                          const __m256d c) {
+		          
+		            register __m256d C1 = _mm2562_set1_pd(1.0);
+		            register __m256d cp1,xa,ba,ratio,l0,l1;
+		            register __m256d cdf;
+		            cp1 = _mm256_add_pd(c,C1);
+		            xa  = _mm256_sub_pd(x,a);
+		            ba  = _mm256_sub_pd(b,a);
+                            l1  = _mm256_log_pd(cp1);
+		             
+                            ratio = _mm256_div_pd(_mm256_mul_pd(c,xa),ba);
+                            l0  = _mm256_log_pd(_mm256_add_pd(C1,ratio));
+       
+                            cdf = _mm256_div_pd(l0,l1);
+                            return (cdf);                   
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+		      bradford_cdf_ymm8r4(const __m256 x,
+		                          const __m256 a,
+		                          const __m256 b,
+		                          const __m256 c) {
+		          
+		            register __m256 C1 = _mm256_set1_ps(1.0f);
+		            register __m256 cp1,xa,ba,ratio,l0,l1;
+		            register __m256 cdf;
+		            cp1 = _mm256_add_ps(c,C1);
+		            xa  = _mm256_sub_ps(x,a);
+		            ba  = _mm256_sub_ps(b,a);
+                            l1  = _mm256_log_ps(cp1);
+		                         
+                             ratio = _mm256_div_ps(_mm256_mul_ps(c,xa),ba);
+                            l0  = _mm256_log_ps(_mm256_add_ps(C1,ratio));
+        
+                            cdf = _mm256_div_ps(l0,l1);
+                            return (cdf);                   
+		     }
+		     
+		     
+/*
+
+      !*****************************************************************************80
+!
+!! BRADFORD_CDF_INV inverts the Bradford CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument of the CDF.
+!
+
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+		      bradford_cdf_inv_ymm4r8(const __m256d cdf,
+		                              const __m256d a,
+		                              const __m256d b,
+		                              const __m256d c) {
+		        
+		          register __m256d C1 = _mm256_set1_pd(1.0);
+		          register __m256d ba,cp1,pow,t0;
+		          register __m256d x;
+		                	        
+		              ba  = _mm256_sub_pd(b,a);
+		              cp1 = _mm256_add_pd(c,C1);
+		              pow = _mm256_sub_pd(_mm256_pow_pd(C1,cdf),C1);
+		              t0  = _mm256_div_pd(pow,c);
+		              x   = _mm256_mul_pd(_mm256_add_pd(a,ba),t0);
+		              return (x);
+		         		                     
+		    }	
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+		      bradford_cdf_inv_ymm8r4(const __m256 cdf,
+		                               const __m256 a,
+		                               const __m256 b,
+		                               const __m256 c) {
+		        
+		          register __m256 C1 = _mm256_set1_ps(1.0f);
+		          register __m256 ba,cp1,pow,t0;
+		          register __m256 x;
+		          
+		              ba  = _mm256_sub_ps(b,a);
+		              cp1 = _mm256_add_ps(c,C1);
+		              pow = _mm256_sub_ps(_mm256_pow_ps(C1,cdf),C1);
+		              t0  = _mm256_div_ps(pow,c);
+		              x   = _mm256_mul_ps(_mm256_add_ps(a,ba),t0);
+		              return (x);
+		                		                     
+		    }	
+		    
+		    
+/*
+         
+        !*****************************************************************************80
+!
+!! BRADFORD_MEAN returns the mean of the Bradford PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) MEAN, the mean of the PDF.
+!  
+
+*/
+	
+	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+		      bradford_mean_ymm4r8(const __m256d a,
+		                           const __m256d b,
+		                           const __m256d c) {
+		       
+		         register __m256d C1 = _mm256_set1_pd(1.0);
+		         register __m256d t1,t2,cp1,cba,acb,l0,l1;
+		         register __m256d mean;
+		         cp1  = _mm256_add_pd(c,C1);
+		         cba  = _mm256_mul_pd(c,_mm256_sub_pd(b,a));
+		         acb  = _mm256_sub_pd(_mm256_mul_pd(a,c1),b);
+
+                         l0   = _mm256_log_pd(cp1);
+
+                         t2   = _mm256_mul_pd(c,l0);
+                         t1   = _mm256_mul_pd(l0,acb);
+                         mean = _mm256_div_pd(_mm256_add_pd(cba,t1),t2);
+                         return (mean);   		                                  
+		   }
+		   
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256  
+		      bradford_mean_ymm8r4(const __m256 a,
+		                           const __m256 b,
+		                           const __m256 c) {
+		       
+		         register __m256 C1 = _mm256_set1_ps(1.0f);
+		         register __m256 t1,t2,cp1,cba,acb,l0,l1;
+		         register __m256 mean;
+		         cp1  = _mm256_add_ps(c,C1);
+		         cba  = _mm256_mul_ps(c,_mm256_sub_ps(b,a));
+		         acb  = _mm256_sub_ps(_mm256_mul_ps(a,c1),b);
+
+                         l0   = _mm256_log_ps(cp1);
+
+                         t2   = _mm256_mul_ps(c,l0);
+                         t1   = _mm256_mul_ps(l0,acb);
+                         mean = _mm256_div_ps(_mm256_add_ps(cba,t1),t2);
+                         return (mean);   		                                  
+		   }
+		   
+		   
+/*
+
+      BRADFORD_PDF evaluates the Bradford PDF.
+!
+!  Discussion:
+!
+!    The formula is:
+!
+!      PDF(A,B,C;X) =
+!        C / ( ( C * ( X - A ) + B - A ) * log ( C + 1 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    30 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    A < B,
+!    0.0D+00 < C.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.   
+
+*/	
+
+
+      	              __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+		      bradford_pdf_ymm4r8(const __m256d a,
+		                           const __m256d b,
+		                           const __m256d c) {
+		          
+		           register __m256d C1 = _mm256_set1_pd(1.0);
+		           register __m256d l0,c1p,xa,ba,t0,t1;
+		           register __m256d pdf;
+		           c1p = _mm256_add_pd(c,C1);
+		           xa  = _mm256_sub_pd(x,a);
+		           ba  = _mm256_sub_pd(b,a);
+
+                           l0   = _mm256_log_pd(cp1);
+		
+                           t0   = _mm256_fmadd_pd(c,xa,ba);
+                           t1   = _mm256_mul_pd(t0,l0);
+                           pdf  = _mm256_div_pd(c,t1);
+                           return (pdf);                              
+		    }
+		    
+		    
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256  
+		      bradford_pdf_ymm8r4(const __m256 a,
+		                           const __m256 b,
+		                           const __m256 c) {
+		          
+		           register __m256 C1 = _mm256_set1_ps(1.0f);
+		           register __m256 l0,c1p,xa,ba,t0,t1;
+		           register __m256 pdf;
+		           c1p = _mm256_add_ps(c,C1);
+		           xa  = _mm256_sub_ps(x,a);
+		           ba  = _mm256_sub_ps(b,a);
+
+                           l0   = _mm256_log_ps(cp1);
+	                   t0   = _mm256_fmadd_ps(c,xa,ba);
+                           t1   = _mm256_mul_ps(t0,l0);
+                           pdf  = _mm256_div_ps(c,t1);
+                           return (pdf);                              
+		    }
+               
+		   	     	    
 
 
 /*
