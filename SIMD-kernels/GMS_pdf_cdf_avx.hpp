@@ -2426,6 +2426,48 @@ namespace gms {
 								               gamma_log_ymm4r8(b)),
 			return (beta);						                     gamma_log_ymm4r8(ab)));
 		    }
+		    
+		    
+/*
+     
+      !*****************************************************************************80
+!
+!! BETA_SAMPLE samples the Beta PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    William Kennedy, James Gentle,
+!    Algorithm BN,
+!    Statistical Computing,
+!    Dekker, 1980.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A,
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF. 
+
+*/
+
+
+           
                  
 
 
@@ -2499,6 +2541,218 @@ namespace gms {
 		          cdf= gamma_incomplete_ymm8r4(p2,x2);
 		          return (cdf);                  
 		    }
+		    
+		    
+/*
+      !*****************************************************************************80
+!
+!! R8_UNIFORM_01 returns a unit pseudorandom R8.
+!
+!  Discussion:
+!
+!    An R8 is a real ( kind = 8 ) value.
+!
+!    For now, the input quantity SEED is an integer ( kind = 4 ) variable.
+!
+!    This routine implements the recursion
+!
+!      seed = 16807 * seed mod ( 2**31 - 1 )
+!      r8_uniform_01 = seed / ( 2**31 - 1 )
+!
+!    The integer arithmetic never requires more than 32 bits,
+!    including a sign bit.
+!
+!    If the initial seed is 12345, then the first three computations are
+!
+!      Input     Output      R8_UNIFORM_01
+!      SEED      SEED
+!
+!         12345   207482415  0.096616
+!     207482415  1790989824  0.833995
+!    1790989824  2035175616  0.947702
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 July 2006
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    Paul Bratley, Bennett Fox, Linus Schrage,
+!    A Guide to Simulation,
+!    Springer Verlag, pages 201-202, 1983.
+!
+!    Pierre L'Ecuyer,
+!    Random Number Generation,
+!    in Handbook of Simulation,
+!    edited by Jerry Banks,
+!    Wiley Interscience, page 95, 1998.
+!
+!    Bennett Fox,
+!    Algorithm 647:
+!    Implementation and Relative Efficiency of Quasirandom
+!    Sequence Generators,
+!    ACM Transactions on Mathematical Software,
+!    Volume 12, Number 4, pages 362-376, 1986.
+!
+!    Peter Lewis, Allen Goodman, James Miller
+!    A Pseudo-Random Number Generator for the System/360,
+!    IBM Systems Journal,
+!    Volume 8, pages 136-143, 1969.
+!
+!  Parameters:
+!
+!    Input/output, integer ( kind = 4 ) SEED, the "seed" value, which should
+!    NOT be 0. On output, SEED has been updated.
+!
+!    Output, real ( kind = 8 ) R8_UNIFORM_01, a new pseudorandom variate,
+!    strictly between 0 and 1   
+*/
+
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+		      uniform_01_ymm4r8( __m256i & seed) {
+		         
+		         register __m256i C127773 = _mm256_set1_epi32(127773);
+		         register __m256i C16807  = _mm256_set1_epi32(16807);
+		         register __m256i C2836   = _mm256_set1_epi32(2836);
+		         register __m256d C4656612875 = _mm256_set1_pd(4.656612875e-10);
+		         register __m256i k,t0,t1;
+		         register __m256d uni01;
+		         k  = _mm256_div_epi32(seed,C127773);
+		         t0 = _mm256_mul_epi32(k,C2836);
+		         t1 = _mm256_sub_epi32(seed,_mm256_mul_epi32(k,C127773));
+		         seed = _mm256_mul_epi32(C16807,_mm256sub_epi32(t1,t0));
+		         if(_mm256_cmp_epi32_mask(seed,_mm256_setzero_epi32(),_CMP_LT_OQ)) 
+		            seed = _mm256_add_epi32(seed,_mm256_set1_epi32(2147483647));
+		         uni01   = _mm256_mul_pd(_mm256_castsi256_pd(seed),C4656612875);
+		         return (uni01);
+		     }
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256
+		      uniform_01_ymm8r4( __m256i & seed) {
+		            
+		            return (_mm256_castpd_ps(uniform_01_ymm4r8(seed)));
+		      }
+		      
+		      
+/*
+     !*****************************************************************************80
+!
+!! BETA_SAMPLE samples the Beta PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    05 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Reference:
+!
+!    William Kennedy, James Gentle,
+!    Algorithm BN,
+!    Statistical Computing,
+!    Dekker, 1980.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < A,
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF. 
+*/
+                 
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 
+                      beta_sample_ymm4r8(const __m256d a,
+                                         const __m256d b,
+                                         __m256i & seed) {
+                         
+                          __m256d C1 = _mm256_set1_pd(1.0);
+                          __m256d C2 = _mm256_set1_pd(2.0);
+                          __m256d C05= _mm256_set1_pd(0.5);
+                          register __m256d mu,stdev,test,u,y;
+                          register __m256d a1,b1,ab2,l0,l1,l2,t0;
+                          register __m256d t1,t2,t3;
+                          register __m256d x;
+                          ab2 = _mm256_sub_pd(_mm256_add_pd(a,b),C2);
+                          a1  = _mm256_sub_pd(a,C1);
+                          b1  = _mm256_sub_pd(b,C1);
+                          mu  = _mm256_div_pd(a1,ab2);
+                          stdev = _mm256_div_pd(C05,_mm256_sqrt_pd(ab2));
+                          while(true) {
+                              
+                              y = normal_01_sample_ymm4r8(seed);
+                              x = _mm256_add_pd(mu,_mm256_mul_pd(stdev,y));
+                              if(_mm256_cmp_pd_mask(x,_mm256_setzero_pd(),_CMP_LT_OQ) || 
+                                 _mm256_cmp_pd_mask(C1,x,_CMP_LT_OQ)) continue;
+                              t0= _mm256_mul_pd(C05,_mm256_mul_pd(y,y));
+                              u = uniform_01_ymm4r8(seed);
+
+                              l0 = _mm256_log_pd(_mm256_div_pd(x,a1));
+                              t1 = _mm256_mul_pd(a1,l0);
+                              l1 = _mm256_log_pd(_mm256_div_pd(_mm256_sub_pd(C1,x),b1));
+                              t2 = _mm256_mul_pd(b1,l1);
+                              l2 = _mm256_add_pd(_mm256_log_pd(ab2),t0); 
+                              t3 = _mm256_mul_pd(ab2,l2);
+                              test = _mm256_add_pd(t1,_mm256_add_pd(t2,t3));
+                              if(_mm256_cmp_pd_mask(_mm256_log_pd(u),test,_CMP_LE_OQ)) break;
+                                   
+                          }  
+                          return (x);                 
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+                      beta_sample_ymm8r4(const __m256d a,
+                                          const __m256d b,
+                                          __m256i & seed) {
+                        
+                         register __m256 sample;
+                         sample = _mm256_castpd_ps(beta_sample_ymm4r8(a,b,seed));
+                         return (sample);                      
+                   }
+ 
+		     
 
 
 
@@ -6320,7 +6574,102 @@ namespace gms {
                          return (trig);
                     } 
                     
+ /*
+    !*****************************************************************************80
+!
+!! CHI_PDF evaluates the Chi PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B,C;X) = EXP ( - 0.5D+00 * ( ( X - A ) / B )^2 )
+!      * ( ( X - A ) / B )^( C - 1 ) /
+!      ( 2^( 0.5D+00 * C - 1 ) * B * GAMMA ( 0.5D+00 * C ) )
+!
+!    CHI(A,B,1) is the Half Normal PDF;
+!    CHI(0,B,2) is the Rayleigh PDF;
+!    CHI(0,B,3) is the Maxwell PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    31 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!    A <= X
+!
+!    Input, real ( kind = 8 ) A, B, C, the parameters of the PDF.
+!    0 < B,
+!    0 < C.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+!
+*/
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d   
+                      chi_pdf_ymm4r8(const __m256d x,
+                                     const __m256d a,
+                                     const __m256d b,
+                                     const __m256d c) {
+                          
+                          const __m256d C05 = _mm256_set1_pd(0.5);
+                          const __m256d C1  = _mm256_set1_pd(1.0);
+                          const __m256d C2  = _mm256_set1_pd(2.0);
+                          register __m256d y,t0,t1,t2,g0,exp;
+                          register __m256d pdf;
+                          t0 = _mm256_mul_pd(_mm256_mul_pd(negate_ymm4r8(C05,y),y),y);
+                          t1 = _mm256_fmsub_pd(C05,c,C1);
+                          y  = _mm256_div_pd(_mm256_sub_pd(x,a),b);
+                          g0 = gamma_ymm4r8(_mm256_mul_pd(C05,c));  
+                          exp= _mm256_mul_pd(_mm256_exp_pd(t0),_mm256_pow_pd(_mm256_sub_pd(c,C1)));
+                          t2 = _mm256_mul_pd(_mm256_pow_pd(C2,t1),
+                                             _mm256_mul_pd(b,g0));
+                          pdf = _mm256_div_pd(exp,t2);
+                          return (pdf);
+                    }
                     
+                    
+                       __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256   
+                      chi_pdf_ymm8r4(const __m256 x,
+                                     const __m256 a,
+                                     const __m256 b,
+                                     const __m256 c) {
+                          
+                          const __m256 C05 = _mm256_set1_ps(0.5f);
+                          const __m256 C1  = _mm256_set1_ps(1.0f);
+                          const __m256 C2  = _mm256_set1_ps(2.0f);
+                          register __m256 y,t0,t1,t2,g0,exp;
+                          register __m256 pdf;
+                          t0 = _mm256_mul_ps(_mm256_mul_ps(negate_ymm8r4(C05,y),y),y);
+                          t1 = _mm256_fmsub_ps(C05,c,C1);
+                          y  = _mm256_div_ps(_mm256_sub_ps(x,a),b);
+                          g0 = gamma_ymm8r4(_mm256_mul_ps(C05,c));  
+                          exp= _mm256_mul_ps(_mm256_exp_ps(t0),_mm256_pow_ps(_mm256_sub_ps(c,C1)));
+                          t2 = _mm256_mul_ps(_mm256_pow_ps(C2,t1),
+                                             _mm256_mul_ps(b,g0));
+                          pdf = _mm256_div_ps(exp,t2);
+                          return (pdf);
+                    }
+/*                   
                     
                    
                                      
