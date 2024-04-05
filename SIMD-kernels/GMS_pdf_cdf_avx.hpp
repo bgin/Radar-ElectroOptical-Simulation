@@ -2751,6 +2751,173 @@ namespace gms {
                          sample = _mm256_castpd_ps(beta_sample_ymm4r8(a,b,seed));
                          return (sample);                      
                    }
+                   
+                   
+/*
+ !*****************************************************************************80
+!
+!! CAUCHY_CDF_INV inverts the Cauchy CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    21 September 2004
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument.
+!
+*/     
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d 
+                      cauchy_cdf_inv_ymm4r8(const __m256d a,
+                                            const __m256d b,
+                                            const __m256d x) {
+                           
+                         const __m256d C314159265358979323846264 = 
+                                               __m256_set1_pd(3.14159265358979323846264);
+                         const __m256d C05 = _mm256_set1_pd(0.5);    
+                         register __m256d cdf,t0,t1;
+                         t0 = _mm256_mul_pd(C314159265358979323846264,
+                                            _mm256_sub_pd(cdf,C05));
+                         t1 = _mm256_tan_pd(t0);
+                             
+                         cdf = _mm256_fmadd_pd(a,b,t1);
+                         return (cdf);
+                   }    
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256
+                      cauchy_cdf_inv_ymm8r4(const __m256 a,
+                                            const __m256 b,
+                                            const __m256 x) {
+                           
+                         const __m256 C314159265358979323846264 = 
+                                               __m256_set1_pd(3.14159265358979323846264f);
+                         const __m256 C05 = _mm256_set1_ps(0.5);    
+                         register __m256 cdf,t0,t1;
+                         t0 = _mm256_mul_ps(C314159265358979323846264,
+                                            _mm256_sub_ps(cdf,C05));
+                         t1 = _mm256_tan_ps(t0);
+                                    
+                         cdf = _mm256_fmadd_ps(a,b,t1);
+                         return (cdf);
+                   }  
+                                   
+                   
+                   
+/*
+   !*****************************************************************************80
+!
+!! CAUCHY_SAMPLE samples the Cauchy PDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    11 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Input/output, integer ( kind = 4 ) SEED, a seed for the random 
+!    number generator.
+!
+!    Output, real ( kind = 8 ) X, a sample of the PDF.
+!
+*/            
+
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d 
+                      cauchy_sample_ymm4r8(const __m256d a,
+                                           const __m256d b) {
+                         __m256d cdf;
+			 svrng_engine_t engine;
+			 svrng_distribution_t uniform;
+			 uint32_t seed    = 0U;
+			 int32_t result   = -9999;
+			 int32_t err      = -9999;
+			 result           = _rdrand32_step(&seed);
+			 if(!result) seed = 1043915199U;
+			 engine           = svrng_new_mt19937_engine(seed);
+			 err              = svrng_get_status();
+			 if(err!=SVRNG_STATUS_OK) {
+                            const __m256d nan = _mm256_set1_pd(std::numeric_limits<double>::quiet_NaN());
+			    return (nan);
+			 }
+			 uniform          = svrng_new_normal_distribution_double(0.0,1.0);
+			 const double * __restrict ptr = (const double*)(&svrng_generate4_double(engine,uniform));
+			 cdf              = cauchy_cdf_inv_ymm4r8(_mm256_loadu_pd(&ptr[0]));
+			 svrng_delete_engine(engine);
+			 return (cdf);                 
+                    }
+                    
+                    
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256 
+                      cauchy_sample_ymm8r4(const __m256 a,
+                                            const __m256 b) {
+                         __m256 cdf;
+			 svrng_engine_t engine;
+			 svrng_distribution_t uniform;
+			 uint32_t seed    = 0U;
+			 int32_t result   = -9999;
+			 int32_t err      = -9999;
+			 result           = _rdrand32_step(&seed);
+			 if(!result) seed = 1043915199U;
+			 engine           = svrng_new_mt19937_engine(seed);
+			 err              = svrng_get_status();
+			 if(err!=SVRNG_STATUS_OK) {
+                            const __m256 nan = _mm256_set1_ps(std::numeric_limits<float>::quiet_NaN());
+			    return (nan);
+			 }
+			 uniform          = svrng_new_normal_distribution_float(0.0f,1.0f);
+			 const float * __restrict ptr = (const float*)(&svrng_generate8_float(engine,uniform));
+			 cdf              = cauchy_cdf_inv_ymm8r4(_mm256_loadu_ps(&ptr[0]));
+			 svrng_delete_engine(engine);
+			 return (cdf);                 
+                    }
  
 		     
 
@@ -6291,6 +6458,113 @@ namespace gms {
                        if(_mm256_cmp_ps_mask(fact,one,_CMP_NEQ_OQ)) res = _mm256_div_ps(fact,res);
                        return (res);
                   }
+                  
+                  
+/*
+!*****************************************************************************80
+!
+!! STUDENT_PDF evaluates the central Student T PDF.
+!
+!  Discussion:
+!
+!    PDF(A,B,C;X) = Gamma ( (C+1)/2 ) /
+!      ( Gamma ( C / 2 ) * Sqrt ( PI * C )
+!      * ( 1 + ((X-A)/B)^2/C )^(C + 1/2 ) )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    02 November 2005
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Input, real ( kind = 8 ) A, B, shape parameters of the PDF,
+!    used to transform the argument X to a shifted and scaled
+!    value Y = ( X - A ) / B.  It is required that B be nonzero.
+!    For the standard distribution, A = 0 and B = 1.
+!
+!    Input, real ( kind = 8 ) C, is usually called the number of
+!    degrees of freedom of the distribution.  C is typically an
+!    integer, but that is not essential.  It is required that
+!    C be strictly positive.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF.
+*/
+
+
+          
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256d 
+                      student_pdf_ymm4r8(const __m256d x,
+                                         const __m256d a,
+                                         const __m256d b,
+                                         const __m256d c) {
+                         
+                         __m256d C314159265358979323846264 = 
+                                           _mm256_set1_pd(3.14159265358979323846264);   
+                         __m256d C1 = _mm256_set1_pd(1.0);
+                         __m256d C05= _mm256_set1_pd(0.5);  
+                         __m256d C2 = _mm256_set1_pd(2.0); 
+                         register __m256d y,t0,t1,t2,t3;
+                         register __m256d r8g1,r8g2,pdf;
+                         t0   = _mm256_mul_pd(C05,_mm256_add_pd(c,C1));
+                         y    = _mm256_div_pd(_mm256_sub_pd(x,a),b);
+                         r8g1 = gamma_zmm8r8(t0);
+                         t1   = _mm256_fmadd_pd(C2,c,C1);
+                         t2   = _mm256_add_pd(_mm256_div_pd(_mm256_mul_pd(y,y),c),C1);
+                         t0   = _mm256_pow_pd(t2,t1); //used
+                         r8g2 = gamma_ymm4r8(_mm256_mul_pd(C05,c));
+                         y    = _mm256_sqrt_pd(_mm256_mul_pd(C314159265358979323846264,c));
+                         t3   = _mm256_mul_pd(y,_mm256_mul_pd(r8g2,t0));
+                         pdf  = _mm256_div_pd(r8g1,t3);
+                         return (pdf);
+                   }
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m256 
+                      student_pdf_ymm8r4(const __m256 x,
+                                         const __m256 a,
+                                         const __m256 b,
+                                         const __m256 c) {
+                         
+                         __m256 C314159265358979323846264 = 
+                                           _mm256_set1_pd(3.14159265358979323846264f);   
+                         __m256 C1 = _mm256_set1_ps(1.0f);
+                         __m256 C05= _mm256_set1_ps(0.5f);  
+                         __m256 C2 = _mm256_set1_ps(2.0f); 
+                         register __m256 y,t0,t1,t2,t3;
+                         register __m256 r8g1,r8g2,pdf;
+                         t0   = _mm256_mul_ps(C05,_mm256_add_ps(c,C1));
+                         y    = _mm256_div_ps(_mm256_sub_ps(x,a),b);
+                         r8g1 = gamma_ymm8r4(t0);
+                         t1   = _mm256_fmadd_ps(C2,c,C1);
+                         t2   = _mm256_add_ps(_mm256_div_ps(_mm256_mul_ps(y,y),c),C1);
+                         t0   = _mm256_pow_ps(t2,t1); //used
+                         r8g2 = gamma_ymm8r4(_mm256_mul_ps(C05,c));
+                         y    = _mm256_sqrt_ps(_mm256_mul_ps(C314159265358979323846264,c));
+                         t3   = _mm256_mul_ps(y,_mm256_mul_ps(r8g2,t0));
+                         pdf  = _mm256_div_ps(r8g1,t3);
+                         return (pdf);
+                   }
+  
                   
                   
  /*                 
