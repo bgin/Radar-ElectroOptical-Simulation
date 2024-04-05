@@ -5996,6 +5996,9 @@ namespace gms {
                   
                   
                   
+                  
+                  
+                  
 /*
 !*****************************************************************************80
 !
@@ -6066,6 +6069,38 @@ namespace gms {
                          y    = _mm512_sqrt_pd(_mm512_mul_pd(C314159265358979323846264,c));
                          t3   = _mm512_mul_pd(y,_mm512_mul_pd(r8g2,t0));
                          pdf  = _mm512_div_pd(r8g1,t3);
+                         return (pdf);
+                   }
+                   
+                   
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline           
+                      __m512
+                      student_pdf_zmm16r4(const __m512 x,
+                                         const __m512 a,
+                                         const __m512 b,
+                                         const __m512 c) {
+                         
+                         __m512 C314159265358979323846264 = 
+                                           _mm512_set1_ps(3.14159265358979323846264f);   
+                         __m512 C1 = _mm512_set1_ps(1.0f);
+                         __m512 C05= _mm512_set1_ps(0.5f);  
+                         __m512 C2 = _mm512_set1_ps(2.0f); 
+                         register __m512 y,t0,t1,t2,t3;
+                         register __m512 r8g1,r8g2,pdf;
+                         t0   = _mm512_mul_ps(C05,_mm512_add_ps(c,C1));
+                         y    = _mm512_div_ps(_mm512_sub_ps(x,a),b);
+                         r8g1 = gamma_zmm16r4(t0);
+                         t1   = _mm512_fmadd_ps(C2,c,C1);
+                         t2   = _mm512_add_ps(_mm512_div_ps(_mm512_mul_ps(y,y),c),C1);
+                         t0   = _mm512_pow_ps(t2,t1); //used
+                         r8g2 = gamma_zmm16r4(_mm512_mul_ps(C05,c));
+                         y    = _mm512_sqrt_ps(_mm512_mul_ps(C314159265358979323846264,c));
+                         t3   = _mm512_mul_ps(y,_mm512_mul_ps(r8g2,t0));
+                         pdf  = _mm512_div_ps(r8g1,t3);
                          return (pdf);
                    }
   
