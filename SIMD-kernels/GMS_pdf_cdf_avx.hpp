@@ -4,15 +4,15 @@
 
 namespace file_info {
 
- const unsigned int gGMS_PDF_CDF_AVX_MAJOR = 1U;
- const unsigned int gGMS_PDF_CDF_AVX_MINOR = 0U;
- const unsigned int gGMS_PDF_CDF_AVX_MICRO = 0U;
- const unsigned int gGMS_PDF_CDF_AVX_FULLVER =
-  1000U*gGMS_PDF_CDF_AVX_MAJOR+100U*gGMS_PDF_CDF_AVX_MINOR+10U*gGMS_PDF_CDF_AVX_MICRO;
- const char * const pgGMS_PDF_CDF_AVX_CREATION_DATE = "06-01-2024 08:34 +00200 (SAT 06 JAN 2024 08:34 GMT+2)";
- const char * const pgGMS_PDF_CDF_AVX_BUILD_DATE    = __DATE__ " " __TIME__ ;
- const char * const pgGMS_PDF_CDF_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
- const char * const pgGMS_PDF_CDF_AVX_SYNOPSIS      = "Manually vectorized [AVX] PDF,CDF functions"
+ const unsigned int GMS_PDF_CDF_AVX_MAJOR = 1U;
+ const unsigned int GMS_PDF_CDF_AVX_MINOR = 0U;
+ const unsigned int GMS_PDF_CDF_AVX_MICRO = 0U;
+ const unsigned int GMS_PDF_CDF_AVX_FULLVER =
+  1000U*GMS_PDF_CDF_AVX_MAJOR+100U*GMS_PDF_CDF_AVX_MINOR+10U*GMS_PDF_CDF_AVX_MICRO;
+ const char * const GMS_PDF_CDF_AVX_CREATION_DATE = "06-01-2024 08:34 +00200 (SAT 06 JAN 2024 08:34 GMT+2)";
+ const char * const GMS_PDF_CDF_AVX_BUILD_DATE    = __DATE__ " " __TIME__ ;
+ const char * const GMS_PDF_CDF_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+ const char * const GMS_PDF_CDF_AVX_SYNOPSIS      = "Manually vectorized [AVX] PDF,CDF functions"
 
 
 }
@@ -2653,6 +2653,143 @@ namespace gms {
 		            
 		            return (_mm256_castpd_ps(uniform_01_ymm4r8(seed)));
 		      }
+		      
+		      
+/*
+     !*****************************************************************************80
+!
+!! NORMAL_CDF_INV inverts the Normal CDF.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    23 February 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) CDF, the value of the CDF.
+!    0.0D+00 <= CDF <= 1.0.
+!
+!    Input, real ( kind = 8 ) A, B, the parameters of the PDF.
+!    0.0D+00 < B.
+!
+!    Output, real ( kind = 8 ) X, the corresponding argument.
+! 
+*/
+
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d 		   
+		      normal_cdf_inv_zmm8r8(const __m256d cdf,
+		                            const __m256d a,
+		                            const __m256d b) {
+		          
+		          register __m256d x2;
+		          register __m256d x;
+		          x2 = normal_01_cdf_inv_ymm4r8(cdf);
+		          x  = _mm256_add_pd(a,_mm256_mul_pd(b,x2));
+		          return (x);      
+		   }
+		   
+		   
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 		   
+		      normal_cdf_inv_zmm16r4(const __m256 cdf,
+		                            const __m256 a,
+		                            const __m256 b) {
+		          
+		          register __m256 x2;
+		          register __m256 x;
+		          x2 = normal_01_cdf_inv_ymm8r4(cdf);
+		          x  = _mm256_add_ps(a,_mm256_mul_ps(b,x2));
+		          return (x);      
+		   } 
+		   
+		   
+/*
+   
+     !*****************************************************************************80
+!
+!! NORMAL_01_PDF evaluates the Normal 01 PDF.
+!
+!  Discussion:
+!
+!    The Normal 01 PDF is also called the "Standard Normal" PDF, or
+!    the Normal PDF with 0 mean and variance 1.
+!
+!    PDF(X) = exp ( - 0.5 * X^2 ) / sqrt ( 2 * PI )
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    04 December 1999
+!
+!  Author:
+!
+!    John Burkardt
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) X, the argument of the PDF.
+!
+!    Output, real ( kind = 8 ) PDF, the value of the PDF. 
+   
+*/
+
+      
+                      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256d  
+		      normal_01_pdf_ymm4r8(const __m256d x) {
+		         
+		          register __m256d C039894228040143267793995 = 
+		                                   _mm256_set1_pd(0.39894228040143267793995);
+		          register __m256d C05 = _mm256_set1_pd(-0.5);
+		          register __m256d earg,pdf;
+		          earg = _mm256_mul_pd(C05,_mm256_mul_pd(x,x));
+                          pdf  = _mm256_mul_pd(_mm256_exp_pd(earg),C039894228040143267793995);
+                        		   
+                          return (pdf);
+		     }  
+		     
+		     
+		      __ATTR_REGCALL__
+                      __ATTR_ALWAYS_INLINE__
+		      __ATTR_HOT__
+		      __ATTR_ALIGN__(32)
+		      static inline
+		      __m256 
+		      normal_01_pdf_ymm8r4(const __m256 x) {
+		         
+		          register __m256 C039894228040143267793995 = 
+		                                   _mm256_set1_ps(0.39894228040143267793995f);
+		          register __m256 C05 = _mm256_set1_ps(-0.5f);
+		          register __m256 earg,pdf;
+		          earg = _mm256_mul_ps(C05,_mm256_mul_ps(x,x));
+                          pdf  = _mm256_mul_ps(_mm256_exp_ps(earg),C039894228040143267793995);
+                        		   
+                          return (pdf);
+		     }   
 		      
 		      
 /*
