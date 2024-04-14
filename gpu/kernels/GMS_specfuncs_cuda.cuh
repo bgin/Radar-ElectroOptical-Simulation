@@ -947,4 +947,86 @@ namespace file_info {
        }
 
 
+/*
+      !*****************************************************************************80
+!
+!! CERROR computes the error function for a complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, complex(kind=sp) ::  CER, the function value.
+!
+*/
+
+
+        __device__ cuda::std::complex<float> 
+                   cerror(const cuda::std::complex<float> z) {
+           
+              cuda::std::complex<float> c0,cl;
+              cuda::std::complex<float> cr,cs;
+              cuda::std::complex<float> z1;
+              float                     a0;
+              int32_t                   k;
+              constexpr float           pi = 3.14159265358979323846264f;
+              a0 = fabsf(z);
+              c0 = exp(-z*z);
+              z1 = z;
+              
+              if(real(z)<0.0f) z1 = -z;
+              if(a0<=5.8f) {
+                 
+                 cs = z1;
+                 cr = z1;
+                 for(k=1;k!=120;++k) {
+                     float tk = (float)k;
+                     cr = cr*z1*z1/(tk+0.5f);
+                     cs += cr;
+                     if(abs(cr/cs)<1.0e-15f) break;
+                 }
+                 
+                 cer = 2.0f*c0*cs/1.77245385090551602729817f;
+              }
+              else {
+                 
+                 cl = 1.0f/z1;
+                 cr = cl;
+                 for(k=1;k!=13;++k) {
+                     float tk = (float)k;
+                     cr = -cr*(tk-0.5f)/(z1*z1);
+                     cl += cr;
+                     if(abs(cr/cl)<1.0e-15f) break;
+                 }
+                 
+                 cer = 1.0f-c0*cl/1.77245385090551602729817f;
+              }  
+              
+              if(real(z)<0.0f) cer = -cer;
+              return (cer);
+                       
+       }
+
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
