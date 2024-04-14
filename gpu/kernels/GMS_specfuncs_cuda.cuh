@@ -20,6 +20,7 @@ namespace file_info {
 
 }
 
+//using namespace cuda::std;
 
 /*
    !===================================================================================85
@@ -108,10 +109,10 @@ namespace file_info {
 
 
       __device__ void airya(float x,
-                            float & ai,
-                            float & bi,
-                            float & ad,
-                            float & bd) {
+                            float  ai,
+                            float  bi,
+                            float  ad,
+                            float  bd) {
             
            float vi1,vi2,vj1,vj2;
            float vk1,vk2,vy1,vy2;
@@ -132,7 +133,7 @@ namespace file_info {
            }
            else if(0.0f<x) {
               ai = pir*xq/sr3*vk1;
-              bi = xq*(pir*vk1+2.0f/sr3*vi1); //! pir * vk1 + 2.0_sp * invsr3 * vii
+              bi = xq*(pir*vk1+2.0f/sr3*vi1); //! pir * vk1 + 2.0 * invsr3 * vii
               ad = -xa/sr3*pir*vk2;
               bd = xa*(pir*vk2+2.0f/sr3*vi2);
            }  
@@ -188,10 +189,10 @@ namespace file_info {
 
 
        __device__ void airyb(const float x,
-                             float & ai,
-                             float & bi,
-                             float & ad,
-                             float & bd) {
+                             float  ai,
+                             float  bi,
+                             float  ad,
+                             float  bd) {
                              
              float ck[41];
              float dk[41];
@@ -254,18 +255,18 @@ namespace file_info {
              }
              else {
                  xe = xa * xq / 1.5f;
-                 xr1 = 1.0_sp / xe;
-                 xar = 1.0_sp / xq;
+                 xr1 = 1.0 / xe;
+                 xar = 1.0 / xq;
                  xf = sqrtf( xar );
                  rp = 0.5641895835477563f;
                  r = 1.0f;
                  #pragma unroll
                  for(k=1;k!=40;++k) {
-                     r = r * ( 6.0_sp * k - 1.0_sp ) * 
-                     0.00462962962962962962963f * ( 6.0_sp * k - 3.0_sp ) /
-                     k * ( 6.0_sp * k - 5.0_sp ) / ( 2.0_sp * k - 1.0_sp );
+                     r = r * ( 6.0 * k - 1.0 ) * 
+                     0.00462962962962962962963f * ( 6.0 * k - 3.0 ) /
+                     k * ( 6.0 * k - 5.0 ) / ( 2.0 * k - 1.0 );
                      ck[k] = r;
-                     dk[k] = - ( 6.0_sp * k + 1.0_sp ) / ( 6.0_sp * k - 1.0_sp ) * ck[k];
+                     dk[k] = - ( 6.0 * k + 1.0 ) / ( 6.0 * k - 1.0 ) * ck[k];
                  }
                  km = (int)(24.5f-xa);
                  if(xa<6.0f)  km = 14;
@@ -290,9 +291,9 @@ namespace file_info {
                          sbd = sbd + dk[k] * r;
                     }
                     xp1 = expf( - xe );
-                    ai = 0.5_sp * rp * xf * xp1 * sai;
+                    ai = 0.5 * rp * xf * xp1 * sai;
                     bi = rp * xf / xp1 * sbi;
-                    ad = -0.5_sp * rp / xf * xp1 * sad;
+                    ad = -0.5 * rp / xf * xp1 * sad;
                     bd = rp / xf / xp1 * sbd;
                   } 
                   else {
@@ -372,14 +373,14 @@ namespace file_info {
 
 
        __device__ void ajyik(const float x,
-                             float & vj1,
-                             float & vj2,
-                             float & vy1,
-                             float & vy2,
-                             float & vi1,
-                             float & vi2,
-                             float & vk1,
-                             float & vk2) {
+                             float  vj1,
+                             float  vj2,
+                             float  vy1,
+                             float  vy2,
+                             float  vi1,
+                             float  vi2,
+                             float  vk1,
+                             float  vk2) {
           
              float a0;
              float b0;
@@ -446,7 +447,7 @@ namespace file_info {
                           vjl = vjl + r;
                           if ( fabsf( r ) < 1.0e-15f ) break;
                       }
-                      a0 = powf(0.5_sp * x, vl);
+                      a0 = powf(0.5 * x, vl);
                       if ( l == 1 )
                           vj1 = a0 / gp1 * vjl;
                       else
@@ -477,7 +478,7 @@ namespace file_info {
                            float t0 = 4.0f * kidx - 1.0f;
                            float t1 = 4.0f * kidx + 1.0f;
                            rq = -0.78125e-2f * rq * ( vv - t0*t0 ) *
-                           ( vv - t1*t1 ) / ( k * ( 2.0_sp * k + 1.0_sp ) * x2 );
+                           ( vv - t1*t1 ) / ( k * ( 2.0 * k + 1.0 ) * x2 );
                            qx += rq;
                        }
                        qx = 0.125f * ( vv - 1.0f ) * qx / x;
@@ -616,11 +617,334 @@ namespace file_info {
                  }
             }
       }
+      
+      
+/*
+     !*****************************************************************************80
+!
+!! GAMMA evaluates the Gamma function.
+!
+!  Licensing:
+!
+!    The original FORTRAN77 version of this routine is copyrighted by 
+!    Shanjie Zhang and Jianming Jin.  However, they give permission to 
+!    incorporate this routine into a user program that the copyright 
+!    is acknowledged.
+!
+!  Modified:
+!
+!    08 September 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by Shanjie Zhang, Jianming Jin.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!    X must not be 0, or any negative integer.
+!
+!    Output, real(kind=sp) ::  GA, the value of the Gamma function.
+!
+*/
+
+#include <cuda/std/limits>
+
+        __device__ float gamma(const float x) {
+                
+                const float g[26] = {
+                      1.0f, 
+                      0.5772156649015329f,
+                     -0.6558780715202538f,
+                     -0.420026350340952e-01f
+                      0.1665386113822915f, 
+                     -0.421977345555443e-01f, 
+                     -0.96219715278770e-02f, 
+                      0.72189432466630e-02f, 
+                     -0.11651675918591e-02f, 
+                     -0.2152416741149e-03f, 
+                      0.1280502823882e-03f,  
+                     -0.201348547807e-04f, 
+                     -0.12504934821e-05f, 
+                      0.11330272320e-05f, 
+                     -0.2056338417e-06f,  
+                      0.61160950e-08f, 
+                      0.50020075e-08f, 
+                     -0.11812746e-08f, 
+                      0.1043427e-09f,  
+                      0.77823e-11f, 
+                     -0.36968e-11f, 
+                      0.51e-12f, 
+                     -0.206e-13f, 
+                     -0.54e-14f, 
+                      0.14e-14f, 
+                      0.1e-15f  
+                };
+                constexpr float pi = 3.14159265358979323846264f;
+                float   gr;
+                float   r;
+                float   z;
+                int32_t k;
+                int32_t m;
+                int32_t m1;
+                if(x==truncf(x)) {
+                
+                   if(0.0f<x) {
+                      ga = 1.0f;
+                      m1 = (int32_t)(x-1.0f);
+                      #pragma unroll
+                      for(k=2;k!=m1;++k) {
+                          const float kidx = (float)kidx;
+                          ga *= kidx;
+                      }
+                   }
+                   else {
+                       ga = ::cuda::std::numeric_limits<float>::max();
+                   }
+                }
+                else {
+                
+                    if(1.0f<fabsf(x)) {
+                       z = fabsf(x);
+                       m = (int32_t)z;
+                       r = 1.0f;
+                       #pragma unroll
+                       for(k=1;k!=m;++k) {
+                           const float kidx = (float)k;
+                           r = r*z-kidx;
+                       }
+                       z = z - (float)m;
+                    }
+                    else {
+                       z = x;
+                    }
+                    
+                    gr = g[25];
+                    #pragma unroll
+                    for(k=25;k!=1;--k) {
+                        float gk = g[k];
+                        gr = gr*z+gk;
+                    }
+                    ga = 1.0f/(gr*z);
+                    if(1.0f<fabsf(x)) {
+                       ga *= r;
+                       if(x<0.0f) ga = -pi/(x*ga*sinf(pi*x));
+                    }
+                }
+                
+                return (ga);
+        }
 
 
+/*
+       !*****************************************************************************80
+!
+!! BETA computes the Beta function B(p,q).
+!
+!  Licensing:
+!
+!    The original FORTRAN77 version of this routine is copyrighted by 
+!    Shanjie Zhang and Jianming Jin.  However, they give permission to 
+!    incorporate this routine into a user program that the copyright 
+!    is acknowledged.
+!
+!  Modified:
+!
+!    12 March 2012
+!
+!  Author:
+!
+!    Original FORTRAN77 version by Shanjie Zhang, Jianming Jin.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45
+!
+!  Parameters:
+!
+!    Input, float P, Q, the parameters.
+!    0 < P, 0 < Q.
+!
+!    Output, float BT, the value of B(P,Q).
+!
+*/
 
 
+          __device__ float beta(const float p,
+                                const float q) {
+                   
+                 float bt;
+                 float gp;
+                 float gpq;
+                 float gq;
+                 float ppq;
+                 
+                 gp = gamma(p);
+                 gq = gamma(q);
+                 ppq= p+q;
+                 gpq= gamma(ppq);
+                 bt = gp*gq/gpq;     
+                 return (bt); 
+        }
+        
+        
+/*
+      !*****************************************************************************80
+!
+!! CERF computes the error function and derivative for a complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex(kind=sp) :: z , the argument.
+!
+!    Output, complex(kind=sp) ::  CER, CDER, the values of erf(z) and erf'(z).
+!    
+*/
 
+
+         __device__ void cerf(const cuda::std::complex<float> z,
+                              cuda::std::complex<float> & cer,
+                              cuda::std::complex<float> & cder) {
+            
+               cuda::std::complex<float> c0;
+               cuda::std::complex<float> cs
+               constexpr float pi   =  3.14159265358979323846264f;
+               constexpr float eps  = 1.0e-12f;  
+               float                     ei1;
+               float                     ei2;
+               float                     er;
+               float                     er0;
+               float                     er1;
+               float                     er2;
+               float                     eri;
+               float                     err;
+               float                     r;
+               float                     ss;
+               float                     w;
+               float                     w1;
+               float                     w2;
+               float                     x;
+               float                     x2;
+               float                     y;
+               int32_t                   k,n;
+                
+               x = real(z);
+               x2= x*x;
+               y = imag(z);
+               if(x<=3.5f) {
+                  
+                  er = 1.0f;
+                  r  = 1.0f;
+                  for(k=1;k!=100;++k) {
+                      float tk = (float)k;
+                      r  = r*x2/tk+0.5f;
+                      er += r;
+                      if(fabsf(er-w)<=eps*fabsf(er)) break;
+                      w = er;
+                  }
+                  c0 = 2.0f/sqrtf(pi)*x*expf(-x2);
+                  er0 = real(c0*er);
+               }
+               else {
+                  
+                  er = 1.0f;
+                  r  = 1.0f;
+                  for(k=1;k!=12;++k) {
+                      float tk = (float)k;
+                      r  = -r*(tk-0.5f)/x2;
+                      er += r;
+                  }
+                  c0 = expf(-x2)/(x*sqrtf(pi));
+                  er0= 1.0f-real(c0*er);
+               }
+               
+               if(y==0.0f) {
+                  err = er0;
+                  eri = 0.0f;
+               }
+               else {
+                  
+                  float t2    = 2.0f*pi*x;
+                  float t0    = 2.0f*x*y;
+                  cs          = cosf(t0);
+                  float t1    = expf(-x2);
+                  ss          = sinf(t0);
+                  er1         = t1*(1.0f-cs)/t2;
+                  ei1         = t1*ss/t2;
+                  er2         = 0.0f;
+                  for(n=1;n!=100;++n) {
+                      float tn = (float)n;
+                      float ny = tn*y;
+                      float nn = tn*tn;
+                      float t0 = expf(-0.25f*tn*tn);
+                      float t1 = nn+4.0f*x2;
+                      float t2 = 2.0f*x-2.0f*x*coshf(ny)*cs;
+                      float t3 = tn*sinhf(ny)*ss;
+                      float t4 = t2+t3;
+                      er2      = er+t0/t1*t4;
+                      if(fabsf((er2-w1)/er2)<eps) break;
+                      w1 = er2;
+                  }
+                  
+                  c0 = 2.0f*expf(-x2)/pi;
+                  err= er0+er1+real(c0*er2);
+                  ei2= 0.0f;
+                  for(n=1;n!=100;++n) {
+                      float tn = (float)n;
+                      float ny = tn*y;
+                      float nn = tn*tn;
+                      float t0 = expf(-0.25f*tn*tn);
+                      float t1 = nn+4.0f*x2;
+                      float t2 = 2.0f*x*coshf(ny)*ss;
+                      float t3 = tn*sinhf(ny)*cs;
+                      float t4 = t2+t3;
+                      ei2      = ei2+t0/t1*t4;
+                      if(fabsf((ei2-w2)/ei2)<eps) break;
+                      w2 = ei2;
+                  }
+                  
+                  eri = ei1+real(c0*ei2);
+               }
+               
+               cer = {err,eri};
+               cder= 2.0f/sqrtf(pi)*exp(-z*z);     
+       }
 
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
