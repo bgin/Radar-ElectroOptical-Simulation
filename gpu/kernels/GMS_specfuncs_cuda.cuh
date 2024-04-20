@@ -1028,5 +1028,234 @@ namespace file_info {
               return (cer);
                        
        }
+       
+       
+/*
+     !*****************************************************************************80
+!
+!! CFC computes the complex Fresnel integral C(z) and C'(z).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    26 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, complex(kind=sp) ::  ZF, ZD, the values of C(z) and C'(z).
+!
+
+*/ 
+
+      
+        __device__ void cfc(const cuda::std::complex<float> z,
+                            cuda::std::complex<float> & zf,
+                            cuda::std::complex<float> & zd)  {
+            
+              cuda::std::complex<float> c,cf,cf0,cf1;
+              cuda::std::complex<float> cg,cr,z0,zp;
+              cuda::std::complex<float> zp2;
+              float                     w0,wa,wa0;
+              int                       k,m;
+              constexpr float eps = 1.0e-14f;
+              constexpr float pi  = 3.14159265358979323846264f;
+              w0                  = abs(z);
+              zp                  = 0.5f*pi*z*z;
+              z0                  = {0.0f,0.0f};
+              zp2                 = zp*zp;
+              if(z==z0) {
+                 c = z0;
+              }
+              else if(w0<=2.5f) {
+                 cr = z;
+                 c  = cr;
+                 #pragma unroll
+                 for(k=1; k!=80; ++k) {
+                     float tk = (float)k;
+                     float t0 = 4.0f*tk-3.0f;
+                     float t1 = 2.0f*tk-1.0f;
+                     float t2 = 4.0f*tk+1.0f;
+                     float t3 = t0/tk/t1/t2;
+                     cr       = -0.5f*t3*zp2;
+                     c        += cr;
+                     wa       = abs(c);
+                     if(abs((wa-w0)/wa) < eps && 10 < k) break;
+                     wa0 = wa;
+                 }
+              } 
+              else if(2.5f<w0 && w0<4.5f) {
+                     m   = 85;
+                     c   = z0;
+                     cf0 = {1.0e-30f,0.0f};
+                     cf1 = z0;
+                     #pragma unroll
+                     for(k=m; k!=0; --k) {
+                         float tk = (float)k;
+                         float t0 = 2.0f*tk+3.0f;
+                         cf       = t0*cf0/zp-cf1;
+                         if(k==(int)((k/2)*2)) c += cf;
+                         cf1 = cf0;
+                         cf0 = c0; 
+                     }
+                     c = sqrt(2.0f/(pi*zp))*sin(zp)/cf*c;
+              }   
+              else {
+                     cr = {1.0f,0.0f};
+                     cf = {1.0f,0.0f};
+                     cuda::std::complex<float> izp2 = 1.0f/zp2;
+                     #pragma unroll
+                     for(k=1; k!=20; ++k) {
+                         float tk = (float)k;
+                         float t0 = 4.0f*tk-1.0f;
+                         float t1 = 4.0f*tk-3.0f;
+                         cr = -0.25f*cr*t0*t1*izp2;
+                         cf += cr;
+                     }
+                     cr = 1.0f/(pi*z*z);
+                     cg = cr;
+                     #pragma unroll
+                     for(k=1; k!=12; ++k) {
+                         float tk = (float)k;
+                         float t0 = 4.0f*tk+1.0f;
+                         float t1 = 4.0f*tk-1.0f;
+                         cr = -0.25f*cr*t0*t1*izp2;
+                         cg += cr;
+                     }
+                     c = 0.5f+(cf*sin(zp)-cg*cos(zp))/(pi*z);
+              }   
+              zf = c;
+              zd = cos(0.5f*pi*z*z);
+       }
+       
+       
+/*
+    !*****************************************************************************80
+!
+!! CFS computes the complex Fresnel integral S(z) and S'(z).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    24 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, complex(kind=sp) ::  ZF, ZD, the values of S(z) and S'(z).
+!
+*/   
+
+
+         __device__ void cfc(const cuda::std::complex<float> z,
+                            cuda::std::complex<float> & zf,
+                            cuda::std::complex<float> & zd)  {
+                  
+                 cuda::std::complex<float> cf,cf0,cf1,cg;
+                 cuda::std::complex<float> cr,s,z0,zp,zp2;
+                 float                     w0,wb,wb0;
+                 int                       k,m;
+                 constexpr float eps = 1.0e-14f;
+                 constexpr float pi  = 3.14159265358979323846264f;  
+                 w0                  = abs(z);
+                 z0                  = {0.0f,0.0f};
+                 zp                  = 0.5f*pi*z*z;
+                 zp2                 = zp*zp;
+                 if(z==z0) {
+                    s = z0;
+                 }
+                 else if(w0<=2.5f) {
+                    s  = z*zp*0.33333333333333333333333333333f;
+                    cr = s;
+                    for(k=1; k!=80; ++k) {
+                        float tk = (float)k;
+                        float t0 = 4.0f*tk-1.0f;
+                        float t1 = 2.0f*tk+1.0f;
+                        float t2 = 4.0f*tk+3.0f;
+                        float t3 = t0/tk/t1/t2;
+                        cr       = -0.5f*cr*t3*zp2;
+                        s        += cr;
+                        wb       = abs(s);
+                        if(abs(wb-wb0)<eps && 10<k) break;
+                        wb0 = wb;
+                    } 
+                 } 
+                 else if(2.5f<w0 && w0<4.5f) {
+                    m   = 85;
+                    s   = z0;
+                    cf1 = z0;
+                    cf0 = {1.0e-30f,0.0f};
+                    for(k=m; k!=0; --k) {
+                        float tk = (float)k;
+                        float t0 = 2.0f*tk+3.0f;
+                        cf       = t0*cf0/zp-cf1;
+                        if(k!=(int)((k/2)*2)) s += cf;
+                        cf1 = cf0;
+                        cf0 = cf;
+                    } 
+                    s = sqrt(2.0f/(pi*zp))*sin(zp)/cf*s;
+                 }  
+                 else {
+                    cr = {1.0f,0.0f};
+                    ci = {1.0f,0.0f};
+                    cuda::std::complex<float> izp2 = 1.0f/zp2;
+                    for(k=1; k!=20; ++k) {
+                        float tk = (float)k;
+                        float t0 = 4.0f*tk+1.0f;
+                        float t1 = 4.0f*tk-3.0f;
+                        cr       = -0.25f*cr*t0*t1*izp2;
+                        cf       += cr;
+                    }
+                    cr = 1.0f/(pi*z*z);
+                    cg = cr;
+                    for(k=1; k!=12; ++k) {
+                        float tk = (float)k;
+                        float t0 = 4.0f*tk+1.0f;
+                        float t1 = 4.0f*tk-1.0f;
+                        cr       = -0.25f*cr*t0*t1*izp2;
+                        cg       += cr;
+                    }
+                    s = 0.5f-(cf*cos(zp)+cg*sin(zp))/(pi*z);
+                 }  
+                 zf = s;
+                 zd = sin(0.5f*pi*z*z);              
+        }  
+             
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
