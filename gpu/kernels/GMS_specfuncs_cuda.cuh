@@ -1255,7 +1255,327 @@ namespace file_info {
                  }  
                  zf = s;
                  zd = sin(0.5f*pi*z*z);              
-        }  
+        } 
+        
+        
+/*
+    
+    !*****************************************************************************80
+!
+!! CGAMA computes the Gamma function for complex argument.
+!
+!  Discussion:
+!
+!    This procedcure computes the gamma function \E2(z) or ln[\E2(z)]
+!    for a complex argument
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    26 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, Y, the real and imaginary parts of 
+!    the argument Z.
+!
+!    Input, integer(kind=i4) ::  KF, the function code.
+!    0 for ln[\E2(z)]
+!    1 for \E2(z)
+!
+!    Output, real(kind=sp) ::  GR, GI, the real and imaginary parts of
+!    the selected function.
+!
+*/ 
+
+
+        __device__ void cgamma(float x,
+                               float y,
+                               const int   kf,
+                               float &     gr,
+                               float &     gi) {
+            
+            const float a[10] = {
+                 8.333333333333333e-02f,-2.777777777777778e-03f, 
+                 7.936507936507937e-04f, -5.952380952380952e-04f, 
+                 8.417508417508418e-04f, -1.917526917526918e-03f,
+                 6.410256410256410e-03f, -2.955065359477124e-02f,
+                 1.796443723688307e-01f, -1.39243221690590f}; 
+            float g0,gi1,gr1,si;
+            float sr,t,th,th1;
+            float th2,x0,x1,y1;
+            float y2,z1,z2;
+            int   j,k,na,idx;
+            constexpr float pi = 3.14159265358979323846264f;
+            
+            if(x<0.0f) {
+               x1 = x;
+               y1 = y;
+               x  = -x;
+               y  = -y;
+            }
+            x0 = x;
+            
+            if(x<=7.0f) {
+               na = (int)(7.0f-x);
+               x0 = x+na;
+            }
+            
+            z1 = sqrtf(x0*x0+y*y);
+            th = atanf(y/x0);
+            gr = (x-0.5f)*logf(z1)-th*y-x0+
+                 0.5f*logf(2.0f*pi);
+            gi = th*(x0-0.5f)+y*log(z1)-y;
+            
+            idx = 0;
+            for(k=1, k!=10; ++k) {
+                ++idx;
+                t = powf(z1,1-2*k);
+                float tidx = (float)idx;
+                float t0   = 2.0f*tidx-1.0f;
+                gr += a[k]*t*cos(t0*th);
+                gi -= a[k]*t*sin(t0*th);
+            }
+            
+            if(x<=7.0f) {
+               gr1 = 0.0f;
+               gi1 = 0.0f;
+               for(j=0; j!=na-1; ++j) {
+                   float tj = (float)j;
+                   float t0 = (x+tj)*(x+tj);
+                   gr1 += 0.5f*logf(t0+y*y);
+                   gi1 += atanf(y/(x+tj));
+               }
+               gr -= gr1;
+               gi -= gi1;
+            }
+            
+            if(x1<0.0f) {
+               float t0 = pi*x;
+               float t1 = pi*y;
+               z1 = sqrtf(x*x+y*y);
+               th1= atanf(y/x);
+               sr = -sinf(t0)*coshf(t1);
+               si = -cosf(t0)*sinhf(t1);
+               z2 = sqrtf(sr*sr+si*si);
+               if(sr<0.0f) th2 += pi;
+               gr = logf(pi/(z1*z2))-gr;
+               gi = -th1-th2-gi;
+               x  = x1;
+               y  = y1;
+            }
+            
+            if(kf==1) {
+               g0 = expf(gr);
+               gr = g0*cosf(gi);
+               gi = g0*sinf(gi);
+            }
+      }
+      
+      
+/*
+   
+   !*****************************************************************************80
+!
+!! CIK01: modified Bessel I0(z), I1(z), K0(z) and K1(z) for complex argument.
+!
+!  Discussion:
+!
+!    This procedure computes the modified Bessel functions I0(z), I1(z), 
+!    K0(z), K1(z), and their derivatives for a complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    31 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex(kind=sp) Z, the argument.
+!
+!    Output, complex(kind=sp) CBI0, CDI0, CBI1, CDI1, CBK0, CDK0, CBK1, 
+!    CDK1, the values of I0(z), I0'(z), I1(z), I1'(z), K0(z), K0'(z), K1(z), 
+!    and K1'(z).
+!  
+  
+*/    
+
+   
+        __device__ void cik01(const cuda::std::complex<float> z,
+                              cuda::std::complex<float> & cbi0,
+                              cuda::std::complex<float> & cdi0,
+                              cuda::std::complex<float> & cbi1,
+                              cuda::std::complex<float> & cdi1,
+                              cuda::std::complex<float> & cbk0,
+                              cuda::std::complex<float> & cdk0,
+                              cuda::std::complex<float> & cbk1) {
+           
+              const float a[12] = {
+                  0.125f,               7.03125e-02f,
+                  7.32421875e-02,       1.1215209960938e-01f,
+                  2.2710800170898e-01f, 5.7250142097473e-01f,
+                  1.7277275025845f,     6.0740420012735f,
+                  2.4380529699556e+01f, 1.1001714026925e+02f,
+                  5.5133589612202e+02f, 3.0380905109224e+03f};
+             const float a1[10] = {
+                   0.125f,              0.2109375f,
+                   1.0986328125f,       1.1775970458984e+01f, 
+                   2.1461706161499f,    5.9511522710323e+03f, 
+                   2.3347645606175e+05f,1.2312234987631e+07f, 
+                   8.401390346421e+08f, 7.2031420482627e+10f};
+             const float b[12]   = {
+                  -0.375f,              -1.171875e-01f, 
+                  -1.025390625e-01f,    -1.4419555664063e-01f,
+                  -2.7757644653320e-01f,-6.7659258842468e-01f,
+                  -1.9935317337513f,    -6.8839142681099f,
+                  -2.7248827311269e+01f, -1.2159789187654e+02f,
+                  -6.0384407670507e+02f, -3.3022722944809e+03f};
+              cuda::std::complex<float> ca,cb,ci,cr;
+              cuda::std::complex<float> cs,cr,ct,cw;
+              cuda::std::complex<float> z1,z2,zr,zr2;
+              float                     w0;
+              int                       k,k0;
+              constexpr float pi = 3.14159265358979323846264f;
+              a0                 = abs(z);
+              ci                 = {0.0f,1.0f};
+              z1                 = z;
+              z2                 = z*z;
+              
+              if(real(z)<0.0f) z1 = -z;
+              if(a0<=18.0f) {
+                 cbi0 = {1.0f,0.0f};
+                 cr   = {1.0f,0.0f};
+                 #pragma unroll
+                 for(k=1; k!=50; ++k) {
+                     float tk = (float)k;
+                     cr       =  0.25f*cr*z2/(tk*tk);
+                     cbi0     += cr;
+                     if(abs(cr/cbi0)<1.0e-15f) break;
+                 }
+                 cbi1 = {1.0f,0.0f};
+                 cr   = {1.0f,0.0f};
+                 for(k=1; k!=50; ++k) {
+                     float tk = (float)k;
+                     cr       =  0.25f*cr*z2/(tk*(tk+1.0f));
+                     cbi1     += cr;
+                     if(abs(cr/cbi1)<1.0e-15f) break;
+                 }
+                 cbi1 = 0.5f*z1*cbi1;
+              }
+              else {
+              
+                 if(a0<35.0f) {
+                    k0 = 12;
+                 }
+                 else if(a0<50.0f) {
+                    k0 = 9;
+                 }
+                 else {
+                    k0 = 7;
+                 }
+                 
+                 ca   = exp(z1)/sqrt(2.0f*pi*z1);
+                 cbi0 = {1.0f,0.0f};
+                 zr   = 1.0f/z1;
+                 int idx = -1;
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     ++idx;
+                     cbi0     = cbi0+a[idx]*pow(zr,tk);
+                 }
+                 cbi0 = ca+cbi0;
+                 cbi1 = {1.0f,0.0f};
+                 idx = -1;
+                 for(k=1; k!=k0; ++k) {
+                     ++idx;
+                     float tk = (float)k;
+                     cbi1     = cbi1+b[idx]*pow(zr,tk);
+                 }
+                 cbi1 = ca*cbi1;
+              }
+              
+              if(a0<=9.0f) {
+                 cs = {0.0f,0.0f};
+                 ct = -log(0.5f*z1)-0.5772156649015329f;
+                 w0 = 0.0f;
+                 cr = {1.0f,0.0f};
+                 for(k=1; k!=50; ++k) {
+                     float tk = (float)k;
+                     w0       = w0+1.0f/tk;
+                     cr       = 0.25f*cr/(tk*tk)*z2;
+                     cs       = cs+cr*(w0+ct);
+                     if(abs((cs-cw)/cs)<1.0e-15f) break;
+                     cw = cs;
+                 }
+                 cbk0 = ct+cs;
+              }
+              else {
+                 cb  = 0.5f/z1;
+                 zr2 = 1.0f/z2;
+                 cbk0= {1.0f,0.0f};
+                 int idx = -1;
+                 for(k=1; k!=10; ++k) {
+                     float tk = (float)k;
+                     ++idx;
+                     cbk0     = cbk0+a1[idx]*pow(zr2,tk);
+                 }
+                 cbk0 = cb*cbk0/cbi0;
+              }
+              
+              cbk1 = (1.0f/z1-cbi1*cbk0)/cbi0;
+              if(real(z)<0.0f) {
+                 if(imag(z)<0.0f) {
+                    cbk0 =  cbk0+ci*pi*cbi0;
+                    cbk1 = -cbk1+ci*pi*cbi1;
+                 }
+                 else {
+                    cbk0 = cbk0-ci*pi*cbi0;
+                    cbk1 = -cbk1-ci*pi*cbi1;
+                 }
+                 cbi1 = -cbi1;
+              }
+              
+              cdi0 = cbi1;
+              cdi1 = cbi0-1.0f/z*cbi1;
+              cdk0 = -cbk1;
+              cdk1 = -cbk0-1.0f/z*cbk1;
+              
+      }
+          
              
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
