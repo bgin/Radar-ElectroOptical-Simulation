@@ -1754,6 +1754,163 @@ namespace file_info {
                 cdiv = cfi-v/z*cbiv;
                 cdkv = -cfk-v/z*cbkv;                 
       }
+      
+      
+/*
+     !*****************************************************************************80
+!
+!! CIKNB computes complex modified Bessel functions In(z) and Kn(z).
+!
+!  Discussion:
+!
+!    This procedure also evaluates the derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    30 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of In(z) and Kn(z).
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, complex(kind=sp) ::  CB((0:N), CDI(0:N), CBK(0:N), CDK(0:N), 
+!    the values of In(z), In'(z), Kn(z), Kn'(z).
+!
+*/
+
+
+        __device__ void ciknb(const int                       n,
+                              const cuda::std::complex<float> z,
+                              cuda::std::complex<float> * __restrict__ cb,
+                              cuda::std::complex<float> * __restrict__ cdi,
+                              cuda::std::complex<float> * __restrict__ cbk,
+                              cuda::std::complex<float> * __restrict__ cdk) {
+              
+             cuda::std::complex<float> c,cf,cf0,cf1;
+             cuda::std::complex<float> cg,cg0,cg1;
+             cuda::std::complex<float> ci,cr,cs0,csk0;
+             cuda::std::complex<float> z1;
+             float                     a0,fac,vt;
+             int                       k,k0,l,m,nm;
+             constexpr float pi = 3.14159265358979323846264f;
+             constexpr float el = 0.57721566490153f;
+             ci                 = {0.0f,1.0f};
+             nm                 = n;
+             a0                 abs(z);
+             
+             if(real(z)<0.0f) 
+                z1 = -z;
+             else
+                z1 = z;
+             if(n==0) nm=1;
+             
+             m = msta1(a0,200);
+             if(m<nm)
+                nm = m;
+             else
+                m  = msta2(a0,nm,15);
+             
+             cbs   = 0.0f;
+             csk0  = 0.0f;
+             cf0   = 0.0f;
+             cf1   = 1.0e+30f;
+             for(k=m; k!=0; --k) {
+                 float tk = (float)k;
+                 cf       = 2.0f*(tk+1.0f)*cf1/z1+cf0;
+                 if(k<=nm) cbi[k] = cf;
+                 if(k!=0 && k==2*(int)(k/2)) csk0 = csk0+4.0f*cf/tk;
+                 cbs = cbs+2.0f*cf;
+                 cf0 = cf1;
+                 cf1 = cf;
+             }    
+             cs0 = exp(z1)/(cbs-cf);
+             for(k=0; k!=nm; ++k) cbi[k] *= cs0;
+             
+             if(a0<=9.0f) {
+                cbk[0] = -(log(0.5f*z1)+el)*cbi[0]+cs0*csk0;
+                cbk[1] =  (1.0f/z1-cbi[1]*cbk0[0])/cbi[0];
+             }  
+             else {
+                ca0 = sqrt(pi/(2.0f*z1))*exp(-z1);
+                if(a0<25.0f) 
+                   k0 = 16;
+                else if(a0<80.0f)
+                   k0 = 10;
+                else if(a0<200.0f)
+                   k0 = 8;
+                else
+                   k0 = 6;
+                
+                for(l=0; l!=2; ++l) {
+                    float tl = (float)l;
+                    cbk1 = 1.0f;
+                    vt   = 4.0f*tl;
+                    cr   = {1.0f,0.0f};
+                    for(k=1; k!=k0; ++k) {
+                        float tk = (float)k;
+                        float t0 = 2.0f*tk-1.0f;
+                        cr       = 0.25f*cr*(vt-t0*t0)/(tk*z1);
+                        cbkl     +=cr;
+                    }
+                    cbkl[l] = ca0*cbkl;
+                }
+             } 
+             
+             cg0 = cbk[0];
+             cg1 = cbk[1];
+             for(k=2; k!=nm; ++k) {
+                 float tk = (float)k;
+                 cg       = 2.0f*(tk-1.0f)/z1*cg1+cg0;
+                 cbk[k]   = cg;
+                 cg0      = cg1;
+                 cg1      = cg; 
+             }  
+             if(real(z)<0.0f) {
+                fac = 1.0f;
+                if(imag(z)<0.0f)
+                   for(k=0; k!=nm; ++k) {
+                       cbk[k] = fac*cbk[k]+ci*pi*cbi[k];
+                       cbi[k] *=fac;
+                       fac    = -fac;
+                   }
+                else
+                   for(k=0; k!=nm; ++k) {
+                       cbk[k] = fac*cbk[k]-ci*pi*cbi[k];
+                       cbi[k] *=fac;
+                       fac    = -fac;
+                   }
+             }   
+             
+             cdi[0] = cbi[1];
+             cdk[0] = -cbk[1];
+             for(k=1; k!=nm; ++k) {
+                 float tk = (float)k;
+                 cdi[k] = cbi[k-1]-tk/z*cbi[k];
+                 cdk[k] = -cbk[k-1]-tk/z*cbk[k];
+             }           
+      }
           
              
 
