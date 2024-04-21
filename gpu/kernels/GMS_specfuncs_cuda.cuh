@@ -1757,6 +1757,213 @@ namespace file_info {
       
       
 /*
+     
+    !*****************************************************************************80
+!
+!! ENVJ is a utility function used by MSTA1 and MSTA2.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    14 March 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, ?
+!
+!    Input, real(kind=sp) ::  X, ?
+!
+!    Output, real(kind=sp) ::  ENVJ, ?
+! 
+
+*/
+
+
+        __device__ float envj(const int   n,
+                              const float x) {
+                              
+                 float fn,l101,l102;
+                 float result;
+                 fn     = (float)n;
+                 l101   = log10f(6.28f*fn);
+                 l102   = log10f(1.36*x/fn);
+                 result = 0.5*l101-fn*f102;
+                 return (result);                       
+       }
+      
+      
+/*
+   
+    !*****************************************************************************80
+!
+!! MSTA1 determines a backward recurrence starting point for Jn(x).
+!
+!  Discussion:
+!
+!    This procedure determines the starting point for backward  
+!    recurrence such that the magnitude of    
+!    Jn(x) at that point is about 10^(-MP).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    08 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Input, integer(kind=i4) :: MP, the negative logarithm of the 
+!    desired magnitude.
+!
+!    Output, integer(kind=i4) :: MSTA1, the starting point.
+! 
+  
+*/
+
+        __device__ int msta1(const float x,
+                             const int   mp) {
+            
+               float a0,f,f0,f1,fmp;
+               int   it,n0,n1,nn;
+               int result;
+               fmp= (float)mp;
+               a0 = fabsf(x);
+               n0 = (int)(1.1e+00f*a0)+1;
+               f0 = envj(n0,a0)-fmp; 
+               n1 = n0+5;
+               f1 = envj(n1,a0)-fmp;
+               for(it=1; it!=20; ++it) {
+                   nn = n1-(n1-n0)/(1.0f-f0/f1);
+                   f  = envj(nn,a0)-fmp;
+                   if(abs(nn-n1)<1) break;
+                   n0 = n1;
+                   f0 = f1;
+                   n1 = nn;
+                   f1 = f;
+               }          
+               result = nn;
+               return (result);          
+       }
+       
+       
+/*
+
+     !*****************************************************************************80
+!
+!! MSTA2 determines a backward recurrence starting point for Jn(x).
+!
+!  Discussion:
+!
+!    This procedure determines the starting point for a backward
+!    recurrence such that all Jn(x) has MP significant digits.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    08 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument of Jn(x).
+!
+!    Input, integer(kind=i4) :: N, the order of Jn(x).
+!
+!    Input, integer(kind=i4) :: MP, the number of significant digits.
+!
+!    Output, integer(kind=i4) :: MSTA2, the starting point.
+!
+
+*/
+
+
+        __device__ int msta2(const float x,
+                             const int   n,
+                             const int   mp) {
+            
+             float a0,ejn,f,f0;
+             float f1,hmp,obj,fmp;
+             fmp = (float)mp;
+             a0  = fabsf(x);
+             hmp = 0.5f*fmp;
+             ejn = envj(n,a0);
+             if(ejn<=hmp) {
+                obj = fmp;
+                n0  = (int)(1.1f*a0);
+             }  
+             else {
+                obj = hmp+ejn;
+                n0  = n;
+             }          
+             f0 = envj(n0,a0)-obj;
+             n1 = n0+5;
+             f1 = envj(n1,a0)-obj;
+             for(it=1; it!=20; ++it) {
+                 nn = n1-(n1-n0)/(1.0f-f0/f1);
+                 f  = envj(nn,a0)-obj;
+                 if(abs(nn-n1)<1) break;
+                 n0 = n1;
+                 f0 = f1;
+                 n1 = nn;
+                 f1 = f;
+             }   
+             result = nn+10;
+             return (result);       
+      }
+      
+      
+/*
      !*****************************************************************************80
 !
 !! CIKNB computes complex modified Bessel functions In(z) and Kn(z).
