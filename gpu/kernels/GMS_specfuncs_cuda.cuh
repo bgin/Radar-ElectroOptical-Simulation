@@ -1575,6 +1575,146 @@ namespace file_info {
               cdk1 = -cbk0-1.0f/z*cbk1;
               
       }
+      
+      
+/*
+    !*****************************************************************************80
+!
+!! CJK: asymptotic expansion coefficients for Bessel functions of large order.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    01 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: KM, the maximum value of K.
+!
+!    Output, real(kind=sp) ::  A(L), the value of Cj(k) where j and k are 
+!    related to L by L = j+1+[k*(k+1)]/2; j,k = 0,1,...,Km.
+!
+*/
+      
+        
+        __device__ void cjk(const int km,
+                            float * __restrict__ a) {
+             
+              float f,f0,g,g0;
+              int   j,k,l1,l2;
+              int   l3,l4;
+              
+              a[0] = 1.0f;
+              f0   = 1.0f;
+              g0   = 1.0f;
+              
+              for(k=0; k!=km; ++k) {
+                  int   t0 = (k+1)*(k+2);
+                  float tk = (float)k;
+                  l1       = t0/2+1;
+                  l2       = t0/2+k+2;
+                  f        = (0.5f*tk+0.125f/(tk+1.0f))*f0;
+                  a[l1]    = f;
+                  f0       = f;
+                  g        = -(1.5f*tk+0.625f/(3.0f*(tk+1.0f)))*g0;
+                  a[l2]    = g;
+                  g0       = g;
+              } 
+              
+              for(k=1; k!=km-1; ++k) {
+                   float tk = (float)k;
+                  for(j=1; j!=k; ++j) {
+                      l3       = k*(k+1)/2+j+1;
+                      float tj = (float)j;
+                      l4       = (k+1)*(k+2)/2+j+1;
+                      float t0 = (2.0f*tj+tk+1.0f);
+                      float t1 = (tj+0.5f*tk+0.125f/t0)*a[l3];
+                      float t2 = (tj+0.5f*tk-1.0f+0.625f/t0)*a[l3-1];
+                      a[l4]    = t1-t2;
+                  }
+              }                   
+       }
+        
+/*
+   
+      !*****************************************************************************80
+!
+!! CIKLV: modified Bessel functions Iv(z), Kv(z), complex argument, large order.
+!
+!  Discussion:
+!
+!    This procedure computes modified Bessel functions Iv(z) and
+!    Kv(z) and their derivatives with a complex argument and a large order.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    31 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) V, the order of Iv(z) and Kv(z).
+!
+!    Input, complex(kind=sp) Z, the argument.
+!
+!    Output, real(kind=sp) CBIV, CDIV, CBKV, CDKV, the values of
+!    Iv(z), Iv'(z), Kv(z), Kv'(z).
+!
+
+*/
+
+
+        __device__ void ciklv(const cuda::std::complex<float> z,
+                              cuda::std::complex<float> &     cbiv,
+                              cuda::std::complex<float> &     cdiv,
+                              cuda::std::complex<float> &     cbkv,
+                              cuda::std::complex<float> &     cdkv) {
+           
+                float a[91];
+                cuda::std::complex<float> cf[12];
+                cuda::std::complex<float> ceta,cfi,cfk,csi;
+                cuda::std::complex<float> csk,ct,ct2,cws;
+                float                     v,v0,vr;
+                int                       i,k,km;
+                int                       l,l0,lf;
+                constexpr float pi = 3.14159265358979323846264f;
+                km                 = 12;
+                                      
+      }
           
              
 
