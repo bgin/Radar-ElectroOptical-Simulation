@@ -1706,14 +1706,53 @@ namespace file_info {
            
                 float a[91];
                 cuda::std::complex<float> cf[12];
+                int p1k[12] = {-1,1,-1,1,-1,1,-1,1,-1,1,-1,1};
                 cuda::std::complex<float> ceta,cfi,cfk,csi;
                 cuda::std::complex<float> csk,ct,ct2,cws;
                 float                     v,v0,vr;
                 int                       i,k,km;
-                int                       l,l0,lf;
+                int                       l,l0,lf,idx,idx2;
                 constexpr float pi = 3.14159265358979323846264f;
                 km                 = 12;
-                                      
+                cjk(km,a);
+                idx = -1;
+                for(l=1; l!=0; --l) {
+                    float tl = (float)l;
+                    v0       = v-tl;
+                    cuda::std::complex<float> zv0 = z/v0;
+                    cws      = sqrt(1.0f+zv0*zv0);
+                    ct       = 1.0f/cws;
+                    ct2      = ct*ct;
+                    for(k=1; k!=km; ++k) {
+                        float tk = (float)k;
+                        ++idx;
+                        l0      = k*(k+1)/2+1;
+                        lf      = l0+k;
+                        cf[idx] = a[lf];
+                        for(i=lf-1; i!=l0; --i) cf[idx] = cf[idx]*ct+a[i];
+                        cf[idx] = cf[idx]*pow(ct,tk);  
+                      }
+                    vr = 1.0f/v0;
+                    csi= {1.0f,0.0f};
+                    idx2 = -1;
+                    for(k=1; k!=km; ++k) {
+                        ++idx2;
+                        csi = csi+cf[idx]*pow(vr,(float)k);
+                    }
+                    cbiv = sqrt(ct/(2.0f*pi*v0))*exp(v0*ceta)*csi;
+                    if(l==1) cfi = cbiv;
+                    csk = {1.0f,0.0f};
+                    idx2 = -1;
+                    for(k=1; k!=km; ++k) {
+                        ++idx2;
+                        csk = csk+p1k[idx]*cf[idx]*pow(vr,(float)k);
+                    }
+                    cbkv = sqrt(pi*ct/(2.0f*v0))*exp(-v0*ceta)*csk;
+                    if(l==1) cfk = cbkv;
+                }     
+                
+                cdiv = cfi-v/z*cbiv;
+                cdkv = -cfk-v/z*cbkv;                 
       }
           
              
