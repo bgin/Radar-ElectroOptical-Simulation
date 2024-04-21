@@ -2118,6 +2118,181 @@ namespace file_info {
                  cdk[k] = -cbk[k-1]-tk/z*cbk[k];
              }           
       }
+      
+      
+/*
+     !*****************************************************************************80
+!
+!! SPHJ computes spherical Bessel functions jn(x) and their derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  SJ(0:N), the values of jn(x).
+!
+!    Output, real(kind=sp) ::  DJ(0:N), the values of jn'(x).
+!
+*/
+
+
+        __device__ void sphj(const int n,
+                             const float x,
+                             int &       nm,
+                             float * __restrict__ sj,
+                             float * __restrict__ dj) {
+                             
+             
+             float cs,f,f0,f1;
+             float sa,sb,invx;
+             int   k,m;
+             
+             invx  = 1.0f/x;
+             nm    = n;
+             sj[0] = sinf(x)*invx;
+             sj[1] = (sj[0]-cosf(x))*invx;
+             if(2<=n) {
+                sa = sj[0];
+                sb = sj[1];
+                m  = msta1(x,200);
+                if(m<n)
+                   nm = n;
+                else
+                   m  = msta2(x,n,15);
+                f0 = 0.0f;
+                f1 = 1.0e-30f;
+                for(k=m; k!=0; --k) {
+                    float tk = (float)k;
+                    f        = (2.0f*tk+3.0f)*f1*invx-f0;
+                    if(k<=nm) sj[k] = f;
+                    f0 = f1;
+                    f1 = f;
+                }
+                
+                if(fabsf(sa)<=fabsf(sb)
+                   cs = sb/f0;
+                else
+                   cs = sa/f;
+                for(k=0; k!=nm; ++k) sj[k] *= cs;
+             }   
+             
+             dj[0] = (cosf(x)-sinf(x)*invx)*invx;
+             for(k=1; k!=nm; ++k) {
+                 float tk = (float)k;
+                 dj[k]    = sj[k-1]-(tk+1.0f)*sj[k]*invx;
+             }                     
+     } 
+     
+/*
+
+       !*****************************************************************************80
+!
+!! SPHI computes spherical Bessel functions in(x) and their derivatives in'(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    18 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of In(X).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  SI(0:N), DI(0:N), the values and derivatives
+!    of the function of orders 0 through N.
+! 
+  
+*/
+
+
+        __device__ void sphi(const int   n,
+                             const float x,
+                             int &       nm,
+                             float * __restrict__ si,
+                             float * __restrict__ di) {
+             
+             float cs,f,f0,f1;
+             float si0,invx;
+             int   k,m,nm;
+             
+             invx   = 1.0f/x;
+             nm     = n;
+             si[0]  = sinhf(x)*invx;
+             si[1]  = -(sinhf(x)*invx-coshf(x))*invx;
+             si0    = si[0];
+             if(2<=n) {
+                
+                m = msta1(x,200);
+                if(m<n)
+                   nm = m;
+                else
+                   m  = msta2(x,n,15);
+                f0 = 0.0f;
+                f1 = 1.0e-30f;
+                for(k=m; k!=0; --k) {
+                    float tk = (float)k;
+                    f        = (2.0f*tk+3.0f)*f1*invx+f0;
+                    if(k<=nm) si[k] = f;
+                    f0 = f1;
+                    f1 = f;
+                }
+                cs = si0/f;
+                for(k=0; k!=nm; ++k) si[k] *= cs;
+             } 
+             
+             di[0] = si[1];
+             for(k=1; k!=nm; ++k) {
+                 float tk = (float)k;
+                 di[k]    = si[k-1]-(tk+1.0f)*invx*si[k];
+             }                     
+      }
           
              
 
