@@ -2010,7 +2010,7 @@ namespace file_info {
 
         __device__ void ciknb(const int                       n,
                               const cuda::std::complex<float> z,
-                              cuda::std::complex<float> * __restrict__ cb,
+                              cuda::std::complex<float> * __restrict__ cbi,
                               cuda::std::complex<float> * __restrict__ cdi,
                               cuda::std::complex<float> * __restrict__ cbk,
                               cuda::std::complex<float> * __restrict__ cdk) {
@@ -2118,6 +2118,251 @@ namespace file_info {
                  cdk[k] = -cbk[k-1]-tk/z*cbk[k];
              }           
       }
+      
+      
+/*
+    !*****************************************************************************80
+!
+!! CIKVA: modified Bessel functions Iv(z), Kv(z), arbitrary order, complex.
+!
+!  Discussion:
+!
+!    Compute the modified Bessel functions Iv(z), Kv(z)
+!    and their derivatives for an arbitrary order and
+!    complex argument
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    31 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:       
+!
+!    Input, real ( kind = 8 ) V, the order of the functions.
+!
+!    Input, complex ( kind = 8 ) Z, the argument.
+!
+!    Output, real ( kind = 8 ) VM, the highest order computed.
+!
+!    Output, real ( kind = 8 ) CBI(0:N), CDI(0:N), CBK(0:N), CDK(0:N),
+!    the values of In+v0(z), In+v0'(z), Kn+v0(z), Kn+v0'(z).
+!
+*/     
+
+
+        __device__ void cikva(const float                     v,
+                              const cuda::std::complex<float> z,
+                              float                         & vm,
+                              cuda::std::complex<float> * __restrict__ cbi,
+                              cuda::std::complex<float> * __restrict__ cdi,
+                              cuda::std::complex<float> * __restrict__ cbk,
+                              cuda::std::complex<float> * __restrict__ cdk) {
+              
+              cuda::std::complex<float> ca,ca1,ca2,cb;
+              cuda::std::complex<float> cbi0,cbk0,cbk1,cf;
+              cuda::std::complex<float> cf1,cf2,cg0,cg1;
+              cuda::std::complex<float> cgk,ci,ci0,cp;
+              cuda::std::complex<float> cr,cr1,cr2,cs;
+              cuda::std::complex<float> z1,z2;
+              cuda::std::complex<float> csu,ct,cvk;
+              float                     a0,gan,gap,piv,v;
+              float                     v0,v0n,v0p,vm;
+              float                     vt,w0,ws,ws0;
+              int                       k,k0,m,n;
+              constexpr float pi = 3.14159265358979323846264f;
+              ci                 = {0.0f,1.0f};
+              a0                 = fabsf(z);
+              z1                 = z;
+              z2                 = z*z;
+              n                  = (int)v;
+              v0                 = v-n;
+              piv                = pi*v0;
+              vt                 = 4.0f*v0*v0;
+              
+              if(n==0) n=1;
+              if(a0<35.0f)
+                 k0 = 14;
+              else if(a0<50.0f)
+                 k0 = 10;
+              else
+                 k0 = 8;
+              if(real(z)<0.0f) z1 = -z;
+              
+              if(a0<18.0f) {
+              
+                 if(v0==0.0)
+                    ca1 = {1.0f,0.0f};
+                 else {
+                    v0p = 1.0f+v0;
+                    gap = gamma(v0p);
+                    ca1 = cuda::std::pow(0.5f*z1,v0/gap);
+                 }
+                 
+                 ci0 = {1.0f,0.0f};
+                 cr  = {1.0f,0.0f};
+                 #pragma unroll
+                 for(k=1; k!=50; ++k) {
+                     float tk = (float)k;
+                     cr = 0.25f*cr*z2/(tk*(tk+v0));
+                     ci0 += cr;
+                     if(abs(cr)<abs(ci0)*1.0e-15) break;
+                 }
+                 
+                 cbi0 = ci0*ca1;
+              } 
+              else {
+                 
+                 ca = exp(z1)/sqrt(2.0f*pi*z1);
+                 cs = {1.0f,0.0f};
+                 cr = {1.0f,0.0f};
+                 #pragma unroll
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     float t0 = 2.0f*tk-1.0f;
+                     cr = -0.125f*cr*(vt-t0*t0)/(tk*z1);
+                     cs += cr;
+                 }
+                 cbi0 = ca*cs;
+              }
+              
+              m = msta1(a0,200);
+              
+              if(m<n)
+                 n = m;
+              else
+                 m = msta2(a0,n,15);
+              
+              cf2 = {0.0f,0.0f};
+              cf1 = {(float)1.0e-30,0.0f};
+              for(k=m; k!=0; --k) {
+                  float tk = (float)k;
+                  cf = 2.0f*(v0+tk+1.0f)/z1*cf1+cf2;
+                  if(k<=n) cbi[k] = cf;
+                  cf2 = cf1;
+                  cf1 = cf;
+              }
+              cs = cbi0/cf;
+              #pragma unroll
+              for(k=0; k!=n; ++k) cbi[k] *= cs;
+              
+              if(a0<=9.0f) {
+                 
+                 if(v0==0.0) {
+                    ct = -log(0.5f*z1)-0.5772156649015329f;
+                    cs = {0.0f,0.0f};
+                    w0 = 0.0f;
+                    cr = {1.0f,0.0f};
+                    #pragma unroll
+                    for(k=1; k!=50; ++k) {
+                        float tk = (float)k;
+                        w0       = w0+1.0f/tk;
+                        cr       = 0.25f*cr/(tk*tk)*z2;
+                        cp       = cr*(w0+ct);
+                        cs       = cs+cp;
+                        if(10<=k && abs(cp/cs)<1.0e-15f) break;
+                    }
+                    cbk0 = ct+cs;
+                 }
+                 else {
+                    
+                    v0n = 1.0f-v0;
+                    gan = gamma(v0n);
+                    ca2 = 1.0f/(gan*pow(0.5f*z1,v0));
+                    ca1 = pow(0.5f*z1,v0/gap);
+                    csu = ca2-ca1;
+                    cr1 = {1.0f,0.0f};
+                    cr2 = {1.0f,0.0f};
+                    #pragma unroll
+                    for(k=1; k!=50; ++k) {
+                        float tk = (float)k;
+                        cr1      = 0.25f*cr1*z2/(tk*(tk-v0));
+                        cr2      = 0.25f*cr2*z2/(tk*(tk+v0));
+                        csu      = csu+ca2*cr1-ca1*cr2;
+                        ws       = abs(csu);
+                        if(10<=k && abs(ws-ws0)/ws<1.0e-15f) break;
+                        ws0 = ws;
+                    }
+                    cbk0 = 0.5f*pi*csu/sin(piv);
+                 }
+              }
+              else {
+                 
+                 cb = exp(-z1)*sqrt(0.5f*pi/z1);
+                 cs = {1.0f,0.0f};
+                 cr = {1.0f,0.0f};
+                 #pragma unroll
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     float t0 = 2.0f*tk-1.0f;
+                     cr = 0.125f*cr*(vt-t0*t0)/(tk*z1);
+                     cs += cr;
+                 }
+                 cbk0 = cb*cs;
+              }
+              
+              cbk1   = (1.0f/z1-cbi[1]*cbk0)/cbi[0];
+              cbk[0] = cbk0;
+              cbk[1] = cbk1;
+              cg0    = cbk0;
+              cg1    = cbk1;
+              #pragma unroll
+              for(k=2; k!=n; ++k) {
+                  float tk = (float)k;
+                  cgk      = 2.0f*(v0+tk-1.0f)/z1*cg1+cg0;
+                  cbk[k]   = cgk;
+                  cg0      = cg1;
+                  cg1      = cgk
+              }
+              
+              if(real(z)<0.0f) {
+                 if(imag(z)<0.0f) {
+                    #pragma unroll
+                    for(k=0; k!=n; ++k) {
+                        float tk = (float)k;
+                        cvk      = exp((tk+v0)*pi*ci);
+                        cbk[k]   = cvk*cbk[k]+pi*ci*cbi[k];
+                        cbi[k]   = cbi[k]/cvk;
+                    }
+                 }
+                 else if(0.0f<imag(z)) {
+                     #pragma unroll
+                     for(k=0; k!=n; ++k) {
+                         float tk = (float)k;
+                         cvk      = exp((tk+v0)*pi*ci);
+                         cbk[k]   = cbk[k]/cvk-pi*ci*cbi[k];
+                         cbi[k]   = cvk*cbi[k];
+                     } 
+                 }
+              }
+              
+              cdi[0] = v0/z*cbi[0]+cbi[1];
+              cdk[0] = v0/z*cbk[0]-cbk[1];
+              #pragma unroll
+              for(k=1; k!=n; ++k) {
+                  float tk = (float)k;
+                  cdi[k] = -(tk+v0)/z*cbi[k]+cbi[k-1];
+                  cdk[k] = -(tk+v0)/z*cbk[k]-cbk[k-1];
+              }
+              vm = n+v0;
+       }
+         
       
       
 /*
