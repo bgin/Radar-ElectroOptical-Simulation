@@ -2718,10 +2718,146 @@ namespace file_info {
               cuda::std::complex<float> cylk;
               float                     a0,wa,ya0,ya1,yak;
               int                       k,lb,lb0;
+              
+              if(n<1) return;
               constexpr float pi = 3.14159265358979323846264;
               a0                 = abs(z);
               nm                 = n;
-                                       
+              cjy01(z,cbj0,cdj0,cbj1,cdj1,cby0,cdy0,cby1,cdy1);  
+              cbj[0] = cbj0;
+              cbj[1] = cbj1;
+              cby[0] = cby0;
+              cby[1] = cby1;
+              cdj[0] = cdj0;
+              cdj[1] = cdj1;
+              cdy[0] = cdy0;
+              cdy[1] = cdy1;
+               
+              if(n<(int)(0.25f*a0)) {
+                 cj0 = cbj0;
+                 cj1 = cbj1;
+                 for(k=2; k!=n; ++k) {
+                     float tk = (float)k;
+                     cjk      = 2.0f*(tk-1.0f)/z*cj1-cj0;
+                     cbj[k]   = cjk;
+                     cj0      = cj1;
+                     cj1      = cjk;
+                 }
+              }  
+              else {
+                 
+                 m = msta1(a0,200);
+                 if(m<n)
+                     nm = m;
+                 else
+                     m  = msta2(a0,n,15);
+                 cf2 = {0.0f,0.0f}; 
+                 cf1 = {(float)1.0e-30f, 0.0f};
+                 for(k=m; k!=0; --k) {
+                     float tk = (float)k;
+                     cf = 2.0f*(tk+1.0f)/z*cf1-cf2;
+                     if(k<=nm) 
+                        cbj[k] = cf;
+                     cf2 = cf1;
+                     cf1 = cf;
+                 }
+                 
+                 if(abs(cbj1)<abs(cbj0))
+                    cs = cbj0/cf;
+                 else
+                    cs = cbj1/cf2;
+                 
+                 for(k=0; k!=nm; ++k) cbj[k] *= cs;
+             } 
+             
+             for(k=2; k!=nm; ++k) {
+                 float tk = (float)k;
+                 cdj[k] = cbj[k-1]-k/z*cbj[k];
+             }
+             ya0 = abs(cby0);
+             lb = 0;
+             cg0 = cby0;
+             cg1 = cby1;
+             for(k=2; k!=nm; ++k) {
+                 float tk = (float)k;
+                 cyk      = 2.0f*(tk-1.0f)/z*cg1-cg0;
+                 if(abs(cyk)<=3.4028234664e+38f) {
+                    yak = abs(cyk);
+                    ya1 = abs(cg0);
+                    if(yak<ya0 && yak<ya1) lb = k;
+                    cby[k] = cyk;
+                    cg0 = cg1;
+                    cg1 = cyk;
+                }
+            }
+             
+           if(4<lb && imag(z)!=0.0f) {
+              
+              while(true) {
+                 
+                 if(lb==lb0) exit
+                 
+                 ch2 = {1.0f,0.0f};
+                 ch1 = {0.0f,0.0f};
+                 lb0 = lb;
+                 for(k=lb; k!=1; ++k) {
+                     float tk = (float)k;
+                     ch0      = 2.0f*tk/z*ch1-ch2;
+                     ch2      = ch1;
+                     ch1      = ch0;
+                 }
+                 cp12 = ch0;
+                 cp22 = ch2;
+                 ch2  = {0.0f,0.0f};
+                 ch1  = {1.0f,0.0f};
+                 for(k=lb; k!=1; ++k) {
+                     float tk = (float)k;
+                     ch0      = 2.0f*tk/z*ch1-ch2;
+                     ch2      = ch1;
+                     ch1      = ch0;
+                 }
+                 cp11 = ch0;
+                 cp21 = ch2;
+                 if(lb==nm) {
+                    cbj[lb+1] = 2.0f*lb/z*cbj[lb]-cbj[lb-1];
+                 }
+                 if(abs(cbj[1])<abs(cbj[0])) {
+                    cby[lb+1] = (cbj[lb+1]*cby0-2.0f*cp11/(pi*z))/cbj[0];
+                    cby[lb]   = (cbj[lb]  *cby0+2.0f*cp12/(pi*z))/cbj[0[;
+                 }
+                 else {
+                    cby[lb+1] = (cbj[lb+1]*cby1-2.0f*cp21/(pi*z))/cbj[1];
+                    cby[lb]   = (cbj[lb]  *cby1+2.0f*cp22/(pi*z))/cbj[1];
+                 }
+                cyl2 = cby[lb+1];
+                cyl1 = cby[lb];
+                for(k=lb-1; k!=0; --k) {
+                    float tk = (float)k;
+                    cylk     = 2.0f*(tk+1.0f)/z*cyl1-cyl2;
+                    cby[k]   = cylk;
+                    cyl2     = cyl1;
+                    cyl1     = cylk;
+                }
+                cyl1 = cby[lb];
+                cyl2 = cby[lb+1];
+                for(k=lb+1; k!=nm-1; ++k) {
+                    float tk = (float)k;
+                    cylk     = 2.0f*tk/z*cyl2-cyl1;
+                    cby[k+1] = cylk;
+                    cyl1     = cyl2;
+                    cyl2     = cylk;
+                }
+                for(k=2; k!=nm; ++k) {
+                    wa = abs(cby[k]);
+                    if(wa<abs(cby[k-1])) lb = k;
+                }
+              }
+           }
+           
+           for(k=2; k!=nm; ++k) {
+             float tk = (float)k;
+             cdy[k]   = cby[k-1]-tk/z*cby[k];
+           }
      }
       
       
