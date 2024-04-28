@@ -2859,7 +2859,147 @@ namespace file_info {
              cdy[k]   = cby[k-1]-tk/z*cby[k];
            }
      }
-      
+     
+     
+/*
+    
+     !*****************************************************************************80
+!
+!! COMELP computes complete elliptic integrals K(k) and E(k).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    07 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) HK, the modulus.  0 <= HK <= 1.
+!
+!    Output, real ( kind = 8 ) CK, CE, the values of K(HK) and E(HK).
+!
+*/
+
+       __device__ void comelp(const float hk,
+                              float     & ck,
+                              float     & ce) {
+                              
+             float ae,ak,be,bk;
+             float ce,ck,pk;
+             if(hk==1.0f) return;
+             pk = 1.0f-hk*hk;  
+             ak = ((( 
+                  0.01451196212e+00f   * pk 
+                + 0.03742563713e+00f ) * pk 
+                + 0.03590092383e+00f ) * pk 
+                + 0.09666344259e+00f ) * pk 
+                + 1.38629436112e+00f;
+
+            bk = ((( 
+                  0.00441787012e+00f   * pk 
+                + 0.03328355346e+00f ) * pk 
+                + 0.06880248576e+00f ) * pk 
+                + 0.12498593597e+00f ) * pk 
+                + 0.5e+00;
+
+           ck = ak-bk*log(pk);
+
+           ae = ((( 
+                  0.01736506451e+00f   * pk 
+                + 0.04757383546e+00f ) * pk 
+                + 0.0626060122e+00f  ) * pk 
+                + 0.44325141463e+00f ) * pk 
+                + 1.0e+00f;
+
+           be = ((( &
+                  0.00526449639e+00f   * pk 
+                + 0.04069697526e+00f ) * pk 
+                + 0.09200180037e+00f ) * pk 
+                + 0.2499836831e+00f  ) * pk;
+
+           ce = ae-be*log(pk);                    
+     }
+     
+     
+/*
+   
+     !****************************************************************************80
+!
+!! CPDLA computes complex parabolic cylinder function Dn(z) for large argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    07 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer N, the order.
+!
+!    Input, complex ( kind = 8 ) Z, the argument.
+!
+!    Output, complex ( kind = 8 ) CDN, the function value.
+!
+
+*/
+
+        __device__ cuda::std::complex<float> 
+                                cpdla(const int n,
+                                      const cuda::std::complex<float> cdn) {
+            
+               cuda::std::complex<float> cb0,cr,cdn;
+               float                     fn;
+               int                       k;
+               
+               fn  = (float)n;
+               cb0 = pow(z,fn)*exp(-0.25f*z*z);
+               cr  = {1.0f,0.0f};
+               cdn = {1.0f,0.0f};
+               #pragma unroll
+               for(k=1; k!=16; ++k) {
+                   float tk = (float)k;
+                   float t0 = 2.0f*tk-fn;
+                   cr       = -0.5f*cr*t0-1.0f*t0/(tk*z*z);
+                   cdn      += cr;
+                   if(abs(cr)<abs(cdn)*1.0e-12f) break;
+               }   
+               cdn = cb0*cdn;
+               return (cdn);                         
+       }
       
 /*
      !*****************************************************************************80
