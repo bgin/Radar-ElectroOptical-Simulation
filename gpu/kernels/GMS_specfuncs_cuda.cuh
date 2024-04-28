@@ -2362,7 +2362,367 @@ namespace file_info {
               }
               vm = n+v0;
        }
-         
+       
+       
+/*
+  
+     !*****************************************************************************80
+!
+!! CJY01: complexBessel functions, derivatives, J0(z), J1(z), Y0(z), Y1(z).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    02 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex ( kind = 8 ) Z, the argument.
+!
+!    Output, complex ( kind = 8 ) CBJ0, CDJ0, CBJ1, CDJ1, CBY0, CDY0, CBY1, 
+!    CDY1, the values of J0(z), J0'(z), J1(z), J1'(z), Y0(z), Y0'(z), 
+!    Y1(z), Y1'(z).
+
+*/
+
+
+        __device__ void cjy01(const cuda::std::complex<float> z,
+                              cuda::std::complex<float> &     cbj0,
+                              cuda::std::complex<float> &     cdj0,
+                              cuda::std::complex<float> &     cbj1,
+                              cuda::std::complex<float> &     cdj1,
+                              cuda::std::complex<float> &     cby0,
+                              cuda::std::complex<float> &     cdy0,
+                              cuda::std::complex<float> &     cby1,
+                              cuda::std::complex<float> &     cdy1) {
+                              
+            
+              float a[13] = {0.0f,
+                -0.703125e-01f,0.112152099609375e+00f, 
+                -0.5725014209747314e+00f,0.6074042001273483e+01f, 
+                -0.1100171402692467e+03f,0.3038090510922384e+04f, 
+                -0.1188384262567832e+06f,0.6252951493434797e+07f, 
+                -0.4259392165047669e+09f,0.3646840080706556e+11f, 
+                -0.3833534661393944e+13f,0.4854014686852901e+15f}; 
+              float a1[13] = {0.0f,
+                 0.1171875e+00f,-0.144195556640625e+00f, 
+                 0.6765925884246826e+00f,-0.6883914268109947e+01f, 
+                 0.1215978918765359e+03f,-0.3302272294480852e+04f, 
+                 0.1276412726461746e+06f,-0.6656367718817688e+07f, 
+                 0.4502786003050393e+09f,-0.3833857520742790e+11f, 
+                 0.4011838599133198e+13f,-0.5060568503314727e+15f};
+              float b[13] = {0.0f,
+                 0.732421875e-01f,-0.2271080017089844e+00f, 
+                 0.1727727502584457e+01f,-0.2438052969955606e+02f, 
+                 0.5513358961220206e+03f,-0.1825775547429318e+05f, 
+                 0.8328593040162893e+06f,-0.5006958953198893e+08f, 
+                 0.3836255180230433e+10f,-0.3649010818849833e+12f, 
+                 0.4218971570284096e+14f,-0.5827244631566907e+16f};
+              float b1[13] = {0.0f,
+                 -0.1025390625e+00f,0.2775764465332031e+00f, 
+                 -0.1993531733751297e+01f,0.2724882731126854e+02f, 
+                 -0.6038440767050702e+03f,0.1971837591223663e+05f, 
+                 -0.8902978767070678e+06f,0.5310411010968522e+08f, 
+                 -0.4043620325107754e+10f,0.3827011346598605e+12f, 
+                 -0.4406481417852278e+14f,0.6065091351222699e+16};
+              cuda::std::complex<float> ci,cp,cp0,cp1;
+              cuda::std::complex<float> cq0,cq1,cr,cs;
+              cuda::std::complex<float> ct1,ct2,cu,z1,z2;
+              float a0,w0,w1;
+              int   k,k0;
+              
+              constexpr float pi = 3.141592653589793f;
+              constexpr float el = 0.5772156649015329f;
+              constexpr float rp2= 0.63661977236758134307554f;
+              ci                 = {0.0f,1.0f};
+              a0                 = abs(z);
+              z2                 = z*z;
+              z1                 = z;
+              
+              if(real(z)<0.0f) z1 = -z;
+              if(a0<=12.0f) {
+                 
+                 cbj0 = {1.0f,0.0f};
+                 cr   = {1.0f,0.0f};
+                 for(k=1; k!=40; ++k) {
+                     float tk = (float)k;
+                     cr       = -0.25f*cr*z2/(tk*tk);
+                     cbj0     += cr;
+                     if(abs(cr)<abs(cbj0)*1.0e-15f) break;
+                 }
+                 
+                 cbj1 = {1.0f,0.0f};
+                 cr   = {1.0f,0.0f};
+                 for(k=1; k!=40; ++k) {
+                     float tk = (float)k;
+                     cr       = -0.25f*cr*z2/(tk*(tk+1.0f));
+                     cbj1     += cr;
+                     if(abs(cr)<abscbj1)*1.0e-15f) break;
+                 }
+                 
+                 cbj1 = 0.5f*z1*cbj1;
+                 w0   = 0.0f;
+                 cr   = {1.0f,0.0f};
+                 cs   = {0.0f,0.0f};
+                 for(k=1; k!=40; ++k) {
+                     float tk = (float)k;
+                     w0       = w0+1.0f/tk;
+                     cr       = -0.25f*cr/(tk*tk)*z2;
+                     cp       = cr*w0;
+                     cs       = cs+cp;
+                     if(abs(cp)<abs(cs)*1.0e-15f) break;
+                 }
+                 
+                 cby0 = rp2*(log(z1/2.0f)+el)*cbj0-rp2*cs;
+                 w1   = 0.0f;
+                 cr   = {1.0f,0.0f};
+                 cs   = {1.0f,0.0f};
+                 for(k=1; k!=40; ++k) {
+                     float tk = (float)k;
+                     w1       = w1+1.0f/tk;
+                     cr       = -0.25f*cr/(tk*(tk+1.0f))*z2;
+                     cp       = cr*(2.0f*w1+1.0f/(tk+1.0f));
+                     cs       = cs+cp;
+                     if(abs(cp)<abs(cs)*1.0e-15f) break; 
+                 }
+                 
+                 cby1 = rp2*((log(z1*0.5f)+el)*cbj1 -
+                        1.0f/z1-0.25f*z1*cs);
+
+              }
+              else {
+                 
+                  if(a0<35.0f) 
+                     k0 = 12;
+                  else if(a0<50.0f) 
+                     k0 = 10;
+                  else
+                     k0 = 8;
+                 ct1 = z1-0.25f*pi;
+                 cp0 = {1.0f,0.0f};
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     cp0      = cp0+a[k]*pow(z1,-2.0f*tk);
+                 }
+                 cq0 = -0.125f/z1;
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     cq0      = cq0+b[k]*pow(z1,-2.0f*t-1.0f);
+                 }
+                 cu   = sqrt(rp2/z1);
+                 cbj0 = cu*(cp0*cos(ct1)-cq0*sin(ct1));
+                 cby0 = cu*(cp0*sin(ct1)+cq0*cos(ct1));
+                 ct2  = z1-0.75f*pi;
+                 cp1  = {1.0f, 0.0f};
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     cp1      = cp1+a1[k]*pow(z1,-2.0f*tk);
+                 }
+                 cq1 = 0.375f/z1;
+                 for(k=1; k!=k0; ++k) {
+                     float tk = (float)k;
+                     cq1      = cq1+b1[k]*pow(z1,-2.0f*tk-1.0f);
+                 }
+                 cbj1 = cu*(cp1*cos(ct2)-cq1*sin(ct2));
+                 cby1 = cu*(cp1*sin(ct2)+cq1*cos(ct2));
+              }
+              
+             if(real(z)<0.0f){
+                if(imag(z)<0.0f) {
+                   cby0 = cby0-2.0f*ci*cbj0;
+                   cby1 = -(cby1-2.0f*ci*cbj1);
+                }
+                else {
+                   cby0 = cby0+2.0f*ci*cbj0;
+                   cby1 = -(cby1+2.0f*ci*cbj1);
+                }
+                cbj1 = -cbj1;
+             }
+
+             cdj0 = -cbj1;
+             cdj1 = cbj0-1.0f/z*cbj1;
+             cdy0 = -cby1;
+             cdy1 = cby0-1.0f/z*cby1;
+      }
+       
+       
+/*
+   
+    !*****************************************************************************80
+!
+!! CJYLV: Bessel functions Jv(z), Yv(z) of complex argument and large order v.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real ( kind = 8 ) V, the order of Jv(z) and Yv(z).
+!
+!    Input, complex ( kind = 8 ) Z, the argument.
+!
+!    Output, complex ( kind = 8 ) CBJV, CDJV, CBYV, CDYV, the values of Jv(z), 
+!    Jv'(z), Yv(z), Yv'(z).
+!
+
+*/
+
+
+        __device__ void cjylv(const float v,
+                              const cuda::std::complex<float> z,
+                              cuda::std::complex<float> &     cbjv,
+                              cuda::std::complex<float> &     cdjv,
+                              cuda::std::complex<float> &     cbyv,
+                              cuda::std::complex<float> &     cdyv) {
+                              
+              float a[91];
+              cuda::std::complex<float> cf[13];
+              int p1k[12] = {-1,1,-1,1,-1,1,-1,1,-1,1,-1,1};
+              cuda::std::complex<float> ceta,cfj,cfy,csj;
+              cuda::std::complex<float> csy,ct,ct2,cws;
+              float                     v0,vr;
+              int                       i,k,km,l;
+              int                       l0,lf;
+              constexpr float pi = 3.14159265358979323846264f;
+              km                 = 12;
+              cjk(km,a);
+              
+              for(l=1; l!=0; --l) {
+                  
+                  v0   = v-l;
+                  cws  = sqrt(1.0f-(z/v0)*(z/v0));
+                  ceta = cws+log(z/v0/(1.0f+cws));
+                  ct   = 1.0f/cws;
+                  ct2  = ct*ct;
+                  for(k=1; k!=km; ++k) {
+                      l0    = k*(k+1)/2+1;
+                      lf    = l0+k;
+                      cf[k] = a[lf];
+                      for(i=lf-1; i!=l0; --i)  
+                          cf[k] = cf[k]*ct2+a[i];
+                      cf[k] = cf[k]*pow(ct,(float)k);   
+                  }
+                  
+                  vr = 1.0f/v0;
+                  csj= {1.0f,0.0f};
+                  for(k=1; k!=km; ++k) 
+                      csj = csj+cf[k]*pow(vr,(float)k);
+                  cbjv = sqrt(ct/(2.0f*pi*v0))*exp(v0*ceta)*csj;
+                  if(l==1) cfj = cbjv;
+                  csy = {1.0f,0.0f};
+                  for(k=1; k!=km; ++k)
+                      csy = csy+p1k[k]*cf[k]*pow(vr,(float)k);
+                  cbyv = -sqrt(2.0f*ct/(pi*v0))*exp(-v0*ceta)*csy;
+                  if(l==1) cfy = cbyv;
+              }
+              
+              cdjv = -v/z*cbjv+cfj;
+              cdyv = -v/z*cbyv+cfy;
+                         
+      }
+      
+      
+/*
+    !*****************************************************************************80
+!
+!! CJYNA: Bessel functions and derivatives, Jn(z) and Yn(z) of complex argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    02 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer ( kind = 4 ) N, the order of Jn(z) and Yn(z).
+!
+!    Input, complex ( kind = 8 ) Z, the argument of Jn(z) and Yn(z).
+!
+!    Output, integer ( kind = 4 ) NM, the highest order computed.
+!
+!    Output, complex ( kind = 8 ), CBJ(0:N), CDJ(0:N), CBY(0:N), CDY(0:N),
+!    the values of Jn(z), Jn'(z), Yn(z), Yn'(z).
+!
+*/
+    
+    
+        __device__ void cjyna(const int n,
+                              const cuda::std::complex<float> z,
+                              int                           & nm,
+                              cuda::std::complex<float> * __restrict__ cbj,
+                              cuda::std::complex<float> * __restrict__ cdj,
+                              cuda::std::complex<float> * __restrict__ cby,
+                              cuda::std::complex<float> * __restrict__ cdy) {
+                              
+               
+              cuda::std::complex<float> cbj0,cbj1,cby0,cby1;
+              cuda::std::complex<float> cdj0,cdj1,cdy0,cdy1;
+              cuda::std::complex<float> cf,cf1,cf2,cg0;
+              cuda::std::complex<float> cg1,ch0,ch1,ch2;
+              cuda::std::complex<float> cj0,cj1,cjk,cp11;
+              cuda::std::complex<float> cp12,cp21,cp22;
+              cuda::std::complex<float> cs,cyk,cyl1,cyl2;
+              cuda::std::complex<float> cylk;
+              float                     a0,wa,ya0,ya1,yak;
+              int                       k,lb,lb0;
+              constexpr float pi = 3.14159265358979323846264;
+              a0                 = abs(z);
+              nm                 = n;
+                                       
+     }
       
       
 /*
