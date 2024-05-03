@@ -3000,6 +3000,11 @@ namespace file_info {
                cdn = cb0*cdn;
                return (cdn);                         
        }
+       
+       
+/*
+     
+*/
       
 /*
      !*****************************************************************************80
@@ -3174,6 +3179,85 @@ namespace file_info {
                  di[k]    = si[k-1]-(tk+1.0f)*invx*si[k];
              }                     
       }
+      
+      
+/*
+    !*****************************************************************************80
+!
+!! SPHK computes modified spherical Bessel functions kn(x) and derivatives.
+!
+!  Discussion:
+!
+!    This procedure computes modified spherical Bessel functions
+!    of the second kind, kn(x) and kn'(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  SK(0:N), DK(0:N), the values of kn(x) and kn'(x).
+!
+*/
+
+
+        __device__ void sphk(const int   k,
+                             const float x,
+                             int &       nm
+                             float * __restrict__ sk,
+                             float * __restrict__ dk) {
+             
+              float f,f0,f1,invx;
+              int   k;
+              constexpr float pi = 3.14159265358979323846264f;
+              invx               = 1.0f/x;
+              nm                 = n;
+              sk[0]              = 0.5f*pi*invx*expf(-x);
+              sk[1]              = sk[0]*(1.0f+invx);
+              f0                 = sk[0];
+              f1                 = sk[1];
+              #pragma unroll
+              for(k=2; k!=n; ++k) {
+                  float tk = (float)k;
+                  f        = (2.0f*tk-1.0f)*f1*invx+f0;
+                  sk[k]    = f;
+                  if(3.4028234664e+38f<fabsf(f)) break;
+                  f0 = f1;
+                  f1 = f;
+              }          
+              nm    = k-1;
+              dk[0] = -sk[1];
+              #pragma unroll
+              for(k=1; k!=nm; ++k) {
+                  float tk = (float)k;
+                  dk[k]    = -sk[k-1]-(tk+1.0f)*invx*sk[k]; 
+              }       
+       }
           
              
 
