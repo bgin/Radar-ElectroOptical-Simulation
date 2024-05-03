@@ -2905,12 +2905,12 @@ namespace file_info {
              float ce,ck,pk;
              if(hk==1.0f) return;
              pk = 1.0f-hk*hk;  
-             ak = ((( 
-                  0.01451196212e+00f   * pk 
-                + 0.03742563713e+00f ) * pk 
-                + 0.03590092383e+00f ) * pk 
-                + 0.09666344259e+00f ) * pk 
-                + 1.38629436112e+00f;
+             ak = 
+                  __fmaf_ru(__fmaf_ru(__fmaf_ru(__fmaf_ru(0.01451196212e+00f, pk, 
+                                                 ,0.03742563713e+00f ),pk, 
+                                          0.03590092383e+00f ), pk, 
+                                0.09666344259e+00f ),pk, 
+                             1.38629436112e+00f);
 
             bk = ((( 
                   0.00441787012e+00f   * pk 
@@ -3075,7 +3075,7 @@ namespace file_info {
                 f1 = 1.0e-30f;
                 for(k=m; k!=0; --k) {
                     float tk = (float)k;
-                    f        = (2.0f*tk+3.0f)*f1*invx-f0;
+                    f        = __fmaf_ru(2.0f,tk,3.0f)*f1*invx-f0;
                     if(k<=nm) sj[k] = f;
                     f0 = f1;
                     f1 = f;
@@ -3164,7 +3164,7 @@ namespace file_info {
                 f1 = 1.0e-30f;
                 for(k=m; k!=0; --k) {
                     float tk = (float)k;
-                    f        = (2.0f*tk+3.0f)*f1*invx+f0;
+                    f        = __fmaf_ru(__fmaf_ru(2.0f,tk,3.0f),(f1*invx),f0);
                     if(k<=nm) si[k] = f;
                     f0 = f1;
                     f1 = f;
@@ -3244,7 +3244,7 @@ namespace file_info {
               #pragma unroll
               for(k=2; k!=n; ++k) {
                   float tk = (float)k;
-                  f        = (2.0f*tk-1.0f)*f1*invx+f0;
+                  f        = __fmaf_ru((2.0f*tk-1.0f),(f1*invx),f0);
                   sk[k]    = f;
                   if(3.4028234664e+38f<fabsf(f)) break;
                   f0 = f1;
@@ -3388,7 +3388,7 @@ namespace file_info {
                  a0 = 2.0f*x/pi;
                  for(k=1; k!=60; ++k) {
                      float tk = (float)k;
-                     float t0 = 2.0f*tk+1.0f;
+                     float t0 = __fmaf_ru(2.0f,tk,1.0f);
                      r        = -r*x/t0*x/t0;
                      s        += r;
                      if(fabsf(r) < fabsf(s)*1.0e-12f) break;
@@ -3429,8 +3429,8 @@ namespace file_info {
                        + 0.4564324e-03f ) * t2 
                        - 0.0124669441f );
                   ta0 = x-0.25f*pi;
-                  by0 = 2.0f/sqrt(x)*(p0*sinf(ta0)+q0*cosf(ta0));
-                  sh0 = 2.0f/(pi*x)*s+by0;
+                  by0 = __fmaf_ru(2.0f/sqrt(x),(p0*sinf(ta0),q0*cosf(ta0)));
+                  sh0 = __fmaf_ru(2.0f/(pi*x),s,by0);
    
               }
               
@@ -3530,8 +3530,8 @@ namespace file_info {
                    - 0.63904e-03f )   * t2 
                    + 0.0374008364f );
                 ta1 = x-0.75f*pi;
-                by1 = 2.0f/sqrtf(x)*(p1*sinf(ta1)+q1*cosf(ta1));
-                sh1 = 0.63661977236758134307554f*(1.0f+s/(x*x))+by1;
+                by1 = __fmaf_ru(2.0f/sqrtf(x),p1*sinf(ta1),q1*cosf(ta1));
+                sh1 = __fmaf_ru(0.63661977236758134307554f,(1.0f+s/(x*x)),by1);
              }
              
              return (sh1);
@@ -3590,7 +3590,7 @@ namespace file_info {
                  a0 = 2.0f*x/pi;
                  for(k=1; k!=60; ++k) {
                      float tk = (float)k;
-                     float t0 = (2.0f*tk+1.0f);
+                     float t0 = __fmaf_ru(2.0f,tk,1.0f);
                      float t1 = x/(t0*t0);
                      r        = r*t1*t1;
                      s        += r;
