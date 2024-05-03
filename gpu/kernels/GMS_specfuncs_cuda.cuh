@@ -3630,6 +3630,96 @@ namespace file_info {
               return (sl0);
         }
         
+        
+/*
+     
+        !*****************************************************************************80
+!
+!! STVL1 computes the modified Struve function L1(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    05 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  SL1, the function value.
+!
+
+*/
+
+
+        __device__ float stvl1(const float x) {
+        
+              float a1,bi1,r,s;
+              float invxx,sl1;
+              float x4;
+              int   k,km;
+              constexpr float pi = 3.14159265358979323846264f;
+              r                  = 1.0f;
+              if(x <= 20.0f) {
+              
+                 s = 0.0f;
+                 for(k=1; k!=60; ++k) {
+                     float tk = (float)k;
+                     float t0 = (4.0f*tk*tk-1.0f);
+                     r        = r*x*x/t0;
+                     s        += r;
+                     if(fabsf(r/s) < 1.0e-12f) break;
+                 }
+                 sl1 = 2.0f/pi*s;
+              } 
+              else {
+                 
+                 s  = 1.0f;
+                 km = (int)(0.5f*x);
+                 km = min(km,25);
+                 invxx = 1.0f/(x*x);
+                 for(k=1; k!=km; ++k) {
+                     float tk = (float)k;
+                     float t0 = __fmaf_ru(2.0f,tk,3.0f);
+                     float t1 = __fmaf_ru(2.0f,tk,1.0f);
+                     r        = r*t0*t1/invxx;
+                     s        += r;
+                     if(fabsf(r/s) < 1.0e-12f) break;
+                 }
+                 x4  = x*x*x*x;
+                 sl1 = __fmaf_ru(2.0f/pi,-1.0f+invxx,3.0f*s/x4);
+                 a1  = expf(x)/sqrtf(2.0f*pi*x);
+                 r   = 1.0f;
+                 bi1 = 1.0f;
+                 for(k=1; k!=16; ++k) {
+                     float tk = (float)k;
+                     float t0 = 2.0f*tk-1.0f;
+                     r        = -0.125f*r*t0*t0/(tk*x);
+                     if(fabsf(r/bi1) < 1.0e-12f) break;
+                 }
+                 sl1 = sl1+a1*b1;
+              }
+              
+              return (sl1);
+        }
+        
                           
           
              
