@@ -3436,6 +3436,107 @@ namespace file_info {
               
               return (sh0);
         }
+        
+        
+/*
+
+     !*****************************************************************************80
+!
+!! STVH1 computes the Struve function H1(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    22 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  SH1, the value of H1(x).
+!   
+
+*/
+
+
+        __device__ float stvh1(const float x) {
+          
+              float a0,by1,p1,q1;
+              float r,s,t,t2;
+              float ta1,sh1;
+              int   k,km; 
+              constexpr float pi = 3.14159265358979323846264f;
+              r                  = 1.0f;
+              if(x <= 20.0f) {
+                 
+                 s0 = 0.0f;
+                 a0 = -0.63661977236758134307554f;
+                 for(k=1; k!=60; ++k) {
+                     float tk = (float)k;
+                     float t0 = (4.0f*tk*tk-1.0f);
+                     r        = -r*x*x/t0;
+                     s        += r;
+                     if(fabsf(r) < fabsf(s)*1.0e-12f) break;
+                 }
+                 sh1 = a0*s;
+             }
+             else {
+                 
+                 s = 1.0f;
+                 if(x <= 50.0f)
+                    km = (int)(0.5f*x);
+                 else
+                    km = 25;
+                 
+                 for(k=1; k!=km; ++k) {
+                     float tk = (float)k;
+                     float t0 = (4.0f*tk*tk-1.0f);
+                     r        = -r*t0/(x*x);
+                     s        += r;
+                     if(fabsf(r) < fabsf(s)*1.0e-12f) break;
+                 }
+                 t  = 4.0f/x;
+                 t2 = t*t;
+                 p1 = (((( 
+                      0.42414e-05f      * t2 
+                    - 0.20092e-04f  )   * t2 
+                    + 0.580759e-04f )   * t2 
+                    - 0.223203e-03f )   * t2 
+                    + 0.29218256e-02f ) * t2 
+                    + 0.3989422819;
+
+                q1 = t * ((((( 
+                   - 0.36594e-05f     * t2 
+                   + 0.1622e-04f )    * t2 
+                   - 0.398708e-04f )  * t2 
+                   + 0.1064741e-03f ) * t2 
+                   - 0.63904e-03f )   * t2 
+                   + 0.0374008364f );
+                ta1 = x-0.75f*pi;
+                by1 = 2.0f/sqrtf(x)*(p1*sinf(ta1)+q1*cosf(ta1));
+                sh1 = 0.63661977236758134307554f*(1.0f+s/(x*x))+by1;
+             }
+             
+             return (sh1);
+        }
+        
                           
           
              
