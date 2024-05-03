@@ -3258,6 +3258,82 @@ namespace file_info {
                   dk[k]    = -sk[k-1]-(tk+1.0f)*invx*sk[k]; 
               }       
        }
+       
+       
+/*
+   
+   !*****************************************************************************80
+!
+!! SPHY computes spherical Bessel functions yn(x) and their derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  SY(0:N), DY(0:N), the values of yn(x) and yn'(x).
+!   
+
+*/
+
+ 
+        __device__ void sphy(const int   n,
+                             const float x,
+                             int &       nm,
+                             float * __restrict__ sy,
+                             float * __restrict__ dy) {
+                             
+              float f,f0,f1,invx;
+              int   k;
+              
+              nm    = n;
+              invx  = 1.0f/x;
+              sy[0] = -cosf(x)*invx;
+              sy[1] = (sy[0]-sinf(x))*invx;
+              f0    = sy[0];
+              f1    = sy[1];
+              #pragma unroll
+              for(k=2; k!=n; ++k) {
+                  float tk = (float)k;
+                  f        = (2.0f*tk-1.0f)*f1*invx-f0;
+                  sy[k]    = f;
+                  if(3.4028234664e+38f <= fabsf(f)) break;
+                  f0 = f1;
+                  f1 = f;
+              } 
+              nm    = k-1;
+              dy[0] = (sinf(x)+cosf(x)*invx)*invx;
+              #pragma unroll
+              for(k=1; k!=nm; ++k) {
+                  float tk = (float)k;
+                  dy[k]    = sy[k-1]-(tk+1.0f)*sy[k]*invx;
+              }                     
+       }
           
              
 
