@@ -3537,6 +3537,99 @@ namespace file_info {
              return (sh1);
         }
         
+        
+        
+/*
+   
+      !*****************************************************************************80
+!
+!! STVL0 computes the modified Struve function L0(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    22 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  SL0, the function value.
+!
+
+*/
+
+
+        __device__ float stvl0(const float x) {
+        
+              float a0,a1,bi0,r;
+              float s,invx;
+              float sl0;
+              int   k,km;
+              constexpr float pi =  3.14159265358979323846264f;
+              s                  = 1.0f;
+              r                  = 1.0f;
+              if(x <= 20.0f) {
+                 a0 = 2.0f*x/pi;
+                 for(k=1; k!=60; ++k) {
+                     float tk = (float)k;
+                     float t0 = (2.0f*tk+1.0f);
+                     float t1 = x/(t0*t0);
+                     r        = r*t1*t1;
+                     s        += r;
+                     if(fabsf(r/s) < 1.0e-12f) break;
+                 }
+                 sl0 = a0*s;
+              }  
+              else {
+                 
+                 if(x < 50.0f) 
+                    km = (int)(0.5f*(x+1.0f));
+                 else
+                    km = 25;   
+                 for(k=1; k!=km; ++k) {
+                     float tk = (float)k;
+                     float t0 = (2.0f*tk-1.0f);
+                     float t1 = x/(t0*t0);
+                     r        = r*t1*t1;
+                     s        += r;
+                     if(fabsf(r/s) < 1.0e-12f) break;
+                 }
+                 
+                 a1 = expf(x)/sqrtf(2.0f*pi*x);
+                 r  = 1.0f;
+                 bi0= 1.0f;
+                 for(k=1; k!=16; ++k) {
+                     float tk = (float)k;
+                     float t0 = (2.0f*tk-1.0f);
+                     r        = 0.125f*r*t0*t0/(tk*x);
+                     bi0      += r;
+                     if(fabsf(r/bi0) < 1.0e-12f) break;
+                 }
+                  bi0 = a1*bi0;
+                  sl0 = -2.0f/(pi*x)*s+bi0;
+              }
+              
+              return (sl0);
+        }
+        
                           
           
              
