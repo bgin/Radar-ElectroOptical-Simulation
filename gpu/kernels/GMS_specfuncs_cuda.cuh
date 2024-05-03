@@ -3334,6 +3334,109 @@ namespace file_info {
                   dy[k]    = sy[k-1]-(tk+1.0f)*sy[k]*invx;
               }                     
        }
+       
+       
+/*
+   
+     !*****************************************************************************80
+!
+!! STVH0 computes the Struve function H0(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    22 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  SH0, the value of H0(x).
+! 
+
+*/
+
+
+        __device__ float stvh0(const float x) {
+        
+              float a0,by0,p0,q0;
+              float r,s,t,t2;
+              float ta0,invx,sh0;
+              int   k,km;
+              constexpr float pi  = 3.14159265358979323846264f;
+              s                   = 1.0f;
+              r                   = 1.0f;
+              if(x<=20.0f) {
+              
+                 a0 = 2.0f*x/pi;
+                 for(k=1; k!=60; ++k) {
+                     float tk = (float)k;
+                     float t0 = 2.0f*tk+1.0f;
+                     r        = -r*x/t0*x/t0;
+                     s        += r;
+                     if(fabsf(r) < fabsf(s)*1.0e-12f) break;
+                 }
+                 sh0 = a0*s;
+              }
+              else {
+              
+                 invx = 1.0f/x;
+                 if(x < 50.0f) 
+                    km = (int)(0.5f*(x+1.0f));
+                 else
+                    km = 25;
+                 
+                 for(k=1; k!=km; ++k) {
+                      float tk = (float)k;
+                      float t0 = (2.0f*tk-1.0f)*invx;
+                      float t1 = t0*t0;
+                      r        = -r*t1;
+                      s        += r;
+                      if(fabsf(r) < fabsf(s)*1.0e-12f) break;
+                  }
+                  t  = 4.0f/x;
+                  t2 = t*t;
+                  p0 = (((( 
+                       - 0.37043e-05f     * t2 
+                       + 0.173565e-04f )  * t2 
+                       - 0.487613e-04f )  * t2 
+                       + 0.17343e-03f )   * t2 
+                       - 0.1753062e-02f ) * t2 
+                       + 0.3989422793f;
+                  
+                  q0 = t * ((((( 
+                         0.32312e-05f     * t2 
+                       - 0.142078e-04f )  * t2 
+                       + 0.342468e-04f )  * t2 
+                       - 0.869791e-04f )  * t2 
+                       + 0.4564324e-03f ) * t2 
+                       - 0.0124669441f );
+                  ta0 = x-0.25f*pi;
+                  by0 = 2.0f/sqrt(x)*(p0*sinf(ta0)+q0*cosf(ta0));
+                  sh0 = 2.0f/(pi*x)*s+by0;
+   
+              }
+              
+              return (sh0);
+        }
+                          
           
              
 
