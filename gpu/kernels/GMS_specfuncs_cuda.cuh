@@ -1093,7 +1093,7 @@ namespace file_info {
                      float tk = (float)k;
                      float t0 = 4.0f*tk-3.0f;
                      float t1 = 2.0f*tk-1.0f;
-                     float t2 = 4.0f*tk+1.0f;
+                     float t2 = __fmaf_ru(4.0f,tk,1.0f);
                      float t3 = t0/tk/t1/t2;
                      cr       = -0.5f*t3*zp2;
                      c        += cr;
@@ -1110,7 +1110,7 @@ namespace file_info {
                      #pragma unroll
                      for(k=m; k!=0; --k) {
                          float tk = (float)k;
-                         float t0 = 2.0f*tk+3.0f;
+                         float t0 = __fmaf_ru(2.0f,tk,3.0f);
                          cf       = t0*cf0/zp-cf1;
                          if(k==(int)((k/2)*2)) c += cf;
                          cf1 = cf0;
@@ -1135,7 +1135,7 @@ namespace file_info {
                      #pragma unroll
                      for(k=1; k!=12; ++k) {
                          float tk = (float)k;
-                         float t0 = 4.0f*tk+1.0f;
+                         float t0 = __fmaf_ru(4.0f,tk+1.0f);
                          float t1 = 4.0f*tk-1.0f;
                          cr = -0.25f*cr*t0*t1*izp2;
                          cg += cr;
@@ -1206,8 +1206,8 @@ namespace file_info {
                     for(k=1; k!=80; ++k) {
                         float tk = (float)k;
                         float t0 = 4.0f*tk-1.0f;
-                        float t1 = 2.0f*tk+1.0f;
-                        float t2 = 4.0f*tk+3.0f;
+                        float t1 = __fmaf_ru(2.0f,tk,1.0f);
+                        float t2 = __fmaf_ru(4.0f,tk,3.0f);
                         float t3 = t0/tk/t1/t2;
                         cr       = -0.5f*cr*t3*zp2;
                         s        += cr;
@@ -1223,7 +1223,7 @@ namespace file_info {
                     cf0 = {1.0e-30f,0.0f};
                     for(k=m; k!=0; --k) {
                         float tk = (float)k;
-                        float t0 = 2.0f*tk+3.0f;
+                        float t0 = __fmaf_ru(2.0f,tk,3.0f);
                         cf       = t0*cf0/zp-cf1;
                         if(k!=(int)((k/2)*2)) s += cf;
                         cf1 = cf0;
@@ -1237,7 +1237,7 @@ namespace file_info {
                     cuda::std::complex<float> izp2 = 1.0f/zp2;
                     for(k=1; k!=20; ++k) {
                         float tk = (float)k;
-                        float t0 = 4.0f*tk+1.0f;
+                        float t0 = __fmaf_ru(4.0f,tk,1.0f);
                         float t1 = 4.0f*tk-3.0f;
                         cr       = -0.25f*cr*t0*t1*izp2;
                         cf       += cr;
@@ -1246,12 +1246,12 @@ namespace file_info {
                     cg = cr;
                     for(k=1; k!=12; ++k) {
                         float tk = (float)k;
-                        float t0 = 4.0f*tk+1.0f;
+                        float t0 = __fmaf_ru(4.0f,tk,1.0f);
                         float t1 = 4.0f*tk-1.0f;
                         cr       = -0.25f*cr*t0*t1*izp2;
                         cg       += cr;
                     }
-                    s = 0.5f-(cf*cos(zp)+cg*sin(zp))/(pi*z);
+                    s = 0.5f-(__fmaf_ru(cf,cos(zp),cg*sin(zp)))/(pi*z);
                  }  
                  zf = s;
                  zd = sin(0.5f*pi*z*z);              
@@ -1338,11 +1338,11 @@ namespace file_info {
                x0 = x+na;
             }
             
-            z1 = sqrtf(x0*x0+y*y);
+            z1 = sqrtf(__fmaf_ru(x0,x0,y*y));
             th = atanf(y/x0);
             gr = (x-0.5f)*logf(z1)-th*y-x0+
                  0.5f*logf(2.0f*pi);
-            gi = th*(x0-0.5f)+y*log(z1)-y;
+            gi = __fmaf_ru(th,(x0-0.5f),y*log(z1)-y);
             
             idx = 0;
             for(k=1, k!=10; ++k) {
@@ -1370,11 +1370,11 @@ namespace file_info {
             if(x1<0.0f) {
                float t0 = pi*x;
                float t1 = pi*y;
-               z1 = sqrtf(x*x+y*y);
+               z1 = sqrtf(__fmaf_ru(x,x,y*y));
                th1= atanf(y/x);
                sr = -sinf(t0)*coshf(t1);
                si = -cosf(t0)*sinhf(t1);
-               z2 = sqrtf(sr*sr+si*si);
+               z2 = sqrtf(__fmaf_ru(sr,sr,si*si));
                if(sr<0.0f) th2 += pi;
                gr = logf(pi/(z1*z2))-gr;
                gi = -th1-th2-gi;
@@ -1523,7 +1523,7 @@ namespace file_info {
                  for(k=1; k!=k0; ++k) {
                      ++idx;
                      float tk = (float)k;
-                     cbi1     = cbi1+b[idx]*pow(zr,tk);
+                     cbi1     = __fmaf_ru(cbi1,b[idx],pow(zr,tk));
                  }
                  cbi1 = ca*cbi1;
               }
@@ -1551,7 +1551,7 @@ namespace file_info {
                  for(k=1; k!=10; ++k) {
                      float tk = (float)k;
                      ++idx;
-                     cbk0     = cbk0+a1[idx]*pow(zr2,tk);
+                     cbk0     = __fmaf_ru(cbk0,a1[idx],pow(zr2,tk));
                  }
                  cbk0 = cb*cbk0/cbi0;
               }
@@ -1644,7 +1644,7 @@ namespace file_info {
                       l3       = k*(k+1)/2+j+1;
                       float tj = (float)j;
                       l4       = (k+1)*(k+2)/2+j+1;
-                      float t0 = (2.0f*tj+tk+1.0f);
+                      float t0 = (__fmaf_ru(2.0f,tj,tk+1.0f));
                       float t1 = (tj+0.5f*tk+0.125f/t0)*a[l3];
                       float t2 = (tj+0.5f*tk-1.0f+0.625f/t0)*a[l3-1];
                       a[l4]    = t1-t2;
@@ -1729,7 +1729,7 @@ namespace file_info {
                         l0      = k*(k+1)/2+1;
                         lf      = l0+k;
                         cf[idx] = a[lf];
-                        for(i=lf-1; i!=l0; --i) cf[idx] = cf[idx]*ct+a[i];
+                        for(i=lf-1; i!=l0; --i) cf[idx] = __fmaf_ru(cf[idx],ct,a[i]);
                         cf[idx] = cf[idx]*pow(ct,tk);  
                       }
                     vr = 1.0f/v0;
@@ -2056,7 +2056,7 @@ namespace file_info {
              for(k=0; k!=nm; ++k) cbi[k] *= cs0;
              
              if(a0<=9.0f) {
-                cbk[0] = -(log(0.5f*z1)+el)*cbi[0]+cs0*csk0;
+                cbk[0] = __fmaf_ru(-(log(0.5f*z1)+el),cbi[0],cs0*csk0);
                 cbk[1] =  (1.0f/z1-cbi[1]*cbk0[0])/cbi[0];
              }  
              else {
@@ -2098,7 +2098,7 @@ namespace file_info {
                 fac = 1.0f;
                 if(imag(z)<0.0f)
                    for(k=0; k!=nm; ++k) {
-                       cbk[k] = fac*cbk[k]+ci*pi*cbi[k];
+                       cbk[k] = __fmaf_ru(fac,cbk[k],ci*pi*cbi[k]);
                        cbi[k] *=fac;
                        fac    = -fac;
                    }
@@ -2337,7 +2337,7 @@ namespace file_info {
                     for(k=0; k!=n; ++k) {
                         float tk = (float)k;
                         cvk      = exp((tk+v0)*pi*ci);
-                        cbk[k]   = cvk*cbk[k]+pi*ci*cbi[k];
+                        cbk[k]   = __fmaf_ru(cvk,cbk[k],pi*ci*cbi[k]);
                         cbi[k]   = cbi[k]/cvk;
                     }
                  }
@@ -2490,7 +2490,7 @@ namespace file_info {
                      if(abs(cp)<abs(cs)*1.0e-15f) break;
                  }
                  
-                 cby0 = rp2*(log(z1/2.0f)+el)*cbj0-rp2*cs;
+                 cby0 = __fmaf_ru(rp2,(log(z1/2.0f),el)*cbj0-rp2*cs;
                  w1   = 0.0f;
                  cr   = {1.0f,0.0f};
                  cs   = {1.0f,0.0f};
@@ -2519,29 +2519,29 @@ namespace file_info {
                  cp0 = {1.0f,0.0f};
                  for(k=1; k!=k0; ++k) {
                      float tk = (float)k;
-                     cp0      = cp0+a[k]*pow(z1,-2.0f*tk);
+                     cp0      = __fmaf_ru(cp0,a[k],pow(z1,-2.0f*tk));
                  }
                  cq0 = -0.125f/z1;
                  for(k=1; k!=k0; ++k) {
                      float tk = (float)k;
-                     cq0      = cq0+b[k]*pow(z1,-2.0f*t-1.0f);
+                     cq0      = __fmaf_ru(cq0,b[k],pow(z1,-2.0f*t-1.0f));
                  }
                  cu   = sqrt(rp2/z1);
                  cbj0 = cu*(cp0*cos(ct1)-cq0*sin(ct1));
-                 cby0 = cu*(cp0*sin(ct1)+cq0*cos(ct1));
+                 cby0 = cu*(__fmaf_ru(cp0,sin(ct1),cq0*cos(ct1)));
                  ct2  = z1-0.75f*pi;
                  cp1  = {1.0f, 0.0f};
                  for(k=1; k!=k0; ++k) {
                      float tk = (float)k;
-                     cp1      = cp1+a1[k]*pow(z1,-2.0f*tk);
+                     cp1      = __fmaf_ru(cp1,a1[k],pow(z1,-2.0f*tk));
                  }
                  cq1 = 0.375f/z1;
                  for(k=1; k!=k0; ++k) {
                      float tk = (float)k;
-                     cq1      = cq1+b1[k]*pow(z1,-2.0f*tk-1.0f);
+                     cq1      = __fmaf_ru(cq1,b1[k],pow(z1,-2.0f*tk-1.0f));
                  }
                  cbj1 = cu*(cp1*cos(ct2)-cq1*sin(ct2));
-                 cby1 = cu*(cp1*sin(ct2)+cq1*cos(ct2));
+                 cby1 = cu*(__fmaf_ru(cp1,sin(ct2),cq1*cos(ct2)));
               }
               
              if(real(z)<0.0f){
@@ -2755,7 +2755,7 @@ namespace file_info {
                  cf1 = {(float)1.0e-30f, 0.0f};
                  for(k=m; k!=0; --k) {
                      float tk = (float)k;
-                     cf = 2.0f*(tk+1.0f)/z*cf1-cf2;
+                     cf = __fmaf_ru(2.0f,tk,1.0f)/z*cf1-cf2;
                      if(k<=nm) 
                         cbj[k] = cf;
                      cf2 = cf1;
@@ -2823,17 +2823,17 @@ namespace file_info {
                  }
                  if(abs(cbj[1])<abs(cbj[0])) {
                     cby[lb+1] = (cbj[lb+1]*cby0-2.0f*cp11/(pi*z))/cbj[0];
-                    cby[lb]   = (cbj[lb]  *cby0+2.0f*cp12/(pi*z))/cbj[0[;
+                    cby[lb]   = (__fmaf_ru(cbj[lb],cby0,2.0f)*cp12/(pi*z))/cbj[0[;
                  }
                  else {
                     cby[lb+1] = (cbj[lb+1]*cby1-2.0f*cp21/(pi*z))/cbj[1];
-                    cby[lb]   = (cbj[lb]  *cby1+2.0f*cp22/(pi*z))/cbj[1];
+                    cby[lb]   = (__fmaf_ru(cbj[lb],cby1,2.0f)*cp22/(pi*z))/cbj[1];
                  }
                 cyl2 = cby[lb+1];
                 cyl1 = cby[lb];
                 for(k=lb-1; k!=0; --k) {
                     float tk = (float)k;
-                    cylk     = 2.0f*(tk+1.0f)/z*cyl1-cyl2;
+                    cylk     = __fmaf_ru(2.0f,tk,1.0f)/z*cyl1-cyl2;
                     cby[k]   = cylk;
                     cyl2     = cyl1;
                     cyl1     = cylk;
@@ -2929,10 +2929,10 @@ namespace file_info {
                          1.0e+00f);
 
            be = 
-              __fmaf__fmaf_ru(__fmaf_ru(0.00526449639e+00f,pk, 
-                  0.04069697526e+00f ),pk, 
-                  0.09200180037e+00f ) * pk 
-                + 0.2499836831e+00f  ) * pk;
+              __fmaf_ru(__fmaf_ru(__fmaf_ru(__fmaf_ru(0.00526449639e+00f,pk, 
+                                             0.04069697526e+00f ),pk, 
+                                     0.09200180037e+00f ),pk, 
+                            0.2499836831e+00f  ),pk);
 
            ce = ae-be*log(pk);                    
      }
