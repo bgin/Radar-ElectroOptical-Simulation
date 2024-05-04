@@ -133,9 +133,9 @@ namespace file_info {
            }
            else if(0.0f<x) {
               ai = pir*xq/sr3*vk1;
-              bi = xq*(pir*vk1+2.0f/sr3*vi1); //! pir * vk1 + 2.0 * invsr3 * vii
+              bi = xq*(__fmaf_ru(pir,vk1,2.0f/sr3*vi1)); //! pir * vk1 + 2.0 * invsr3 * vii
               ad = -xa/sr3*pir*vk2;
-              bd = xa*(pir*vk2+2.0f/sr3*vi2);
+              bd = xa*(__fmaf_ru(pir,vk2,2.0f/sr3*vi2));
            }  
            else {
               ai = 0.5f*xq*(vj1-vy1/sr3);
@@ -220,7 +220,8 @@ namespace file_info {
                 r  = 1.0f;
                 #pragma unroll
                 for(k=1;k!=40;++k) {
-                    r  = r*x/(3.0f*k)*x/(3.0f*k-1.0f)*x;
+                    float tk = (float)tk;
+                    r  = r*x/(3.0f*tk)*x/(3.0f*tk-1.0f)*x;
                     fx = fx+r;
                     if ( fabsf(r)<fabsf(fx)*eps) break;
                 }
@@ -228,17 +229,19 @@ namespace file_info {
                 r  = x;
                 #pragma unroll
                 for(k=1;k!=40;++k) {
-                    r = r*x/(3.0f*k)*x/(3.0f*k+1.0f)*x;
+                    float tk = (float)k;
+                    r = r*x/(3.0f*tk)*x/(__fmaf_ru(3.0f,tk,1.0f))*x;
                     gx = gx+r;
                     if(fabsf(r)<fabsf(gx)*eps) break;
                 }
                  ai = c1 * fx - c2 * gx;
-                 bi = sr3 * ( c1 * fx + c2 * gx );
+                 bi = sr3 * ( __fmaf_ru(c1,fx ,c2 * gx) );
                  df = 0.5f * x * x;
                  r = df;
                  #pragma unroll
                 for(k=1;k!=40;++k) {
-                    r = r * x / ( 3.0f * k ) * x / ( 3.0f * k + 2.0f ) * x;
+                    float tk = (float)k;
+                    r = r * x / ( 3.0f * tk ) * x / ( __fmaf_ru(3.0f,tk,2.0f) ) * x;
                     df = df + r; 
                     if (fabsf( r ) < fabsf( df ) * eps ) break; 
                 }
@@ -246,27 +249,29 @@ namespace file_info {
                 r  = 1.0f;
                 #pragma unroll
                 for(k=1;k!=40;++k) {
-                    r = r * x / ( 3.0f * k ) * x / ( 3.0f * k - 2.0f ) * x;
+                    float tk = (float)k;
+                    r = r * x / ( 3.0f * tk ) * x / ( 3.0f * tk - 2.0f ) * x;
                     dg = dg + r;
                     if ( fabsf( r ) < fabsf( dg ) * eps ) break;
                 }
                  ad = c1 * df - c2 * dg;
-                 bd = sr3 * ( c1 * df + c2 * dg );
+                 bd = sr3 * ( __fmaf_ru(c1,df,c2 * dg) );
              }
              else {
                  xe = xa * xq / 1.5f;
-                 xr1 = 1.0 / xe;
-                 xar = 1.0 / xq;
+                 xr1 = 1.0f / xe;
+                 xar = 1.0f / xq;
                  xf = sqrtf( xar );
                  rp = 0.5641895835477563f;
                  r = 1.0f;
                  #pragma unroll
                  for(k=1;k!=40;++k) {
-                     r = r * ( 6.0 * k - 1.0 ) * 
-                     0.00462962962962962962963f * ( 6.0 * k - 3.0 ) /
-                     k * ( 6.0 * k - 5.0 ) / ( 2.0 * k - 1.0 );
+                     float tk = (float)k;
+                     r = r * ( 6.0f * tk - 1.0f ) * 
+                     0.00462962962962962962963f * ( 6.0f * tk - 3.0f ) /
+                     k * ( 6.0f * tk - 5.0f ) / ( 2.0f * tk - 1.0f );
                      ck[k] = r;
-                     dk[k] = - ( 6.0 * k + 1.0 ) / ( 6.0 * k - 1.0 ) * ck[k];
+                     dk[k] = - ( 6.0f * tk + 1.0f ) / ( 6.0f * tk - 1.0f ) * ck[k];
                  }
                  km = (int)(24.5f-xa);
                  if(xa<6.0f)  km = 14;
@@ -291,9 +296,9 @@ namespace file_info {
                          sbd = sbd + dk[k] * r;
                     }
                     xp1 = expf( - xe );
-                    ai = 0.5 * rp * xf * xp1 * sai;
+                    ai = 0.5f * rp * xf * xp1 * sai;
                     bi = rp * xf / xp1 * sbi;
-                    ad = -0.5 * rp / xf * xp1 * sad;
+                    ad = -0.5f * rp / xf * xp1 * sad;
                     bd = rp / xf / xp1 * sbd;
                   } 
                   else {
@@ -319,8 +324,8 @@ namespace file_info {
                         sdb = sdb + dk[2*k+1] * r;
                     }
                     ai = rp * xf * ( xss * ssa - xcs * ssb );
-                    bi = rp * xf * ( xcs * ssa + xss * ssb );
-                    ad = -rp / xf * ( xcs * sda + xss * sdb );
+                    bi = rp * xf * ( __fmaf_ru(xcs,ssa,xss * ssb) );
+                    ad = -rp / xf * ( __fmaf_ru(xcs,sda,xss * sdb) );
                     bd =  rp / xf * ( xss * sda - xcs * sdb );
                   }
              }
@@ -476,23 +481,23 @@ namespace file_info {
                        for(k=1;k!=k0;++k) {
                            const float kidx = (float)k;
                            float t0 = 4.0f * kidx - 1.0f;
-                           float t1 = 4.0f * kidx + 1.0f;
+                           float t1 = __fmaf_ru(4.0f,kidx,1.0f);
                            rq = -0.78125e-2f * rq * ( vv - t0*t0 ) *
-                           ( vv - t1*t1 ) / ( k * ( 2.0 * k + 1.0 ) * x2 );
+                           ( vv - t1*t1 ) / ( k * ( __fmaf_ru(2.0f,kidx,1.0f) ) * x2 );
                            qx += rq;
                        }
                        qx = 0.125f * ( vv - 1.0f ) * qx / x;
-                       xk = x - ( 0.5f * l * 0.3333333333333333f + 0.25f ) * pi;
+                       xk = x - ( __fmaf_ru(0.5f,(l * 0.3333333333333333f),0.25f ) * pi;
                        a0 = sqrtf( rp2 / x );
                        ck = cosf( xk );
                        sk = sinf( xk );
                        if(l == 1) {
                            vj1 = a0 * ( px * ck - qx * sk );
-                           vy1 = a0 * ( px * sk + qx * ck );
+                           vy1 = a0 * ( __fmaf_ru(px,sk,qx * ck) );
                        }
                        else {
                            vj2 = a0 * ( px * ck - qx * sk );
-                           vy2 = a0 * ( px * sk + qx * ck )
+                           vy2 = a0 * ( __fmaf_ru(px,sk,qx * ck) )
                        }
                   }
              }
@@ -732,7 +737,7 @@ namespace file_info {
                     #pragma unroll
                     for(k=25;k!=1;--k) {
                         float gk = g[k];
-                        gr = gr*z+gk;
+                        gr = __fmaf_ru(gr,z,gk);
                     }
                     ga = 1.0f/(gr*z);
                     if(1.0f<fabsf(x)) {
@@ -3624,7 +3629,7 @@ namespace file_info {
                      if(fabsf(r/bi0) < 1.0e-12f) break;
                  }
                   bi0 = a1*bi0;
-                  sl0 = -2.0f/(pi*x)*s+bi0;
+                  sl0 = -2.0f/__fmaf_ru((pi*x),s,bi0);
               }
               
               return (sl0);
@@ -3720,6 +3725,148 @@ namespace file_info {
               return (sl1);
         }
         
+        
+/*
+    
+      !*****************************************************************************80
+!
+!! STVHV computes the Struve function Hv(x) with arbitrary order v.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    24 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  V, the order of the function.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  HV, the value of Hv(x).
+!
+    
+*/        
+        
+        __device__ float stvhv(const float v,
+                               const float x) {
+               
+               float bf,bf0,bf1;
+               float by0,by1,byv;
+               float ga,gb,pu0,pu1;
+               float qu0,qu1,r1,r2;
+               float s,s0,sa,sr;
+               float t0,t1,u,u0;
+               float v,va,vb,vt;
+               int   k,l,n;
+               constexpr float pi = 3.141592653589793f;
+               
+               if(x<=20.0f) {
+                  
+                  v0 = v+1.5f;
+                  ga = gamma(v0);
+                  s  = 2.0f/(1.77245385090551602729817f*ga);
+                  r1 = 1.0f;
+                  for(k=1; k!=100; ++k) {
+                      float tk = (float)k;
+                      va       = tk+1.5f;
+                      ga       = gamma(va);
+                      vb       = v+tk+1.5f;
+                      gb       = gamma(vb);
+                      r1       = -r1*(0.5f*x)*(0.5f*x);
+                      r2       = r1/(ga*gb);
+                      s        += r2;
+                      if(fabsf(r2)<fabsf(s)*1.0e-12f) break;
+                  }
+                  hv = pow((0.5f*x),(v+1.0f))*s;
+               }
+               else {
+                  
+                    sa = pow(0.5f*x,v-1.0f)/pi;
+                    v0 = v+0.5f;
+                    ga = gamma(v0);
+                    s  = 1.77245385090551602729817f/ga;
+                    r1 = 1.0f;
+                    for(k=1; k!=12; ++k) {
+                        float tk = (float)k;
+                        va       = tk+0.5f;
+                        ga       = gamma(va);
+                        vb       = -tk+v+0.5f;
+                        gb       = gamma(vb);
+                        r1       = r1/(0.5f*x)*(0.5f*x);
+                        s        = s+r1*ga/gb;
+                    }
+                    
+                    s0 = sa*s;
+                    u  = fabsf(v);
+                    n  = (int)u;
+                    u0 = u-n;
+                    
+                    for(l=0; l!=1; ++l) {
+                        float tl = (float)l;
+                        vt       = 4.0f*(u0+l)*(u0+l);
+                        r1       = 1.0f;
+                        pu1      = 1.0f;
+                        for(k=1; k!=12; ++k) {
+                            float tk   = (float)k;
+                            float tmp0 = (4.0f*tk-3.0f);
+                            float tmp1 = (4.0f*tk-1.0f);
+                            float tmp2 = (2.0f*tk-1.0f);
+                            r1         = -0.0078125f*r1*tmp0*tmp1/(tmp2*tk*x*x);
+                            pu1        += r1;
+                        }
+                        qu1 = 1.0f;
+                        r2  = 1.0f;
+                        for(k=1; k!=12; ++k) {
+                            float tk   = (float)k;
+                            float tmp0 = (4.0f*tk-1.0f);
+                            float tmp1 = __fmaf_ru(4.0f,tk,1.0f);
+                            float tmp2 = __fmaf_ru(2.0f,tk,1.0f);
+                            r2         = -0.0078125f*r2*tmp0*tmp1/(tmp2*tk*x*x);
+                            pu1        += r1;
+                        }
+                        qu1 = 0.125f*(vt-1.0f)/x*qu1;
+                        if(l==0) {
+                           pu0 = pu1;
+                           qu0 = qu1;
+                        }
+                    }
+                    
+                    t0  = x- __fmaf_ru(0.5f,u0,0.25f)*pi;
+                    t1  = x- __fmaf_ru(0.5f,u0,0.75f)*pi;
+                    sr  = sqrtf(2.0f/(pi*x));
+                    by0 = sr*__fmaf_ru(pu0,sinf(t0),qu0*cosf(t0));
+                    by1 = sr*__fmaf_ru(pu1,sinf(t1),qu1*cosf(t1));
+                    bf0 = by0;
+                    bf1 = by1;
+                    if(n==0)
+                       byv = by0;
+                    else if(n==1)
+                       byv = by1;
+                    else
+                       byv = bf;
+                    hv = byv + s0;
+               }
+                 
+                return (hv);                     
+       }
                           
           
              
