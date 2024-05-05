@@ -3867,6 +3867,145 @@ namespace file_info {
                  
                 return (hv);                     
        }
+       
+       
+/*
+     !*****************************************************************************80
+!
+!! STVLV computes the modified Struve function Lv(x) with arbitary order.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    04 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  V, the order of Lv(x).
+!
+!    Input, real(kind=sp) ::  X, the argument of Lv(x).
+!
+!    Output, real(kind=sp) ::  SLV, the value of Lv(x).
+!
+*/
+
+
+        __device__ float stvlv(const float v,
+                               const float x) {
+                               
+              
+              float bf,bf0,bf1,biv;
+              float biv0,ga,gb,r;
+              float r1,r2,s,s0;
+              float sa,u,u0,v;
+              float v0,va,vb,vt;
+              float slv;
+              int k,l,n;
+              constexpr float pi =  3.14159265358979323846264f;
+              
+              if(x==0.0f) {
+              
+                  if(-1.0f<v || (int)v-v == 0.5f)
+                      slv = 0.0f;
+                  else if(v < -1.0f)
+                      slv = ::cuda::std::numeric_limits<float>::max();
+                  else if(v == -1.0f)
+                      slv = 0.63661977236758134307554f;
+                      
+             }    
+              else if(x <= 40.0f) {
+                  
+                  v0 = v+1.5f;
+                  ga = gamma(v0);
+                  s  = 2.0f/(1.77245385090551602729817f*ga);
+                  r1 = 1.0f;
+                  for(k=1; k!=100; ++k) {
+                      float tk = (float)k;
+                      va       = tk+1.5f;
+                      ga       = gamma(va);
+                      vb       = v+t4+1.5f;
+                      gb       = gamma(vb);
+                      r1       = r1*(0.5f*x)*(0.5f*x);
+                      r2       = r1/(ga*gb);
+                      s        += r2;
+                      if(fabsf(r2/s)<1.0e-12f) break;
+                  }
+                  slv = pow(0.5f*x,v+1.0f)*s;
+             }   
+             else {
+                  
+                  sa = -1.0f/pi*pow(0.5f*x,v-1.0f);
+                  v0 = v+0.5f;
+                  ga = gamma(v0);
+                  s  = -1.77245385090551602729817f/ga;
+                  r1 = -1.0f;
+                  for(k=1; k!=12; ++k) {
+                      float tk = (float)k;
+                      va       = tk+0.5f;
+                      ga       = gamma(va);
+                      vb       = -tk+v+0.5f;
+                      gb       = gamma(vb);
+                      r1       = r1/(0.5f*x)*(0.5f*x);
+                      s        = s+r1*ga/gb;
+                  }
+                    s0 = sa*s;
+                    u  = fabsf(v);
+                    n  = (int)u;
+                    u0 = u-n;
+                    
+                    for(l=0; l!=1; ++l) {
+                    
+                        float tl = (float)l;
+                        vt       =  u0+tl;
+                        r        = 1.0f;
+                        biv      = 1.0f;
+                        for(k=1; k!=16; ++k) {
+                            float tk = (float)k;
+                            float t0 = 2.0f*tk-1.0f;
+                            float t1 = 4.0f*vt*vt;
+                            r        = -0.125f*r*t1*t0/(tk*x);
+                            biv      += r;
+                            if(fabsf(r/biv)<1.0e-12f) break;
+                        }
+                        if(l==0) biv0 = biv;
+                    }
+                    
+                      bf0 = biv0;
+                      bf1 = biv;
+                      for(k=2; k!=n; ++k) {
+                          float tk = (float)k;
+                          float t0 = tk-1.0f+u0;
+                          bf       = -2.0f*t0/x*bf1+bf0;
+                          bf0      = bf1;
+                          bf1      = bf;
+                      }
+                      
+                      if(n==0)
+                         biv = biv0;
+                      else if(1<n)
+                         biv = bf;
+                      slv = expf(x)/sqrtf(2.0f*pi*x)*biv+s0;
+             }    
+             
+             return (slv);          
+      }
                           
           
              
