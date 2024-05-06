@@ -538,6 +538,70 @@ rvv_pcg32_fast(const vuint64m1_t seed,
     return (__riscv_vreinterpret_v_u64m1_u32m1(__riscv_vsrl_vx_u64m1(x,22+count,vl)));
 }
 
+__attribute__((hot))
+__attribute__((aligned(32)))
+__attribute__((always_inline))
+inline static
+vuint32m1_t rvv_well19937a(vuint32m1_t * __restrict__ state,
+                           size_t                      vl) {
+    
+    const vuint32m1_t MASKU = __riscv_vsrl_vx_u32m1(__riscv_vmv_v_x_u32m1(0xffffffffU,vl),1,vl);
+    const vuint32m1_t MASKL = __riscv_vnot_v_u32m1(MASKU,vl);                                             
+    const 
+    const int32_t W = 32;
+    const int32_t R = 624;
+    const int32_t P = 31;
+    const int32_t M1= 70;
+    const int32_t M2= 179;
+    const int32_t M3= 449;
+    #define STATE(i) (sptr[(i)<=loc ? -(i) : R-(i)])
+    static int32_t loc = 0;
+    vuint32m1_t * __restrict__ sptr = state + loc;
+    register vuint32m1_t rval;
+    register vuint32m1_t m1 = sptr[loc < R - M1 ? M1 : M1 - R];
+    register vuint32m1_t t0 = __riscv_vxor_vv_u32m1(m1,__riscv_vsrl_vx_u32m1(m1,27,vl),vl);
+    register vuint32m1_t t1 = __riscv_vxor_vv_u32m1(*sptr,__riscv_vsll_vx_u32m1(*sptr,25,vl),vl);
+    register vuint32m1_t z1 = __riscv_vxor_vv_u32m1(t0,t1,vl);
+    register vuint32m1_t m3 = sptr[loc < R - M3 ? M3 : M3 - R];
+    t0                      = __riscv_vxor_vv_u32m1(m3,__riscv_vsrl_vx_u32m1(m3,1,vl),vl);
+    t1                      = sptr[loc < R - M2 ? M2 : M2 - R];
+    register vuint32m1_t z2 = __riscv_vxor_vv_u32m1(__riscv_vsrl_vx_u32m1(t1,9,vl),t0,vl);
+    if(loc >= 2)
+       rval = __riscv_vor_vv_u32m1(__riscv_vand_vv_u32m1(sptr[-1],MASKL,vl),
+                                   __riscv_vand_vv_u32m1(sptr[-2],MASKU,vl),vl);
+    else
+       rval = __riscv_vor_vv_u32m1(__riscv_vand_vv_u32m1(STATE(1),MASKL,vl),
+                                   __riscv_vand_vv_u32m1(STATE(2),MASKU,vl),vl);
+    *sptr   = __riscv_vxor_vv_u32m1(z1,z2,vl);
+     t0     = __riscv_vxor_vv_u32m1(__riscv_vsll_vx_u32m1(z1,9,vl),
+                                    __riscv_vsll_vx_u32m1(z2,21,vl),vl);
+     t1     = __riscv_vsll_vx_u32m1(*sptr,21,vl);
+     rval   = __riscv_vxor_vv_u32m1(rval,__riscv_vxor_vx_u32m1(t0,t1,vl),vl);
+     if(!loc)
+        loc = R-1;
+     else
+         loc--;
+     state[loc] = rval;
+     return (rval);
+}
+
+
+__attribute__((hot))
+__attribute__((aligned(32)))
+__attribute__((always_inline))
+inline static
+vuint32m1_t rvv_well19937at(vuint32m1_t * __restrict__ state,
+                            size_t                      vl) {
+        
+        register vuint32m1_t rval    = rvv_well19937a(state,vl);
+        rval                         = __riscv_vxor_vv_u32m1(rval,__riscv_vand_vx_u32m1(
+                                                                __riscv_vsll_vx_u32m1(rval,7,vl),0xe46e1700U,vl),vl);
+        rval                         = __riscv_vxor_vv_u32m1(rval,__riscv_vand_vx_u32m1(
+                                                                __riscv_vsll_vx_u32m1(rval,15,vl),0x9b868000U,vl),vl);
+        return (rval);
+} 
+
+
 
 
     
