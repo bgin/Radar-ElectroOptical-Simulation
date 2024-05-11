@@ -4847,6 +4847,336 @@ L300:
                    
                    return (result);     
        }
+       
+       
+       
+/*
+    !*****************************************************************************80
+!
+!! CALJY0 computes various J0 and Y0 Bessel functions.
+!
+!  Discussion:
+!
+!    This routine computes zero-order Bessel functions of the first and
+!    second kind (J0 and Y0), for real arguments X, where 0 < X <= XMAX
+!    for Y0, and |X| <= XMAX for J0.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    John Hart, Ward Cheney, Charles Lawson, Hans Maehly,
+!    Charles Mesztenyi, John Rice, Henry Thatcher,
+!    Christoph Witzgall,
+!    Computer Approximations,
+!    Wiley, 1968,
+!    LC: QA297.C64.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  ARG, the argument.  If JINT = 0, ARG
+!    must satisfy
+!     -XMAX < ARG < XMAX;
+!    If JINT = 1, then ARG must satisfy
+!      0 < ARG < XMAX.
+!
+!    Output, real(kind=sp) ::  RESULT, the value of the function,
+!    which depends on the input value of JINT:
+!    0, RESULT = J0(x);
+!    1, RESULT = Y0(x);
+!
+!    Input, integer(kind=i4) :: JINT, chooses the function to be computed.
+!    0, J0(x);
+!    1, Y0(x);
+*/  
+     
+       
+        __device__ float caljy0(const float arg,
+                                const int   jint) {
+                                
+               
+               const float plg[4] = {
+                      -2.4562334077563243311e+01f,2.3642701335621505212e+02f,
+                      -5.4989956895857911039e+02f,3.5687548468071500413e+02f};
+               const float qlg[4] = {
+                       -3.5553900764052419184e+01f,1.9400230218539473193e+02f, 
+                       -3.3442903192607538956e+02f,1.7843774234035750207e+02f};
+               const float pj0[7] = {
+                        6.6302997904833794242e+06f,-6.2140700423540120665e+08f,
+                        2.7282507878605942706e+10f,-4.1298668500990866786e+11f,
+                       -1.2117036164593528341e-01f, 1.0344222815443188943e+02f,
+                       -3.6629814655107086448e+04f};
+               const float qj0[5] = {
+                        4.5612696224219938200e+05f, 1.3985097372263433271e+08f,
+                        2.6328198300859648632e+10f, 2.3883787996332290397e+12f,
+                        9.3614022392337710626e+02f};                      
+               const float pj1[8] = {
+                        4.4176707025325087628e+03f, 1.1725046279757103576e+04f,
+                        1.0341910641583726701e+04f,-7.2879702464464618998e+03f,
+                       -1.2254078161378989535e+04f,-1.8319397969392084011e+03f, 
+                        4.8591703355916499363e+01f, 7.4321196680624245801e+02f};
+               const float qj1[7] = {
+                        3.3307310774649071172e+02f,-2.9458766545509337327e+03f,
+                        1.8680990008359188352e+04f,-8.4055062591169562211e+04f,
+                        2.4599102262586308984e+05f,-3.5783478026152301072e+05f, 
+                       -2.5258076240801555057e+01f};
+               const float py0[6] = {
+                        1.0102532948020907590e+04f,-2.1287548474401797963e+06f,
+                        2.0422274357376619816e+08f,-8.3716255451260504098e+09f,
+                        1.0723538782003176831e+11f,-1.8402381979244993524e+01f};
+               const float qy0[6] = {
+                        6.6475986689240190091e+02f, 2.3889393209447253406e+05f,
+                        5.5662956624278251596e+07f, 8.1617187777290363573e+09f,
+                        5.8873865738997033405e+11f};
+               const float py1[7] = {
+                       -1.4566865832663635920e+04f, 4.6905288611678631510e+06f, 
+                       -6.9590439394619619534e+08f, 4.3600098638603061642e+10f, 
+                       -5.5107435206722644429e+11f,-2.2213976967566192242e+13f, 
+                        1.7427031242901594547e+01f};
+               const float qy1[6] = {
+                        8.3030857612070288823e+02f, 4.0669982352539552018e+05f, 
+                        1.3960202770986831075e+08f, 3.4015103849971240096e+10f, 
+                        5.4266824419412347550e+12f, 4.3386146580707264428e+14f};
+               const float py2[8] = {
+                        2.1363534169313901632e+04f,-1.0085539923498211426e+07f,
+                        2.1958827170518100757e+09f,-1.9363051266772083678e+11f,
+                       -1.2829912364088687306e+11f, 6.7016641869173237784e+14f,
+                       -8.0728726905150210443e+15f,-1.7439661319197499338e+01f};
+               const float qy2[7] = {
+                         8.7903362168128450017e+02f, 5.3924739209768057030e+05f, 
+                         2.4727219475672302327e+08f, 8.6926121104209825246e+10f, 
+                         2.2598377924042897629e+13f, 3.9272425569640309819e+15f, 
+                         3.4563724628846457519e+17f};
+               const float p0[6]  = {
+                         3.4806486443249270347e+03f, 2.1170523380864944322e+04f, 
+                         4.1345386639580765797e+04f, 2.2779090197304684302e+04f, 
+                         8.8961548424210455236e-01f, 1.5376201909008354296e+02f};
+               const float q0[5]  = {
+                         3.5028735138235608207e+03f, 2.1215350561880115730e+04f,
+                         4.1370412495510416640e+04f, 2.2779090197304684318e+04f, 
+                         1.5711159858080893649e+02f};
+               const float p1[6]  = {
+                        -2.2300261666214198472e+01f,-1.1183429920482737611e+02f,
+                        -1.8591953644342993800e+02f,-8.9226600200800094098e+01f,
+                        -8.8033303048680751817e-03f,-1.2441026745835638459e+00f};
+               const float q1[5]  = {
+                         1.4887231232283756582e+03f, 7.2642780169211018836e+03f,
+                         1.1951131543434613647e+04f, 5.7105024128512061905e+03f,
+                         9.0593769594993125859e+01f}; 
+              constexpr float zero   = 0.0f;
+              constexpr float one    = 1.0f;
+              constexpr float three  = 3.0f;
+              constexpr float four   = 4.0f;
+              constexpr float eight  = 8.0f;
+              constexpr float five5  = 5.5f;
+              constexpr float sixty4 = 64.0f
+              constexpr float oneov8 = 0.125f;
+              constexpr float p17    = 1.716e-1f;
+              constexpr float two56  = 256.0f;
+              constexpr float cons   = -1.1593151565841244881e-1f;
+              constexpr float pi2    = 6.3661977236758134308e-1f;
+              constexpr float twopi  = 6.2831853071795864769f;
+              constexpr float twopi1 = 6.28125f;
+              constexpr float twopi2 = 1.9353071795864769253e-3f;   
+              constexpr float xmax   = 1.07e+09f;
+              constexpr float xsmall = 9.31e-10f;
+              constexpr float xinf   = 1.7e+38f;
+//!
+//!  Zeroes of Bessel functions
+//!
+              constexpr float xj0    = 2.4048255576957727686e+0f;
+              constexpr float xj1    = 5.5200781102863106496e+0f;
+              constexpr float xy0    = 8.9357696627916752158e-1f;
+              constexpr float xy1    = 3.9576784193148578684e+0f;
+              constexpr float xy2    = 7.0860510603017726976e+0f;
+              constexpr float xj01   = 616.0e+0f;
+              constexpr float xj02   = -1.4244423042272313784e-03f;
+              constexpr float xj11   = 1413.0e+0f;
+              constexpr float xj12   = 5.4686028631064959660e-04f;
+              constexpr float xy01   = 228.0e+0f;
+              constexpr float xy02   = 2.9519662791675215849e-03f;
+              constexpr float xy11   = 1013.0e+0f;
+              constexpr float xy12   = 6.4716931485786837568e-04f;
+              constexpr float xy21   = 1814.0e+0f;
+              constexpr float xy22   = 1.1356030177269762362e-04f;
+              float           arg,ax,down,prod;
+              float           resj,r0,r1,up;
+              float           w,wsq,xden,z,zsq;
+              float           result;
+              
+              ax  = fabsf(arg);
+              if(jint==1 && arg<=zero)
+                 return (-xinf);
+              else if(xmax<ax)
+                 return (zero);
+              if(eight<ax) goto L800;
+              
+              if(ax<=xsmall) {
+                 if(jint==0)
+                    return (zero);
+                 else
+                    return (pi2*logf(ax)+cons);
+             }
+             
+              //  Calculate J0 for appropriate interval, preserving
+              //!  accuracy near the zero of J0.  
+              zsq = ax*ax;
+              if(ax<=four) {
+                 xnum = __fmaf_ru(__fmaf_ru(pj0[4],zsq,pj0[5]),zsq,pj0[6]);
+                 xden = zsq+qj0[4];
+                 xnum = __fmaf_ru(xnum,zsq,pj0[0]);
+                 xden = __fmaf_ru(xden,zsq,qj0[0]);
+                 prod = ((ax-xj01/two56)-xj02)*(ax+xj0);
+              }
+              else {
+                 wsq  = one-zsq/sixty4;
+                 xnum = __fmaf_ru(pj1[6],wsq,pj1[7]);
+                 xden = wsq+qj1[6];
+                 xnum = __fmaf_ru(xnum,wsq,pj1[0]);
+                 xden = __fmaf_ru(xden,wsq,qj1[0]);
+                 xnum = __fmaf_ru(xnum,wsq,pj1[1]);
+                 xden = __fmaf_ru(xden,wsq,qj1[1]);
+                 xnum = __fmaf_ru(xnum,wsq,pj1[2]);
+                 xden = __fmaf_ru(xden,wsq,qj1[2]);
+                 xnum = __fmaf_ru(xnum,wsq,pj1[3]);
+                 xden = __fmaf_ru(xden,wsq,qj1[3]);
+                 xnum = __fmaf_ru(xnum,wsq,pj1[4]);
+                 xden = __fmaf_ru(xden,wsq,qj1[4]);
+                 xnum = __fmaf_ru(xnum,wsq,pj1[5]);
+                 xden = __fmaf_ru(xden,wsq,qj1[5]);
+                 prod = (ax+xj1)*((ax-xj11/two56)-xj12);
+              }
+              result  = prod*xnum/xden;
+              if(jint==0) return (result);
+              
+              /*
+                     Calculate Y0.  First find  RESJ = pi/2 ln(x/xn) J0(x),
+                     !  where xn is a zero of Y0.
+              */
+              
+              if(ax<=three) {
+                 up = (ax-xy01/two56)-xy02;
+                 xy = xy0;
+              }
+              else if(ax<=five5) {
+                 up = (ax-xy11/two56)-xy12;
+                 xy = xy1;
+              }
+              else {
+                 up = (ax-xy21/two56)-xy22;
+                 xy = xy2;
+              }
+              down = ax+xy;
+              
+              if(fabsf(up)<p17*down) {
+                 w    = up/down;
+                 wsq  = w*w;
+                 xnum = plg[0];
+                 xden = wsq+qlg[0];
+                 xnum = __fmaf_ru(xnum,wsq,plg[1]);
+                 xden = __fmaf_ru(xden,wsq,qlg[1]);
+                 xnum = __fmaf_ru(xnum,wsq,plg[2]);
+                 xden = __fmaf_ru(xden,wsq,qlg[2]);
+                 xnum = __fmaf_ru(xnum,wsq,plg[3]);
+                 xden = __fmaf_ru(xden,wsq,qlg[3]);
+                 resj = pi2*result*w*xnum/xden;
+              }
+              else {
+                 resj = pi2*result*logf(ax/xy);
+              }
+              /*
+                   Now calculate Y0 for appropriate interval, preserving
+                   !  accuracy near the zero of Y0.
+              */
+              
+              if(ax<=three) {
+                 xnum = __fmaf_ru(py0[5],zsq,py0[0]);
+                 xden = zsq+qy0[0];
+                 xnum = __fmaf_ru(xnum,zsq,py0[1]);
+                 xden = __fmaf_ru(xden,zsq,qy0[1]);
+                 xnum = __fmaf_ru(xnum,zsq,py0[2]);
+                 xden = __fmaf_ru(xden,zsq,qy0[2]);
+                 xnum = __fmaf_ru(xnum,zsq,py0[3]);
+                 xden = __fmaf_ru(xden,zsq,qy0[3]);
+                 xnum = __fmaf_ru(xnum,zsq,py0[4]);
+                 xden = __fmaf_ru(xden,zsq,qy0[4]);
+            }
+             else if(ax<=five5) {
+                  xnum = __fmaf_ru(py1[6],zsq,py1[0]);
+                  xden = zsq+qy1[0];
+                  xnum = __fmaf_ru(xnum,zsq,py1[1]);
+                  xden = __fmaf_ru(xden,zsq,qy1[1]);
+                  xnum = __fmaf_ru(xnum,zsq,py1[2]);
+                  xden = __fmaf_ru(xden,zsq,qy1[2]);
+                  xnum = __fmaf_ru(xnum,zsq,py1[3]);
+                  xden = __fmaf_ru(xden,zsq,qy1[3]);
+                  xnum = __fmaf_ru(xnum,zsq,py1[4]);
+                  xden = __fmaf_ru(xden,zsq,qy1[4]);
+                  xnum = __fmaf_ru(xnum,zsq,py1[5]);
+                  xden = __fmaf_ru(xden,zsq,qy1[5]);
+            }
+            else {
+                  xnum = __fmaf_ru(py2[7],zsq,py2[0]);
+                  xden = zsq + qy2[0];
+                  xnum = __fmaf_ru(xnum,zsq,py2[1]);
+                  xden = __fmaf_ru(xden,zsq,qy2[1]);
+                  xnum = __fmaf_ru(xnum,zsq,py2[2]);
+                  xden = __fmaf_ru(xden,zsq,qy2[2]);
+                  xnum = __fmaf_ru(xnum,zsq,py2[3]);
+                  xden = __fmaf_ru(xden,zsq,qy2[3]);
+                  xnum = __fmaf_ru(xnum,zsq,py2[4]);
+                  xden = __fmaf_ru(xden,zsq,qy2[4]);
+                  xnum = __fmaf_ru(xnum,zsq,py2[5]);
+                  xden = __fmaf_ru(xden,zsq,qy2[5]);
+                  xnum = __fmaf_ru(xnum,zsq,py2[6]);
+                  xden = __fmaf_ru(xden,zsq,qy2[6]);
+            }
+            result = resj+up*down*xnum/xden;
+            return (result);
+L800:
+            z = eight/ax;
+            w = ax/twopi;
+            w = (int)w+oneov8;
+            w = (ax-w*twopi1)-w*twopi2;
+            zsq = z*z;
+            xnum = __fmaf_ru(p0[4],zsq,p0[5]);
+            xden = zsq+q0[4];
+            up   = __fmaf_ru(p1[4],zsq,p1[5]);
+            down = zsq+q1[4];
+            xnum = __fmaf_ru(xnum,zsq,p0[0]);
+            xden = __fmaf_ru(xden,zsq,q0[0]);
+            xnum = __fmaf_ru(xnum,zsq,p0[1]);
+            xden = __fmaf_ru(xden,zsq,q0[1]);
+            xnum = __fmaf_ru(xnum,zsq,p0[2]);
+            xden = __fmaf_ru(xden,zsq,q0[2]);
+            xnum = __fmaf_ru(xnum,zsq,p0[3]);
+            xden = __fmaf_ru(xden,zsq,q0[3]);
+            r0   = xnum/xden;
+            r1   = up/down;
+
+            if(jint==0 ){
+               result = sqrtf(pi2/ax) *
+                          (r0* cosf(w)-z*r1*sinf(w));
+               return (result);
+           }
+            else {
+               result = sqrtf(pi2/ax) *
+                          (r0*sinf(w)+z*r1*cosf(w));
+               return (result);
+         }
+ 
+      }
           
              
 
