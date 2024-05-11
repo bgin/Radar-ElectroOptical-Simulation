@@ -4654,6 +4654,200 @@ namespace file_info {
                   return (result);
           }  
           
+          
+/*
+       !*****************************************************************************80
+!
+!! CALERF computes various forms of the error function.
+!
+!  Discussion:
+!
+!    This routine evaluates erf(x), erfc(x), and exp(x*x)*erfc(x)
+!    for a real argument x.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody,
+!    Rational Chebyshev Approximations for the Error Function,
+!    Mathematics of Computation,
+!    Volume 23, Number 107, July 1969, pages 631-638.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  ARG, the argument.  If JINT is 1, the
+!    argument must be less than XBIG.  If JINT is 2, the argument
+!    must lie between XNEG and XMAX.
+!
+!    Output, real(kind=sp) ::  RESULT, the value of the function,
+!    which depends on the input value of JINT:
+!    0, RESULT = erf(x);
+!    1, RESULT = erfc(x) = 1 - erf(x);
+!    2, RESULT = exp(x*x)*erfc(x) = exp(x*x) - erf(x*x)*erf(x).
+!
+!    Input, integer(kind=i4) :: JINT, chooses the function to be computed.
+!    0, erf(x);
+!    1, erfc(x);
+!    2, exp(x*x)*erfc(x).
+!
+*/
+
+
+        __device__ float calerf(const float arg,
+                                const int   jint) {
+                                
+               const float a[5] = {
+                         3.16112374387056560e+00f,1.13864154151050156e+02f,
+                         3.77485237685302021e+02f,3.20937758913846947e+03f, 
+                         1.85777706184603153e-1f};                      
+               const float b[4] = {
+                         2.36012909523441209e+01f,2.44024637934444173e+02f,
+                         1.28261652607737228e+03f,2.84423683343917062e+03f};
+               const float c[9] = {
+                         5.64188496988670089e-1f, 8.88314979438837594e+00f,
+                         6.61191906371416295e+01f,2.98635138197400131e+02f, 
+                         8.81952221241769090e+02f,1.71204761263407058e+03f, 
+                         2.05107837782607147e+03f,1.23033935479799725e+03f,
+                         2.15311535474403846e-8f};
+               const float d[8] = {
+                         1.57449261107098347e+01f,1.17693950891312499e+02f,
+                         5.37181101862009858e+02f,1.62138957456669019e+03f, 
+                         3.29079923573345963e+03f,4.36261909014324716e+03f,
+                         3.43936767414372164e+03f,1.23033935480374942e+03f};
+               const float p[6] = {
+                         3.05326634961232344e-1f,3.60344899949804439e-1f,
+                         1.25781726111229246e-1f,1.60837851487422766e-2f, 
+                         6.58749161529837803e-4f,1.63153871373020978e-2f};
+               const float q[5] = {
+                         2.56852019228982242e+00f,1.87295284992346047e+00f,
+                         5.27905102951428412e-1f, 6.05183413124413191e-2f,
+                         2.33520497626869185e-3f};
+               constexpr float four  = 4.0f;
+               constexpr float one   = 1.0f;
+               constexpr float half  = 0.5f;
+               constexpr float two   = 2.0f;
+               constexpr float zero  = 0.0f;
+               constexpr float sqrpi = 5.6418958354775628695e-1f;
+               constexpr float thresh= 0.46875f;
+               constexpr float sixth = 16.0f;
+               constexpr float xinf  = 3.4028235e+38f;
+               constexpr float xneg  = -26.628f;
+               constexpr float xsmall= 1.11e-16f;
+               constexpr float xbig  = 26.543f;
+               constexpr float xhuge = 6.71e+7f;
+               float           del,sixten,y,ysq;
+               float           result;
+               
+               x = arg;
+               y = fabsf(x);
+               if(y<=thresh) {
+                  
+                  ysq = zero;
+                  if(xsmall<y) ysq = y*y;
+                  xnum   = a[4]*ysq;
+                  xden   = ysq;
+                  xnum   = (xnum+a[0])*ysq;
+                  xden   = (xden+b[0])*ysq;
+                  xnum   = (xnum+a[1])*ysq;
+                  xden   = (xden+b[1])*ysq;
+                  xnum   = (xnum+a[2])*ysq;
+                  xden   = (xden+b[2])*ysq;
+                  result = x*((xnum+a[3])/(xden+b[3]));
+                  if(jint!=0) result -= one;
+                  if(jint==2) result *= expf(ysq);
+                  return (result); 
+               }
+               else if(y<=four) {
+                  
+                  xnum = c[8]*y;
+                  xden = y;
+                  xnum = (xnum+c[0])*y;
+                  xden = (xden+d[0])*y;
+                  xnum = (xnum+c[1])*y;
+                  xden = (xden+d[1])*y;
+                  xnum = (xnum+c[2])*y;
+                  xden = (xden+d[2])*y;
+                  xnum = (xnum+c[3])*y;
+                  xden = (xden+d[3])*y;
+                  xnum = (xnum+c[4])*y;
+                  xden = (xden+d[4])*y;
+                  xnum = (xnum+c[5])*y;
+                  xden = (xden+d[5])*y;
+                  xnum = (xnum+c[6])*y;
+                  xden = (xden+d[6])*y;
+                  result = ((xnum+c[7])/(xden+d[7));
+                  if(jint!=2) {
+                     ysq    = (int)(y*sixten)/sixten;
+                     del    = (y-ysq)*(y+ysq);
+                     result = expf(-ysq*ysq)*expf(-del)*result; 
+                  }
+               }
+               else {
+                   
+                   result = zero;
+                   if(xbig<=y) {
+                      if(jint!=2) goto L300;
+                      if(xhuge<=y) {
+                         result = sqrpi/y;
+                         goto L300;
+                      }
+                   }
+                   
+                   ysq = one/(y*y);
+                   xnum= p[5]*ysq;
+                   xden= ysq;
+                   xnum= (xnum+p[0])*ysq;
+                   xden= (xden+q[0])*ysq;
+                   xnum= (xnum+p[1])*ysq;
+                   xden= (xden+q[1])*ysq;
+                   xnum= (xnum+p[2])*ysq;
+                   xden= (xden+q[2])*ysq;
+                   xnum= (xnum+p[3])*ysq;
+                   xden= (xden+q[3])*ysq;
+                   result = ysq*(xnum+p[4])/(xden+q[4]);
+                   result = (sqrpi-result)/y;
+                   if(jint!=2) {
+                     ysq    = (int)(y*sixten)/sixten;
+                     del    = (y-ysq)*(y+ysq);
+                     result = expf(-ysq*ysq)*expf(-del)*result; 
+                   }
+               }
+L300:
+                   if(jint==0) {
+                      result = (half-result)+half;
+                      if(x<zero) result = -result;
+                   }  
+                   else if(jint==1) {
+                      if(x<zero) result = two-result;
+                   }   
+                   else {
+                      if(x<zero) {
+                         if(x<xneg) 
+                            result = xinf;
+                         else {
+                            ysq    = (int)(y*sixten)/sixten;
+                            del    = (y-ysq)*(y+ysq);
+                            result = expf(-ysq*ysq)*expf(-del)*result; 
+                            result = (y+y)-result;
+                         }
+                      }
+                   }   
+                   
+                   return (result);     
+       }
+          
              
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
