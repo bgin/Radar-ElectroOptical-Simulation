@@ -5469,6 +5469,252 @@ L800:
               }
 
        }
+       
+       
+/*
+    
+     !*****************************************************************************80
+!
+!! DLGAMA evaluates log ( Gamma ( X ) ) for a real argument.
+!
+!  Discussion:
+!
+!    This routine calculates the LOG(GAMMA) function for a positive real
+!    argument X.  Computation is based on an algorithm outlined in
+!    references 1 and 2.  The program uses rational functions that
+!    theoretically approximate LOG(GAMMA) to at least 18 significant
+!    decimal digits.  The approximation for X > 12 is from reference
+!    3, while approximations for X < 12.0 are similar to those in
+!    reference 1, but are unpublished.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    03 April 2007
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody, Laura Stoltz.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody, Kenneth Hillstrom,
+!    Chebyshev Approximations for the Natural Logarithm of the
+!    Gamma Function,
+!    Mathematics of Computation,
+!    Volume 21, Number 98, April 1967, pages 198-203.
+!
+!    Kenneth Hillstrom,
+!    ANL/AMD Program ANLC366S, DGAMMA/DLGAMA,
+!    May 1969.
+!
+!    John Hart, Ward Cheney, Charles Lawson, Hans Maehly,
+!    Charles Mesztenyi, John Rice, Henry Thatcher,
+!    Christoph Witzgall,
+!    Computer Approximations,
+!    Wiley, 1968,
+!    LC: QA297.C64.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument of the function.
+!
+!    Output, real(kind=sp) ::  DLGAMA, the value of the function.
+!
+
+*/
+
+
+        __device__ float dlgama(const float x) {
+        
+               const float p1[8] = {
+                         4.945235359296727046734888f,2.018112620856775083915565e+2f, 
+                         2.290838373831346393026739e+3f,1.131967205903380828685045e+4f, 
+                         2.855724635671635335736389e+4f,3.848496228443793359990269e+4f, 
+                         2.637748787624195437963534e+4f,7.225813979700288197698961e+3f};
+               const float q1[8] = {
+                         6.748212550303777196073036e+1f,1.113332393857199323513008e+3f, 
+                         7.738757056935398733233834e+3f,2.763987074403340708898585e+4f, 
+                         5.499310206226157329794414e+4f,6.161122180066002127833352e+4f, 
+                         3.635127591501940507276287e+4f,8.785536302431013170870835e+3f};
+               const float p2[8] = {
+                         4.974607845568932035012064f,5.424138599891070494101986e+2f, 
+                         1.550693864978364947665077e+4f,1.847932904445632425417223e+5f, 
+                         1.088204769468828767498470e+6f,3.338152967987029735917223e+6f,
+                         5.106661678927352456275255e+6f,3.074109054850539556250927e+6f};
+               const float q2[8] = {
+                         1.830328399370592604055942e+2f,7.765049321445005871323047e+3f, 
+                         1.331903827966074194402448e+5f,1.136705821321969608938755e+6f, 
+                         5.267964117437946917577538e+6f,1.346701454311101692290052e+7f, 
+                         1.782736530353274213975932e+7f,9.533095591844353613395747e+6f};
+               const float p4[8] = {
+                         1.474502166059939948905062e+4f,2.426813369486704502836312e+6f, 
+                         1.214755574045093227939592e+8f,2.663432449630976949898078e+9f, 
+                         2.940378956634553899906876e+10f,1.702665737765398868392998e+11f, 
+                         4.926125793377430887588120e+11f,5.606251856223951465078242e+11f};
+               const float q4[8] = {
+                         2.690530175870899333379843e+3f,6.393885654300092398984238e+5f, 
+                         4.135599930241388052042842e+7f,1.120872109616147941376570e+9f, 
+                         1.488613728678813811542398e+10f,1.016803586272438228077304e+11f, 
+                         3.417476345507377132798597e+11f,4.463158187419713286462081e+11f};
+               const float c[7]  = {
+                        -1.910444077728e-03f,8.4171387781295e-04f, 
+                        -5.952379913043012e-04f,7.93650793500350248e-04f,
+                        -2.777777777777681622553e-03f,8.333333333333333331554247e-02f,
+                         5.7083835261e-03f};
+               constexpr float one    = 1.0
+               constexpr float half   = 0.5
+               constexpr float twelve = 12.0
+               constexpr float zero   = 0.0
+               constexpr float four   = 4.0
+               constexpr float thrhal = 1.5
+               constexpr float two    = 2.0
+               constexpr float pnt68  = 0.6796875f
+               constexpr float sqrtpi = 0.9189385332046727417803297f
+               constexpr float eps    = 1.19e-07f
+               constexpr float frtbig = 3.4028234664e+38f
+               constexpr float d1     = -5.772156649015328605195174e-1f
+               constexpr float d2     = 4.227843350984671393993777e-1f
+               constexpr float d4     = 1.791759469228055000094023f
+               float     corr,xden,xnum;
+               float     xm1,xm2,xm4;
+               float     y,ysq,res;
+               
+               y  = x;
+               if(zero<y) {
+                  if(y<=eps) {
+                     res = -logf(y);
+                  }
+                  else if(y<=thrhal) {
+                     if(y<pnt68) {
+                        corr = -logf(y);
+                        xm1  = y;
+                     }
+                     else {
+                        corr = zero;
+                        xm1  = (y-half)-half;
+                     }
+                     
+                     if(y<=half || pnt68<=y) {
+                        xden = one;
+                        xnum = zero;
+                        xnum = __fmaf_ru(xnum,xm1,p1[0]);
+                        xden = __fmaf_ru(xden,xm1,q1[0]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[1]);
+                        xden = __fmaf_ru(xden,xm1,q1[1]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[2]);
+                        xden = __fmaf_ru(xden,xm1,q1[2]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[3]);
+                        xden = __fmaf_ru(xden,xm1,q1[3]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[4]);
+                        xden = __fmaf_ru(xden,xm1,q1[4]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[5]);
+                        xden = __fmaf_ru(xden,xm1,q1[5]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[6]);
+                        xden = __fmaf_ru(xden,xm1,q1[6]);
+                        xnum = __fmaf_ru(xnum,xm1,p1[7]);
+                        xden = __fmaf_ru(xden,xm1,q1[7]);
+                        res = corr+(xm1*(d1+xm1*(xnum/xden)));
+                     }
+                     else {
+                        xm2  = (y-half)-half;
+                        xden = one;
+                        xnum = zero;
+                        xnum = __fmaf_ru(xnum,xm2,p2[0]);
+                        xden = __fmaf_ru(xden,xm2,q2[0]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[1]);
+                        xden = __fmaf_ru(xden,xm2,q2[1]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[2]);
+                        xden = __fmaf_ru(xden,xm2,q2[2]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[3]);
+                        xden = __fmaf_ru(xden,xm2,q2[3]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[4]);
+                        xden = __fmaf_ru(xden,xm2,q2[4]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[5]);
+                        xden = __fmaf_ru(xden,xm2,q2[5]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[6]);
+                        xden = __fmaf_ru(xden,xm2,q2[6]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[7]);
+                        xden = __fmaf_ru(xden,xm2,q2[7]);
+                        res = corr+xm2*(d2+xm2*(xnum/xden));
+                     }
+                  }
+                  else if(y<=four) {
+                   
+                        xm2  = y-two;
+                        xden = one;
+                        xnum = zero;
+                        xnum = __fmaf_ru(xnum,xm2,p2[0]);
+                        xden = __fmaf_ru(xden,xm2,q2[0]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[1]);
+                        xden = __fmaf_ru(xden,xm2,q2[1]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[2]);
+                        xden = __fmaf_ru(xden,xm2,q2[2]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[3]);
+                        xden = __fmaf_ru(xden,xm2,q2[3]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[4]);
+                        xden = __fmaf_ru(xden,xm2,q2[4]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[5]);
+                        xden = __fmaf_ru(xden,xm2,q2[5]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[6]);
+                        xden = __fmaf_ru(xden,xm2,q2[6]);
+                        xnum = __fmaf_ru(xnum,xm2,p2[7]);
+                        xden = __fmaf_ru(xden,xm2,q2[7]);
+                        res  = xm2*(d2+xm2*(xnum/xden));
+               }   
+               else if(y<=twelve) {
+                        
+                        xm4 = y-four;
+                        xden = -one;
+                        xnum = zero;
+                        xnum = __fmaf_ru(xnum,xm4,p2[0]);
+                        xden = __fmaf_ru(xden,xm4,q2[0]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[1]);
+                        xden = __fmaf_ru(xden,xm4,q2[1]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[2]);
+                        xden = __fmaf_ru(xden,xm4,q2[2]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[3]);
+                        xden = __fmaf_ru(xden,xm4,q2[3]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[4]);
+                        xden = __fmaf_ru(xden,xm4,q2[4]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[5]);
+                        xden = __fmaf_ru(xden,xm4,q2[5]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[6]);
+                        xden = __fmaf_ru(xden,xm4,q2[6]);
+                        xnum = __fmaf_ru(xnum,xm4,p2[7]);
+                        xden = __fmaf_ru(xden,xm4,q2[7]);
+                        res  = d4+xm4*(xnum/xden);
+               }  
+               else {
+                        res = zero;
+                        if(y<=frtbig) {
+                           res = c[6];
+                           ysq = y*y;
+                           res = res/ysq+c[0];
+                           res = res/ysq+c[1];
+                           res = res/ysq+c[2];
+                           res = res/ysq+c[3];
+                           res = res/ysq+c[4];
+                           res = res/ysq+c[5];
+                        }
+                        res /= y;
+                        corr = logf(y);
+                        res  = res+sqrtpi-half*corr;
+                        res  = res+y*(corr-one);
+               }  
+               
+            }
+            else {
+                   
+                   res = x;
+            }
+            
+            return (res);
+        }
           
              
 
