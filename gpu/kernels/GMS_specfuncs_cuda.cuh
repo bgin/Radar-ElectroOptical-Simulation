@@ -5715,7 +5715,193 @@ L800:
             
             return (res);
         }
+        
+        
+/*
+
+      !*****************************************************************************80
+!
+!! R8_GAMMA evaluates Gamma(X) for a real argument.
+!
+!  Discussion:
+!
+!    This function was originally named DGAMMA.
+!
+!    However, a number of Fortran compilers now include a library
+!    function of this name.  To avoid conflicts, this function was
+!    renamed R8_GAMMA.
+!
+!    This routine calculates the GAMMA function for a real argument X.
+!    Computation is based on an algorithm outlined in reference 1.
+!    The program uses rational functions that approximate the GAMMA
+!    function to at least 20 significant decimal digits.  Coefficients
+!    for the approximation over the interval (1,2) are unpublished.
+!    Those for the approximation for 12 <= X are from reference 2.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    18 January 2008
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody, Laura Stoltz.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody,
+!    An Overview of Software Development for Special Functions,
+!    in Numerical Analysis Dundee, 1975,
+!    edited by GA Watson,
+!    Lecture Notes in Mathematics 506,
+!    Springer, 1976.
+!
+!    John Hart, Ward Cheney, Charles Lawson, Hans Maehly,
+!    Charles Mesztenyi, John Rice, Henry Thatcher,
+!    Christoph Witzgall,
+!    Computer Approximations,
+!    Wiley, 1968,
+!    LC: QA297.C64.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument of the function.
+!
+!    Output, real(kind=sp) ::  R8_GAMMA, the value of the function.
+
+*/
           
-             
+        __device__ float r4_gamma(const float x) {
+        
+                const float c[7] = {
+                     -1.910444077728e-03f,
+                      8.4171387781295e-04f,
+                     -5.952379913043012e-04f,
+                      7.93650793500350248e-04f,
+                     -2.777777777777681622553e-03f,
+                      8.333333333333333331554247e-02f,
+                      5.7083835261e-03f};
+                const float p[8] = {
+                      -1.71618513886549492533811e+0f,   2.47656508055759199108314e+01f,
+                      -3.79804256470945635097577e+02f,  6.29331155312818442661052e+02f,
+                       8.66966202790413211295064e+02f, -3.14512729688483675254357e+04f,
+                      -3.61444134186911729807069e+04f,  6.64561438202405440627855e+04f};
+                const float q[8] = {
+                      -3.08402300119738975254353e+01f,  3.15350626979604161529144e+02f, 
+                      -1.01515636749021914166146e+03f, -3.10777167157231109440444e+03f, 
+                       2.25381184209801510330112e+04f,  4.75584627752788110767815e+03f, 
+                      -1.34659959864969306392456e+05f, -1.15132259675553483497211e+05f};
+                 constexpr float one    = 1.0e+00f;
+                 constexpr float half   = 0.5e+00f;
+                 constexpr float twelve = 12.0e+00f;
+                 constexpr float two    = 2.0e+00f;
+                 constexpr float zero   = 0.0e+00f;
+                 constexpr float sqrtpi = 0.9189385332046727417803297e+00f;
+                 constexpr float pi     = 3.1415926535897932384626434e+00f;
+                 constexpr float xbig   = 171.624e+00f;
+                 constexpr float xminin = 1.1754943508e-38f;
+                 constexpr float eps    = 1.19e-07f;
+                 float           fact,res,sum;
+                 float           xden,xnum,y,y1;
+                 float           ysq,z;
+                 int             n;
+                 bool            parity;
+                 
+                 parity = false;
+                 fact = one;
+                 n = 0;
+                 y = x;
+                 
+                 if(y<=zero) {
+                    y   = -x;
+                    y1  = truncf(y);
+                    res = y-y1;
+                    if(res!=zero) {
+                       if(y1!=truncf(y1*half)*two) parity = true;
+                       fact = -pi/sinf(pi*res);
+                       y    =+ one;
+                    }
+                    else {
+                       res = xminin;
+                       return (res);
+                    }
+                 }
+                 
+                 if(y<eps) {
+                    if(xminin<=y)
+                       res = one/y;
+                    else {
+                       res = xminin;
+                       return (res);
+                    }
+                 }
+                 else if(y<twelve) {
+                    y1 = y;
+                    if(y<one) {
+                       z = y;
+                       y += one;
+                    }
+                    else {
+                       n = (int)y-1;
+                       y = y-(float)n;
+                       z = y-one;
+                    }
+                    xnum = zero;
+                    xden = one;
+                    xnum = (xnum+p[0])*z;
+                    xden = __fmaf_ru(xden,z,q[0]);
+                    xnum = (xnum+p[1])*z;
+                    xden = __fmaf_ru(xden,z,q[1]);
+                    xnum = (xnum+p[2])*z;
+                    xden = __fmaf_ru(xden,z,q[2]);
+                    xnum = (xnum+p[3])*z;
+                    xden = __fmaf_ru(xden,z,q[3]);
+                    xnum = (xnum+p[4])*z;
+                    xden = __fmaf_ru(xden,z,q[4]);
+                    xnum = (xnum+p[5])*z;
+                    xden = __fmaf_ru(xden,z,q[5]);
+                    xnum = (xnum+p[6])*z;
+                    xden = __fmaf_ru(xden,z,q[6]);
+                    xnum = (xnum+p[7])*z;
+                    xden = __fmaf_ru(xden,z,q[7]);
+                    res  = xnum/xden+one;
+                    if(y1<y) {
+                       res /= y1;
+                    }
+                    else if(y<y1) {
+                       for(int i=1; i!=n; ++i) {
+                           res *= y;
+                           y   += one;
+                       }
+                    }
+                    else {
+                       if(x<=xbig) {
+                           ysq = y*y;
+                           sum = c[6];
+                           sum = sum/ysq+c[0];
+                           sum = sum/ysq+c[1];
+                           sum = sum/ysq+c[2];
+                           sum = sum/ysq+c[3];
+                           sum = sum/ysq+c[4];
+                           sum = sum/ysq+c[5];
+                           sum = sum/y-y+sqrtpi;
+                           sum = sum+(y-half)*logf(y);
+                           res = expf(sum);
+                       }
+                       else {
+                           res = 3.4028234664e+38f;
+                           return (res);
+                       }
+                    }
+                 }
+                 
+                if(parity)    res = -res;
+                if(fact!=one) res /= fact;
+                return (res);
+        }       
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
