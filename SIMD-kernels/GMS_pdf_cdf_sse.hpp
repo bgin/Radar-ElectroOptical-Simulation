@@ -2520,7 +2520,7 @@ namespace gms {
 			   const __m128 _1    = _mm_set1_ps(1.0f);
 			  // const __m128 nan   = _mm_set1_ps(std::numeric_limits<float>::quiet_NaN());
 			   __m128 pdf,t0;
-			   __mmask 16m,m1;
+			   __mmask8 m,m1;
 			   //if(__builtin_expect(_mm_cmp_ps_mask(a,_0,_CMP_LE_OQ))) {
                           //     return (nan);
 			  // }
