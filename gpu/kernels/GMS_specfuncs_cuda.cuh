@@ -6168,6 +6168,71 @@ L800:
                
                return (pv);
       }
+      
+      
+/*
+
+      !*****************************************************************************80
+!
+!! VVLA computes parabolic cylinder function Vv(x) for large arguments.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    04 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Input, real(kind=sp) ::  VA, the order nu.
+!
+!    Output, real(kind=sp) ::  PV, the value of V(nu,x).
+!
+ 
+*/
+
+
+        __device__ float vvla(const float x,
+                              const float va) {
+                              
+               float a0,dsl,gl,pdl;
+               float qe,r,x1,pv;
+               int   k;
+               constexpr float pi   = 3.14159265358979323846264f;
+               constexpr float eps  = 1.0e-12f;
+               if(x<0.0f) return (x);
+               qe                   = expf(0.25f*x*x);
+               a0                   = powf(fabsf(x),-va-1.0f)*2.50662827463100050241577f*qe;
+               r                    = 1.0f;
+               pv                   = 1.0f;
+               for(k=1; k!=18; ++k) {
+                   float tk = (float)k;
+                   float t0 = 2.0f*tk+va;
+                   r        = 0.5f*r*t0-1.0f*t0/(tk*x*x);
+                   pv       += r;
+                   if(fabsf(r/pv)<eps) break;
+               }  
+               pv = a0*pv;
+               return (pv);               
+      }
  
         
 
