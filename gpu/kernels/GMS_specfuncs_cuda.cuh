@@ -6233,6 +6233,83 @@ L800:
                pv = a0*pv;
                return (pv);               
       }
+      
+      
+/*
+   
+    !*****************************************************************************80
+!
+!! RCTY computes Riccati-Bessel function of the second kind, and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    18 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of yn(x).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  RY(0:N), the values of x yn(x).
+!
+!    Output, real(kind=sp) ::  DY(0:N), the values of [x yn(x)]'.
+!
+
+*/
+
+
+        __device__ void rcty(const int n,
+                             const float x,
+                             int        &nm,
+                             float * __restrict__ ry,
+                             float * __restrict__ dy) {
+                             
+              
+              float  rf0,rf1,rf2;
+              int    k;
+              
+              nm    = n;
+              ry[0] = -cosf(x);
+              ry[1] = ry[0]/x-sinf(x);
+              rf0   = ry[0];
+              rf1   = ry[1];
+              for(k=2; k!=n; ++k) {
+                  float tk = (float)k;
+                  float t0 = 2.0f*tk-1.0f;
+                  rf2      = tk*rf1/x-rf0;
+                  if(3.4028234664e+38f<fabsf(rf2)) break;
+                  ry[k]    = rf2;
+                  rf0      = rf1;
+                  rf1      = rf2;
+              }     
+              nm    = k-1;
+              dy[0] = sinf(x);
+              for(k=1; k!=nm; ++k) {
+                  float tk = (float)k;
+                  dy[k]    = -tk*ry[k]/x+ry[k-1];
+              }           
+      }
  
         
 
