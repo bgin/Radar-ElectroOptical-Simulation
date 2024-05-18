@@ -6084,6 +6084,90 @@ L800:
                 result = aug+logf(x);
                 return (result);
         }
+        
+        
+/*
+    
+     !*****************************************************************************80
+!
+!! VVSA computes parabolic cylinder function V(nu,x) for small arguments.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    04 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Input, real(kind=sp) ::  VA, the order nu.
+!
+!    Output, real(kind=sp) ::  PV, the value of V(nu,x).
+!
+
+*/
+
+
+        __device__ float vvsa(const float x,
+                              const float va) {
+                              
+               float a0,ep,fac,g1;
+               float ga0,gm,gw,pv;
+               float r,r1,sq2,sv;
+               float sv0,v1,va0,vb0;
+               float vm,pv;
+               int   m;
+               
+               constexpr float eps = 1.0e-15f;
+               constexpr float pi  = 3.14159265358979323846264f;
+               ep                  = expf(-0.25f*x*x);
+               va0                 = 1.0f+0.5f*va;
+               if(x==0.0f) {
+                  if((va0<=0.0f && va0==truncf(va0)) || va==0.0f) {
+                     pv = 0.0f;
+                  }
+                  else {
+                     vb0 = -0.5f*va;
+                     sv0 = sinf(va0*pi);
+                     ga0 = gamma(va0);
+                     pv  = powf(2.0f,vb0)*sv0/ga0;
+                  }
+               }
+               else {
+                   for(m=1; m!=250; ++m) {
+                       float tm = (float)m;
+                       vm       = 0.5f*(tm-va);
+                       gm       = gamma(vm);
+                       r        = r*sq2*x/tm;
+                       fac      = -fac;
+                       gw       = fac*sv+1.0f;
+                       r1       = gw*r*gm;
+                       pv       = pv+r1;
+                       if(fabsf(r1/pv)<eps && gw!=0.0f) break;
+                   }
+                   pv = a0*pv;
+               }
+               
+               return (pv);
+      }
  
         
 
