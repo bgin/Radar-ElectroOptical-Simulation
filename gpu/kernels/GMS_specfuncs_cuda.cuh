@@ -5903,5 +5903,188 @@ L800:
                 if(fact!=one) res /= fact;
                 return (res);
         }       
+        
+        
+
+/*
+
+      !*****************************************************************************80
+!
+!! R8_PSI evaluates the function Psi(X).
+!
+!  Discussion:
+!
+!    This routine evaluates the logarithmic derivative of the
+!    Gamma function,
+!
+!      PSI(X) = d/dX ( GAMMA(X) ) / GAMMA(X)
+!             = d/dX LN ( GAMMA(X) )
+!
+!    for real X, where either
+!
+!      - XMAX1 < X < - XMIN, and X is not a negative integer,
+!
+!    or
+!
+!      XMIN < X.
+!
+!  Licensing:
+!
+!    This code is distributed under the GNU LGPL license.
+!
+!  Modified:
+!
+!    23 January 2008
+!
+!  Author:
+!
+!    Original FORTRAN77 version by William Cody.
+!    FORTRAN90 version by John Burkardt.
+!
+!  Reference:
+!
+!    William Cody, Anthony Strecok, Henry Thacher,
+!    Chebyshev Approximations for the Psi Function,
+!    Mathematics of Computation,
+!    Volume 27, Number 121, January 1973, pages 123-127.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  XX, the argument of the function.
+!
+!    Output, real(kind=sp) ::  R8_PSI, the value of the function.
+!
+
+*/ 
+
+
+        __device__ float r4_psi(const float xx) {
+        
+                const float p1[9] = {
+                      4.5104681245762934160e-03f,
+                      5.4932855833000385356f, 
+                      3.7646693175929276856e+02f, 
+                      7.9525490849151998065e+03f, 
+                      7.1451595818951933210e+04f, 
+                      3.0655976301987365674e+05f, 
+                      6.3606997788964458797e+05f, 
+                      5.8041312783537569993e+05f, 
+                      1.6585695029761022321e+05f};
+                const float p2[7]  = {
+                     -2.7103228277757834192f,
+                     -1.5166271776896121383e+01f, 
+                     -1.9784554148719218667e+01f,
+                     -8.8100958828312219821f, 
+                     -1.4479614616899842986f,
+                     -7.3689600332394549911e-02f,
+                     -6.5135387732718171306e-21f};
+                const float q1[8]  = {
+                      9.6141654774222358525e+01f, 
+                      2.6287715790581193330e+03f, 
+                      2.9862497022250277920e+04f, 
+                      1.6206566091533671639e+05f,
+                      4.3487880712768329037e+05f,
+                      5.4256384537269993733e+05f,
+                      2.4242185002017985252e+05f, 
+                      6.4155223783576225996e-08f};
+                const float q2[6]  = {
+                      4.4992760373789365846e+01f,
+                      2.0240955312679931159e+02f,
+                      2.4736979003315290057e+02f,
+                      1.0742543875702278326e+02f,
+                      1.7463965060678569906e+01f, 
+                      8.8427520398873480342e-01f};
+                constexpr float  four  = 4.0f;
+                constexpr float  fourth= 0.25f;
+                constexpr float  half  = 0.5f;
+                constexpr float  one   = 1.0f;
+                constexpr float  piov4 = 0.78539816339744830962f;
+                constexpr float  three = 3.0f;
+                constexpr float  zero  = 0.0f;
+                constexpr float  x01   = 187.0f;
+                constexpr float  x01d  = 128.0f;
+                constexpr float  x02   = 6.9464496836234126266e-04f;
+                constexpr float  xlarge= 2.04e+15f;
+                constexpr float  xmax1 = 3.60e+16f;
+                constexpr float  xsmall= 2.05e-09f;
+                float            sgn,upper,w,x;
+                float            z,aug,den,result;
+                int              n,nq,it;
+                
+                x  = xx;
+                w  = fabsf(x);
+                aug= zero;
+                if(zero<x) return (xx);
+                
+                if(x<half) {
+                
+                   if(w<=xsmall) {
+                      aug = -one/w;
+                   }
+                   else {
+                      if(x<zero)
+                         sgn = piov4;
+                      else
+                         sgn = -piov4;
+                      it = (int)w;
+                      w  = w-(float)it;
+                      nq = (int)(w*four);
+                      w  = four*(w-((float)nq)*fourth);
+                      n  = nq/2;
+                      if(n+n!=nq) w = one-w;
+                      z  = piov4*w;
+                      if((n%2)!=0) sgn = -sgn;
+                      n  = (nq+1)/2;
+                      if((n%2)==0) 
+                         aug = sgn*(four/tanf(z));
+                      else
+                         aug = sgn*four*tanf(z);
+                   }
+                }
+                x = one-x;
+                
+                if(x<=three) {
+                   den   = x;
+                   upper = p1[0]*x;
+                   den   = (den+q1[0])*x;
+                   upper = (upper+p1[1])*x;
+                   den   = (den+q1[1])*x;
+                   upper = (upper+p1[2])*x;
+                   den   = (den+q1[2])*x;
+                   upper = (upper+p1[3])*x;
+                   den   = (den+q1[4])*x;
+                   upper = (upper+p1[5])*x;
+                   den   = (den+q1[5])*x;
+                   upper = (upper+p1[6])*x;
+                   den   = (den+q1[6])*x;
+                   upper = (upper+p1[7])*x;
+                   den   = (upper+p1[8])/(den+q1[7]);
+                   x     = (x-x01/x01d)-x02;
+                   result= __fmaf_ru(den,x,aug);
+                   return (result);
+                }
+                
+                if(x<xlarge) {
+                   w     = one/(x*x);
+                   den   = w;
+                   upper = p2[0]*w;
+                   den   = (den+q2[0])*w;
+                   upper = (upper+p2[1])*w;
+                   den   = (den+q2[1])*w;
+                   upper = (upper+p2[2])*w;
+                   den   = (den+q2[2])*w;
+                   upper = (upper+p2[3])*w;
+                   den   = (den+q2[3])*w;
+                   upper = (upper+p2[4])*w;
+                   den   = (den+q2[4])*w;
+                   upper = (upper+p2[5])*w;
+                   aug   = (upper+p2[6])/(den+q2[5])-half/x+aug; 
+                }
+                
+                result = aug+logf(x);
+                return (result);
+        }
+ 
+        
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
