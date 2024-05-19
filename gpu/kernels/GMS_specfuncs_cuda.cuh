@@ -6401,6 +6401,125 @@ L800:
                  dj[k]    = -tk*rj[k]/x+rj[k-1];
              }                    
       }
+      
+      
+/*
+
+    !*****************************************************************************80
+!
+!! OTHPL computes orthogonal polynomials Tn(x), Un(x), Ln(x) or Hn(x).
+!
+!  Discussion:
+!
+!    This procedure computes orthogonal polynomials: Tn(x) or Un(x),
+!    or Ln(x) or Hn(x), and their derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    08 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: KT, the function code:
+!    1 for Chebyshev polynomial Tn(x)
+!    2 for Chebyshev polynomial Un(x)
+!    3 for Laguerre polynomial Ln(x)
+!    4 for Hermite polynomial Hn(x)
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  PL(0:N), DPL(0:N), the value and derivative of
+!    the polynomials of order 0 through N at X. 
+  
+*/
+
+
+        __device__ void othpol(const int            n,
+                               const float          x,
+                               float * __restrict__ pl,
+                               float * __restrict__ dpl) {
+                               
+               float a,b,c;
+               float dy0,dy1,dyn;
+               float y0,y1,yn;
+               int   k,kf;
+               
+               a      = 2.0f
+               b      = 0.0f;
+               c      = 1.0f;
+               y0     = 1.0f;
+               y1     = 2.0f*x;
+               dy0    = 0.0f;
+               dy1    = 2.0f;
+               pl[0]  = 1.0f;
+               pl[1]  = 2.0f*x;
+               dpl[0] = 0.0f;
+               dpl[1] = 2.0f;
+               
+               if(kf==1) {
+                  y1    = x;
+                  dy1   = 1.0f;
+                  pl[1] = x;
+                  dpl[1]= 1.0f; 
+               }  
+               else if(kf==3) {
+                  y1     = 1.0f-x;
+                  dy1    = -1.0f;
+                  pl[1]  = 1.0f-x;
+                  dpl[1] = -1.0f;
+               } 
+               
+               if(kf==3) {
+                  for(k=2; k!=n; ++k) {
+                      float tk = (float)k;
+                      a        = -1.0f/tk;
+                      b        = 2.0f+a;
+                      c        = 1.0f+a;
+                      yn       = __fmaf_ru(a,x,b)*y1-c*y0;
+                      dyn      = __fmaf_ru(a,y1,__fmaf_ru(a,x,b))*dy1-c*dy0;
+                      pl[k]    = yn;
+                      dpl[k]   = dyn;
+                      y0       = y1;
+                      y1       = yn;
+                      dy0      = dy1;
+                      dy1      = dyn;
+                  }
+               } 
+               else if(kf==4) {
+                      for(k=2; k!=n; ++k) {
+                      float tk = (float)k;
+                      c        = 2.0f*(tk-1.0f);
+                      yn       = __fmaf_ru(a,x,b)*y1-c*y0;
+                      dyn      = __fmaf_ru(a,y1,__fmaf_ru(a,x,b))*dy1-c*dy0;
+                      pl[k]    = yn;
+                      dpl[k]   = dyn;
+                      y0       = y1;
+                      y1       = yn;
+                      dy0      = dy1;
+                      dy1      = dyn;
+                  } 
+               }                
+      }
  
         
 
