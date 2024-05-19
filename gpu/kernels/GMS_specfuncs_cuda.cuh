@@ -6602,6 +6602,103 @@ L800:
                    }  
                 }                   
       }
+      
+      
+/*
+    
+       !*****************************************************************************80
+!
+!! LGAMA computes the gamma function or its logarithm.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    15 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: KF, the argument code.
+!    1, for gamma(x);
+!    2, for ln(gamma(x)).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  GL, the function value.
+!
+
+*/
+
+
+        __device__ float lgama(const int   kf,
+                               const float x) {
+                               
+              const float a[10] = {
+                      8.333333333333333e-02f, 
+                     -2.777777777777778e-03f, 
+                      7.936507936507937e-04f, 
+                     -5.952380952380952e-04f, 
+                      8.417508417508418e-04f,
+                     -1.917526917526918e-03f,
+                      6.410256410256410e-03f,
+                     -2.955065359477124e-02f, 
+                      1.796443723688307e-01f, 
+                     -1.39243221690590f}; 
+             float gl,gl0,x0;
+             float x2,xp,t0,t1;
+             int   k,n;
+             
+             x0  = x;
+             if(x==1.0f || x==2.0f) {
+                gl = 0.0f;
+                if(kf==1) gl = 1.0f;
+                return (gl);
+             }
+             else if(x<=7.0f) {
+                n   = (int)(7.0f-x);
+                x0  = x+(float)n;
+             }
+             
+             x2 = 1.0f/(x0*x0);
+             xp = 6.283185307179586477f;
+             gl0= a[9];
+             gl0= __fmaf_ru(gl0,x2,a[8]);
+             gl0= __fmaf_ru(gl0,x2,a[7]);
+             gl0= __fmaf_ru(gl0,x2,a[6]);
+             gl0= __fmaf_ru(gl0,x2,a[5]);
+             gl0= __fmaf_ru(gl0,x2,a[4]);
+             gl0= __fmaf_ru(gl0,x2,a[3]);
+             gl0= __fmaf_ru(gl0,x2,a[2]);
+             gl0= __fmaf_ru(gl0,x2,a[1]);
+             gl0= __fmaf_ru(gl0,x2,a[0]);
+             t0 = (x0+0.5f)*logf(x0)-x0;
+             gl = gl0/x0+0.5f*logf(xp)+t0;
+             if(x<=7.0f) {
+                for(k=1; k!=n; ++k) {
+                    gl =  gl-logf(x-1.0f);
+                    x0 -= 1.0f;
+                }
+             }
+             if(kf==1) gl = expf(gl);
+             return (gl);
+             
+      }
  
         
 
