@@ -6699,7 +6699,231 @@ L800:
              return (gl);
              
       }
- 
+      
+      
+/*
+    
+       
+!*****************************************************************************80
+!
+!! KLVNB: Kelvin functions ber(x), bei(x), ker(x), and kei(x), and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    03 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BER, BEI, GER, GEI, DER, DEI, HER, HEI, 
+!    the values of ber x, bei x, ker x, kei x, ber'x, bei'x, ker'x, kei'x.
+!
+
+*/
+
+
+        __device__ void klvnb(const float x,
+                              float      &ber,
+                              float      &bei,
+                              float      &ger,
+                              float      &gei,
+                              float      &der,
+                              float      &dei,
+                              float      &her,
+                              float      &hei) {
+                              
+                float csn,csp,fxi,fxr;
+                float pni,pnr,ppi,ppr;
+                float ssn,ssp,t,t2;
+                float tni,tnr,tpi,tpr;
+                float u,v,yc1,yc2;
+                float yci,ye1,ye2,yei,yd;
+                int   l;
+                constexpr float pi = 3.141592653589793f;
+                
+                if(x==0.0f) return;
+                if(x<8.0f) {
+                   t = x/8.0f;
+                   t2 = t*t;
+                   u = t2*t2;
+                   ber = ((((((
+                       - 0.901e-05f*u 
+                       + 0.122552e-02f)*u 
+                       - 0.08349609f)*u 
+                       + 2.64191397f)*u 
+                       - 32.36345652f)*u 
+                       + 113.77777774f)*u 
+                       - 64.0f)*u 
+                       + 1.0_sp;
+
+                   bei = t*t*((((((
+                         0.11346e-03f*u 
+                       - 0.01103667f)*u
+                       + 0.52185615f)*u
+                       - 10.56765779f)*u
+                       + 72.81777742f)*u
+                       - 113.77777774f)*u
+                       + 16.0f);
+
+                   ger = (((((( 
+                       - 0.2458e-04f*u
+                       + 0.309699e-02f)*u
+                       - 0.19636347f)*u
+                       + 5.65539121f)*u
+                       - 60.60977451f)*u
+                       + 171.36272133f)*u
+                       - 59.05819744f)*u
+                       - 0.57721566f;
+                   ger = __fmaf_ru((ger-logf(0.5f*x))*ber,(0.25f*pi*bei));
+                   
+                   gei = t2*((((((
+                         0.29532e-03f*u
+                       - 0.02695875f)*u
+                       + 1.17509064f)*u
+                       - 21.30060904f)*u
+                       + 124.2356965f)*u
+                       - 142.91827687f)*u
+                       + 6.76454936f);
+                   gei = gei-logf(0.5f*x)*bei-0.25f*pi*ber;
+                   
+                   der = x*t2*((((((
+                       - 0.394e-05f*u
+                       + 0.45957e-03f)*u
+                       - 0.02609253f)*u
+                       + 0.66047849f)*u
+                       - 6.0681481f)*u
+                       + 14.22222222f)*u
+                       - 4.0f);
+
+                   dei = x * ((((((
+                         0.4609e-04f*u
+                       - 0.379386e-02f)*u
+                       + 0.14677204f)*u
+                       - 2.31167514f)*u
+                       + 11.37777772f)*u 
+                       - 10.66666666f)*u
+                       + 0.5f); 
+
+                   her = x*t2*((((((
+                       - 0.1075e-04f*u
+                       + 0.116137e-02f)*u
+                       - 0.06136358f)*u
+                       + 1.4138478f)*u
+                       - 11.36433272f)*u 
+                       + 21.42034017f)*u 
+                       - 3.69113734f);
+                   her = her-logf(0.5f*x)*der-ber/x +
+                        0.25f*pi*dei;
+                        
+                   hei = x*((((((
+                         0.11997e-03f*u
+                       - 0.926707e-02f)*u
+                       + 0.33049424f)*u
+                       - 4.65950823f)*u
+                       + 19.41182758f)*u
+                       - 13.39858846f)*u
+                       + 0.21139217f);
+
+                   hei = hei-logf(0.5f*x)*dei-bei/x - 
+                         0.25f*pi*der;
+                }
+                else {
+                   
+                   t = 8.0f/x;
+                   for(l=1; l!=2; ++l) {
+                       float tl = (float)l;
+                       v        = powf(-1.0f,tl)*t;
+                       tpr      = (((( 
+                                  0.6e-06f*v
+                                - 0.34e-05f)*v 
+                                - 0.252e-04f)*v
+                                - 0.906e-04f)*v*v
+                                + 0.0110486f)*v
+
+                       tpi      = ((((
+                                  0.19e-05f*v
+                                + 0.51e-05f)*v*v
+                                - 0.901e-04f)*v
+                                - 0.9765e-03f)*v
+                                - 0.0110485f)*v
+                                - 0.3926991f;
+                       if(l==1) {
+                          tnr = tpr;
+                          tni = tpi;
+                       }
+                   }
+                   
+                   yd  = x/1.41421356237309504880169f;
+                   ye1 = expf(yd+tpr);
+                   ye2 = expf(-yd+tnr);
+                   yc1 = 1.0f/sqrtf(2.0f*pi*x);
+                   yc2 = sqrtf(pi/(2.0f*x));
+                   csp = cosf(yd+tpi);
+                   ssp = sinf(yd+tpi);
+                   csn = cosf(-yd+tni);
+                   ssn = sinf(-yd+tni);
+                   ger = yc2*ye2*csn;
+                   gei = yc2*ye2*ssn;
+                   fxr = yc1*ye1*csp;
+                   fxi = yc1*ye1*ssp;
+                   ber = fxr-gei*0.31830988618379067153777f;
+                   bei = fxi+ger*0.31830988618379067153777f;
+                   
+                   for(l=1; l!=2; ++l) {
+                       float tl  = (float)l;
+                       v         = powf(-1.0f,tl)*t;
+                       ppr       = (((((
+                                   0.16e-05f*v
+                                 + 0.117e-04f)*v
+                                 + 0.346e-04f)*v 
+                                 + 0.5e-06f)*v
+                                 - 0.13813e-02f)*v
+                                 - 0.0625001f)*v
+                                 + 0.7071068f;
+
+                       ppi       = (((((
+                                 - 0.32e-05f*v
+                                 - 0.24e-05f)*v
+                                 + 0.338e-04f)*v
+                                 + 0.2452e-03f)*v
+                                 + 0.13811e-02f)*v
+                                 - 0.1e-06f)*v
+                                 + 0.7071068f;
+                        if(l==1) {
+                          pnr = ppr;
+                          pni = ppi;
+                       }
+                   }
+                   
+                   her = gei*pni-ger*pnr;
+                   hei = -__fmaf_ru(gei,pnr,ger*pni);
+                   der = fxr*ppr-fxi*ppi-hei*0.31830988618379067153777f;
+                   dei = __fmaf_ru(__fmaf_ru(fxi,ppr,fxr),ppi,her*0.31830988618379067153777f);
+                   
+                }
+                   
+                
+                                       
+      }
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
