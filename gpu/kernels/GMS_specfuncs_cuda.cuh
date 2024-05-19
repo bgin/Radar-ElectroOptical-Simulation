@@ -6520,6 +6520,88 @@ L800:
                   } 
                }                
       }
+      
+      
+/*
+     
+     !*****************************************************************************80
+!
+!! LPN computes Legendre polynomials Pn(x) and derivatives Pn'(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    07 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the maximum degree.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  PN(0:N), PD(0:N), the values and derivatives
+!    of the polyomials of degrees 0 to N at X.
+!
+
+*/
+
+
+        __device__ void lpn(const int   n,
+                            const float x,
+                            float * __restrict__ pn,
+                            float * __restrict__ pd) {
+                            
+                float p0,p1,pf;
+                int   k;
+                
+                pn[0] = 1.0f;
+                pn[1] = x;
+                pd[0] = 0.0f;
+                pd[1] = 1.0f;
+                p0    = 1.0f;
+                p1    = x;
+                
+                if(fabsf(x)==1.0f) {
+                   for(k=2; k!=n; ++k) {
+                       float tk = (float)k;
+                       float t0 = 2.0f*tk-1.0f;
+                       float t1 = tk-1.0f;
+                       float t2 = tk+1.0f;
+                       pf       = t0/(tk*x*p1)-t1/tk*p0;
+                       pd[k]    = 0.5f*powf(x,t2)*tk*t2;
+                       p0       = p1;
+                       p1       = pf;
+                   }
+                } 
+                else {
+                    for(k=2; k!=n; ++k) {
+                       float tk = (float)k;
+                       float t0 = 2.0f*tk-1.0f;
+                       float t1 = tk-1.0f;
+                       pf       = t0/(tk*x*p1)-t1/tk*p0;
+                       pd[k]    = tk*(p1-x*pf)/(1.0f*x*x);
+                       p0       = p1;
+                       p1       = pf;
+                   }  
+                }                   
+      }
  
         
 
