@@ -6310,6 +6310,97 @@ L800:
                   dy[k]    = -tk*ry[k]/x+ry[k-1];
               }           
       }
+      
+      
+/*
+
+    !*****************************************************************************80
+!
+!! RCTJ computes Riccati-Bessel function of the first kind, and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    18 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of jn(x).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  RJ(0:N), the values of x jn(x).
+!
+!    Output, real(kind=sp) ::  DJ(0:N), the values of [x jn(x)]'.
+ 
+*/
+
+
+        __device__ void rctj(const int n,
+                             const float x,
+                             int        &nm,
+                             float * __restrict__ rj,
+                             float * __restrict__ dj) {
+                             
+              float cs,f,f0,f1;
+              float rj0,rj1;
+              int   k,m;
+              
+              nm    = n;
+              rj[0] = sinf(x);
+              rj[1] = rj[0]/x-cosf(x);
+              rj0 = rj[0];
+              rj1 = rj[1];
+              
+              if(2<=n) {
+                 m = msta1(x,200);
+                 if(m<n)
+                    nm = m;
+                 else
+                    m  = msta2(x,n,15);
+                 f0 = 0.0f;
+                 f1 = 1.1754943508e-38f;
+                 for(k=m; k!=0; --k) {
+                     float tk = (float)k;
+                     float t0 = __fmaf_ru(2.0f,tk,3.0f)*f1/x-f0;
+                     if(k<=nm) rj[k] = f;
+                     f0 = f1;
+                     f1 = f;
+                 }
+                 
+                 if(fabsf(rj1)<fabsf(rj0))
+                    cs = rj0/f;
+                 else
+                    cs = rj1/f0;
+                 for(k=0; k!=nm; ++k) 
+                     rj[k] *= cs;
+             }
+             
+             dj[0] = cosf(x);
+             for(k=1; k!=nm; ++k) {
+                 float tk = (float)k;
+                 dj[k]    = -tk*rj[k]/x+rj[k-1];
+             }                    
+      }
  
         
 
