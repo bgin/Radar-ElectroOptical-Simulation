@@ -6924,6 +6924,122 @@ L800:
                 
                                        
       }
+      
+      
+/*
+      !*****************************************************************************80
+!
+!! JYNDD: Bessel functions Jn(x) and Yn(x), first and second derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    02 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BJN, DJN, FJN, BYN, DYN, FYN, the values of
+!    Jn(x), Jn'(x), Jn"(x), Yn(x), Yn'(x), Yn"(x).
+!
+*/    
+
+
+        __device__ void jyndd(const int   n,
+                              const float x,
+                              float      &bjn,
+                              float      &djn,
+                              float      &fjn,
+                              float      &byn,
+                              float      &dyn,
+                              float      &fyn) {
+                              
+            float bj[102];
+            float by[102];
+            float bs,e0,ec,f;
+            float f0,f1,s1,su;
+            float t0,t1,t2,t3;
+            int   k,m,mt,nt; 
+            
+            t1 = fabsf(x);
+            for(nt=1; nt!=900; ++nt) {
+                float fnt = (float)nt;
+                t0        = 0.5f*log10f(6.28f*fnt);
+                t2        = log10f(1.36f*t1/fnt);
+                mt        = (int)(t0-fnt*t2);
+                if(20<mt) break;
+            } 
+                              
+            m   = nt;
+            bs  = 0.0f;
+            f0  = 0.0f;
+            f1  = 1.1754943508e-38f
+            su  = 0.0f;
+            for(k=m; k!=0; ++k) {
+                float tk = (float)k;
+                t0       = 2.0f*(tk+1.0f);
+                f        = t0*f1/x-f0;
+                if(k<=n+1) bj[k+1] = f;
+                if(k==2*(int)(k/2)) {
+                   bs = bs+2.0f*f;
+                   if(k!=0) {
+                      su = powf(-1.0f,k/2)*f/(float)k;
+                   }
+                }
+                f0 = f1;
+                f1 = f;
+            }  
+             
+            t0 = bs-f;
+            for(k=0; k!=(n+1); ++k) bj[k+1] = bj[k+1]/t0;
+            
+            bjn   = bj[n+1];
+            ec    = 0.5772156649015329f;
+            e0    = 0.3183098861837907f;
+            s1    = 2.0f*e0*(logf(x*0.5f)+ec)*bj[1];
+            f0    = s1-8.0f*e0*su/t0;
+            f1    = (bj[2]*f0-2.0f*e0/x)/bj[1];
+            by[1] = f0;
+            by[2] = f1;
+            for(k=2; k!=n+1; ++k) {
+                float tk = (float)k;
+                f        = 2.0f*(tk-1.0f)*f1/x-f0;
+                by[k+1]  = f;
+                f0       = f1;
+                f1       = f;
+            }
+            
+            
+            t1  =  x*x;
+            t2  =  t0/t1;
+            byn =  by[n+1];
+            t3  = (float)n;
+            djn = -bj[n+2]+t3*bj[n+1]/x;
+            dyn = -by[n+2]+t3*by[n+1]/x;
+            t0  =  t3*t3/t1-1.0f;
+            fjn = t0*bjn-djn/x;
+            fyn = t0*byn-dyn/x;
+      }  
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
