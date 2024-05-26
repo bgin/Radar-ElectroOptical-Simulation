@@ -7219,6 +7219,164 @@ L800:
                     dy[k]    = by[k-1]-tk*by[k]/x;
                 }     
        }  
+       
+       
+/*
+   
+     !*****************************************************************************80
+!
+!! JY01B computes Bessel functions J0(x), J1(x), Y0(x), Y1(x) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    02 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BJ0, DJ0, BJ1, DJ1, BY0, DY0, BY1, DY1,
+!    the values of J0(x), J0'(x), J1(x), J1'(x), Y0(x), Y0'(x), Y1(x), Y1'(x).
+!
+
+*/
+
+
+        __device__ void jy01b(const float x,
+                              float     &bj0,
+                              float     &dj0,
+                              float     &bj1,
+                              float     &dj1,
+                              float     &by0,
+                              float     &dy0,
+                              float     &by1,
+                              float     &dy1) {
+                              
+              float a0,p0,p1,t;
+              float q0,q1,t2,t0;
+              float ta0,ta1,t1;
+              constexpr float pi = 3.14159265358979323846264f;
+              
+              if(x<=4.0f) {
+                 
+                 t   = x*0.25f;
+                 t2  = t*t;
+
+                 bj0 = (((((( &
+                       - 0.5014415e-03f*t2 
+                       + 0.76771853e-02f)*t2
+                       - 0.0709253492f)*t2
+                       + 0.4443584263f)*t2 
+                       - 1.7777560599f)*t2
+                       + 3.9999973021f)*t2
+                       - 3.9999998721f)*t2
+                       + 1.0f;
+
+                 bj1 = t*((((((( 
+                       - 0.1289769e-03f*t2
+                       + 0.22069155e-02f)*t2
+                       - 0.0236616773f)*t2
+                       + 0.1777582922f)*t2 
+                       - 0.8888839649f)*t2
+                       + 2.6666660544f)*t2
+                       - 3.9999999710f)*t2
+                       + 1.9999999998f);
+
+                 by0 = ((((((( 
+                       - 0.567433e-04f*t2 
+                       + 0.859977e-03f)*t2
+                       - 0.94855882e-02f)*t2
+                       + 0.0772975809f)*t2
+                       - 0.4261737419f)*t2
+                       + 1.4216421221f)*t2
+                       - 2.3498519931f)*t2
+                       + 1.0766115157f)*t2
+                       + 0.3674669052f;
+                       
+                 t0   = 0.63661977236758134307554f*logf(0.5f*x);
+                 by0  = __fmaf_ru(t0,bj0,by0);
+
+                 by1  = (((((((( 
+                         0.6535773e-03f*t2
+                       - 0.0108175626f)*t2
+                       + 0.107657606f)*t2
+                       - 0.7268945577f)*t2
+                       + 3.1261399273f)*t2
+                       - 7.3980241381f)*t2
+                       + 6.8529236342f)*t2
+                       + 0.3932562018f)*t2
+                       - 0.6366197726f)/x;
+
+                  by1 = __fmaf_ru(t0,bj1,by1);
+              } 
+              else {
+                  
+                  t   = 4.0f/x;
+                  t2  = t*t;
+                  ta0 = x-0.78539816339744830961566f;
+                  ta1 = x-2.35619449019234492884698f;
+                  a0  = sqrtf(2.0f/(pi*x));
+                  p0  = (((( 
+                     - 0.9285e-05f*t2
+                     + 0.43506e-04f)*t2
+                     - 0.122226e-03f)*t2
+                     + 0.434725e-03f)*t2
+                     - 0.4394275e-02f)*t2
+                     + 0.999999997f;
+                 t0  = sinf(ta0);
+                 q0  =  t*(((((
+                       0.8099e-05f*t2
+                     - 0.35614e-04f)*t2
+                     + 0.85844e-04f)*t2
+                     - 0.218024e-03f)*t2
+                     + 0.1144106e-02f)*t2
+                     - 0.031249995f);
+                 t1  = cosf(ta0); 
+                 bj0 = a0*(p0*t1-q0*t0);
+                 by0 = __fmaf_ru(a0,p0*t0,q0*t1);
+                 t0  = sinf(ta1);
+                 p1 = ((((
+                      0.10632e-04f*t2 
+                    - 0.50363e-04f)*t2
+                    + 0.145575e-03f)*t2
+                    - 0.559487e-03f)*t2
+                    + 0.7323931e-02f)*t2
+                    + 1.000000004f;
+                 t1 = cosf(ta1);
+                 q1 = t * ((((( 
+                    - 0.9173e-05f*t2
+                    + 0.40658e-04f)*t2
+                    - 0.99941e-04f)*t2
+                    + 0.266891e-03f)*t2
+                    - 0.1601836e-02f)*t2
+                    + 0.093749994f);
+                 bj1 = a0*(p1*t1-q1*t0);
+                 by1 = a0*__fmaf_ru(p1,t0,q1*t1);   
+              }   
+              
+               dj0 = -bj1;
+               dj1 =  bj0-bj1/x;
+               dy0 = -by1
+               dy1 =  by0-by1/x;                  
+       }
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
