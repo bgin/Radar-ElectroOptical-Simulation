@@ -6993,7 +6993,7 @@ L800:
             m   = nt;
             bs  = 0.0f;
             f0  = 0.0f;
-            f1  = 1.1754943508e-38f
+            f1  = 1.1754943508e-38f;
             su  = 0.0f;
             for(k=m; k!=0; ++k) {
                 float tk = (float)k;
@@ -7040,6 +7040,185 @@ L800:
             fjn = t0*bjn-djn/x;
             fyn = t0*byn-dyn/x;
       }  
+      
+      
+/*
+   
+     !*****************************************************************************80
+!
+!! JYNB computes Bessel functions Jn(x) and Yn(x) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    02 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  BJ(0:N), DJ(0:N), BY(0:N), DY(0:N), the values
+!    of Jn(x), Jn'(x), Yn(x), Yn'(x).
+!
+
+*/     
+
+
+        __device__ void jynb(const int   n,
+                             const float x,
+                             int        &nm,
+                             float * __restrict__ bj,
+                             float * __restrict__ dj,
+                             float * __restrict__ by,
+                             float * __restrict__ dy) {
+                             
+                const float a[4]  = {
+                      -0.7031250000000000e-01f, 0.1121520996093750f, 
+                      -0.5725014209747314f, 0.6074042001273483e+01f}; 
+                const float a1[4] = {
+                       0.1171875000000000f, -0.1441955566406250f, 
+                       0.6765925884246826f, -0.6883914268109947e+01f};
+                const float b[4]  = {
+                       0.7324218750000000e-01f, -0.2271080017089844f,
+                       0.1727727502584457e+01f, -0.2438052969955606e+02f};
+                const float b1[4] = {
+                      -0.1025390625000000f,     0.2775764465332031f, 
+                      -0.1993531733751297e+01f, 0.2724882731126854e+02f};
+                float bj0,bj1,bjk,bs;
+                float by0,by1,byk,cu;
+                float ec,f,f1,f2;
+                float p0,p1,q0,q1;
+                float s0,su,sv,t1,t2;
+                float t0;
+                int   k,m;
+                constexpr float pi = 3.14159265358979323846264f;
+                constexpr float r2p= 0.63661977236758f;
+                
+                if(x<=300.0f || (int)(0.9f*x)<n) {
+                   if(n==0) nm = 1;
+                   m = msta1(x,200);
+                   if(m<nm)
+                      nm = n;
+                   else
+                      m  = msta2(x,nm,15);
+                   bs    = 0.0f;
+                   su    = 0.0f;
+                   sv    = 0.0f;
+                   f2    = 0.0f;
+                   f1    = 1.1754943508e-38f;
+                   for(k=m; k!=0; --k) {
+                       float tk = (float)k;
+                             t0 = 2.0f*(tk+1.0f);
+                       f        = t0/x*f1-f2;
+                       if(k<=nm) bj[k] = f;
+                       if(k==2*(int)(k/2) && k!=0) {
+                          bs = bs+2.0f*f;
+                          su = su+powf(-1.0f,k/2)*f/tk;
+                       }
+                       else if(1<k) {
+                          sv = sv+powf(-1.0f,k/2)*tk/(tk*tk-1.0f)*f;
+                       }
+                       f2 = f1;
+                       f1 = f;
+                   }
+                   s0 = bs+f;
+                   t0 = 1.0f/s0;
+                   for(k=0; k!+m; ++k) bj[k]*t0;
+                   ec    = logf(x/2.0f)+0.5772156649015329f;
+                   by0   = r2p*(ec*bj[0]-4.0f*su/s0);
+                   by[0] = by0;
+                   by1   = r2p*((ec-1.0f)*bj[1]-bj[0]/x-4.0f*sv/s0);
+                   by[1] = by1;
+                }   
+                else {
+                   float pw0,pw1,pw3,pw4;
+                   pw0= powf(x,-2);             
+                   t1 = x-0.78539816339744830961566f;
+                   pw1= powf(x,-4);
+                   p0 = 1.0f;
+                   pw2= powf(x,-6);
+                   q0 = -0.125f/x;
+                   pw3= powf(x,-8);
+                   p0 = p0+a[0]*pw0;
+                   q0 = q0+b[0];
+                   p0 = p0+a[1]*pw1;
+                   q0 = q0+b[1]*pw0;
+                   p0 = p0+a[2]*pw2;
+                   q0 = q0+b[2]*pw1;
+                   p0 = p0+a[3]*pw3;
+                   q0 = q0+b[3]*pw2;
+                   cu = sqrtf(r2p/x);
+                   pw0= cosf(t1);
+                   pw1= sinf(t1);
+                   bj0= cu*(p0*pw0-q0*pw1);
+                   by0= cu*__fmaf_ru(p0,pw1,q0*pw0);
+                   bj[0] = bj0;
+                   by[0] = by0;
+                   t2 = x-2.35619449019234492884698f;
+                   p1 = 1.0f;
+                   q1 = 0.375f/x;
+                   p1 = p1+a[0]*pw0;
+                   q1 = q1+b[0];
+                   p1 = p1+a[1]*pw1;
+                   q1 = q1+b[1]*pw0;
+                   p1 = p1+a[2]*pw2;
+                   q1 = q1+b[2]*pw1;
+                   p1 = p1+a[3]*pw3;
+                   q1 = q1+b[3]*pw2;
+                   pw0= cosf(t2);
+                   pw1= sinf(t2);
+                   bj1= cu*(p1*pw0-q1*pw1);
+                   by1= cu*__fmaf_ru(p1,pw1,q1*pw0);
+                   bj[1] = bj1;
+                   by[1] = by1;
+                   for(k=2; k!=nm; ++k) {
+                       float tk = (float)k;
+                       bjk      = 2.0f*(tk-1.0f)/x*bj1-bj0;
+                       bj[k]    = bjk;
+                       bj0      = bj1;
+                       bj1      = bjk;
+                   }
+                }    
+                
+                dj[0] = -bj[1];
+                for(k=1; k!=nm; ++k) {
+                    float tk = (float)k;
+                    dj[k]    = bj[k-1]-tk/x*bj[k];
+                } 
+                for(k=2; k!=nm; ++k) {
+                       float tk = (float)k;
+                       byk      = 2.0f*(tk-1.0f)*by1/x-by0;
+                       by[k]    = byk;
+                       by0      = by1;
+                       by1      = byk;
+                }   
+                dy[0] = -by[1];
+                for(k=1; k!=nm; ++k) {
+                    float tk = (float)k;
+                    dy[k]    = by[k-1]-tk*by[k]/x;
+                }     
+       }  
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
