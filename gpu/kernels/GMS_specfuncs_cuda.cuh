@@ -7377,6 +7377,181 @@ L800:
                dy0 = -by1
                dy1 =  by0-by1/x;                  
        }
+       
+       
+/*
+
+   !*****************************************************************************80
+!
+!! JY01A computes Bessel functions J0(x), J1(x), Y0(x), Y1(x) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    01 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BJ0, DJ0, BJ1, DJ1, BY0, DY0, BY1, DY1,
+!    the values of J0(x), J0'(x), J1(x), J1'(x), Y0(x), Y0'(x), Y1(x), Y1'(x).  
+
+*/
+
+
+        __device__ void jy01a(const float x,
+                              float     &bj0,
+                              float     &dj0,
+                              float     &bj1,
+                              float     &dj1,
+                              float     &by0,
+                              float     &dy0,
+                              float     &by1,
+                              float     &dy1) {
+                              
+             const float a[12]  = {
+                   -0.7031250000000000e-01f, 0.1121520996093750f, 
+                   -0.5725014209747314f,     0.6074042001273483e+01f, 
+                   -0.1100171402692467e+03f, 0.3038090510922384e+04f, 
+                   -0.1188384262567832e+06f, 0.6252951493434797e+07f, 
+                   -0.4259392165047669e+09f, 0.3646840080706556e+11f, 
+                   -0.3833534661393944e+13f, 0.4854014686852901e+15f};
+             const float a1[12] = {
+                    0.1171875000000000f,     -0.1441955566406250f, 
+                    0.6765925884246826f,     -0.6883914268109947e+01f, 
+                    0.1215978918765359e+03f, -0.3302272294480852e+04f, 
+                    0.1276412726461746e+06f, -0.6656367718817688e+07f, 
+                    0.4502786003050393e+09f, -0.3833857520742790e+11f, 
+                    0.4011838599133198e+13f, -0.5060568503314727e+15f};   
+             const float b[12]  = {
+                    0.7324218750000000e-01f, -0.2271080017089844f, 
+                    0.1727727502584457e+01f, -0.2438052969955606e+02f, 
+                    0.5513358961220206e+03f, -0.1825775547429318e+05f, 
+                    0.8328593040162893e+06f, -0.5006958953198893e+08f, 
+                    0.3836255180230433e+10f, -0.3649010818849833e+12f, 
+                    0.4218971570284096e+14f, -0.5827244631566907e+16f};   
+             const float b1[12] = {
+                   -0.1025390625000000f,     0.2775764465332031f, 
+                   -0.1993531733751297e+01f, 0.2724882731126854e+02f, 
+                   -0.6038440767050702e+03f, 0.1971837591223663e+05f, 
+                   -0.8902978767070678e+06f, 0.5310411010968522e+08f, 
+                   -0.4043620325107754e+10f, 0.3827011346598605e+12f, 
+                   -0.4406481417852278e+14f, 0.6065091351222699e+16f};  
+             float cs0,cs1,cu,ec;
+             float p0,p1,q0,q1;
+             float r,r0,r1,t1,t2;
+             float w0,w1,x2,tmp0,tmp1;
+             int   k,k0,idx;
+             constexpr float pi  = 3.14159265358979323846264f;
+             constexpr float rp2 = 0.63661977236758f;
+             x2                  = x*x;
+             
+             if(x<=12.0f) {
+                
+                bj0 = 1.0f;
+                r   = 1.0f;
+                for(k=1; k!=30; ++k) {
+                    float tk = (float)k;
+                    r        = -0.25f*r*x2/(tk*tk);
+                    bj0      += r;
+                    if(fabsf(r)<fabsf(bj0)*1.0e-15f) break;
+                }
+                bj1 = 1.0f;
+                r   = 1.0f;
+                for(k=1; k!=30; ++k) {
+                    float tk = (float)k;
+                    r        = -0.25f*r*x2/(tk*(tk+1.0f));
+                    bj1      += r;
+                    if(fabsf(r)<fabsf(bj1)*1.0e-15f) break;
+                }
+                bj1 = 0.5f*x*bj1;
+                ec  = logf(x/2.0f)+0.5772156649015329f;
+                cs0 = 0.0f;
+                w0  = 0.0f;
+                r0  = 1.0f;
+                for(k=1; k!=30; ++k) {
+                    float tk = (float)k;
+                    w0       = w0+1.0f/tk;
+                    r0       = -0.25f*r0/(tk*tk)*x2;
+                    r        =  r0*w0;
+                    cs0      =  cs0+r;
+                    if(fabsf(r)<fabsf(cs0)*1.0e-15f) break;
+                }
+                by0 = rp2 * ( ec * bj0 - cs0 )
+                cs1 = 1.0_sp
+                w1 = 0.0_sp
+                r1 = 1.0_sp
+                for(k=1; k!=30; ++k) {
+                    float tk = (float)k;
+                    w1       = w1+1.0f/tk;
+                    r1       = -0.25f*r1/(tk*(tk+1.0f))*x2;
+                    r        = r1*__fmaf_ru(2.0f,w1,1.0f/(tk+1.0f));
+                    cs1      += r;
+                    if(fabsf(r)<fabsf(cs1)*1.0e-15f) break;
+                }
+                 by1 = rp2*(ec*bj1-1.0f/x-0.25f*x*cs1);
+             }
+             else {
+                 
+                 if(x<35.0f)
+                    k0 = 12;
+                 else if(x<50.0f)
+                    k0 = 10;
+                 else
+                    k0 = 8;
+                 t1    =  x-0.78539816339744830961566f;
+                 tmp0  =  cosf(t1);
+                 p0    =  1.0f;
+                 q0    = -0.125f/x;
+                 tmp1  = sinf(t1);
+                 idx = 0;
+                 for(k=1; k!=k0; ++k) {
+                     ++idx;
+                     p0 = p0+a[idx]*powf(x,-2*k);
+                     q0 = q0+b[idx]*powf(x,-2*k-1);
+                 }
+                 cu = sqrtf(rp2/x);
+                 bj0 = cu*(p0*tmp0-q0*tmp1);
+                 by0 = cu*__fmaf_ru(p0,tmp1,q0*tmp0);
+                 t2  = x-2.35619449019234492884698f;
+                 tmp0= cosf(t2);
+                 p1  = 1.0f;
+                 q1  = 0.375f/x;
+                 idx = 0;
+                 tmp1= sinf(t2);
+                 for(k=1; k!=k0; ++k) {
+                     ++idx;
+                     p0 = p1+a1[idx]*powf(x,-2*k);
+                     q0 = q1+b1[idx]*powf(x,-2*k-1);
+                 }
+                 bj1 = cu*(p1*tmp0-q1*tmp1);
+                 by1 = cu*__fmaf_ru(p1,tmp1,q1*tmp0);
+             }
+             
+             dj0 = -bj1;
+             dj1 =  bj0-bj1/x;
+             dy0 = -by1;
+             dy1 =  by0-by1/x;
+                            
+      }
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
