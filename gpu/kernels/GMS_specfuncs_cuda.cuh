@@ -7155,6 +7155,146 @@ L800:
                     ty = rc*(bg*cxp-bf*sxp);
                 }     
        }
+       
+       
+/*
+
+      !*****************************************************************************80
+!
+!! ITJYB computes integrals of Bessel functions J0(t) and Y0(t).
+!
+!  Discussion:
+!
+!    This procedure integrates Bessel functions J0(t) and Y0(t)
+!    with respect to t from 0 to x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TJ, TY, the integrals of J0(t) and Y0(t) 
+!    from 0 to x.
+!
+
+*/
+
+
+        __device__ void itjyb(const float x,
+                              float      &tj,
+                              float      &ty) {
+                              
+               float f0,g0,t,x;
+               float x1,xt,sxt,cxt;
+               float sqrx;
+               constexpr float pi =  3.14159265358979323846264f;
+               
+               if(x==0.0f) {
+                  tj = 0.0f;
+                  ty = 0.0f;
+               }
+               else if(x<=4.0f) {
+                  x1 = x*0.25f;
+                  t  = x1*x1;
+
+                  tj = ((((((( 
+                       - 0.133718e-03f  * t
+                       + 0.2362211e-02f)* t
+                       - 0.025791036f )* t 
+                       + 0.197492634f )* t 
+                       - 1.015860606f )* t 
+                       + 3.199997842f )* t 
+                       - 5.333333161f )* t 
+                       + 4.0f)*x1;
+
+                  ty = ((((((((
+                         0.13351e-04f   * t 
+                       - 0.235002e-03f) * t 
+                       + 0.3034322e-02f)* t 
+                       - 0.029600855f )* t 
+                       + 0.203380298f )* t 
+                       - 0.904755062f )* t 
+                       + 2.287317974f )* t 
+                       - 2.567250468f )* t 
+                       + 1.076611469f )* x1;
+                  ty = 0.63661977236758134307554f*logf(x*0.5f)*tj-ty;
+
+               }      
+               else if(x<=8.0f) {
+                   xt = x-0.78539816339744830961566f;
+                   cxt=cosf(xt);
+                   t  = 16.0f/(x*x);
+                   f0 = (((((( 
+                          0.1496119e-02f * t 
+                        - 0.739083e-02f) * t 
+                        + 0.016236617f ) * t 
+                        - 0.022007499f ) * t 
+                        + 0.023644978f ) * t 
+                        - 0.031280848f ) * t 
+                        + 0.124611058f ) * 4.0f/x;
+                  sxt = sinf(xt);
+                  g0 = ((((( &
+                          0.1076103e-02f * t 
+                        - 0.5434851e-02f)* t 
+                        + 0.01242264f )  * t 
+                        - 0.018255209f ) * t 
+                        + 0.023664841f ) * t 
+                        - 0.049635633f ) * t 
+                        + 0.79784879f;
+                  sqrx = sqrtf(x);
+                  tj = 1.0f-(f0*cxt-g0*sxt)/sqrx;
+                  ty = -__fmaf_ru(f0,sxt,g0*cxt)/sqrx;
+               } 
+               else {
+                  t  = 64.0f/(x*x);
+                  xt = x-0.78539816339744830961566f;
+                  cxt= cosf(xt);
+                  f0 = ((((((( 
+                       - 0.268482e-04f     * t 
+                       + 0.1270039e-03f )  * t 
+                       - 0.2755037e-03f )  * t 
+                       + 0.3992825e-03f )  * t 
+                       - 0.5366169e-03f )  * t 
+                       + 0.10089872e-02f ) * t 
+                       - 0.40403539e-02f ) * t 
+                       + 0.0623347304f ) * 8.0f/x;
+                 sxt = sinf(xt);
+                 g0 = (((((( 
+                       - 0.226238e-04f * t 
+                       + 0.1107299e-03f )     * t 
+                       - 0.2543955e-03f )     * t 
+                       + 0.4100676e-03f )     * t 
+                       - 0.6740148e-03f )     * t 
+                       + 0.17870944e-02f )    * t 
+                       - 0.01256424405f )     * t 
+                       + 0.79788456f;
+                 sqrx = sqrtf(x);
+                 tj   = 1.0f-(f0*cxt-g0*sxt)/sqrx;
+                 ty   = -__fmaf_ru(f0,sxt,g0*cxt)/sqrx;
+
+               }              
+      }
       
 /*
       !*****************************************************************************80
