@@ -6927,6 +6927,85 @@ L800:
       
       
 /*
+
+      !*****************************************************************************80
+!
+!! JELP computes Jacobian elliptic functions SN(u), CN(u), DN(u).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    08 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  U, the argument.
+!
+!    Input, real(kind=sp) ::  HK, the modulus, between 0 and 1.
+!
+!    Output, real(kind=sp) ::  ESN, ECN, EDN, EPH, the values of
+!    sn(u), cn(u), dn(u), and phi (in degrees).
+!
+
+*/
+      
+        __device__ void jelp(const float u,
+                             const float hk,
+                             float      &esn,
+                             float      &ecn,
+                             float      &edn,
+                             float      &eph) {
+                             
+             float r[40];
+             float a,a0,b,b0;
+             float c,d,dn,sa;
+             float t;
+             int   j,n;
+             constexpr float pi = 3.14159265358979323846264f;
+             a0                 = 1.0f;
+             b0                 = sqrtf(1.0f-hk*hk);
+             #pragma unroll
+             for(n=0; n!=40; ++n) {
+                 a    = (a0+b0)*0.5f;
+                 b    = sqrtf(a0*b0);
+                 c    = (a0-b0)*0.5f;
+                 r[n] = c/a;
+                 if(c<1.0e-7f) break;
+                 a0   = a;
+                 b0   = b; 
+             }    
+             dn = 1099511627776.0f*a*u;
+             #pragma unroll
+             for(j=n; j!=0; --j) {
+                 t   = r[j]*sinf(dn);
+                 sa  = atanf(t/sqrtf(fabsf(1.0f-t*t)));
+                 d   = 0.5f*(dn+sa);
+                 dn  = d;
+             }  
+             eph = d*180.0f/pi;
+             esn = sinf(d);
+             ecn = cosf(d);
+             edn = sqrtf(1.0f-hk*hk*esn*esn);             
+      }
+      
+/*
       !*****************************************************************************80
 !
 !! JYNDD: Bessel functions Jn(x) and Yn(x), first and second derivatives.
@@ -7552,6 +7631,13 @@ L800:
              dy1 =  by0-by1/x;
                             
       }
+      
+      
+/*
+
+    
+
+*/
         
 
 #endif /*__GMS_SPECFUNCS_CUDA_CUH__*/
