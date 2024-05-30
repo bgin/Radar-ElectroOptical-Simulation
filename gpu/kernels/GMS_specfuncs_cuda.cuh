@@ -6930,6 +6930,152 @@ L800:
 
       !*****************************************************************************80
 !
+!! ITSH0 integrates the Struve function H0(t) from 0 to x.
+!
+!  Discussion:
+!
+!    This procedure evaluates the integral of Struve function
+!    H0(t) with respect to t from 0 and x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TH0, the integral of H0(t) from 0 to x.
+   
+*/
+
+
+        __device__ float itsh0(const float x) {
+        
+              float a[26];
+              float a0,a1,af,bf,bg;
+              float el,rd,s,s0;
+              float ty,xp,th0;
+              int   k;
+              constexpr float pi = 3.141592653589793f;
+              r                  = 1.0f;
+              
+              if(x<=30.0f) {
+                 s = 0.5f;
+                 for(k=1; k!=100; ++k) {
+                     float tk = (float)k;
+                     float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                     if(k==1)
+                        rd = 0.5f;
+                     else
+                        rd = 1.0f;
+                     float t1 = x/t0;
+                     r        = -r*rd*tk/(tk+1.0f)*t1*t1;
+                     if(fabsf(r)<fabsf(s)*1.0e-12f) break;
+                 }
+                 th0 = 0.63661977236758134307554f*x*x*s;
+              }
+              else {
+                 s = 1.0f;
+                 for(k=1; k!=12; ++k) {
+                     float tk = (float)k;
+                     float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                     float t1 = tk/(tk+1.0f);
+                     r        = -r*t1*t0*t0;
+                     s        += r;
+                     if(fabsf(r)<fabsf(s)*1.0e-12f) break;
+                 }
+                 el   = 0.57721566490153f;
+                 s0   = s/(pi*x*x)+0.63661977236758134307554f*
+                        (logf(2.0f*x)+el);
+                 a0   = 1.0f;
+                 a1   = 0.625f;
+                 a[1] = a1;
+                 for(k=1; k!=20; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk+0.5f;
+                     float t1 = 1.5f*t0*tk+5.0f*0.16666666666666666666667f;
+                     float t2 = a1-0.5f*t0*t0*(tk-0.5f)*a0;
+                     af       = (t1*t2)/(tk+1.0f);
+                     a[k+1]   = af;
+                     a0       = a1;
+                     a1       = af;
+                 }
+                 bf = 1.0f;
+                 r  = 1.0f;
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[2],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[4],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[6],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[8],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[10],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[12],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[14],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[16],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[18],r,bf);
+                 r  = -r/(x*x);
+                 bf = __fmaf_ru(a[20],r,bf);
+                 bg = a[1]/x;
+                 r  = 1.0f/x;
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[3],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[5],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[7],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[9],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[11],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[13],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[15],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[17],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[19],r,bg);
+                 r  = -r/(x*x);
+                 bg = __fmaf_ru(a[21],r,bg);
+                 xp = x+0.78539816339744830961566f;
+                 ty = sqrtf(2.0f/(pi*x))
+                      *(bg*cosf(xp)-bf*sinf(xp));
+                 th0 = ty+s0;
+              }
+              return (th0);
+        }
+      
+      
+/*
+
+      !*****************************************************************************80
+!
 !! JELP computes Jacobian elliptic functions SN(u), CN(u), DN(u).
 !
 !  Licensing:
