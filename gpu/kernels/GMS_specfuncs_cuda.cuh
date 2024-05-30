@@ -7005,6 +7005,157 @@ L800:
              edn = sqrtf(1.0f-hk*hk*esn*esn);             
       }
       
+      
+/*
+     
+    !*****************************************************************************80
+!
+!! ITJYA computes integrals of Bessel functions J0(t) and Y0(t).
+!
+!  Discussion:
+!
+!    This procedure integrates Bessel functions J0(t) and Y0(t) with
+!    respect to t from 0 to x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    25 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TJ, TY, the integrals of J0(t) and Y0(t) 
+!    from 0 to x.  
+
+*/
+
+
+        __device__ void itjya(const float x,
+                              float     &tj,
+                              float     &ty) {
+                              
+                float a[19];
+                float a0,a1,af,bf;
+                float bg,r,r2,rc;
+                float rs,ty1,ty2;
+                float x2,xp,cxp,sxp;
+                int   k;
+                constexpr float pi =  3.14159265358979323846264f;
+                constexpr float el =  0.5772156649015329f;
+                constexpr float eps=  1.0e-12f;
+                
+                if(x==0.0f) {
+                   tj = 0.0f;
+                   ty = 0.0f;
+                }
+                else if(x==20.0f) {
+                   x2 = x*x;
+                   tj = x;
+                   r  = x;
+                   for(k=1; k!=60; ++k) {
+                       float tk = (float)k;
+                       float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                       float t1 = 2.0f*tk-1.0f;
+                       r        = -0.25f*r*t0/t1/(tk*tk)*x2;
+                       tj       += r;
+                       if(fabsf(r)<fabsf(tj)*eps) break;
+                   }
+                   ty1 = (el+logf(x*0.5f))*tj;
+                   rs  = 0.0f;
+                   ty2 = 1.0f;
+                   r   = 1.0f;
+                   for(k=1; k!=60; ++k) {
+                       float tk = (float)k;
+                       float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                       float t1 = 2.0f*tk-1.0f;
+                       r        = -0.25f*r*t0/t1/(tk*tk)*x2;
+                       rs       = rs+1.0f/tk;
+                       r2       = r*(rs+1.0f/t0);
+                       ty2      +=r2;
+                       if(fabsf(r2)<fabsf(ty2)*eps) break;
+                   }
+                   ty = (ty1-x*ty2)*0.63661977236758134307554f;
+                }   
+                else {
+                    a0   = 1.0f;
+                    a1   = 0.625f;
+                    a[1] = a1;
+                    for(k=1; k!=16; ++k) {
+                        float tk = (float)k;
+                        float t0 = tk+0.5f;
+                        float t1 = 1.5f*t0;
+                        float t2 = t0*0.16666666666666666666667f;
+                        float t3 = a1-0.5f*t0*t0;
+                        float t4 = (tk-0.5f)*a0;
+                        af       = (t1*t2*t3*t4)/(tk+1.0f);
+                        a[k+1]   = af;
+                        a0       = a1;
+                        a1       = af;
+                    }
+                    bf = 1.0f;
+                    r  = 1.0f;
+                    r  = -r/(x*x);
+                    bf = bf+a[2]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[4]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[6]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[8]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[10]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[12]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[14]*r;
+                    r  = -r/(x*x);
+                    bf = bf+a[16]*r;
+                    bg = a[1]/x;
+                    r  = 1.0f/x;
+                    r  = -r/(x*x);
+                    bg = bg+a[3]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[5]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[7]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[9]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[11]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[13]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[15]*r;
+                    r  = -r/(x*x);
+                    bg = bg+a[17]*r;
+                    xp = x+0.78539816339744830961566f;
+                    cxp= cosf(xp);
+                    rc = sqrtf(2.0f/(pi*x));
+                    sxp= sinf(xp);
+                    tj = 1.0f-rc*(__fmaf_ru(bf,cxp,bg*sxp);
+                    ty = rc*(bg*cxp-bf*sxp);
+                }     
+       }
+      
 /*
       !*****************************************************************************80
 !
