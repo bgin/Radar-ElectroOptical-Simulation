@@ -6930,6 +6930,132 @@ L800:
 
       !*****************************************************************************80
 !
+!! ITSL0 integrates the Struve function L0(t) from 0 to x.
+!
+!  Discussion:
+!
+!    This procedure evaluates the integral of modified Struve function
+!    L0(t) with respect to t from 0 to x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    31 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TL0, the integral of L0(t) from 0 to x.
+! 
+
+*/
+
+
+       __device__ float itsl0(const float x) {
+       
+               float a[19];
+               float a0,a1,af,el;
+               float r,rd,s,s0;
+               float ti,tl0;
+               int   k;
+               constexpr float pi = 3.14159265358979323846264f;
+               r                  = 1.0f;
+               if(x<=20.0f) {
+                  s = 0.5f;
+                  for(k=1; k!=100; ++k) {
+                      float tk = (float)k;
+                      float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                      float t1 = tk/(tk+1.0f);
+                      if(k==1)
+                         rd    = 0.5f;
+                      else
+                         rd    = 1.0f;
+                      float t2 = x/(t0*t0);
+                      r        = r*rd*t1*t0;
+                      s        +=r;
+                      if(fabsf(r/s)<1.0e-12f) break;
+                  }
+                  tl0 = 0.63661977236758134307554f*x*x*s;
+                  return (tl0);
+               }
+               else {
+                  s = 1.0f;
+                  for(k=1; k!=10; ++k) {
+                      float tk = (float)k;
+                      float t0 = __fmaf_ru(2.0f,tk.1.0f);
+                      float t1 = tk/(tk+1.0f);
+                      r        = r*t1*t0*t0;
+                      s        +=r;
+                      if(fabsf(r/s)<1.0e-12f) break;
+                  }
+                  el   = 0.57721566490153f;
+                  s0   = -s/(pi*x*x)+0.63661977236758134307554f*
+                          (logf(x+x)+el);
+                  a0   = 1.0f;
+                  a1   = 0.625f;
+                  a[1] = a1;
+                  for(k=1; k!=10; ++k) {
+                      float tk = (float)k;
+                      float t0 = tk+0.5f;
+                      float t1 = 1.5f*tk*(tk+0.83333333333333333333333f)*a1-0.5f;
+                      float t2 = t0*t0*(tk-0.5f)*a0;
+                      af       = t1*t2/(tk+1.0f)
+                      a[k+1]   = af;
+                      a0       = a1;
+                      a1       = af;
+                  }
+                  ti = 1.0f;
+                  r  = 1.0f;
+                  r  = r/x;
+                  ti = __fmaf_ru(a[1],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[2],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[3],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[4],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[5],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[6],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[7],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[8],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[9],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[10],r,ti);
+                  r  = r/x;
+                  ti = __fmaf_ru(a[11],r,ti);
+                  tl0= ti/sqrtf(2.0f*pi*x)*expf(x)+s0;
+                  return (tl0);
+               }
+       }
+      
+      
+/*
+
+      !*****************************************************************************80
+!
 !! ITSH0 integrates the Struve function H0(t) from 0 to x.
 !
 !  Discussion:
@@ -6975,7 +7101,7 @@ L800:
               float el,rd,s,s0;
               float ty,xp,th0;
               int   k;
-              constexpr float pi = 3.141592653589793f;
+              constexpr float pi = 3.14159265358979323846264f
               r                  = 1.0f;
               
               if(x<=30.0f) {
