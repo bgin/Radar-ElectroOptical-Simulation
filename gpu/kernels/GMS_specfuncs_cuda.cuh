@@ -7245,9 +7245,153 @@ L800:
                      float t1 = r*(tk-1.0f);
                      r        = 0.25f*t1/(t0)*x*x;
                      rs       = rs+1.0f/tk;
-                     r2       = r*(rs+1.0f/(
+                     r2       = r*(rs+1.0f/(tk+tk)-
+                                (el+tc0);
+                     b1       = b1+r2;
+                     if(fabsf(r2/b1)<1.0e-12f) break;
                  }
-              }              
+                 ttk = e0-0.125f*x*x*b1;
+              }     
+              else {
+                 ttk = 1.0f;
+                 r   = ttk;
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[0],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[1],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[2],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[3],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[4],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[5],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[6],r,ttk);
+                 r   = r/x;
+                 ttk = __fmaf_ru(c[7],r,ttk);
+                 rc  = x*sqrtf(0.63661977236758134307554f*x);
+                 ttk = ttk*expf(-x)/rc;
+              }         
+      }
+      
+      
+/*
+
+     !*****************************************************************************80
+!
+!! ITTIKB integrates (I0(t)-1)/t from 0 to x, K0(t)/t from x to infinity.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    28 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the integral limit.
+!
+!    Output, real(kind=sp) ::  TTI, TTK, the integrals of
+!    [I0(t)-1]/t from 0 to x, and K0(t)/t from x to oo.
+!  
+
+*/
+
+
+        __device__ void ittikb(const float x,
+                               float      &tti,
+                               float      &ttk) {
+                               
+              float e0,t1,x1; 
+              constexpr float pi = 3.14159265358979323846264f;
+              constexpr float el = 0.5772156649015329f;
+              
+              if(x==0.0f) {
+                 tti = 0.0f;
+              }
+              else if(x<=5.0f) {
+                 x1   = x*0.2f;
+                 t    = x1*x1;
+                 tti  = 
+                        __fmaf_ru(
+                        __fmaf_ru(
+                        __fmaf_ru(
+                        __fmaf_ru(
+                        __fmaf_ru(
+                        __fmaf_ru(
+                        __fmaf_ru(0.1263e-03f,t,0.96442e-03f),
+                                              t,0.968217e-02f),
+                                              t,0.06615507f),
+                                              t,0.33116853),
+                                              t,1.13027241),
+                                              t,2.44140746),
+                                              t,3.12499991);
+                                                               
+              } 
+              else {
+                 t   = 5.0f/x;
+                 tti = ((((((((( 
+                       2.1945464f    * t 
+                     - 3.5195009f )  * t 
+                     - 11.9094395f ) * t 
+                     + 40.394734f  ) * t 
+                     - 48.0524115f ) * t 
+                     + 28.1221478f ) * t 
+                     - 8.6556013f )  * t 
+                     + 1.4780044f )  * t 
+                     - 0.0493843f )  * t 
+                     + 0.1332055f )  * t 
+                     + 0.3989314f;
+                 tti = tti*expf(x)/(sqrtf(x)*x);
+              }     
+              
+            if(x==0.0f) {
+               ttk = x;
+            }
+            else if(x<=2.0f) {
+               t1  = x/2.0f;
+               t   = t1*t1;
+               ttk = ((((( 
+                     0.77e-06f         * t 
+                   + 0.1544e-04f )     * t 
+                   + 0.48077e-03f )    * t 
+                   + 0.925821e-02f )   * t 
+                   + 0.10937537f )     * t 
+                   + 0.74999993f )     * t;
+               e0  = el+logf(x*0.5f);
+               ttk = __fmaf_ru(pi,0.13089969389957471826928f,e0)*
+                     __fmaf_ru(0.5f,e0,tti)-ttk;
+            }  
+            else {
+               t   = 4.0f/x;
+               ttk = ((((( 
+                     0.02724f    * t 
+                   - 0.1110396f) * t 
+                   + 0.2060126f) * t 
+                   - 0.2621446f) * t 
+                   + 0.3219184f) * t 
+                   - 0.5091339f) * t 
+                   + 1.2533141f;
+               ttk = ttk*expf(-x)/(sqrtf(x)*x); 
+            }                  
       }
       
       
