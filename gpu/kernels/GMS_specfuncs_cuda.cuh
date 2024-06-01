@@ -7130,14 +7130,125 @@ L800:
                        - 0.11e-05f)     * t 
                        + 0.7978846f;
                    g0  = ((((( 
-                       - 0.23731e-02_sp * t &
-                       + 0.59842e-02_sp ) * t &
-                       + 0.24437e-02_sp ) * t &
-                       - 0.0233178_sp ) * t &
-                       + 0.595e-04_sp ) * t &
-                    + 0.1620695_sp ) * t
+                       - 0.23731e-02f  * t 
+                       + 0.59842e-02f) * t 
+                       + 0.24437e-02f) * t 
+                       - 0.0233178f)   * t 
+                       + 0.595e-04f)   * t 
+                       + 0.1620695f)   * t;
+                   tty = (f0*sinf(xt)-g0*cosf(xt))/(sqrtf(x)*x);
+                   tth = tth+tty;
+                   return (tth);
                 }
         }
+        
+        
+/*
+
+      !*****************************************************************************80
+!
+!! ITTIKA integrates (I0(t)-1)/t from 0 to x, K0(t)/t from x to infinity.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    23 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the integral limit.
+!
+!    Output, real(kind=sp) ::  TTI, TTK, the integrals of [I0(t)-1]/t 
+!    from 0 to x, and of K0(t)/t from x to oo.
+
+*/
+
+
+       __device__ void ittika(const float x,
+                              float      &tti,
+                              float      &ttk) {
+                              
+              const float c[8] = {
+                    1.625f, 4.1328125f,
+                    1.45380859375e+01f, 6.553353881835e+01f,
+                    3.6066157150269e+02f, 2.3448727161884e+03f,
+                    1.7588273098916e+04f, 1.4950639538279e+05f};    
+              float b1,e0,r,r2;
+              float rc,rs,tc0,tc1;
+              int   k;
+              constexpr float pi = 3.14159265358979323846264f;
+              constexpr float el = 0.5772156649015329f;
+              
+              if(x<40.0f) {
+                 tti = 1.0f;
+                 r   = 1.0f;
+                 for(k=2; k!=50; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk*tk*tk;
+                     float t1 = tk-1.0f;
+                     r        = 0.25f*r*t1/(t0)*x*x;
+                     tti      +=r;
+                     if(fabsf(r/tti)<1.0e-12f) break;
+                 }
+                 tti = tti*0.125f*x*x;
+              } 
+              else {
+                 tti = 1.0f;
+                 r   = 1.0f;
+                 r   = r/x;
+                 tti = __fmaf_ru(c[0],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[1],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[2],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[3],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[4],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[5],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[6],r,tti);
+                 r   = r/x;
+                 tti = __fmaf_ru(c[7],r,tti);
+                 rc  = x*sqrtf(2.0f*pi*x);
+                 tti = tti*expf(x)/rc;
+              }   
+              
+              if(x<=12.0f) {
+                 tc0 = logf(x*0.5f);
+                 e0  = (0.5f+tc0+el)*tc0+pi*0.13089969389957471826928f+
+                       0.5f*el*el;
+                 b1  = 1.5f-(el+tc0);
+                 rs  = 1.0f;
+                 r   = rs;
+                 for(k=2; k!=50; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk*tk*tk;
+                     float t1 = r*(tk-1.0f);
+                     r        = 0.25f*t1/(t0)*x*x;
+                     rs       = rs+1.0f/tk;
+                     r2       = r*(rs+1.0f/(
+                 }
+              }              
+      }
       
       
 /*
