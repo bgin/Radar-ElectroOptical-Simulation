@@ -7050,6 +7050,94 @@ L800:
                   return (tl0);
                }
        }
+       
+       
+/*
+
+       !*****************************************************************************80
+!
+!! ITTH0 integrates H0(t)/t from x to oo.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    23 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the lower limit of the integral.
+!
+!    Output, real(kind=sp) ::  TTH, the integral of H0(t)/t from x to oo.
+
+*/
+
+
+        __device__ float itth0(const float x) {
+        
+                float f0,g0,r,s;
+                float t,tty,xt;
+                float tth;
+                constexpr float pi = 3.14159265358979323846264f
+                r                  = 1.0f;
+                s                  = r;
+                if(x<=24.5f) {
+                   for(k=1; k!=60; ++k) {
+                       float tk = (float)k;
+                       float t0 = 2.0f*tk-1.0f;
+                       float t1 = __fmaf_ru(2.0f,tk,1.0f);
+                       r        = -r*x*x*t0/(t1*t1*t1);
+                       s        += r;
+                       if(fbasf(r)<fabsf(s)*1.0e-12f) break;
+                   }
+                   tth = 0.93417655442731527615578f*x*s;
+                   return (tth);
+                }
+                else {
+                   for(k=1; k!=10; ++k) {
+                       float tk = (float)k;
+                       float t0 = __fmaf_ru(2.0f,tk,1.0f);
+                       float t1 = 2.0f*tk+1.0f;
+                       r        = -r*(t1*t1*t1)/(t0*x*x);
+                       s        += r;
+                       if(fbasf(r)<fabsf(s)*1.0e-12f) break;
+                   }
+                   tth = 2.0f/(pi*x)*s;
+                   t   = 8.0f/x;
+                   xt  = x+0.78539816339744830961566f;
+                   f0  = ((((( 
+                         0.18118e-02f   * t 
+                       - 0.91909e-02f ) * t 
+                       + 0.017033f )    * t 
+                       - 0.9394e-03f)   * t 
+                       - 0.051445f)     * t 
+                       - 0.11e-05f)     * t 
+                       + 0.7978846f;
+                   g0  = ((((( 
+                       - 0.23731e-02_sp * t &
+                       + 0.59842e-02_sp ) * t &
+                       + 0.24437e-02_sp ) * t &
+                       - 0.0233178_sp ) * t &
+                       + 0.595e-04_sp ) * t &
+                    + 0.1620695_sp ) * t
+                }
+        }
       
       
 /*
