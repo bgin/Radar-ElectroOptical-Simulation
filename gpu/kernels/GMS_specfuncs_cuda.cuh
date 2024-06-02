@@ -7225,6 +7225,140 @@ L800:
 
        !*****************************************************************************80
 !
+!! ITTJYB integrates (1-J0(t))/t from 0 to x, and Y0(t)/t from x to infinity.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    01 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the integral limit.
+!
+!    Output, real(kind=sp) ::  TTJ, TTY, the integrals of [1-J0(t)]/t 
+!    from 0 to x and of Y0(t)/t from x to oo.
+!
+
+*/
+
+
+        __device__ void ittjyb(const float x,
+                               float     &ttj,
+                               float     &tty) {
+                               
+              float e0,f0,g0,t;
+              float t1,x1,xt,lx2;
+              float cxt,sxt,t0;
+              constexpr float pi = 3.14159265358979323846264f;
+              constexpr float el = 0.5772156649015329f;
+              
+              if(x==0.0f) return;
+              
+              lx2 = logf(x*0.5f);
+              if(x<=4.0f) {
+                 x1  = x*0.25f;
+                 t   = x1*x1;
+                 ttj = (((((( 
+                       0.35817e-04f    * t
+                     - 0.639765e-03f ) * t 
+                     + 0.7092535e-02f ) * t 
+                     - 0.055544803f ) * t 
+                     + 0.296292677f ) * t 
+                     - 0.999999326f ) * t 
+                     + 1.999999936f ) * t;
+ 
+                 tty = (((((((  
+                     - 0.3546e-05f * t 
+                     + 0.76217e-04f )     * t 
+                     - 0.1059499e-02f )   * t 
+                     + 0.010787555f ) * t 
+                     - 0.07810271f )  * t 
+                     + 0.377255736f ) * t 
+                     - 1.114084491f ) * t 
+                     + 1.909859297f ) * t;
+                 e0  = el+lx2;
+                 tty = 0.52359877559829887307711f+e0/pi*
+                       (2.0f*ttj-e0)-tty; 
+              }
+              else if(x<=8.0f) {
+                 xt = x+0.78539816339744830961566f;
+                 t0 = sqrtf(x)*x;
+                 t1 = 4.0f/x;
+                 sxt= sinf(xt);
+                 t  = t1*t1;
+                 f0 = ((((( 
+                      0.0145369f * t 
+                    - 0.0666297f ) * t 
+                    + 0.1341551f ) * t 
+                    - 0.1647797f ) * t 
+                    + 0.1608874f ) * t 
+                    - 0.2021547f ) * t 
+                    + 0.7977506f;
+                 cxt= cosf(xt);
+                 g0 = (((((( 
+                      0.0160672f   * t 
+                    - 0.0759339f ) * t 
+                    + 0.1576116f ) * t 
+                    - 0.1960154f ) * t 
+                    + 0.1797457f ) * t 
+                    - 0.1702778f ) * t 
+                    + 0.3235819f ) * t1;
+                 ttj = __fmaf_ru(f0,cxt,g0*sxt)/t0;
+                 ttj = ttj+el+lx2;
+                 tty = (f0*sxt-g0*cxt)/t0;
+              }
+              else {
+                 t   = 8.0f/x;
+                 t0  = sqrtf(x)*x;
+                 xt  = x+0.78539816339744830961566f;
+                 sxt = sinf(xt);
+                 f0  = ((((( 
+                       0.18118e-02f    * t 
+                     - 0.91909e-02f )  * t 
+                     + 0.017033f )     * t 
+                     - 0.9394e-03f )   * t 
+                     - 0.051445f )     * t 
+                     - 0.11e-05f )     * t 
+                     + 0.7978846f;
+                 cxt = cosf(xt);
+                 g0  = ((((( 
+                     - 0.23731e-02f     * t 
+                     + 0.59842e-02f )   * t 
+                     + 0.24437e-02f )   * t 
+                     - 0.0233178f )     * t 
+                     + 0.595e-04f )     * t 
+                     + 0.1620695f )     * t;
+                 ttj = __fmaf_ru(f0,cxt,g0*sxt)/t0+el+lx2;
+                 tty = (f0*sxt-g0*cxt)/t0;
+     
+              }
+              
+                                       
+      }
+       
+       
+/*
+
+       !*****************************************************************************80
+!
 !! ITTH0 integrates H0(t)/t from x to oo.
 !
 !  Licensing:
