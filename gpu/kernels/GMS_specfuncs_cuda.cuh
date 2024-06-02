@@ -7054,6 +7054,175 @@ L800:
        
 /*
 
+     !*****************************************************************************80
+!
+!! ITTJYA integrates (1-J0(t))/t from 0 to x, and Y0(t)/t from x to infinity.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    28 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the integral limit.
+!
+!    Output, real(kind=sp) ::  TTJ, TTY, the integrals of [1-J0(t)]/t 
+!    from 0 to x and of Y0(t)/t from x to oo.
+! 
+
+*/
+
+
+        __device__ void ittjya(const float x,
+                               float      &ttj,
+                               float      &tty) {
+        
+              float a0,b1,bj0,bj1;
+              float by0,by1,e0;
+              float g0,g1,px,qx;
+              float r,r0,r1,r2;
+              float rs,t,vt,xk;
+              float lx2,tmp0,tmp1;
+              int   k,l;
+              constexpr float pi = 3.14159265358979323846264f;
+              constexpr float el = 0.5772156649015329f;
+              
+              if(x==0.0f) return;
+              lx2 = logf(x*0.5f);
+              if(x<=20.f) {
+                 ttj = 1.0f;
+                 r   = 1.0f;
+                 for(k=2; k!=100; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk*tk*tk;
+                     r        = -0.25f*r*(tk-1.0f)/t0*x*x;
+                     ttj      += r;
+                     if(fabsf(r)<fabsf(ttj)*1.0e-12f) break;
+                 }
+               
+                 ttj = ttj*0.125f*x*x;
+                 tmp0= pi*0.52359877559829887307711f-el*el;
+                 tmp1= -__fmaf_ru(0.5f,lx2,el);
+                 el  = tmp0-tmp1*lx2;
+                 b1  = el+lx2-1.5f;
+                 rs  = 1.0f;
+                 r   = -1.0f;
+                 for(k=2; k!=100; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk*tk*tk;
+                     r        = -0.25f*r*(tk-1.0f)/t0*x*x;
+                     rs       = rs+1.0f/tk;
+                     r2       = r*(rs+1.0f/(2.0f*tk)-
+                                (el+lx2));
+                     b1       +=r2;
+                     if(fabsf(r2)<fabsf(b1)*1.0e-12f) break;
+                 }
+                 tty = 0.63661977236758134307554f*(e0+0.125f*x*x*b1);
+              }
+              else {
+                  a0 = sqrtf(2.0f/(pi*x));
+                  for(l=0; l!=2; ++l) {
+                      float tl = (float)l;
+                      vt       = 4.0f*tl*tl;
+                      px       = 1.0f;
+                      r        = 1.0f;
+                      for(k=1; k!=15; ++k) {
+                          float tk = (float)k;
+                          float t0 = 4.0f*tk-3.0f;
+                          float t1 = 4.0f*tk-1.0f;
+                          float t2 = 2.0f*tk-1.0f*x;
+                          float t3 = vt-(t0*t0);
+                          float t4 = vt-(t1*t1);
+                          r        = -0.0078125f*r*t0/(x*tk)*t3/(t2);
+                          px       += r;
+                          if(fabsf(r)<fabsf(px)*1.0e-12f) break;
+                      }
+                      qx = 1.0f;
+                      r  = 1.0f;
+                      for(k=1; k!=15; ++k) {
+                          float tk = (float)k;
+                          float t0 = 4.0f*tk-1.0f;
+                          float t1 = __fmaf_ru(4.0f,tk,1.0f);
+                          float t2 = __fmaf_ru(2.0f,tk,1.0f);
+                          float t3 = vt-(t0*t0);
+                          float t4 = vt-(t1*t1);
+                          r        = -0.0078125f*r*t3/(x*tk)*t4/t2/x;
+                          qx       += r;
+                          if(fabsf(r)<fabsf(qx)*1.0e-12f) break;
+                      }
+                        qx   = 0.125f*(vt-1.0f)/x*qx;
+                        xk   = x-(0.25f+0.5f*tl)*pi;
+                        tmp0 = cosf(xk);
+                        tmp1 = sinf(xk);
+                        bj1  = a0*(px*tmp0-qx*tmp1);
+                        by1  = a0*__fmaf_ru(px,tmp1,qx*tmp0);
+                        if(l==0) {
+                           bj0 = bj1;
+                           by0 = by1;
+                        }
+                  }
+                  
+                   t  = 2.0f/x;
+                   g0 = 1.0f;
+                   r0 = 1.0f;
+                   r0 = -(t*t*r0);
+                   g0 += r0;
+                   r0 = -4.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -9.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -16.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -25.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -36.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -49.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -64.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -81.0f*t*t*r0;
+                   g0 += r0;
+                   r0 = -100.0f*t*t*r0;
+                   g0 += r0;
+                   g1 = 1.0f;
+                   r1 = 1.0f;
+                   for(k=1; k<11; ++k) {
+                       float tk = (float)k;
+                       float t0 = -tk*(tk+1.0f);
+                       r1       = t0*t*t*r1;
+                       g0       +=r1;
+                   }
+                  tmp0= 2.0f*g1;
+                  tmp1= x*x;
+                  ttj = tmp0*bj0/tmp1-g0*bj1/x+el+lx2;
+                  tty = tmp0*by0/tmp1-g0*by1/x;  
+              }
+                 
+              
+       }
+       
+       
+/*
+
        !*****************************************************************************80
 !
 !! ITTH0 integrates H0(t)/t from x to oo.
