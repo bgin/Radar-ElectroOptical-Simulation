@@ -7353,8 +7353,159 @@ L800:
               
                                        
       }
+      
+      
+/*
+
+    !*****************************************************************************80
+!
+!! ITIKB computes the integral of the Bessel functions I0(t) and K0(t).
+!
+!  Discussion:
+!
+!    This procedure integrates Bessel functions I0(t) and K0(t)
+!    with respect to t from 0 to x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    24 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TI, TK, the integral of I0(t) and K0(t)
+!    from 0 to X.
+
+*/
        
-       
+        __device__ void itikb(const float x,
+                              float      &ti,
+                              float      &tk) {
+        
+              float t1,t;
+              constexpr float pi = 3.14159265358979323846264f;
+              
+              if(x==0.0f) {
+                 ti = 0.0f;
+              }
+              else if(x<5.0f) {
+                 t1 = 0.2f*x;
+                 t  = t1*t1;
+                 ti = 
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(0.59434e-03f,t,0.4500642e-02f),
+                                             t,0.044686921f),
+                                             t,0.300704878f),
+                                             t,1.471860153f),
+                                             t,4.844024624f),
+                                             t,9.765629849f),
+                                             t,10.416666367f),
+                                             t,5.0f)*t1;
+                 
+              }
+              else if(5.0f<=x && x<=8.0f) {
+                 t  = 5.0f/x;
+                 ti = ((( 
+                    - 0.015166f    * t
+                    - 0.0202292f ) * t 
+                    + 0.1294122f ) * t 
+                    - 0.0302912f ) * t 
+                    + 0.4161224f;
+                 ti = ti*expf(x)/sqrtf(x);
+              }
+              else {
+                 t  = 8.0f/x;
+                 ti = (((((
+                    - 0.0073995f     * t 
+                    + 0.017744f )    * t 
+                    - 0.0114858f )   * t 
+                    + 0.55956e-02f ) * t 
+                    + 0.59191e-02f ) * t 
+                    + 0.0311734f )   * t 
+                    + 0.3989423f;
+                 ti = ti*expf(x)/sqrtf(x); 
+              }
+              
+              if(x==0.0f) {
+                 tk = 0.0f;
+              }
+              else if(x<=2.0f) {
+                 t1 = x*0.5f;
+                 t  = t1*t1;
+                 tk =
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(
+                      __fmaf_ru(0.116e-05f,t,0.2069e-04f),
+                                           t,0.62664e-03f),
+                                           t,0.01110118f),
+                                           t,0.11227902f),
+                                           t,0.50407836f),
+                                           t,0.84556868f)*t1;
+                 tk = tk-logf(x*0.5f)*ti;
+              }
+              else if(2.0f<=x && x<=4.0f) {
+                 t  = 2.0f/x;
+                 tk = (((
+                      0.0160395f  * t 
+                    - 0.0781715f) * t 
+                    + 0.185984f)  * t 
+                    - 0.3584641f) * t 
+                    + 1.2494934f;
+                 tk = 1.57079632679489661923132f-tk*expf(-x)/sqrtf(x);
+              }
+              else if(4.0f<x && x<=7.0f) {
+                 t  = 4.0f/x;
+                 tk = (((((
+                      0.37128e-02f * t
+                    - 0.0158449f ) * t 
+                    + 0.0320504f ) * t 
+                    - 0.0481455f ) * t 
+                    + 0.0787284f ) * t 
+                    - 0.1958273f ) * t 
+                    + 1.2533141f;
+                tk = 1.57079632679489661923132f-tk*expf(-x)/sqrtf(x);
+              }
+              else {
+                t  = 7.0f/x;
+                tk = ((((( 
+                     0.33934e-03f      * t 
+                   - 0.163271e-02f )   * t 
+                   + 0.417454e-02f )   * t 
+                   - 0.933944e-02f )   * t 
+                   + 0.02576646f ) * t 
+                   - 0.11190289f ) * t 
+                   + 1.25331414f;
+                tk = 1.57079632679489661923132f-tk*expf(-x)/sqrtf(x);
+              }
+      }
 /*
 
        !*****************************************************************************80
