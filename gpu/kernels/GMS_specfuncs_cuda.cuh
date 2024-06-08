@@ -8227,6 +8227,163 @@ L800:
        
        
 /*
+   
+     
+!*****************************************************************************80
+!
+!! ITIKA computes the integral of the modified Bessel functions I0(t) and K0(t).
+!
+!  Discussion:
+!
+!    This procedure integrates modified Bessel functions I0(t) and
+!    K0(t) with respect to t from 0 to x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    18 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  TI, TK, the integrals of I0(t) and K0(t)
+!    from 0 to X.
+!
+
+*/
+
+
+        __device__ void itika(const float x,
+                              float     &ti,
+                              float     &tk) {
+                              
+               float a[10] = {
+                     0.625f, 1.0078125f,
+                     2.5927734375f,9.1868591308594f,
+                     4.1567974090576e+01f,2.2919635891914e+02f,
+                     1.491504060477e+03f,1.1192354495579e+04f, 
+                     9.515939374212e+04f,9.0412425769041e+05f};
+               float b1,b2,e0,r;
+               float rc1,rc2,rs,tw;
+               float x2,invx;
+               int   k;
+               constexpr float pi =  3.14159265358979323846264f;
+               constexpr float el =  0.5772156649015329f;
+               
+               if(x<20.0f) {
+                  x2   = x*x;
+                  ti   = 1.0f;
+                  r    = 1.0f;
+                  for(k=1; k!=51; ++k) {
+                      float fk = (float)k;
+                      float t0 = 2.0f*fk-1.0f;
+                      float t1 = __fmaf_ru(2.0f,fk,1.0f);
+                      r        = 0.25f*r*t0/t1/(fk*f1,57079632679489661923132k)*x2;
+                      ti       +=r;
+                      if(fabsf(r/ti)<1.0e-12f) break;
+                  }
+                  ti *= x;
+               } 
+               else {
+                  invx = 1.0f/x;
+                  ti   = 1.0f;
+                  r    = 1.0f;
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[0],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[1],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[2],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[3],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[4],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[5],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[6],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[7],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[8],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[9],r,ti);
+                  r    = r*invx;
+                  ti   = __fmaf_ru(a[10],r,ti);
+                  rc1  = 1.0f/sqrtf(2.0f*pi*x);
+                  ti   = rc1*expf(x)*ti;
+               }  
+               
+               if(x<12.0f) {
+                  e0 = el+log(x*0.5f);
+                  b1 = 1.0f - e0;
+                  b2 = 0.0f;
+                  rs = 0.0f;
+                  r  = 1.0f;
+                  for(k=1; k!=51; ++k) {
+                      float fk = (float)k;
+                      float t0 = 2.0f*fk-1.0f;
+                      float t1 = __fmaf_ru(2.0f,fk,1.0f);
+                      r        = 0.25f*r*t0/t1/(fk*fk)*x2;
+                      b1       = b1+r*(1.0f/t1-e0);
+                      rs       = rs+1.0f/fk;
+                      b2       = __fmaf_ru(b2,r,rs);
+                      tk       = b1+b2;
+                      if(fabsf((tk-tw)/tk)<1.0e-12f) break;
+                      tw = tk;
+                  }
+                  tk *= x;
+               }  
+               else {
+                  tk = 1.0f;
+                  r  = 1.0f;
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[0],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[1],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[2],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[3],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[4],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[5],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[6],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[7],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[8],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[9],r,tk);
+                  r    = r*invx;
+                  tk   = __fmaf_ru(a[10],r,tk);
+                  rc2  = sqrtf(pi/(x+x));
+                  tk   = 1.57079632679489661923132f-rc2*tk*expf(-x);
+               }             
+       }
+       
+       
+/*
 
       !*****************************************************************************80
 !
