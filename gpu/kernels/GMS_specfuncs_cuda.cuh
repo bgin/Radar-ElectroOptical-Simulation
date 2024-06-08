@@ -7357,6 +7357,92 @@ L800:
       
 /*
 
+     !*****************************************************************************80
+!
+!! INCOG computes the incomplete gamma function r(a,x), ,(a,x), P(a,x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    22 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  A, the parameter.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  GIN, GIM, GIP, the values of
+!    r(a,x), \E2(a,x), P(a,x).
+!
+
+*/
+      
+        __device__ void incog(const float a,
+                              const float x,
+                              float    &gin,
+                              float    &gim,
+                              float    &gip) {
+                              
+               float ga,r,s,t0;
+               float xam;
+               float k;
+               
+               xam = __fmaf_ru(logf(x),a,-x);
+               if(x==0.0f) {
+                  gin = 0.0f;
+                  ga  = gamma(a);
+                  gim = ga;
+                  gip = 0.0f;
+                  return;
+               }             
+               else if(x<=1.0f+a) {
+                  s = 1.0f/a;
+                  r = s;
+                  for(k=1; k!=61; ++k) {
+                      float tk = (float)k;
+                      r        = r*x/(a+tk);
+                      s        +=r;
+                      if(fabsf(r/s)<1.0e-15f) break;
+                  }
+                  gin = expf(xam)*s;
+                  ga  = gamma(a);
+                  gip = gin/ga;
+                  gim = ga-gin;
+                  return;
+               }  
+               else if(1.0f+a<x) {
+                  t0 = 0.0f;
+                  for(k=61; k!=1; --k) {
+                      float tk = (float)k;
+                      t0       = (tk-a)/(1.0f+tk/(x+t0));
+                  }
+                  gim = expf(xam)/(x+t0);
+                  ga  = gamma(a);
+                  gin = ga-gim;
+                  gip = 1.0f-gim/ga;
+                  return;
+               }       
+       }
+/*
+
     !*****************************************************************************80
 !
 !! ITIKB computes the integral of the Bessel functions I0(t) and K0(t).
