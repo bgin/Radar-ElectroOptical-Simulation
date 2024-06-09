@@ -7444,6 +7444,100 @@ L800:
        
        
 /*
+    
+     !*****************************************************************************80
+!
+!! INCOB computes the incomplete beta function Ix(a,b).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    22 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  A, B, parameters.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BIX, the function value.
+!
+
+*/
+
+        __device__ float incob(const float a,
+                               const float b,
+                               const float x) {
+                               
+                float dk[51];
+                float fk[51];
+                float bix,bt,s0,tmp0;
+                float t1,t2,ta,tb;   
+                
+                s0 = (a+1.0f)/(a+b+2.0f);
+                bt = beta(a,b);
+                if(x<=s0) {
+                   for(k=1; k!=21; ++k) {
+                       float tk = (float)k;
+                       float c0 = a+2.0f*tk;
+                       float c1 = tk*(b-tk)*x;
+                       dk[2*k]  = c1/(c0-1.0f)/c0;
+                   }
+                   for(k=0; k!=21; ++k) {
+                       float tk = (float)k;
+                       float c0 = a+2.0f*tk;
+                       float c1 = -(a+tk)*(a+b+tk)*x;
+                       dk[2*k+1]= c1/c0/(c0+1.0f);
+                   }
+                   t1 = 0.0f;
+                   for(k=21; k!=1; --k) {
+                       t1 = dk[k]/(1.0f+t1);
+                   }
+                    ta  = 1.0f/(1.0f+t1);
+                    bix = powf(x,a)*powf(1.0f-x,b)/(a*bt)*ta;
+                }   
+                else {
+                    tmp0 = 1.0f-x;
+                    for(k=1; k!=21; ++k) {
+                        float tk = (float)k;
+                        float c0 = b+2.0f*tk;
+                        float c1 = tk*(a-tk)*tmp0;
+                        fk[2*k]  = c1/(c0-1.0f)/c0;
+                    }
+                    for(k=0; k!=20; ++k) {
+                        float tk = (float)k;
+                        float c0 = -(b+tk)*(a+b+tk)*tmp0;
+                        float c1 = b+2.0f*tk;
+                        fk[2*k+1]= c0/c1/(c1+1.0f);
+                    }
+                    t2 = 0.0f;
+                    for(k=21; k!=1; --k) {
+                        t2 = dk[k]/(1.0f+t2);
+                   }
+                   tb  = 1.0f/(1.0f+t2);
+                   bix = 1.0f-powf(x,a)* powf(1.0f-x,b)/(b*bt)*tb;
+                }         
+      }
+       
+       
+/*
    
        !****************************************************************************80
 !
