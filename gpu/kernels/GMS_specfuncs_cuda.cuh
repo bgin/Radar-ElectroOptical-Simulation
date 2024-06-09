@@ -2370,6 +2370,141 @@ namespace file_info {
        
        
 /*
+   
+     !*****************************************************************************80
+!
+!! IKNB compute Bessel function In(x) and Kn(x).
+!
+!  Discussion:
+!
+!    Compute modified Bessel functions In(x) and Kn(x),
+!    and their derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    17 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of In(x) and Kn(x).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  BI(0:N), DI(0:N), BK(0:N), DK(0:N),
+!    the values of In(x), In'(x), Kn(x), Kn'(x).
+!
+
+*/
+       
+        __device__ void iknb(const int   n,
+                             const float x,
+                             int        &nm,
+                             float * __restrict__ bi,
+                             float * __restrict__ di,
+                             float * __restrict__ bk,
+                             float * __restrict__ dk) {
+                             
+                float a0,bkl,bs,f;
+                float f0,f1,g,g0;
+                float r,s0,sk0,vt;
+                float invx;
+                int   k,k0,l,m;
+                constexpr float pi = 3.14159265358979323846264f; 
+                constexpr float el = 0.5772156649015329f;
+                nm                 = n;
+                
+                if(n==0) nm = 1;
+                m = msta1(x,200);
+                if(m<nm)
+                   nm = m;
+                else
+                   nm = msta2(x,nm,15);
+                bs  = 0.0f;
+                sk0 = 0.0f;
+                f0  = 0.0f;
+                f1  = 1.1754943508e-38f;
+                invx= 1.0f/x;
+                for(k=m; k>=0; --k) {
+                    float tk = (float)k;
+                    f        = 2.0f*(tk+1.0f)*invx*f1+f0;
+                    if(k<=nm) bi[k] = f;
+                    if(k!=0 && k==2*(int)(k/2))
+                       sk0 = sk0+4.0f*f/tk;
+                    bs = __fmaf_ru(f,2.0f,bs);
+                    f0 = f1;
+                    f1 = f;
+                }    
+                  s0 = expf(x)/(bs-f);
+                  for(k=0; k!=nm; ++k) s0 *= bi[k];
+                  
+                if(x<=8.0f) {
+                   bk[0] = __fmaf_ru(-(logf(0.5f*x)+el),bi[0],s0*sk0);
+                   bk[1] = (invx-bi[1]*bk[0])/bi[0];
+                } 
+                else {
+                   a0 = sqrtf(pi/(2.0f*x))*expf(-x); 
+                } 
+                  if(x<25.0f)
+                     k0 = 16;
+                  else if(x<80.0f)
+                     k0 = 10;
+                  else if(x<200.0f) 
+                     k0 = 8;
+                  else
+                     k0 = 6;
+                  for(l=0; l<=1; ++l) {
+                      float tl = (float)l;
+                      bkl      = 1.0f;
+                      vt       = 4.0f*tl;
+                      r        = 1.0f;
+                      for(k=1; k<=k0; ++k) {
+                          float tk = (float)k;
+                          float t0 = 2.0f*tk-1.0f;
+                          r        = 0.125f*r*(vt-t0*t0)/(tk*x);
+                          bkl      +=r;
+                      }
+                     bkl[l] *= a0;
+                  }
+               }
+                g0 = bk[0];
+                g1 = bk[1];
+                for(k=2; k<=nm; ++k) {
+                    float tk = (float)k;
+                    g        = 2.0f*(tk-1.0f)*__fmaf_ru(invx,g1,g0);
+                    bk[k]    = g;
+                    g0       = g1;
+                    g1       = g;
+                }
+                di[0] = bi[1];
+                dk[0] = -bk[1];
+                for(k=1; k<=nm; ++k) {
+                    float tk = (float)k;
+                    di[k] =  bi[k-1]-tk/x*bi[k];
+                    dk[k] = -bk[k-1]-tk/x*bk[k];
+                }
+       }
+       
+/*
   
      !*****************************************************************************80
 !
@@ -7441,6 +7576,9 @@ L800:
                   return;
                }       
        }
+       
+       
+       
        
        
 /*
