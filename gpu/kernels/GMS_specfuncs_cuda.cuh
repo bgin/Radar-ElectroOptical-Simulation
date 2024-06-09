@@ -7441,6 +7441,248 @@ L800:
                   return;
                }       
        }
+       
+       
+/*
+   
+       !****************************************************************************80
+!
+!! ITAIRY computes the integrals of Airy functions.
+!
+!  Discussion:
+!
+!    Compute the integrals of Airy functions with respect to t,
+!    from 0 and x.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    19 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the upper limit of the integral.
+!
+!    Output, real(kind=sp) ::  APT, BPT, ANT, BNT, the integrals, from 0 to x,
+!    of Ai(t), Bi(t), Ai(-t), and Bi(-t).
+!       
+
+*/
+
+
+        __device__ void itairy(const float x,
+                               float     &apt,
+                               float     &bpt,
+                               float     &ant,
+                               float     &bnt) {
+              
+            const  float a[16] = {  
+                    0.569444444444444f,     0.891300154320988f, 
+                    0.226624344493027e+01f, 0.798950124766861e+01f, 
+                    0.360688546785343e+02f, 0.198670292131169e+03f, 
+                    0.129223456582211e+04f, 0.969483869669600e+04f, 
+                    0.824184704952483e+05f, 0.783031092490225e+06f, 
+                    0.822210493622814e+07f, 0.945557399360556e+08f, 
+                    0.118195595640730e+10f, 0.159564653040121e+11f, 
+                    0.231369166433050e+12f, 0.358622522796969e+13f};  
+            float fx,gx,sxe,cxe;
+            float q0,q1,q2,r;
+            float su1,su2,su3;
+            float su4,su5,su6,xe;
+            float xp6,xr1,xr2;
+            int   k,l;
+            constexpr float eps = 1.0e-15f;
+            constexpr float pi  = 3.14159265358979323846264f;
+            constexpr float c1  = 0.355028053887817f;
+            constexpr float c2  = 0.258819403792807f;
+            constexpr float sr3 = 1.732050807568877f;
+                  
+            if(x==0.0f) return;
+            if(fabsf(x)<=9.25f) {
+               for(l=0; l!=2; ++l) {
+                   float tl = (float)l;
+                   x        = powf(-1.0f,tl)*x;
+                   fx       = x;
+                   r        = x;
+                   for(k=1; k!=41; ++k) {
+                       float tk = (float)k;
+                       float t0 = 3.0f*tk;
+                       float t1 = t0-2.0f;
+                       float t2 = __fmaf_ru(3.0f,tk,1.0f);
+                       float t3 = t0-1.0f;
+                       float t4 = x/t0;
+                       float t5 = x/t3;
+                       r        = r*t1/t2*t4*t5*x;
+                       fx       +=r;
+                       if(fabsf(r)<fabsf(fx)*eps) break; 
+                   }
+                   gx = 0.5f*x*x;
+                   r  = gx;
+                   for(k=1; k!=41; ++k) {
+                       float tk = (float)k;
+                       float t0 = 3.0f*tk;
+                       float t1 = t0-1.0f;
+                       float t2 = __fmaf_ru(3.0f,tk,2.0f);
+                       float t3 = __fmaf_ru(3.0f,tk,1.0f);
+                       r        = r*t1/t2*x/t0*x/t3*x;
+                       gx       +=r;
+                       if(fabsf(r)<fabsf(gx)*eps) break;
+                   }
+                   ant = c1*fx-c2*gx;
+                   bnt = sr3*__fmaf_ru(c1,fx,c2*gx);
+                   if(l==0) {
+                      apt = ant;
+                      bpt = bnt;
+                   }
+                   else {
+                      ant = -ant;
+                      bnt = -bnt;
+                      x = -x;
+                   }
+               }
+            } 
+            else {
+               
+                q2  = 1.414213562373095f;
+                q0  = 0.3333333333333333f;
+                q1  = 0.6666666666666667f;
+                xe  = x*sqrt(x)*0.66666666666666666666667f;
+                xp6 = 1.0f/sqrtf(6.0f*pi*xe);
+                su1 = 1.0f;
+                r   = 1.0f;
+                xr1 = 1.0f/xe;
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[0],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[1],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[2],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[3],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[4],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[5],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[6],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[7],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[8],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[9],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[10],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[11],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[12],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[13],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[14],r,su1);
+                r   = -r*xr1;
+                su1 = __fmaf_ru(a[15],r,su1);
+                su2 = 1.0f;
+                r   = 1.0f;
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[0],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[1],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[2],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[3],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[4],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[5],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[6],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[7],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[8],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[9],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[10],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[11],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[12],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[13],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[14],r,su2);
+                r   = -r*xr1;
+                su2 = __fmaf_ru(a[15],r,su2);
+                apt = q0-expf(-xe)*xp6*su1;
+                bpt = 2.0f*expf(xe)*xp6*su2;
+                su3 = 1.0f;
+                cxe = cosf(x);
+                r   = 1.0f;
+                xr2 = 1.0f/(xe*xe);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[2],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[4],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[6],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[8],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[10],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[12],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[14],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[16],r,su4);
+                su4 = a[1]*xr1;
+                sxe = sinf(xe);
+                r   = xr1;
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[3],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[5],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[7],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[9],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[11],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[13],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[15],r,su4);
+                r   = -r*xr2;
+                su4 = __fmaf_ru(a[17],r,su4);
+                su5 = su3+su4;
+                su6 = su3-su4;
+                ant = q1-q2*xp6*(su5*cxe-su6*sxe);
+                bnt = q2*xp6*__fmaf_ru(su5,sxe,su6*cxe);
+            }    
+      }
+
+
 /*
 
     !*****************************************************************************80
