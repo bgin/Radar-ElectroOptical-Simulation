@@ -2504,6 +2504,160 @@ namespace file_info {
                 }
        }
        
+/*     
+!*****************************************************************************80
+!
+!! IK01A compute Bessel function I0(x), I1(x), K0(x), and K1(x).
+!
+!  Discussion:
+!
+!    This procedure computes modified Bessel functions I0(x), I1(x),
+!    K0(x) and K1(x), and their derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    16 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BI0, DI0, BI1, DI1, BK0, DK0, BK1, DK1, the
+!    values of I0(x), I0'(x), I1(x), I1'(x), K0(x), K0'(x), K1(x), K1'(x).
+!
+*/
+
+
+         __device__ void ik01a(const float x,
+                               float      &bi0,
+                               float      &di0,
+                               float      &bi1,
+                               float      &di1,
+                               float      &bk0,
+                               float      &dk0,
+                               float      &bk1,
+                               float      &dk1) {
+                               
+                const float a[12] = {
+                     0.125f, 7.03125e-02f, 
+                     7.32421875e-02f, 1.1215209960938e-01f, 
+                     2.2710800170898e-01, 5.7250142097473e-01f, 
+                     1.7277275025845f, 6.0740420012735f, 
+                     2.4380529699556e+01f, 1.1001714026925e+02f,
+                     5.5133589612202e+02f, 3.0380905109224e+03f};    
+               const float a1[8] =  {
+                     0.125f, 0.2109375f, 
+                     1.0986328125f, 1.1775970458984e+01f, 
+                     2.1461706161499e+02f, 5.9511522710323e+03f,
+                     2.3347645606175e+05f, 1.2312234987631e+07f};  
+               const float b[12] =  {
+                     -0.375f, -1.171875e-01f, 
+                     -1.025390625e-01f, -1.4419555664063e-01f, 
+                     -2.7757644653320e-01f, -6.7659258842468e-01f,
+                     -1.9935317337513f, -6.8839142681099f,
+                     -2.7248827311269e+01f, -1.2159789187654e+02f,
+                     -6.0384407670507e+02f, -3.3022722944809e+03f};   
+               float ca,cb,ct,r;
+               float w0,ww,x2,xr;
+               float xr2;
+               int   idx,k,k0;
+               constexpr float pi = 3.14159265358979323846264f;
+               constexpr float el = 0.5772156649015329f;
+               x2                 = x*x;
+               if(x<=18.0f) {
+                  bi0 = 1.0f;
+                  r   = 1.0f;
+                  for(k=1; k<=50; ++k) {
+                      float tk = (float)k;
+                      r        =  0.25f*r*x2/(tk*tk);
+                      bi0      += r;
+                      if(fabsf(r/bi0)<1.0e-15f) break;
+                  }
+                  bi1 = 1.0f;
+                  r   = 1.0f;
+                  for(k=1; k<=50; ++k) {
+                      float tk = (float)k;
+                      r        =  0.25f*r*x2/(tk*(tk+1.0f));
+                      bi1      += r;
+                      if(fabsf(r/bi1)<1.0e-15f) break;
+                  }
+                    bi1 = 0.5f*x*bi1;
+               } 
+               else {
+                   ca   = expf(x)/sqrtf(2.0f*pi*x);
+                   bi0  = 1.0f;
+                   xr   = 1.0f/x;
+                   if(x<35.0f) 
+                     k0 = 12;
+                   else if(x<50.0f)
+                      k0 = 9;
+                   else
+                     k0 = 7;
+                   idx = -1;
+                   for(k=1; k<=k0; ++k) {
+                       ++idx;
+                       bi0 = __fmaf_ru(powf(xr,k),a[idx],bi0);
+                   }
+                    bi0 = ca*bi0;
+                    bi1 = 1.0f;
+                    idx = -1;
+                    for(k=1; k<=k0; ++k) {
+                       ++idx;
+                       bi1 = __fmaf_ru(powf(xr,k),b[idx],bi1);
+                   }
+                    bi1 = ca*bi1;
+               }     
+              if(x<=9.0f) {
+                 ct  = -(logf(x*0.5f)+el);
+                 bk0 = 0.0f;
+                 w0  = 0.0f;
+                 r   = 1.0f;
+                 for(k=1; k<=50; ++k) {
+                     float tk = (float)k;
+                     w0       = w0+1.0f/tk;
+                     r        = 0.25f*r/(tk*tk)*x2;
+                     bk0      = __fmaf_ru(w0+ct,r,bk0);
+                     if(fabsf((bk0-ww)/bk0)<1.0e-15f) break;
+                     ww       = bk0;
+                 }
+                 bk0 += ct;
+              } 
+              else {
+                 cb  = 0.5f/x;
+                 xr2 = 1.0f/x2;
+                 bk0 = 1.0f;
+                 idx = -1;
+                 for(k=1; k<=8; ++k) {
+                     ++idx;
+                     bk0 = __fmaf_ru(powf(xr2,k),a1[idx],bk0);
+                 }
+                 bk0 = cb*bk0/bi0;
+              }       
+               bk1 = (1.0f/x-bi1*bk0)/bi0;
+               di0 = bi1;
+               di1 = bi0-bi1/x;
+               dk0 = -bk1;
+               dk1 = -bk0-bk1/x;
+       }
+       
 /*
   
      !*****************************************************************************80
