@@ -2658,6 +2658,162 @@ namespace file_info {
                dk1 = -bk0-bk1/x;
        }
        
+       
+/*
+
+    !*****************************************************************************80
+!
+!! IK01B: Bessel functions I0(x), I1(x), K0(x), and K1(x) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    17 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  BI0, DI0, BI1, DI1, BK0, DK0, BK1, DK1, the
+!    values of I0(x), I0'(x), I1(x), I1'(x), K0(x), K0'(x), K1(x), K1'(x).
+!
+
+*/
+
+
+        __device__ void ik01b( const float x,
+                               float      &bi0,
+                               float      &di0,
+                               float      &bi1,
+                               float      &di1,
+                               float      &bk0,
+                               float      &dk0,
+                               float      &bk1,
+                               float      &dk1) {
+            
+            float t0;
+            if(x==0.0f) return;
+            if(x<=3.75f) {
+               t   = x/3.75f;
+               t2  = t*t;
+               bi0 = __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(0.0045813f,t2,0.0360768f),
+                                          t2,0.2659732f),
+                                          t2,1.2067492f),
+                                          t2,3.0899424f),
+                                          t2,3.5156229f),
+                                          t2,1.0f);
+               bi1 = x*__fmaf_ru(
+                       __fmaf_ru(
+                       __fmaf_ru(
+                       __fmaf_ru(
+                       __fmaf_ru(
+                       __fmaf_ru(0.00032411f,t2,0.00301532f),
+                                             t2,0.02658733f),
+                                             t2,0.15084934f),
+                                             t2,0.51498869f),
+                                             t2,0.87890594f),
+                                             t2,0.5f);
+                                           
+          }  
+          else {
+                t0  = expf(x)/sqrtf(x);
+                t   = 3.75f/x;
+                bi0 = (((((((( 
+                      0.00392377f    * t 
+                    - 0.01647633f)   * t 
+                    + 0.02635537f)   * t 
+                    - 0.02057706f)   * t 
+                    + 0.916281e-02f) * t 
+                    - 0.157565e-02f) * t 
+                    + 0.225319e-02f) * t 
+                    + 0.01328592f)   * t 
+                    + 0.39894228f)   * t0;
+               bi1  = (((((((( 
+                    - 0.420059e-02f * t 
+                    + 0.01787654f ) * t 
+                    - 0.02895312f ) * t 
+                    + 0.02282967f ) * t 
+                    - 0.01031555f ) * t 
+                    + 0.163801e-02f) * t 
+                    - 0.00362018f ) * t 
+                    - 0.03988024f ) * t 
+                    + 0.39894228f ) * t0;
+          }   
+          
+           if(x<=2.0f) {
+               t   = x*0.5f;
+               t2  = t*t;
+               t0  = logf(t);
+               bk0 = 
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(
+                     __fmaf_ru(0.0000074f,t2,0.0001075f),
+                                          t2,0.00262698f),
+                                          t2,0.0348859f),
+                                          t2,0.23069756f),
+                                          t2,0.4227842f)*t2-
+                                          0.57721566f-bi0*t0;
+               bk1 = 
+                     (((((( 
+                   - 0.00004686f  * t2 
+                   - 0.00110404f) * t2 
+                   - 0.01919402f) * t2 
+                   - 0.18156897f) * t2 
+                   - 0.67278579f) * t2 
+                   + 0.15443144f) * t2
+                   + 1.0f)/x+bi1*t0;
+           }    
+           else {
+                t0  = expf(x)/sqrtf(x);
+                t2  = t*t;
+                bk0 = (((((( 
+                      0.00053208f  * t 
+                    - 0.0025154f)  * t 
+                    + 0.00587872f) * t 
+                    - 0.01062446f) * t 
+                    + 0.02189568f) * t 
+                    - 0.07832358f) * t 
+                    + 1.25331414f) * t0;
+                bk1 = (((((( 
+                    - 0.00068245f   * t 
+                    + 0.00325614f ) * t 
+                    - 0.00780353f)  * t 
+                    + 0.01504268f)  * t 
+                    - 0.0365562f)   * t  
+                    + 0.23498619f)  * t 
+                    + 1.25331414f)  * t0;
+           }   
+           di0 = bi1;
+           di1 = bi0-bi1/x;
+           dk0 = -bk1;
+           dk1 = -bk0-bk1/x;            
+     }
+       
+       
 /*
   
      !*****************************************************************************80
