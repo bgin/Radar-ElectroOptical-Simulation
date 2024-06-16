@@ -2812,6 +2812,329 @@ namespace file_info {
            dk0 = -bk1;
            dk1 = -bk0-bk1/x;            
      }
+     
+     
+/*
+
+     !*****************************************************************************80
+!
+!! IKNA compute Bessel function In(x) and Kn(x), and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    16 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order of In(x) and Kn(x).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  BI(0:N), DI(0:N), BK(0:N), DK(0:N),
+!    the values of In(x), In'(x), Kn(x), Kn'(x).
+!
+
+*/
+
+
+        __device__ void ikna(const int32_t n,
+                             const float   x,
+                             int32_t     &nm,
+                             float * __restrict__ bi,
+                             float * __restrict__ di,
+                             float * __restrict__ bk,
+                             float * __restrict__ dk) {
+                             
+             float bi0,bi1,bk0,bk1;
+             float di1,di0,dk1,dk0;
+             float f,f0,f1;
+             float g,g0,g1;
+             float h,h0,h1;
+             float s0,invx;
+             int32_t k,m,nm;
+             
+             if(n<=1) return;
+             nm = n;
+             ik01a(x,bi0,di0,bi1,di1,bk0,dk0,bk1,dk1);
+             bi[0] = bi0;
+             bi[1] = bi1;
+             bk[0] = bk0;
+             bk[1] = bk1;
+             di[0] = di0;
+             di[1] = di1;
+             dk[0] = dk0;
+             dk[1] = dk1;  
+             if(40.0f<x && n<(int32_t)(0.25f*x)) {
+                 invx = 1.0f/x;
+                 h0   = bi0;
+                 h1   = bi1;
+                 #pragma unroll
+                 for(k=2; k<=n; ++k) {
+                     float tk = (float)k;
+                     h        = __fmaf_ru(-2.0f*(tjk-1.0f)*invx,h1,h0);
+                     bi[k]    = h;
+                     h0       = h1;
+                     h1       = h;
+                 }
+             } 
+             else {
+                  invx = 1.0f/x;
+                  m = msta1(x,200);
+                  if(m<n)
+                     nm = n;
+                  else
+                     m =  msta2(x,n,15);
+                  f0   =  0.0f;
+                  f1   =  1.1754943508e-38f;
+                  for(k=m; k>=0; --k) {
+                      float tk = (float)k;
+                      f        = __fmaf_ru(2.0f*(tk+1.0f)*f1,invx,f0);
+                      if(k<=nm) bi[k] = f;
+                      f0       = f1;
+                      f1       = f; 
+                  }
+                  s0 = bi0/f;
+                  for(k=0; k<=nm; ++k) bi[k] *= s0;
+                  g0 = bk0;
+                  g1 = bk1;
+                  #pragma unroll
+                  for(k=2; k<=nm; ++k) {
+                      float tk = (float)k;
+                      g        = __fmaf_ru(2.0f*(tk-1.0f)*invx,g1,g0);
+                      bk[k]    = g;
+                      g0       = g1;
+                      g1       = g;
+                  }
+                  #pragma unroll
+                  for(k=2; k<=nm; ++k) {
+                      float tk =  (float)k;
+                      float t0 =  tk*invx;
+                      di[k]    =  bi[k-1]-t0*bi[k];
+                      dk[k]    = -bk[k-1]-t0*bk[k];
+                  }
+             }             
+      }
+      
+      
+/*
+
+      !*****************************************************************************80
+!
+!! FFK computes modified Fresnel integrals F+/-(x) and K+/-(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    23 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: KS, the sign code.
+!    0, to calculate F+(x) and K+(x);
+!    1, to calculate F_(x) and K_(x).
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  FR, FI, FM, FA, the values of
+!    Re[F+/-(x)], Im[F+/-(x)], |F+/-(x)|, Arg[F+/-(x)]  (Degs.).
+!
+!    Output, real(kind=sp) ::  GR, GI, GM, GA, the values of
+!    Re[K+/-(x)], Im[K+/-(x)], |K+/-(x)|, Arg[K+/-(x)]  (Degs.).
+!        
+
+*/
+
+
+        __device__ void ffk(const int32_t ks,
+                            const float   x,
+                            float         &fr,
+                            float         &fi,
+                            float         &fm,
+                            float         &fa,
+                            float         &gr,
+                            float         &gi,
+                            float         &gm,
+                            float         &ga) {
+                            
+              float c1,cs,fi0;
+              float s1,ss,invx;
+              float x2,x4,xa,xc;
+              float xf,xf0,xf1,xg;
+              float xp,xq,xq2,xr;
+              float sx2,cx2;
+              float xs,xsu,xw;
+              int32_t k,m;
+              
+              constexpr float srd = 57.29577951308233f;
+              constexpr float eps = 1.0e-15f;
+              constexpr float pi  = 3.141592653589793f;
+              constexpr float pp2 = 1.2533141373155f;
+              constexpr float p2p = 0.7978845608028654f;
+              xa = fabsf(x);
+              x2 = x*x;
+              x4 = x2*x2;
+
+              if(x==0.0f) {
+                 fr = 0.62665706865775012560394f;
+                 fi = powf(-1.0f,ks*fr);
+                 fm = 1,25331413731550025120788f;
+                 fa = powf(-1.0,ks*45.0f);
+                 gr = 0.5f;
+                 gi = 0.0f;
+                 gm = 0.5f;
+                 ga = 0.0f;
+             }
+             else {
+                 if(xa<2.5f) {
+                    xr = p2p*xa;
+                    c1 = xr;
+                    for(k=1; k<=50; ++k) {
+                        float tk = (float)k;
+                        float t0 = 4.0f*tk-3.0f;
+                        float t1 = 2.0f*tk-1.0f;
+                        float t2 = __fmaf_ru(4.0f,tk,1.0f);
+                        xr       = -0.5f*xr*t0/tk/t1/t2*x4;
+                        c1       += xr;
+                        if(fabsf(xr/c1)<eps) break
+                    }
+                     s1 = p2p*xa*xa*xa*0.3333333333333333333333f;
+                     xr = s1;
+                     for(k=1; k<=50; ++k) {
+                         float tk = (float)k;
+                         float t0 = 4.0f*tk-1.0f;
+                         float t1 = __fmaf_ru(2.0f,tk,1.0f);
+                         float t2 = __fmaf_ru(4.0f,tk,3.0f);
+                         xr       = -0.5f*xr*t0/tk/t1/t2*x4;
+                         s1       += xr;
+                         if(fabsf(xr/s1)<eps) break;
+                     }
+                 }
+                 else if(x<5.5f) {
+                     m   = (int32_t)(__fmaf_ru(x2,1.75f,42.0f);
+                     invx= 1.0f/x2;
+                     xsu = 0.0f;
+                     xc  = 0.0f;
+                     xs  = 0.0f;
+                     xf1 = 0.0f;
+                     xf0 = 1.0e-15f;
+                     for(k=m; k>=0; --k) {
+                         float tk = (float)k;
+                         xf       = __fmaf_ru(2.0f,tk,3.0f)*xf0*invx-xf1;
+                         if(k==2*(int32_t)(k/2))
+                            xc    += xf;
+                         else
+                            xc    += xs;
+                         xsu      = __fmaf_ru(xf,xf*__fmaf_ru(2.0f,tk,1.0f),xsu);
+                         xf1      = xf0;
+                         xf0      = xf;
+                     }
+                       xq = sqrtf(xsu);
+                       xw = p2p*xa/xq;
+                       c1 = xc*xw;
+                       s1 = xs*xw;
+                     }
+                     else {
+                        xr   = 1.0f;
+                        xf   = 1.0f;
+                        invx = 1.0f/x4;
+                        #pragma unroll
+                        for(k=1; k<=12; ++k) {
+                            float tk = (float)k;
+                            float t1 = 4.0f*tk-1.0f;
+                            float t2 = t1-2.0f;
+                            xr       = -0.25f*xr*t1*t2*invx;
+                            xf       += xr;
+                        }
+                        xr = 1.0f/(2.0f*xa*xa);
+                        xg = xr;
+                        cx2= cosf(x2);
+                        for(k=1; k<=12; ++k) {
+                            float tk = (float)k;
+                            float t1 = __fmaf_ru(4.0f,tk,1.0f);
+                            float t2 = 4.0f*tk-1.0f;
+                            xr       = -0.25f*xr*t1*t2*invx;
+                            xg       += xr;
+                        }
+                        sx2 = sinf(x2);
+                        c1  = 0.5f+xf*sx2-xg*cx2*0.39894228040143267793995f/(xa);
+                        s1  = 0.5f-__fmaf_ru(xf,cx2,xg*sx2)*0.39894228040143267793995f/(xa);
+                     }
+                      fr  = pp2*(0.5f-c1);
+                      fi0 = pp2*(0.5f-s1);
+                      fi  = powf(-1.0f,ks)*fi0;
+                      fm  = sqrtf(__fmaf_ru(fr,fr,fi*fi));
+                      if(0.0<=fr) 
+                         fa = srd*atanf(fi/fr);
+                      else if(0.0f<fi)
+                         fa = srd*(atanf(fi/fr)+pi);
+                      else if(fi<0.0f) 
+                         fa = srd*(atan(fi/fr)-pi);
+                      xp  = __fmaf_ru(x,x,0.78539816339744830961566f);
+                      cs  = cosf(xp);
+                      ss  = sinf(xp);
+                      xq2 = 0.56418958354775628694808f;
+                      gr  = xq2*__fmaf_ru(fr,cs,fi0 * ss);
+                      gi  = powf(-1.0f,ks)*xq2*(fi0*cs-fr*ss);
+                      gm  = sqrtf( _fmaf_ru(gr,gr,gi*gi);
+                      if(0.0f<=gr)
+                         ga = srd*atanf(gi/gr);
+                      else if(0.0f<gi)
+                         ga = srd*(atanf(gi/gr)+pi);
+                      else if(gi<0.0f) 
+                         ga = srd*(atanf(gi/gr)-pi);
+   
+                      if(x<0.0f) {
+                         fr = pp2-fr;
+                         fi = powf(-1.0f,ks)*pp2-fi;
+                         fm = sqrtf(__fmaf_ru(fr,fr,fi*fi));
+                         fa = srd*atanf(fi/fr);
+                         gr = cosf(x*x)-gr;
+                         gi = -powf(-1.0f,ks)*sinf(x*x)-gi;
+                         gm = sqrtf( __fmaf_ru(gr,gr,gi * gi));
+                         ga = srd*atanf(gi/gr);
+                      }
+                     
+               }  
+                       
+     } 
+                            
        
        
 /*
