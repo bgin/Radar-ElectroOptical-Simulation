@@ -5588,6 +5588,81 @@ namespace file_info {
               }
               return (e1);
          }   
+         
+         
+/*
+
+      
+!*****************************************************************************80
+!
+!! E1XA computes the exponential integral E1(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    06 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  E1, the function value.
+!
+
+*/
+
+
+        __device__ float e1xa(const float x) {
+        
+                float es1,es2;
+                
+                if(x==0.0f) {
+                    e1 = 3.4028235e+38f
+                }
+                else if(x<=1.0f) {
+                    e1 = -logf(x)+((((
+                          1.07857e-03f  * x
+                         -9.76004e-03f) * x
+                         + 5.519968e-02f ) * x
+                         - 0.24991055f) * x
+                         + 0.99999193f) * x 
+                         - 0.57721566f;
+                }
+                else {
+                    es1 = 
+                     ((( x 
+                         + 8.5733287401f) * x
+                         +18.059016973f)  * x
+                         + 8.6347608925f) * x 
+                         + 0.2677737343f;
+
+                   es2 = ((( x
+                         +  9.5733223454f) * x
+                         + 25.6329561486f) * x 
+                         + 21.0996530827f) * x 
+                         + 3.9584969228f;
+
+                   e1 = expf(-x)/x*es1/es2;
+                }
+                return (e1);
+        }
           
 /*
        !*****************************************************************************80
