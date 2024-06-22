@@ -5520,11 +5520,74 @@ namespace file_info {
        
        
 /*
-    
-      
 
+   !*****************************************************************************80
+!
+!! E1XB computes the exponential integral E1(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    06 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  E1, the function value.
+!
 */
-          
+       
+         __device__ float e1xb(const float x) {
+         
+                float ga,r,t0,e1;
+                int32_t k,m;
+                
+                if(x==0.0) {
+                   e1 = 3.4028235e+38f);
+                }
+                else if(x<=1.0f) {
+                   e1 = 1.0f;
+                   r  = 1.0f;
+                   for(k=1; k<=25; ++k) {
+                       float tk = (float)k;
+                       float t1 = tk+1.0f;
+                       r        = -r*tk*x/(t1*t1);
+                       e1       += r;
+                       if(fabsf(r)<=fabsf(e1)*1.0e-15f) break;
+                   }
+                   ga = 0.5772156649015328f;
+                   e1 = -ga-logf(x)+x*e1;
+                }
+                else {
+                   m  = 20+(int32_t)(80.0f/x);
+                   t0 = 0.0f;
+                   for(k=m; k>=1; --k) {
+                       float tk = (float)k;
+                       t0       = tk/(1.0f+tk/(x+t0));
+                   }
+                   t  = 1.0f/(x+t0);
+                   e1 = expf(-x)*t;
+              }
+              return (e1);
+         }   
           
 /*
        !*****************************************************************************80
