@@ -3635,6 +3635,222 @@ namespace file_info {
      
      
 /*
+
+   !*****************************************************************************80
+!
+!! CY01 computes complex Bessel functions Y0(z) and Y1(z) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    01 August 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer KF, the function choice.
+!    0 for ZF = Y0(z) and ZD = Y0'(z);
+!    1 for ZF = Y1(z) and ZD = Y1'(z);
+!    2 for ZF = Y1'(z) and ZD = Y1''(z).
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, complex(kind=sp) ::  ZF, ZD, the values of the requested function 
+!    and derivative.   
+
+
+*/
+
+        __device__ void cy01(const int kf,
+                             const cuda::std::complex<float> z,
+                             cuda::std::complex<float>      &zf,
+                             cuda::std::complex<float>      &zd) {
+                             
+                const float a[12] = {
+                     -0.703125e-01f,           0.112152099609375f,
+                     -0.5725014209747314f,     0.6074042001273483e+01f,
+                     -0.1100171402692467e+03f, 0.3038090510922384e+04f, 
+                     -0.1188384262567832e+06f, 0.6252951493434797e+07f, 
+                     -0.4259392165047669e+09f, 0.3646840080706556e+11f, 
+                     -0.3833534661393944e+13f, 0.4854014686852901e+15f};
+                const float a1[12] = {
+                      0.1171875f, -0.144195556640625f,
+                      0.6765925884246826f,       -0.6883914268109947e+01f, 
+                      0.1215978918765359e+03f, -0.3302272294480852e+04f, 
+                      0.1276412726461746e+06f, -0.6656367718817688e+07f, 
+                      0.4502786003050393e+09f, -0.3833857520742790e+11f, 
+                      0.4011838599133198e+13f, -0.5060568503314727e+15f};     
+                const float b[12]  = {
+                      0.732421875e-01f, -0.2271080017089844f,
+                      0.1727727502584457e+01f, -0.2438052969955606e+02f, 
+                      0.5513358961220206e+03f, -0.1825775547429318e+05f, 
+                      0.8328593040162893e+06f, -0.5006958953198893e+08f, 
+                      0.3836255180230433e+10f, -0.3649010818849833e+12f, 
+                      0.4218971570284096e+14f, -0.5827244631566907e+16f};
+                const float b1[12]  = {
+                     -0.1025390625f,           0.2775764465332031f,
+                     -0.1993531733751297e+01f, 0.2724882731126854e+02f,
+                     -0.6038440767050702e+03f, 0.1971837591223663e+05f,
+                     -0.8902978767070678e+06f, 0.5310411010968522e+08f,
+                     -0.4043620325107754e+10f, 0.3827011346598605e+12f,
+                     -0.4406481417852278e+14f, 0.6065091351222699e+16f};
+                cuda::std::complex<float>  cbj0,cbj1;
+                cuda::std::complex<float>  cby0,cby1;
+                cuda::std::complex<float>  cdy0,cdy1;
+                cuda::std::complex<float>  ci,cp;
+                cuda::std::complex<float>  cp0,cp1;
+                cuda::std::complex<float>  cq0,cq1;
+                cuda::std::complex<float>  cr,cs;
+                cuda::std::complex<float>  ct1,ct2;
+                cuda::std::complex<float>  cu,z1,z2;
+                cuda::std::complex<float>  ctx,stx;
+                float                      w0,w1,a0;
+                int32_t                    k,k0,idx;
+                
+                constexpr float pi =  3.14159265358979323846264f;
+                constexpr float el =  0.5772156649015329f;
+                constexpr float rp2=  0.63661977236758134307554f;
+                ci                 =  {0.0f,1.0f};
+                a0                 =  abs(z);
+                z2                 =  z*z;
+                z1                 =  z;
+                
+                if(a0==0.0f){ 
+                   return;
+                }
+                else {
+                   if(real(z)<0.0f) z1 = -z; 
+                   if(a0<=12.0f) {
+                      cbj0 = {1.0f,0.0f};
+                      cr   = {1.0f,0.0};
+                      for(k=1; k<=40; ++k) {
+                          float tk = (float)k;
+                          float t0 = tk*tk;
+                          cr       = -0.25f*cr*z2/t0;
+                          cbj0     += cr;
+                          if(abs(cr)<abs(cbj0)*1.0e-15f) break;
+                      }
+                      cbj1 = {1.0f,0.0f};
+                      cr   = {1.0f,0.0f};
+                      for(k=1; k<=40; ++k) {
+                          float tk = (float)k;
+                          float t0 = tk*(tk+1.0f);
+                          cr       = -0.25f*cr*z2/t0;
+                          cbj1     += cr;
+                          if(abs(cr)<abs(cbj1)*1.0e-15f) break;
+                      }
+                      cbj1 = 0.5f*z1*cbj1;
+                      w0   = 0.0f;
+                      cr   = {1.0f,0.0f};
+                      cs   = {0.0f,0.0f};
+                      for(k=1; k<=40; ++k) {
+                          float tk = (float)k;
+                          float t0 = tk*tk;
+                          cr       = -0.25f*cr/t0*z2;
+                          cp       = cr*w0;
+                          cs       += cp;
+                          if(abs(cp)<abs(cs)*1.0e-15f) break;
+                      }
+                       cby0 = rp2*(log(z1*0.5f)+el)*cbj0-rp2*cs;
+                       w1   = 0.0f;
+                       cr   = {1.0f,0.0f};
+                       cs   = {1.0f,0.0f};
+                       for(k=1; k<=40; ++k) {
+                           float tk = (float)k;
+                           float t0 = tk*(tk+1.0f);
+                           float t1 = tk+1.0f;
+                           w1       = w1+1.0f/tk;
+                           cr       = -0.25f*cr/t0*z2;
+                           cp       = cr*(2.0f*w1+1.0f/t1);
+                           cs       = cs+cp;
+                           if(abs(cp)<abs(cs)*1.0e-15f) break;
+                       }
+                       cby1 = rp2*((logf(z1*0.5f)+el)*cbj1-
+                              1.0f/z1-0.25f*z1*cs);
+                   }
+                   else {
+                       if(a0<35.0f)
+                          k0 = 12;
+                       else if(a0<50.0f)
+                          k0 = 10;
+                       else
+                          k0 = 8;
+                        ct1 = z1-0.78539816339744830961566f;
+                        ctx = cos(ct1);
+                        cp0 = {1.0f,0.0f};
+                        cq0 = -0.125f/z1;
+                        idx = -1;
+                        for(k=1; k<=k0; ++k) {
+                            ++idx;
+                            cp0 = cp0+a[idx]*pow(z1,-2*k);
+                            cq0 = cq0+b[idx]*pow(z1,-2*k-1);
+                        }
+                        stx  = sin(ct1);
+                        cu   = sqrt(rp2/z1);
+                        cbj0 = cu*cp0*ctx-cq0*stx;
+                        cby0 = cu*cp0*stx+cq0*ctx;
+                        ct2  = z1-2.35619449019234492884698f;
+                        ctx  = cos(ct2);
+                        cq1  = 0.375f/z1;
+                        cp1  = {1.0f,0.0f};
+                        idx  = -1;
+                        for(k=1; k<=k0; ++k) {
+                            ++idx;
+                            cp1 = cp1+a1[idx]*pow(z1,-2*k);
+                            cq1 = cq1+b1[idx]*pow(z1,-2*k-1);
+                        }
+                        stx  = sin(ct2);
+                        cbj1 = cu*cp1*ctx-cq1*stx;
+                        cby1 = cu*cp1*stx+cq1*ctx;
+                   }
+                   if(real(z)<0.0f) {
+                      if(imag(z)<0.0f) {
+                          cby0 = cby0-2.0f*ci*cbj0;
+                          cby1 = -(cby1-2.0f*ci*cbj1);
+                      }
+                      else {
+                          cby0 = cby0+2.0f*ci*cbj0;
+                          cby1 = -(cby1+2.0f*ci*cbj1);
+                      }
+                       cbj1 = -cbj1;
+                   }
+                    cdy0 = -cby1;
+                    cdy1 = cby0-1.0f/z*cby1;
+                   
+                }      
+                 
+                 if(kf==0) {
+                    zf = cby0;
+                    zd = cdy0;
+                 }
+                 else if(kf==1) {
+                    zf = cby1;
+                    zd = cdy1;
+                 }
+                 else if(kf==2) {
+                    zf = cdy1
+                    zd = -cdy1/z-(1.0f-1.0f/(z*z))*cby1;
+                 }
+       }  
+     
+     
+/*
     
      !*****************************************************************************80
 !
