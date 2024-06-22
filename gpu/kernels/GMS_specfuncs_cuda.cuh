@@ -5424,6 +5424,109 @@ namespace file_info {
           
           
 /*
+     
+      !*****************************************************************************80
+!
+!! ERROR evaluates the error function.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    07 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  ERR, the function value.
+!
+  
+*/
+
+
+        __device__ float error(const float x) {
+        
+               float c0,er,r,x2;
+               float invx,err;
+               int32_t k;
+               constexpr float pi = 3.14159265358979323846264f;
+               constexpr float eps= 1.0e-15f;
+               
+               x2 = x*x;
+               if(fabsf(x)<3.5f) {
+                  er = 1.0f;
+                  r  = 1.0f;
+                  for(k=1; k<=50; ++k) {
+                      float tk = (float)k;
+                      float t0 = tk+0.5f;
+                      r        = r*x2/t0;
+                      er       +=r;
+                      if(fabsf(r)<=fabsf(er)*eps) break;
+                  }
+                  c0 = 1.12837916709551257389616f*x*expf(-x2);
+                  err= c0*er;
+               } 
+               else {
+                  invx =1.0f/x2;
+                  er   = 1.0f;
+                  r    = 1.0f;
+                  r    = -r*0.5f*invx;
+                  er   += r;
+                  r    = -r*1.5f*invx;
+                  er   += r;
+                  r    = -r*2.5f*invx;
+                  er   += r;
+                  r    = -r*3.5f*invx;
+                  er   += r;
+                  r    = -r*4.5f*invx;
+                  er   += r;
+                  r    = -r*5.5f*invx;
+                  er   += r;
+                  r    = -r*6.5f*invx;
+                  er   += r;
+                  r    = -r*7.5f*invx;
+                  er   += r;
+                  r    = -r*8.5f*invx;
+                  er   += r;
+                  r    = -r*9.5f*invx;
+                  er   += r;
+                  r    = -r*10.5f*invx;
+                  er   += r;
+                  r    = -r*11.5f*invx;
+                  er   += r;
+                  c0   = expf(-x2)/(fabsf(x)*1.77245385090551602729817f);
+                  err  = 1.0f-c0*er;
+                  if(x<0.0f) err = -err;
+                  return (err);
+               }
+       }
+       
+       
+/*
+    
+      
+
+*/
+          
+          
+/*
        !*****************************************************************************80
 !
 !! CALERF computes various forms of the error function.
