@@ -3636,6 +3636,91 @@ namespace file_info {
      
 /*
 
+     !*****************************************************************************80
+!
+!! CISIB computes cosine and sine integrals.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    20 March 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument of Ci(x) and Si(x).
+!
+!    Output, real(kind=sp) ::  CI, SI, the values of Ci(x) and Si(x).
+!   
+
+*/
+     
+        __device__ void cisib(const float x,
+                              float      &ci,
+                              float      &si) {
+                              
+              float fx,gx,x2;
+              float sx,cx;
+              if(x==0.0f) return;
+              x2 = x*x;
+              if(x<=1.0f) {
+                  ci = (((( -3.0e-08f         * x2 
+                            + 3.10e-06f     ) * x2 
+                            - 2.3148e-04f   ) * x2 
+                            + 1.041667e-02f ) * x2 
+                            - 0.25f     )     * x2+0.577215665f+logf(x);
+
+                  si = (((( 3.1e-07f        * x2 &
+                          - 2.834e-05f    ) * x2 &
+                          + 1.66667e-03f  ) * x2 &
+                          - 5.555556e-02f ) * x2 + 1.0f) * x;
+              }  
+              else {
+                    cx = cosf(x)/x;
+                    fx = (((( x2              
+                              + 38.027264f  ) * x2 
+                              + 265.187033f ) * x2 
+                              + 335.67732f  ) * x2 
+                              + 38.102495f  ) /    
+                         (((( x2                 
+                              + 40.021433f  ) * x2 
+                              + 322.624911f ) * x2 
+                              + 570.23628f  ) * x2 
+                              + 157.105423f );
+                   sx = sinf(x)/x;
+                   gx = (((( x2                 
+                              + 42.242855f  ) * x2  
+                              + 302.757865f ) * x2  
+                              + 352.018498f ) * x2  
+                              + 21.821899f ) /      
+                        (((( x2                  
+                              + 48.196927f   ) * x2 
+                              + 482.485984f  ) * x2 
+                              + 1114.978885f ) * x2 
+                              + 449.690326f  ) / x;
+                  ci = fx*sx-gx*cx;
+                  si = 1.570796327f-fx*cx-gx*sx; 
+              }                     
+      }
+     
+/*
+
    !*****************************************************************************80
 !
 !! CY01 computes complex Bessel functions Y0(z) and Y1(z) and derivatives.
