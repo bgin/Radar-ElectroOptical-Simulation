@@ -3848,6 +3848,115 @@ namespace file_info {
                     zd = -cdy1/z-(1.0f-1.0f/(z*z))*cby1;
                  }
        }  
+       
+       
+/*
+
+    !*****************************************************************************80
+!
+!! EIX computes the exponential integral Ei(x).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    10 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, real(kind=sp) ::  EI, the function value.
+!  
+
+*/
+
+
+        __device__ float eix(const float x) {
+        
+             float ga,r,invx,ei;
+             int32_t k;
+             
+             if(x==0.0f) {
+                ei = -3.4028234664e+38f;
+             } 
+             else if(x<=40.0f) {
+                ei = 1.0f;
+                r  = 1.0f;
+                for(k=1; k<=100; ++k) {
+                    float tk = (float)k;
+                    float t0 = (tk+1.0f);
+                    r        = r*tk*x/(t0*t0);
+                    ei       +=r;
+                    if(fabsf(r/ei)<=1.0e-15f) break;
+                }
+                ga = 0.5772156649015328f;
+                ei = ga+logf(x)+x*ei;
+             }
+             else {
+                invx = 1.0f/x;
+                ei   = 1.0f;
+                r    = 1.0f;
+                r    = r*invx;
+                ei   +=r;
+                r    = r*2.0f*invx;
+                ei   +=r;
+                r    = r*3.0f*invx;
+                ei   +=r;
+                r    = r*4.0f*invx;
+                ei   +=r;
+                r    = r*5.0f*invx;
+                ei   +=r;
+                r    = r*6.0f*invx;
+                ei   +=r;
+                r    = r*7.0f*invx;
+                ei   +=r;
+                r    = r*8.0f*invx;
+                ei   +=r;
+                r    = r*9.0f*invx;
+                ei   +=r;
+                r    = r*10.0f*invx;
+                ei   +=r;
+                r    = r*11.0f*invx;
+                ei   +=r;
+                r    = r*12.0f*invx;
+                ei   +=r;
+                r    = r*13.0f*invx;
+                ei   +=r;
+                r    = r*14.0f*invx;
+                ei   +=r;
+                r    = r*15.0f*invx;
+                ei   +=r;
+                r    = r*16.0f*invx;
+                ei   +=r;
+                r    = r*17.0f*invx;
+                ei   +=r;
+                r    = r*18.0f*invx;
+                ei   +=r;
+                r    = r*19.0f*invx;
+                ei   +=r;
+                r    = r*20.0f*invx;
+                ei   +=r;
+                ei   = expf(x)*invx*ei;
+             }
+             return (ei);
+        }
      
      
 /*
