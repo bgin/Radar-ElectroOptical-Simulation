@@ -4102,7 +4102,83 @@ namespace file_info {
        
 /*
      
+      !*****************************************************************************80
+!
+!! E1Z computes the complex exponential integral E1(z).
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    16 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, complex(kind=sp) ::  Z, the argument.
+!
+!    Output, complex(kind=sp) ::  CE1, the function value.
+! 
+     
 */
+
+         __device__ cuda::std::complex<float> 
+                    e1z(const cuda::std::complex<float> z) {
+               
+                cuda::std::complex<float> ce1,cr;
+                cuda::std::complex<float> ct0;
+                float                     a0,x;
+                int32_t                   k;
+                constexpr  float pi =  3.14159265358979323846264f;
+                constexpr  float el =  0.5772156649015328f;
+                
+                x  = real(z);
+                a0 = abs(z);
+                if(a0==0.0f) {
+                   ce1 = {3.4028234664e+38f,0.0f};
+                }   
+                else if(a0<=10.0f || (x<0.0f && a0<20.0f)) {
+                   ce1 = {1.0f,0.0f};
+                   cr  = {1.0f,0.0f};
+                   for(k=1; k<=150; ++k) {
+                       float tk = (float)k;
+                       float t0 = tk+1.0f;
+                       float t1 = t0*t0;
+                       cr       = -cr*tk*z/t1;
+                       ce1      += cr;
+                       if(abs(cr)<=abs(ce1)*1.0e-15f) break;
+                   }
+                   ce1 = -el-log(z)+z*ce1;
+                } 
+                else {
+                   ct0 = {0.0f,0.0f};
+                   for(k=1; k<=120; ++k) {
+                       float tk = (float)k;
+                       ct0      = tk/(1.0f+tk/(z+ct0));
+                   }
+                   ct = 1.0f/(z+ct0);
+                   ce1= exp(-z)*ct;
+                   if(x<=0.0f && imag(z)==0.0f)
+                      ce1 = ce1-pi*{0.0f,1.0f};
+                }
+                return (ce1);
+         }
+                                          
       
 /*
      !*****************************************************************************80
