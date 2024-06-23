@@ -4178,6 +4178,77 @@ namespace file_info {
                 }
                 return (ce1);
          }
+         
+         
+/*
+
+      !*****************************************************************************80
+!
+!! DVLA computes parabolic cylinder functions Dv(x) for large argument.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    06 July 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+! 
+!  Parameters:
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Input, real(kind=sp) ::  VA, the order.
+!
+!    Output, real(kind=sp) ::  PD, the function value.
+!
+
+*/
+
+
+        __device__ float dvla(const float x,
+                              const float va) {
+                              
+               float a0,gl,pd,r;
+               float vl,x1,ep;
+               int32_t k;
+               constexpr float pi = 3.14159265358979323846264f
+               constexpr float eps= 1.0e-12f;
+               ep                 = expf(-0.25f*x*x);
+               a0                 = powf(fabsf(x),va)*ep;
+               r                  = 1.0f;
+               pd                 = 1.0f;
+               for(k=1; k<=16; ++k) {
+                   float tk = (float)k;
+                   float t0 = 2.0f*tk-va;
+                   float t1 = tk*x*x;
+                   r        = (-0.5f*r*(t0-1.0f)*(t0-2.0f))/t1;
+                   pd       += r;
+                   if(fabsf(r/pd)<eps) break;
+               }
+               pd *= a0;
+               if(x<0.0f) {
+                  x1 = -x;
+                  vl = vvla(va,x1);
+                  gl = gamma(-va);
+                  pd = pi*vl/gl+cosf(pi*va)*pd;
+               }
+               return (pd);
+      }
                                           
       
 /*
