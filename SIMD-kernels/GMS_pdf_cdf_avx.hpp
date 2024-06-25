@@ -2241,7 +2241,7 @@ namespace gms {
 
 
 
-		     __ATTR_REGCALL__
+		      __ATTR_REGCALL__
                       __ATTR_ALWAYS_INLINE__
 		      __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
@@ -2618,11 +2618,7 @@ namespace gms {
 
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+                    
 		      __m256d 
 		      uniform_01_ymm4r8( __m256i & seed) {
 		         
@@ -2635,7 +2631,7 @@ namespace gms {
 		         k  = _mm256_div_epi32(seed,C127773);
 		         t0 = _mm256_mul_epi32(k,C2836);
 		         t1 = _mm256_sub_epi32(seed,_mm256_mul_epi32(k,C127773));
-		         seed = _mm256_mul_epi32(C16807,_mm256sub_epi32(t1,t0));
+		         seed = _mm256_mul_epi32(C16807,_mm256_sub_epi32(t1,t0));
 		         if(_mm256_cmp_epi32_mask(seed,_mm256_setzero_epi32(),_CMP_LT_OQ)) 
 		            seed = _mm256_add_epi32(seed,_mm256_set1_epi32(2147483647));
 		         uni01   = _mm256_mul_pd(_mm256_castsi256_pd(seed),C4656612875);
@@ -7080,7 +7076,7 @@ namespace gms {
                           pdf = _mm256_div_ps(exp,t2);
                           return (pdf);
                     }
-/*                   
+                 
                     
                    
                                      
