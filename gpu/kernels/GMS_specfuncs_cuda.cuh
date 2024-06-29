@@ -3636,6 +3636,130 @@ namespace file_info {
      
 /*
 
+   
+    !*****************************************************************************80
+!
+!! JYNA computes Bessel functions Jn(x) and Yn(x) and derivatives.
+!
+!  Licensing:
+!
+!    This routine is copyrighted by Shanjie Zhang and Jianming Jin.  However, 
+!    they give permission to incorporate this routine into a user program 
+!    provided that the copyright is acknowledged.
+!
+!  Modified:
+!
+!    29 April 2012
+!
+!  Author:
+!
+!    Shanjie Zhang, Jianming Jin
+!
+!  Reference:
+!
+!    Shanjie Zhang, Jianming Jin,
+!    Computation of Special Functions,
+!    Wiley, 1996,
+!    ISBN: 0-471-11963-6,
+!    LC: QA351.C45.
+!
+!  Parameters:
+!
+!    Input, integer(kind=i4) :: N, the order.
+!
+!    Input, real(kind=sp) ::  X, the argument.
+!
+!    Output, integer(kind=i4) :: NM, the highest order computed.
+!
+!    Output, real(kind=sp) ::  BJ(0:N), DJ(0:N), BY(0:N), DY(0:N), the values
+!    of Jn(x), Jn'(x), Yn(x), Yn'(x).
+!   
+*/
+
+
+        __device__ void jyna(const int n,
+                             const float x,
+                             int       &nm,
+                             float * __restrict__ bj,
+                             float * __restrict__ dj,
+                             float * __restrict__ by,
+                             float * __restrict__ dy) {
+                             
+              float bj0,bj1,bjk;
+              float by0,by1;
+              float dy0,dy1;
+              float dj0,dj1;
+              float f,f0,invx;
+              float f1,f2;
+              int   k;
+              
+              invx  = 1.0f/x;
+              nm    = n;
+              jy01b(x,bj0,dj0,bj1,dj1,by0,dy0,by1,dy1);
+              bj[0] = bj0;
+              bj[1] = bj1;
+              by[0] = by0;
+              by[1] = by1;
+              dj[0] = dj0;
+              dj[1] = dj1;
+              dy[0] = dy0;
+              dy[1] = dy1;
+              if(n<(int)(0.9f*x)) {
+                 for(k=2; k<=n; ++k) {
+                     float tk = (float)k;
+                     float t0 = tk-1.0f;
+                     bjk      = 2.0f*t0*invx*bj1-bj0;
+                     bj[k]    = bjk;
+                     bj0      = bj1;
+                     bj1      = bjk;
+                 }
+              } 
+              else {
+                 m = msta1(x,200);
+                 if(m<n)
+                    nm = n;
+                 else
+                    m = msta2(x,n,15);
+                 f2 = 0.0f;
+                 f1 = 3.4028234664e+38f;
+                 for(k=m; k>=0; --k) {
+                     float tk = (float)k;
+                     float t0 = tk+1.0f;
+                     f        = 2.0f*t0*invx*f1-f2;
+                     if(k<=nm) bj[k] = f;
+                     f2 = f1;
+                     f1 = f;
+                 }
+                 if(fbasf(bj1)<fabsf(bj0))
+                    cs = bj0/f;
+                 else
+                    cs = bj1/f2;
+                 for(k=0; k<=nm; ++k)
+                     bj[k] *= cs;
+              }    
+              for(k=2; k<=nm; ++k) {
+                  float tk = (float)k;
+                  dj[k]    = bj[k-1]-tk*invx*bj[k];
+              }  
+              f0 = by[0];
+              f1 = by[1];
+              for(k=2; k<=nm; ++k) {
+                  float tk = (float)k;
+                  float t0 = tk-1.0f;
+                  f        = 2.0f*t0*invx*f1-f0;
+                  by[k]    = f;
+                  f0       = f1;
+                  f1       = f;
+              }  
+              for(k=2; k<=nm; ++k) {
+                  float tk = (float)k;
+                  dy[k]    = by[k-1]-tk*by[k]*invx;
+              }  
+     }
+
+   
+/*
+
      !*****************************************************************************80
 !
 !! CISIB computes cosine and sine integrals.
