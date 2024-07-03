@@ -1,4 +1,4 @@
-# Guided-Missile-Radar-IR-EOS-Simulation
+# Radar-IR-EOS-Simulation
 
 This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation
 and missile guidance system.
