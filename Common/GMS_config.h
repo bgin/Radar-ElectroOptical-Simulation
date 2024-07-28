@@ -37,6 +37,10 @@ namespace file_info {
     #define __ATTR_VECTORCALL__ __attribute__((vectorcall))
 #endif
 
+#if !defined(__ATTR_NO_STACK_PROTECTOR__)
+    #define __ATTR_NO_STACK_PROTECTOR__ __attribute__((no_stack_protector))
+#endif
+
 #if !defined(__ATTR_HOT__)
     #define  __ATTR_HOT__  __attribute__ ((hot))
 #endif
@@ -47,6 +51,10 @@ namespace file_info {
 
 #if !defined(__ATTR_ALIGN__)
     #define __ATTR_ALIGN__(n) __attribute__ ((aligned((n))))
+#endif
+
+#if !defined(__ATTR_OPTIMIZE_O3__)
+    #define __ATTR_OPTIMIZE_03__ __attribute__((optimize("O3")))
 #endif
 
 #if !defined(__ATTR_TARGET_DEFAULT__)
