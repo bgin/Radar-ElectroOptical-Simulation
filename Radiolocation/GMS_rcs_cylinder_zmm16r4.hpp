@@ -4449,10 +4449,9 @@ namespace gms {
                   }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4172_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4495,10 +4494,9 @@ namespace gms {
                   }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4172_zmm16r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4547,9 +4545,8 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_zmm16r4(const __m512 mur,
                                           const __m512 mui,
@@ -4582,10 +4579,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4624,9 +4620,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_zmm16r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4668,9 +4663,8 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_zmm16r4(const __m512 mur,
                                           const __m512 mui,
@@ -4709,9 +4703,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4756,9 +4749,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_zmm16r4_u(const float * __restrict pmur,
                                             const float * __restrict  pmui,
@@ -4808,10 +4800,9 @@ namespace gms {
                        */
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_zmm16r4(const __m512 mur,
                                            const __m512 mui,
@@ -4843,10 +4834,9 @@ namespace gms {
                  }
 
 
-                    __ATTR_ALWAYS_INLINE__
-	           
-	           
-                   __ATTR_VECTORCALL__
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
                                             const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4883,10 +4873,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_zmm16r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4928,10 +4917,9 @@ namespace gms {
                            Formula 4.1-76
                     */
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_zmm16r4( const __m512 mur,
                                            const __m512 mui,
@@ -4969,9 +4957,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -5015,10 +5002,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_zmm16r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5069,9 +5055,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_zmm16r4( const __m512 mur,
                                            const __m512 mui,
@@ -5105,9 +5090,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -5148,9 +5132,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_zmm16r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5196,9 +5179,8 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_zmm16r4(const __m512 mur,
                                            const __m512 mui,
@@ -5219,10 +5201,9 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -5249,10 +5230,9 @@ namespace gms {
                 }
 
                   
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_zmm16r4_u(const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5286,10 +5266,9 @@ namespace gms {
                     */
 
                   
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_zmm16r4( const __m512 mur,
                                            const __m512 mui,
@@ -5311,9 +5290,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -5341,9 +5319,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_zmm16r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5377,9 +5354,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_zmm16r4( const __m512 mur,
                                            const __m512 mui,
@@ -5401,9 +5377,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -5431,9 +5406,8 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_zmm16r4_u(  const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5466,10 +5440,9 @@ namespace gms {
                    */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rint_f4169_zmm16r4(const __m512 mur,
                                            const __m512 mui,
@@ -5486,10 +5459,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void Rint_f4169_zmm16r4_a( const float * __restrict __ATTR_ALIGN__(64) pmur,
                                              const float * __restrict __ATTR_ALIGN__(64) pmui,
@@ -14474,9 +14446,8 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4420_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
                                               const float * __restrict __ATTR_ALIGN__(64) pb,
@@ -14503,10 +14474,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4420_zmm16r4_u(const float * __restrict  pa,
                                               const float * __restrict  pb,
@@ -14540,10 +14510,9 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __mmask16 
                    T_f4423_helper_zmm16r4( const __m512 k0,
@@ -14574,9 +14543,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 T_f4423_zmm16r4(const __m512 a,
                                           const __m512 b,
@@ -14615,9 +14583,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 T_f4423_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
                                           const float * __restrict __ATTR_ALIGN__(64) pb,
@@ -14660,10 +14627,9 @@ namespace gms {
                  }
 
 
-                     __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 T_f4423_zmm16r4_u(const float * __restrict pa,
                                           const float * __restrict  pb,
@@ -14713,10 +14679,9 @@ namespace gms {
                      */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4424_zmm16r4(const __m512 a,
                                           const __m512 b,
@@ -14757,9 +14722,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4424_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pa,
                                               const float * __restrict __ATTR_ALIGN__(64) pb,
@@ -14805,9 +14769,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4424_zmm16r4_u(const float * __restrict  pa,
                                               const float * __restrict  pb,
@@ -14858,10 +14821,9 @@ namespace gms {
                      */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4425_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -14884,10 +14846,9 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4425_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64)  pk0,
                                               const float * __restrict __ATTR_ALIGN__(64)  pa,
@@ -14915,9 +14876,8 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4425_zmm16r4_u(const float * __restrict   pk0,
                                               const float * __restrict   pa,
@@ -14952,9 +14912,8 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_zmm16r4(const __m512 k0,
                                          const __m512 a,
@@ -15008,9 +14967,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                          const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -15072,10 +15030,9 @@ namespace gms {
                 }
 
 
-                  __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_zmm16r4_u(const float * __restrict  pk0,
                                          const float * __restrict  pa,
@@ -15146,9 +15103,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_zmm16r4(const __m512 k0,
                                          const __m512 a,
@@ -15202,9 +15158,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                          const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -15267,9 +15222,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_zmm16r4_u(const float * __restrict  pk0,
                                          const float * __restrict  pa,
@@ -15341,10 +15295,9 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4428_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -15400,10 +15353,9 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4428_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -15469,9 +15421,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4428_zmm16r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -15548,9 +15499,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4429_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -15607,9 +15557,8 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4429_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -15676,9 +15625,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4429_zmm16r4_u(const float * __restrict pk0,
                                               const float * __restrict  pa,
@@ -15754,9 +15702,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4430_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -15810,9 +15757,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4430_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -15875,9 +15821,8 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4430_zmm16r4_u(const float * __restrict pk0,
                                               const float * __restrict  pa,
@@ -15950,9 +15895,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4431_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -16005,10 +15949,9 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4431_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -16069,10 +16012,9 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4431_zmm16r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -16148,9 +16090,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4432_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -16165,10 +16106,9 @@ namespace gms {
                }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4432_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -16185,9 +16125,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4432_zmm16r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -16214,10 +16153,9 @@ namespace gms {
                    */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4433_zmm16r4(const __m512 k0,
                                             const __m512 a,
@@ -16233,9 +16171,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4433_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0,
                                               const float * __restrict __ATTR_ALIGN__(64) pa,
@@ -16252,9 +16189,8 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   
-	           
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           __ATTR_VECTORCALL__
 	           static inline
                    __m512 rcs_f4433_zmm16r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
