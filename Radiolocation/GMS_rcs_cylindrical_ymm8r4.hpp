@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if !defined(__AVX512F__) || !defined(__AVX512VL__)
+#error "AVX512F or AVX512VL ISA not supported!!"
+#endif
+
 namespace file_version {
 
     const unsigned int GMS_RCS_CYLINDRICAL_YMM8R4_MAJOR = 1U;
@@ -42,7 +46,7 @@ namespace file_version {
 #include <immintrin.h>
 #include "GMS_config.h"
 #include "GMS_complex_ymm8r4.hpp"
-
+#include "GMS_simd_utils.hpp"
 
 
 #ifndef __RCS_CYLINDER_YMM8R4_PF_CACHE_HINT__
@@ -79,11 +83,11 @@ namespace gms {
                    __m256 rcs_f419_ymm8r4(const __m256 a,
                                            const __m256 k0a) {
 
-                          const register __m256 num = _mm256_mul_ps(a, 
+                          const  __m256 num = _mm256_mul_ps(a, 
                                                            _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
-                          const register __m256 c0  = _mm256_set1_ps(0.8905f);
-                          const register __m256 arg = _mm256_mul_ps(k0a,c0);
+                          const  __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
+                          const  __m256 c0  = _mm256_set1_ps(0.8905f);
+                          const  __m256 arg = _mm256_mul_ps(k0a,c0);
                           __m256 ln,ln2,rcs,den;
                           ln = _mm256_log_ps(arg);
                           ln2= _mm256_mul_ps(ln,ln);
@@ -105,7 +109,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 16;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%16;
@@ -214,7 +218,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 10;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%10;
@@ -300,7 +304,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 6;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%6;
@@ -364,13 +368,13 @@ namespace gms {
                    __m256 rcs_f419_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                            const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          const register __m256 a   = _mm256_load_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          const register __m256 num = _mm256_mul_ps(a, 
+                          const  __m256 a   = _mm256_load_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                          const  __m256 num = _mm256_mul_ps(a, 
                                                            _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
-                          const register __m256 c0  = _mm256_set1_ps(0.8905f);
-                          const register __m256 arg = _mm256_mul_ps(k0a,c0);
+                          const  __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
+                          const  __m256 c0  = _mm256_set1_ps(0.8905f);
+                          const  __m256 arg = _mm256_mul_ps(k0a,c0);
                           __m256 ln,ln2,rcs,den;
                           ln = _mm256_log_ps(arg);
                           ln2= _mm256_mul_ps(ln,ln);
@@ -387,13 +391,13 @@ namespace gms {
                    __m256 rcs_f419_ymm8r4_u(const float * __restrict  pa,
                                              const float * __restrict  pk0a) {
 
-                          const register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          const register __m256 num = _mm256_mul_ps(a, 
+                          const  __m256 a   = _mm256_loadu_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                          const  __m256 num = _mm256_mul_ps(a, 
                                                            _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
-                          const register __m256 c0  = _mm256_set1_ps(0.8905f);
-                          const register __m256 arg = _mm256_mul_ps(k0a,c0);
+                          const  __m256 pi4 = _mm256_set1_ps(2.467401100272339654708622749969f);
+                          const  __m256 c0  = _mm256_set1_ps(0.8905f);
+                          const  __m256 arg = _mm256_mul_ps(k0a,c0);
                           __m256 ln,ln2,rcs,den;
                           ln = _mm256_log_ps(arg);
                           ln2= _mm256_mul_ps(ln,ln);
@@ -416,12 +420,12 @@ namespace gms {
                    __m256 rcs_f4120_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
 
-                          const register __m256 pi2a = _mm256_mul_ps(a, 
+                          const  __m256 pi2a = _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 c0   = _mm256_set1_ps(2.25f);
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,
+                          const  __m256 c0   = _mm256_set1_ps(2.25f);
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,
                                                                  _mm256_mul_ps(k0a,k0a));
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(c0,k0a3));
                           return (rcs);
               }
@@ -439,7 +443,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 16;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%16;
@@ -548,7 +552,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 10;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%10;
@@ -634,7 +638,7 @@ namespace gms {
                                                    
                          if(__builtin_expect(n<=0,0)) {return;}
                          if(__builtin_expect(PF_DIST<=0)) PF_DIST = 6;
-                         register __m256 a,k0a,rcs;
+                          __m256 a,k0a,rcs;
                          int32_t j,m,m1;
                          
                          m = n%6;
@@ -700,14 +704,14 @@ namespace gms {
                    __m256 rcs_f4120_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          const register __m256 a    = _mm256_load_ps(&pa[0]);
-                          const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                          const register __m256 pi2a = _mm256_mul_ps(a, 
+                          const  __m256 a    = _mm256_load_ps(&pa[0]);
+                          const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                          const  __m256 pi2a = _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 c0   = _mm256_set1_ps(2.25f);
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,
+                          const  __m256 c0   = _mm256_set1_ps(2.25f);
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,
                                                                  _mm256_mul_ps(k0a,k0a));
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(c0,k0a3));
                           return (rcs);
               }
@@ -720,14 +724,14 @@ namespace gms {
                    __m256 rcs_f4120_ymm8r4_u(const float * __restrict  pa,
                                             const float * __restrict  pk0a) {
 
-                          const register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          const register __m256 pi2a = _mm256_mul_ps(a, 
+                          const  __m256 a    = _mm256_loadu_ps(&pa[0]);
+                          const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                          const  __m256 pi2a = _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 c0   = _mm256_set1_ps(2.25f);
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,
+                          const  __m256 c0   = _mm256_set1_ps(2.25f);
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,
                                                                  _mm256_mul_ps(k0a,k0a));
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(c0,k0a3));
                           return (rcs);
               }
@@ -785,10 +789,10 @@ namespace gms {
                                             const __m256 a,
                                             const __m256 k0a) {
 
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 cosph,k0a3,frac,sqr,rcs; 
+                          const  __m256 hlf = _mm256_set1_ps(0.5f);
+                           __m256 cosph,k0a3,frac,sqr,rcs; 
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           cosph = _mm256_cos_ps(phi);
                           frac  = _mm256_add_ps(hlf,cosph);
@@ -811,7 +815,7 @@ namespace gms {
 	                                            
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 16;
-	                register __m256 phi,a,k0a,rcs;
+	                 __m256 phi,a,k0a,rcs;
 	                int32_t j,m,m1;
 	                
 	                m = n%16;
@@ -943,7 +947,7 @@ namespace gms {
 	                                            
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 10;
-	                register __m256 phi,a,k0a,rcs;
+	                 __m256 phi,a,k0a,rcs;
 	                int32_t j,m,m1;
 	                
 	                m = n%10;
@@ -1046,7 +1050,7 @@ namespace gms {
 	                                            
 	                if(__builtin_expect(n<=0,0)) { return;}
 	                if(__builtin_expect(PF_DIST<=0,0)) PF_DIST = 6;
-	                register __m256 phi,a,k0a,rcs;
+	                 __m256 phi,a,k0a,rcs;
 	                int32_t j,m,m1;
 	                
 	                m = n%6;
@@ -1125,13 +1129,13 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          const register __m256 phi = _mm256_load_ps(&pphi[0]);
-                          const register __m256 a   = _mm256_load_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 phi = _mm256_load_ps(&pphi[0]);
+                          const  __m256 a   = _mm256_load_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 cosph,k0a3,frac,sqr,rcs; 
+                          const  __m256 hlf = _mm256_set1_ps(0.5f);
+                           __m256 cosph,k0a3,frac,sqr,rcs; 
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           cosph = _mm256_cos_ps(phi);
                           frac  = _mm256_add_ps(hlf,cosph);
@@ -1149,13 +1153,13 @@ namespace gms {
                                               const float * __restrict  pa,
                                               const float * __restrict  pk0a) {
 
-                          const register __m256 phi = _mm256_loadu_ps(&pphi[0]);
-                          const register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                          const  __m256 a   = _mm256_loadu_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 cosph,k0a3,frac,sqr,rcs; 
+                          const  __m256 hlf = _mm256_set1_ps(0.5f);
+                           __m256 cosph,k0a3,frac,sqr,rcs; 
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           cosph = _mm256_cos_ps(phi);
                           frac  = _mm256_add_ps(hlf,cosph);
@@ -1215,11 +1219,11 @@ namespace gms {
                    __m256 rcs_f4124_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
 
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
-                          const register __m256 qtr = _mm256_set1_ps(0.25f);
-                          register __m256 rcs;
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
+                          const  __m256 qtr = _mm256_set1_ps(0.25f);
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(k0a3,qtr));
                           return (rcs);
                   }
@@ -1232,13 +1236,13 @@ namespace gms {
                    __m256 rcs_f4124_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          const register __m256 a   = _mm256_load_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 a   = _mm256_load_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
-                          const register __m256 qtr = _mm256_set1_ps(0.25f);
-                          register __m256 rcs;
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
+                          const  __m256 qtr = _mm256_set1_ps(0.25f);
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(k0a3,qtr));
                           return (rcs);
                   }
@@ -1251,13 +1255,13 @@ namespace gms {
                    __m256 rcs_f4124_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a) {
 
-                          const register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          const register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          const register __m256 pi2a= _mm256_mul_ps(a, 
+                          const  __m256 a   = _mm256_loadu_ps(&pa[0]);
+                          const  __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                          const  __m256 pi2a= _mm256_mul_ps(a, 
                                                     _mm256_set1_ps(9.869604401089358618834490999876f));
-                          const register __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
-                          const register __m256 qtr = _mm256_set1_ps(0.25f);
-                          register __m256 rcs;
+                          const  __m256 k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
+                          const  __m256 qtr = _mm256_set1_ps(0.25f);
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(pi2a,_mm256_mul_ps(k0a3,qtr));
                           return (rcs);
                   }
@@ -1281,9 +1285,9 @@ namespace gms {
                                          __m256 * __restrict Kzr,
                                          __m256 * __restrict Kzi) {
 
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 ln  = _mm256_log_ps(lna);
                         const __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
                         const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi;
@@ -1309,14 +1313,14 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) Kzr,
                                            float * __restrict __ATTR_ALIGN__(32) Kzi) {
 
-                        const register __m256 eps0 = _mm256_load_ps(&peps0[0]);
-                        const register __m256 mu0  = _mm256_load_ps(&pmu0[0]);
-                        const register __m256 Er   = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_load_ps(&pEi[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 eps0 = _mm256_load_ps(&peps0[0]);
+                        const  __m256 mu0  = _mm256_load_ps(&pmu0[0]);
+                        const  __m256 Er   = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_load_ps(&pEi[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 ln  = _mm256_log_ps(lna);
                         const __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
                         const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi,resr,resi;
@@ -1343,14 +1347,14 @@ namespace gms {
                                            float * __restrict  Kzr,
                                            float * __restrict  Kzi) {
 
-                        const register __m256 eps0 = _mm256_loadu_ps(&peps0[0]);
-                        const register __m256 mu0  = _mm256_loadu_ps(&pmu0[0]);
-                        const register __m256 Er   = _mm256_loadu_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
-                        const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 eps0 = _mm256_loadu_ps(&peps0[0]);
+                        const  __m256 mu0  = _mm256_loadu_ps(&pmu0[0]);
+                        const  __m256 Er   = _mm256_loadu_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
+                        const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 ln  = _mm256_log_ps(lna);
                         const __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
                         const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi,resr,resi;
@@ -1433,10 +1437,10 @@ namespace gms {
                                          __m256 * __restrict Izr,
                                          __m256 * __restrict Izi) {
 
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
-                        const register __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
+                        const  __m256 ln  = _mm256_log_ps(lna);
                         const __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
                         const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi,t2r,t2i;
@@ -1465,18 +1469,18 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) Izr,
                                            float * __restrict __ATTR_ALIGN__(32) Izi) {
 
-                        const register __m256 eps0 = _mm256_load_ps(&peps0[0]);
-                        const register __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
-                        const register __m256 mu0  = _mm256_load_ps(&pmu0[0]);
-                        const register __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
-                        const register __m256 Er   = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_load_ps(&pEi[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 eps0 = _mm256_load_ps(&peps0[0]);
+                        const  __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
+                        const  __m256 mu0  = _mm256_load_ps(&pmu0[0]);
+                        const  __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
+                        const  __m256 Er   = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_load_ps(&pEi[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 ln  = _mm256_log_ps(lna);
-                        const register __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi,resr,resi,t2r,t2i;
                         t0r = nIr;
                         t0i = _mm256_mul_ps(nIi,sqr);
@@ -1504,18 +1508,18 @@ namespace gms {
                                            float * __restrict  Izr,
                                            float * __restrict  Izi) {
 
-                        const register __m256 eps0 = _mm256_load_ps(&peps0[0]);
-                        const register __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
-                        const register __m256 mu0  = _mm256_load_ps(&pmu0[0]);
-                        const register __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
-                        const register __m256 Er   = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_load_ps(&pEi[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 lna = _mm256_mul_ps(k0a,
+                        const  __m256 eps0 = _mm256_load_ps(&peps0[0]);
+                        const  __m256 _2pi= _mm256_set1_ps(6.283185307179586476925286766559f);
+                        const  __m256 mu0  = _mm256_load_ps(&pmu0[0]);
+                        const  __m256 sqr = _mm256_sqrt_ps(_mm256_div_ps(eps0,mu0));
+                        const  __m256 Er   = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_load_ps(&pEi[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 lna = _mm256_mul_ps(k0a,
                                                      _mm256_set1_ps(0.8905f));
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 ln  = _mm256_log_ps(lna);
-                        const register __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 ln  = _mm256_log_ps(lna);
+                        const  __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                         __m256 t0r,t0i,t1r,t1i,divr,divi,resr,resi,t2r,t2i;
                         t0r = nIr;
                         t0i = _mm256_mul_ps(nIi,sqr);
@@ -1552,32 +1556,32 @@ namespace gms {
                                          __m256 * __restrict EOr,
                                          __m256 * __restrict EOi) {
 
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(5.0f);
+                        const  __m256 c5 = _mm256_set1_ps(5.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1613,39 +1617,39 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) EOr,
                                            float * __restrict __ATTR_ALIGN__(32) EOi) {
 
-                        const register __m256 phi2 = _mm256_load_ps(&pphi2[0]);
-                        const register __m256 a    = _mm256_load_ps(&pa[0]);
-                        const register __m256 r    = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 Er   = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_load_ps(&pEi[0]);
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                        const  __m256 phi2 = _mm256_load_ps(&pphi2[0]);
+                        const  __m256 a    = _mm256_load_ps(&pa[0]);
+                        const  __m256 r    = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 Er   = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_load_ps(&pEi[0]);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(5.0f);
+                        const  __m256 c5 = _mm256_set1_ps(5.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1681,39 +1685,39 @@ namespace gms {
                                            float * __restrict  EOr,
                                            float * __restrict  EOi) {
 
-                        const register __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
-                        const register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                        const register __m256 Er   = _mm256_loadu_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                        const  __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
+                        const  __m256 a    = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r    = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                        const  __m256 Er   = _mm256_loadu_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,exr,exi;;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(5.0f);
+                        const  __m256 c5 = _mm256_set1_ps(5.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1757,32 +1761,32 @@ namespace gms {
                                          __m256 * __restrict HOr,
                                          __m256 * __restrict HOi) {
 
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(7.0f);
+                        const  __m256 c5 = _mm256_set1_ps(7.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1818,39 +1822,39 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) HOr,
                                            float * __restrict __ATTR_ALIGN__(32) HOi) {
 
-                        const register __m256 phi2 = _mm256_load_ps(&pphi2[0]);
-                        const register __m256 a    = _mm256_load_ps(&pa[0]);
-                        const register __m256 r    = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 Hr   = _mm256_load_ps(&pHr[0]);
-                        const register __m256 Hi   = _mm256_load_ps(&pHi[0]);
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                        const  __m256 phi2 = _mm256_load_ps(&pphi2[0]);
+                        const  __m256 a    = _mm256_load_ps(&pa[0]);
+                        const  __m256 r    = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 Hr   = _mm256_load_ps(&pHr[0]);
+                        const  __m256 Hi   = _mm256_load_ps(&pHi[0]);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(7.0f);
+                        const  __m256 c5 = _mm256_set1_ps(7.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1886,39 +1890,39 @@ namespace gms {
                                            float * __restrict  HOr,
                                            float * __restrict  HOi) {
 
-                        const register __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
-                        const register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                        const register __m256 Hr   = _mm256_loadu_ps(&pHr[0]);
-                        const register __m256 Hi   = _mm256_loadu_ps(&pHi[0]);
-                        register __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
-                        register __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
-                        register __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
-                        register __m256 t2r,t2i;
-                        const register __m256 c0 = _mm256_set1_ps(0.375f);
+                        const  __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
+                        const  __m256 a    = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r    = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                        const  __m256 Hr   = _mm256_loadu_ps(&pHr[0]);
+                        const  __m256 Hi   = _mm256_loadu_ps(&pHi[0]);
+                         __m256 t0,t1,t2,cosf2,cos2f2,t3,t4,t5;
+                         __m256 t0r,t0i,t1r,t1i,_2k0a,_2r,cos4f2;
+                         __m256 k0as,fac,earg,_2a,cer,cei,hxr,hxi;
+                         __m256 t2r,t2i;
+                        const  __m256 c0 = _mm256_set1_ps(0.375f);
                         cosf2 = _mm256_cos_ps(phi2);
-                        const register __m256 c1 = _mm256_set1_ps(0.1171875f);
+                        const  __m256 c1 = _mm256_set1_ps(0.1171875f);
                         cos2f2 = _mm256_mul_ps(cosf2,cosf2);
-                        const register __m256 c2 = _mm256_set1_ps(4.0f);
+                        const  __m256 c2 = _mm256_set1_ps(4.0f);
                         cos4f2 = _mm256_mul_ps(cos2f2,cos2f2);
                         _2k0a  = _mm256_add_ps(k0a,k0a);
-                        const register __m256 c3 = _mm256_set1_ps(8.0f);
+                        const  __m256 c3 = _mm256_set1_ps(8.0f);
                         _2r    = _mm256_add_ps(r,r);
                         _2a    = _mm256_add_ps(a,a);
-                        const register __m256 c4 = _mm256_set1_ps(33.0f);
+                        const  __m256 c4 = _mm256_set1_ps(33.0f);
                         k0as   = _mm256_mul_ps(k0a,k0a);
-                        const register __m256 c5 = _mm256_set1_ps(7.0f);
+                        const  __m256 c5 = _mm256_set1_ps(7.0f);
                         t0     = _mm256_mul_ps(a,cosf2);
-                        const register __m256 c6 = _mm256_set1_ps(1.0f);
+                        const  __m256 c6 = _mm256_set1_ps(1.0f);
                         t1     = _mm256_div_ps(t0,_2r);
                         fac    = _mm256_sqrt_ps(t1);
                         earg   = _mm256_mul_ps(k0,
                                           _mm256_sub_ps(r,_mm256_mul_ps(_2a,cosf2)));
                         t0r    = Ir;
                         t0i    = _mm256_mul_ps(Ii,earg);
-                        cexp_ymm8r4(t0r,t0i,&cer,&cei);
+                        cexp_ymm8c4(t0r,t0i,&cer,&cei);
                         t3     = _mm256_rcp14_ps(cos2f2);
                         cmul_ymm8c4(t0r,t0i,cer,cei,&t1r,&t1i);
                         t3     = _mm256_sub_ps(t3,c0);//taken t3
@@ -1964,23 +1968,30 @@ namespace gms {
                                          __m256 * __restrict ECr,
                                          __m256 * __restrict ECi) {
 
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        const  __m256 vone = __m256_set1_ps(1.0f);
+#endif                                           
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0ai16 = _mm256_div_ps(vone,k0ai16);
+#else                        
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+#endif                        
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(0.910721f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.9358135f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(1.607129f);
@@ -1992,13 +2003,21 @@ namespace gms {
                         const  __m256 _1   = _mm256_set1_ps(1.0f);
                         const  __m256 k0an23 = _mm256_pow_ps(k0a,
                                                           _mm256_set1_ps(0.666666666666666666666666666667f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an23 = _mm256_div_ps(vone,k0an23);
+#else                                                          
                         k0an23 = _mm256_rcp14_ps(k0an23);
+#endif                        
                         const __m256 k0an43= _mm256_pow_ps(k0a,
                                                         _mm256_set1_ps(1.333333333333333333333333333333f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an43 = _mm256_div_ps(vone,k0an43);
+#else                                                        
                         k0an43 = _mm256_rcp14_ps(k0an43);
+#endif                        
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2029,30 +2048,37 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) ECr,
                                            float * __restrict __ATTR_ALIGN__(32) ECi) {
 
-                        const register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                        const register __m256 a    = _mm256_load_ps(&pa[0]);
-                        const register __m256 r    = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 Er   = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_load_ps(&pEi[0]);
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m256 phi  = _mm256_load_ps(&pphi[0]);
+                        const  __m256 a    = _mm256_load_ps(&pa[0]);
+                        const  __m256 r    = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 Er   = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_load_ps(&pEi[0]);
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        const  __m256 vone = __m256_set1_ps(1.0f);
+#endif                          
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0ai16 = _mm256_div_ps(vone,k0ai16);
+#else                        
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+#endif                          
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(0.910721f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.9358135f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(1.607129f);
@@ -2064,13 +2090,21 @@ namespace gms {
                         const  __m256 _1   = _mm256_set1_ps(1.0f);
                         const  __m256 k0an23 = _mm256_pow_ps(k0a,
                                                           _mm256_set1_ps(0.666666666666666666666666666667f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an23 = _mm256_div_ps(vone,k0an23);
+#else                                                          
                         k0an23 = _mm256_rcp14_ps(k0an23);
+#endif                         
                         const __m256 k0an43= _mm256_pow_ps(k0a,
                                                         _mm256_set1_ps(1.333333333333333333333333333333f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an43 = _mm256_div_ps(vone,k0an43);
+#else                                                        
                         k0an43 = _mm256_rcp14_ps(k0an43);
+#endif                                                           
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2101,30 +2135,37 @@ namespace gms {
                                            float * __restrict  ECr,
                                            float * __restrict ECi) {
 
-                        const register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                        const register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                        const register __m256 Er   = _mm256_loadu_ps(&pEr[0]);
-                        const register __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                        const  __m256 a    = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r    = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                        const  __m256 Er   = _mm256_loadu_ps(&pEr[0]);
+                        const  __m256 Ei   = _mm256_loadu_ps(&pEi[0]);
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        const  __m256 vone = __m256_set1_ps(1.0f);
+#endif                            
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0ai16 = _mm256_div_ps(vone,k0ai16);
+#else                        
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+#endif                            
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(0.910721f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.9358135f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(1.607129f);
@@ -2136,13 +2177,21 @@ namespace gms {
                         const  __m256 _1   = _mm256_set1_ps(1.0f);
                         const  __m256 k0an23 = _mm256_pow_ps(k0a,
                                                           _mm256_set1_ps(0.666666666666666666666666666667f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an23 = _mm256_div_ps(vone,k0an23);
+#else                                                          
                         k0an23 = _mm256_rcp14_ps(k0an23);
+#endif                         
                         const __m256 k0an43= _mm256_pow_ps(k0a,
                                                         _mm256_set1_ps(1.333333333333333333333333333333f));
+#if !defined(__AVX512F__) && !defined(__AVX512VL__)
+                        k0an43 = _mm256_div_ps(vone,k0an43);
+#else                                                        
                         k0an43 = _mm256_rcp14_ps(k0an43);
+#endif                           
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2183,23 +2232,24 @@ namespace gms {
                                          __m256 * __restrict HCr,
                                          __m256 * __restrict HCi) {
 
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                         
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(1.531915f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.404308f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(0.70028f);
@@ -2217,7 +2267,7 @@ namespace gms {
                         k0an43 = _mm256_rcp14_ps(k0an43);
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2249,30 +2299,30 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32)  HCr,
                                            float * __restrict __ATTR_ALIGN__(32)  HCi) {
 
-                        const register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                        const register __m256 a    = _mm256_load_ps(&pa[0]);
-                        const register __m256 r    = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                        const register __m256 Hr   = _mm256_load_ps(&pHr[0]);
-                        const register __m256 Hi   = _mm256_load_ps(&pHi[0]);
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m256 phi  = _mm256_load_ps(&pphi[0]);
+                        const  __m256 a    = _mm256_load_ps(&pa[0]);
+                        const  __m256 r    = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                        const  __m256 Hr   = _mm256_load_ps(&pHr[0]);
+                        const  __m256 Hi   = _mm256_load_ps(&pHi[0]);
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(1.531915f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.404308f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(0.70028f);
@@ -2290,7 +2340,7 @@ namespace gms {
                         k0an43 = _mm256_rcp14_ps(k0an43);
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2321,30 +2371,30 @@ namespace gms {
                                            float * __restrict   HCr,
                                            float * __restrict   HCi) {
 
-                        const register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                        const register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        const register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                        const register __m256 Hr   = _mm256_loadu_ps(&pHr[0]);
-                        const register __m256 Hi   = _mm256_loadu_ps(&pHi[0]);
-                        register __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
-                        register __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
-                        register __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
+                        const  __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                        const  __m256 a    = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r    = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        const  __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                        const  __m256 Hr   = _mm256_loadu_ps(&pHr[0]);
+                        const  __m256 Hi   = _mm256_loadu_ps(&pHi[0]);
+                         __m256 e1ar,e1ai,ce1r,ce1i,e2ar,e2ai,e3ar,e3ai;
+                         __m256 ce2r,ce2i,ce3r,ce3i,sqr,tmp2r,tmp2i;
+                         __m256 Etr,Eti,tmp1r,tmp1i,t0r,t0i,t1r,t1i,tmp3r,tmp3i;
                         const  __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         const  __m256 k0ai16 = _mm256_pow_ps(k0a,
                                                          _mm256_set1_ps(0.166666666666666666666666666667f));
-                        const register __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
+                        const  __m256 k0apaphi = _mm256_fmadd_ps(k0a,PI,phi);
                         e2ar   = Ir; 
                         e2ai   = k0apaphi;
-                        cexp_ymm8r4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
+                        cexp_ymm8c4(e2ar,e2ai,&ce2r,&ce2i); // second cexp
                         k0ai16 = _mm256_rcp14_ps(k0ai16);
-                        const register __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
+                        const  __m256 k0apsphi = _mm256_fmsub_ps(k0a,PI,phi);
                         const  __m256 c0   = _mm256_set1_ps(1.531915f);
-                        const  register __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
+                        const   __m256 k0rp12 = _mm256_fmadd_ps(k0,r,pi12);
                         e3ar   = Ir;
                         e3ai   = k0apsphi;
-                        cexp_ymm8r4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
+                        cexp_ymm8c4(e3ar,e3ai,&ce3r,&ce3i); // third cexp
                         const  __m256 c0r  = _mm256_set1_ps(0.404308f);
                         sqr    = _mm256_div_ps(a,_mm256_add_ps(r,r);
                         const  __m256 c0i  = _mm256_set1_ps(0.70028f);
@@ -2362,7 +2412,7 @@ namespace gms {
                         k0an43 = _mm256_rcp14_ps(k0an43);
                         e1ar = Ir;
                         e1ai = k0rp12;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i); // first cexp
                         t0r = _mm256_fmadd_ps(_1,c0r,k0an23);// 1st complex term
                         t0i = _mm256_fmadd_ps(_1,c0i,k0an23);// //-//-//-
                         t1r = _mm256_mul_ps(c1r,k0an43);
@@ -2399,8 +2449,8 @@ namespace gms {
                                          __m256 * __restrict EOr,
                                          __m256 * __restrict EOi) {
 
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2417,7 +2467,7 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Er,t2);
                         faci            = _mm256_mul_ps(Ei,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_5,t1);
@@ -2444,14 +2494,14 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) EOr,
                                            float * __restrict __ATTR_ALIGN__(32) EOi) {
 
-                        register __m256 Er = _mm256_load_ps(&pEr[0]);
-                        register __m256 Ei = _mm256_load_ps(&pEi[0]);
-                        register __m256 a  = _mm256_load_ps(&pa[0]);
-                        register __m256 r  = _mm256_load_ps(&pr[0]);
-                        register __m256 k0a= _mm256_load_ps(&pk0a[0]);
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
-                        register __m256 resr,resi;
+                         __m256 Er = _mm256_load_ps(&pEr[0]);
+                         __m256 Ei = _mm256_load_ps(&pEi[0]);
+                         __m256 a  = _mm256_load_ps(&pa[0]);
+                         __m256 r  = _mm256_load_ps(&pr[0]);
+                         __m256 k0a= _mm256_load_ps(&pk0a[0]);
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2468,12 +2518,12 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Er,t2);
                         faci            = _mm256_mul_ps(Ei,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_5,t1);
                         t0i             = Ir;
-                        t0r             = mm512_add_ps(_1,t0r);
+                        t0r             = _mm256_add_ps(_1,t0r);
                         t3              = _mm256_div_ps(c0,t2);
                         t0r             = _mm256_add_ps(t3,t0r);
                         t0i             = _mm256_setzero_ps();
@@ -2496,14 +2546,14 @@ namespace gms {
                                            float * __restrict  EOr,
                                            float * __restrict  EOi) {
 
-                        register __m256 Er = _mm256_loadu_ps(&pEr[0]);
-                        register __m256 Ei = _mm256_loadu_ps(&pEi[0]);
-                        register __m256 a  = _mm256_loadu_ps(&pa[0]);
-                        register __m256 r  = _mm256_loadu_ps(&pr[0]);
-                        register __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
-                        register __m256 resr,resi;
+                         __m256 Er = _mm256_loadu_ps(&pEr[0]);
+                         __m256 Ei = _mm256_loadu_ps(&pEi[0]);
+                         __m256 a  = _mm256_loadu_ps(&pa[0]);
+                         __m256 r  = _mm256_loadu_ps(&pr[0]);
+                         __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2520,7 +2570,7 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Er,t2);
                         faci            = _mm256_mul_ps(Ei,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_5,t1);
@@ -2556,8 +2606,8 @@ namespace gms {
                                          __m256 * __restrict HOr,
                                          __m256 * __restrict HOi) {
 
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2574,7 +2624,7 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Hr,t2);
                         faci            = _mm256_mul_ps(Hi,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_11,t1);
@@ -2601,14 +2651,14 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) HOr,
                                            float * __restrict __ATTR_ALIGN__(32) HOi) {
 
-                        register __m256 Hr = _mm256_load_ps(&pHr[0]);
-                        register __m256 Hi = _mm256_load_ps(&pHi[0]);
-                        register __m256 a  = _mm256_load_ps(&pa[0]);
-                        register __m256 r  = _mm256_load_ps(&pr[0]);
-                        register __m256 k0 = _mm256_load_ps(&pk0[0]);
-                        register __m256 k0a= _mm256_load_ps(&pk0a[0]);
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 Hr = _mm256_load_ps(&pHr[0]);
+                         __m256 Hi = _mm256_load_ps(&pHi[0]);
+                         __m256 a  = _mm256_load_ps(&pa[0]);
+                         __m256 r  = _mm256_load_ps(&pr[0]);
+                         __m256 k0 = _mm256_load_ps(&pk0[0]);
+                         __m256 k0a= _mm256_load_ps(&pk0a[0]);
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2625,7 +2675,7 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Er,t2);
                         faci            = _mm256_mul_ps(Ei,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_11,t1);
@@ -2654,14 +2704,14 @@ namespace gms {
                                            float * __restrict  HOr,
                                            float * __restrict  HOi) {
 
-                        register __m256 Hr = _mm256_loadu_ps(&pHr[0]);
-                        register __m256 Hi = _mm256_loadu_ps(&pHi[0]);
-                        register __m256 a  = _mm256_loadu_ps(&pa[0]);
-                        register __m256 r  = _mm256_loadu_ps(&pr[0]);
-                        register __m256 k0 = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
-                        register __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
-                        register __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
+                         __m256 Hr = _mm256_loadu_ps(&pHr[0]);
+                         __m256 Hi = _mm256_loadu_ps(&pHi[0]);
+                         __m256 a  = _mm256_loadu_ps(&pa[0]);
+                         __m256 r  = _mm256_loadu_ps(&pr[0]);
+                         __m256 k0 = _mm256_loadu_ps(&pk0[0]);
+                         __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
+                         __m256 _2r,_2k0a,k0as,k0r,t0,t1,t2,t3,t1r,t1i,resr,resi;
+                         __m256 ear,eai,cer,cei,facr,faci,t0r,t0i,cer1,cei1;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         const __m256 _16= _mm256_set1_ps(16.0f);
                         _2r             = _mm256_add_ps(r,r);
@@ -2678,7 +2728,7 @@ namespace gms {
                         t2              = _mm256_sqrt_ps(t1);
                         facr            = _mm256_mul_ps(Er,t2);
                         faci            = _mm256_mul_ps(Ei,t2);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(_16,k0a);
                         t2              = _mm256_mul_ps(c1,k0as);
                         t0r             = _mm256_div_ps(_11,t1);
@@ -2713,10 +2763,10 @@ namespace gms {
                                          __m256 * __restrict ECr,
                                          __m256 * __restrict ECi) {
 
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(2.939945f);
@@ -2742,11 +2792,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -2767,15 +2817,15 @@ namespace gms {
                                          float * __restrict __ATTR_ALIGN__(32) ECr,
                                          float * __restrict __ATTR_ALIGN__(32) ECi) {
 
-                        const register __m256 Er = _mm256_load_ps(&pEr[0]);
-                        const register __m256 Ei = _mm256_load_ps(&pEi[0]);
-                        const register __m256 a  = _mm256_load_ps(&pa[0]);
-                        const register __m256 r  = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0 = _mm256_load_ps(&pk0[0]);
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                        const  __m256 Er = _mm256_load_ps(&pEr[0]);
+                        const  __m256 Ei = _mm256_load_ps(&pEi[0]);
+                        const  __m256 a  = _mm256_load_ps(&pa[0]);
+                        const  __m256 r  = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0 = _mm256_load_ps(&pk0[0]);
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(2.939945f);
@@ -2801,11 +2851,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -2827,15 +2877,15 @@ namespace gms {
                                            float * __restrict  ECr,
                                            float * __restrict  ECi) {
 
-                        const register __m256 Er = _mm256_loadu_ps(&pEr[0]);
-                        const register __m256 Ei = _mm256_loadu_ps(&pEi[0]);
-                        const register __m256 a  = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r  = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0 = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                        const  __m256 Er = _mm256_loadu_ps(&pEr[0]);
+                        const  __m256 Ei = _mm256_loadu_ps(&pEi[0]);
+                        const  __m256 a  = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r  = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0 = _mm256_loadu_ps(&pk0[0]);
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(2.939945f);
@@ -2861,11 +2911,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -2895,10 +2945,10 @@ namespace gms {
                                          __m256 * __restrict HCr,
                                          __m256 * __restrict HCi) {
 
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(1.2701695f);
@@ -2924,11 +2974,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -2949,15 +2999,15 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) HCr,
                                            float * __restrict __ATTR_ALIGN__(32) HCi) {
 
-                        const register __m256 Hr = _mm256_load_ps(&pHr[0]);
-                        const register __m256 Hi = _mm256_load_ps(&pHi[0]);
-                        const register __m256 a  = _mm256_load_ps(&pa[0]);
-                        const register __m256 r  = _mm256_load_ps(&pr[0]);
-                        const register __m256 k0 = _mm256_load_ps(&pk0[0]);
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                        const  __m256 Hr = _mm256_load_ps(&pHr[0]);
+                        const  __m256 Hi = _mm256_load_ps(&pHi[0]);
+                        const  __m256 a  = _mm256_load_ps(&pa[0]);
+                        const  __m256 r  = _mm256_load_ps(&pr[0]);
+                        const  __m256 k0 = _mm256_load_ps(&pk0[0]);
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(1.2701695f);
@@ -2983,11 +3033,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -3008,15 +3058,15 @@ namespace gms {
                                            float * __restrict  HCr,
                                            float * __restrict  HCi) {
 
-                        const register __m256 Hr = _mm256_loadu_ps(&pHr[0]);
-                        const register __m256 Hi = _mm256_loadu_ps(&pHi[0]);
-                        const register __m256 a  = _mm256_loadu_ps(&pa[0]);
-                        const register __m256 r  = _mm256_loadu_ps(&pr[0]);
-                        const register __m256 k0 = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 k0r,k0a,k0a13,k0an13,k0an16;
-                        register __m256 fracr,fraci,_2r,t0,t1,t2;
-                        register __m256 e1ar,e1ai,exar;
-                        register __m256 ce1r,ce1i,rex,t0r,t0i;
+                        const  __m256 Hr = _mm256_loadu_ps(&pHr[0]);
+                        const  __m256 Hi = _mm256_loadu_ps(&pHi[0]);
+                        const  __m256 a  = _mm256_loadu_ps(&pa[0]);
+                        const  __m256 r  = _mm256_loadu_ps(&pr[0]);
+                        const  __m256 k0 = _mm256_loadu_ps(&pk0[0]);
+                         __m256 k0r,k0a,k0a13,k0an13,k0an16;
+                         __m256 fracr,fraci,_2r,t0,t1,t2;
+                         __m256 e1ar,e1ai,exar;
+                         __m256 ce1r,ce1i,rex,t0r,t0i;
                         const __m256 pi12 = _mm256_set1_ps(0.261799387799149436538553615273f);
                         k0r   = _mm256_mul_ps(k0,r);
                         const __m256 c0   = _mm256_set1_ps(1.2701695f);
@@ -3042,11 +3092,11 @@ namespace gms {
                         t1    = _mm256_add_ps(k0r,t1);
                         e1ar  = t1;
                         e1ai  = Ir;
-                        cexp_ymm8r4(e1ar,e1ai,&ce1r,&ce1i);
+                        cexp_ymm8c4(e1ar,e1ai,&ce1r,&ce1i);
                         exar  = _mm256_fmsub_ps(c3,k0a13,
                                             _mm256_mul_ps(c4,k0an13));
                         t1    = _mm256_mul_ps(c2,k0an16);
-                        t2    = xexpf(exar);
+                        t2    = _mm256_exp_ps(exar);
                         rex   = _mm256_rcp14_ps(t2);
                         rex   = _mm256_mul_ps(rex,t1);
                         cmul_ymm8c4(fracr,fraci,ce1r,ce1i,&t0r,&t0i);
@@ -3068,7 +3118,7 @@ namespace gms {
                    __m256 rcs_f4137_ymm8r4(const __m256 a,
                                             const __m256 phi2) {
 
-                          register __m256 rcs,cosp2;
+                           __m256 rcs,cosp2;
                           cosp2 = _mm256_cos_ps(phi2);
                           rcs   = _mm256_mul_ps(PI,_mm256_mul_ps(a,cosp2));
                           return (rcs);
@@ -3082,9 +3132,9 @@ namespace gms {
                    __m256 rcs_f4137_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi2) {
 
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 phi2 = _mm256_load_ps(&pphi2[0]);
-                          register __m256 rcs,cosp2;
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 phi2 = _mm256_load_ps(&pphi2[0]);
+                           __m256 rcs,cosp2;
                           cosp2 = _mm256_cos_ps(phi2);
                           rcs   = _mm256_mul_ps(PI,_mm256_mul_ps(a,cosp2));
                           return (rcs);
@@ -3098,9 +3148,9 @@ namespace gms {
                    __m256 rcs_f4137_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pphi2) {
 
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
-                          register __m256 rcs,cosp2;
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
+                           __m256 rcs,cosp2;
                           cosp2 = _mm256_cos_ps(phi2);
                           rcs   = _mm256_mul_ps(PI,_mm256_mul_ps(a,cosp2));
                           return (rcs);
@@ -3129,7 +3179,7 @@ namespace gms {
 	           static inline
                    __m256 rcs_f4138_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa) {
 
-                          register __m256 a = _mm256_load_ps(&pa[0]);
+                           __m256 a = _mm256_load_ps(&pa[0]);
                           return (__m256_mul_ps(a,PI));
                   }
 
@@ -3140,7 +3190,7 @@ namespace gms {
 	           static inline
                    __m256 rcs_f4138_ymm8r4_u(const float * __restrict  pa) {
 
-                          register __m256 a = _mm256_loadu_ps(&pa[0]);
+                           __m256 a = _mm256_loadu_ps(&pa[0]);
                           return (__m256_mul_ps(a,PI));
                   }
 
@@ -3158,11 +3208,11 @@ namespace gms {
                    __m256 rcs_f4140_ymm8r4(const __m256 k0a,
                                             const __m256 alpha) {
 
-                          register __m256 sinc,k0alp,k0as,t0;
-                          register __m256 rcs;
+                           __m256 sinc,k0alp,k0as,t0;
+                           __m256 rcs;
                           const __m256 _4       = _mm256_set1_ps(4.0f);
                           k0alp = _mm256_mul_ps(k0a,alpha);
-                          t0    = xsinf(k0alp);
+                          t0    = _mm256_sin_ps(k0alp);
                           sinc  = _mm256_div_ps(t0,k0alp); 
                           k0as  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a)); 
                           rcs   = _mm256_mul_ps(k0as,_mm256_mul_ps(sinc,sinc));
@@ -3177,13 +3227,13 @@ namespace gms {
                    __m256 rcs_f4140_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(32) palpha) {
 
-                          register __m256 k0a   = _mm256_load_ps(&pk0a[0]);
-                          register __m256 alpha = _mm256_load_ps(&palpha[0]);
-                          register __m256 sinc,k0alp,k0as,t0;
-                          register __m256 rcs;
+                           __m256 k0a   = _mm256_load_ps(&pk0a[0]);
+                           __m256 alpha = _mm256_load_ps(&palpha[0]);
+                           __m256 sinc,k0alp,k0as,t0;
+                           __m256 rcs;
                           const __m256 _4       = _mm256_set1_ps(4.0f);
                           k0alp = _mm256_mul_ps(k0a,alpha);
-                          t0    = xsinf(k0alp);
+                          t0    = _mm256_sin_ps(k0alp);
                           sinc  = _mm256_div_ps(t0,k0alp); 
                           k0as  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a)); 
                           rcs   = _mm256_mul_ps(k0as,_mm256_mul_ps(sinc,sinc));
@@ -3198,13 +3248,13 @@ namespace gms {
                    __m256 rcs_f4140_ymm8r4_u(const float * __restrict  pk0a,
                                               const float * __restrict  palpha) {
 
-                          register __m256 k0a   = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 alpha = _mm256_loadu_ps(&palpha[0]);
-                          register __m256 sinc,k0alp,k0as,t0;
-                          register __m256 rcs;
+                           __m256 k0a   = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 alpha = _mm256_loadu_ps(&palpha[0]);
+                           __m256 sinc,k0alp,k0as,t0;
+                           __m256 rcs;
                           const __m256 _4       = _mm256_set1_ps(4.0f);
                           k0alp = _mm256_mul_ps(k0a,alpha);
-                          t0    = xsinf(k0alp);
+                          t0    = _mm256_sin_ps(k0alp);
                           sinc  = _mm256_div_ps(t0,k0alp); 
                           k0as  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a)); 
                           rcs   = _mm256_mul_ps(k0as,_mm256_mul_ps(sinc,sinc));
@@ -3233,19 +3283,19 @@ namespace gms {
                                          __m256 * __restrict Esr,
                                          __m256 * __restrict Esi) {
 
-                        register __m256 _2k0as,k0r,k0alp,sinc,div;
-                        register __m256 facr,faci,arr,ari,t0r,t0i,t0;
-                        register __m256 cer,cei;
+                         __m256 _2k0as,k0r,k0alp,sinc,div;
+                         __m256 facr,faci,arr,ari,t0r,t0i,t0;
+                         __m256 cer,cei;
                         const __m256 _2  = _mm256_set1_ps(2.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         _2k0as = _mm256_add_ps(_2,_mm256_mul_ps(k0a,k0a));
                         k0r    = _mm256_mul_ps(k0,r);
                         k0alp  = _mm256_mul_ps(k0a,alp);
-                        t0     = xsinf(k0alp);
+                        t0     = _mm256_sin_ps(k0alp);
                         arr    = _mm256_sub_ps(k0r,pi4);
                         ari    = Ir;
                         sinc   = _mm256_div_ps(t0,k0alp);
-                        cexp_ymm8r4(arr,ari,&cer,&cei);
+                        cexp_ymm8c4(arr,ari,&cer,&cei);
                         div    = _mm256_div_ps(_2k0as,pi4);
                         t0     = _mm256_sqrt_ps(div);
                         facr   = _mm256_mul_ps(Er,t0);
@@ -3269,25 +3319,25 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) Esr,
                                            float * __restrict __ATTR_ALIGN__(32) Esi) {
 
-                        register __m256 Er = _mm256_load_ps(&pEr[0]);
-                        register __m256 Ei = _mm256_load_ps(&pEi[0]);
-                        register __m256 r  = _mm256_load_ps(&pr[0]);
-                        register __m256 k0 = _mm256_load_ps(&pk0[0]);
-                        register __m256 alp= _mm256_load_ps(&palp[0]);
-                        register __m256 k0a= _mm256_load_ps(&pk0a[0]);
-                        register __m256 _2k0as,k0r,k0alp,sinc,pir,div;
-                        register __m256 facr,faci,arr,ari,t0r,t0i,t0;
-                        register __m256 cer,cei,resr,resi;
+                         __m256 Er = _mm256_load_ps(&pEr[0]);
+                         __m256 Ei = _mm256_load_ps(&pEi[0]);
+                         __m256 r  = _mm256_load_ps(&pr[0]);
+                         __m256 k0 = _mm256_load_ps(&pk0[0]);
+                         __m256 alp= _mm256_load_ps(&palp[0]);
+                         __m256 k0a= _mm256_load_ps(&pk0a[0]);
+                         __m256 _2k0as,k0r,k0alp,sinc,pir,div;
+                         __m256 facr,faci,arr,ari,t0r,t0i,t0;
+                         __m256 cer,cei,resr,resi;
                         const __m256 _2  = _mm256_set1_ps(2.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         _2k0as = _mm256_add_ps(_2,_mm256_mul_ps(k0a,k0a));
                         k0r    = _mm256_mul_ps(k0,r);
                         k0alp  = _mm256_mul_ps(k0a,alp);
-                        t0     = xsinf(k0alp);
+                        t0     = _mm256_sin_ps(k0alp);
                         arr    = Ir;
                         ari    = _mm256_sub_ps(k0r,pir);
                         sinc   = _mm256_div_ps(t0,k0alp);
-                        cexp_ymm8r4(arr,ari,&cer,&cei);
+                        cexp_ymm8c4(arr,ari,&cer,&cei);
                         div    = _mm256_div_ps(_2k0as,pi4);
                         t0     = _mm256_sqrt_ps(div);
                         facr   = _mm256_mul_ps(Er,t0);
@@ -3313,25 +3363,25 @@ namespace gms {
                                            float * __restrict  Esr,
                                            float * __restrict  Esi) {
 
-                        register __m256 Er = _mm256_loadu_ps(&pEr[0]);
-                        register __m256 Ei = _mm256_loadu_ps(&pEi[0]);
-                        register __m256 r  = _mm256_loadu_ps(&pr[0]);
-                        register __m256 k0 = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 alp= _mm256_loadu_ps(&palp[0]);
-                        register __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
-                        register __m256 _2k0as,k0r,k0alp,sinc,pir,div;
-                        register __m256 facr,faci,arr,ari,t0r,t0i,t0;
-                        register __m256 cer,cei,resr,resi;
+                         __m256 Er = _mm256_loadu_ps(&pEr[0]);
+                         __m256 Ei = _mm256_loadu_ps(&pEi[0]);
+                         __m256 r  = _mm256_loadu_ps(&pr[0]);
+                         __m256 k0 = _mm256_loadu_ps(&pk0[0]);
+                         __m256 alp= _mm256_loadu_ps(&palp[0]);
+                         __m256 k0a= _mm256_loadu_ps(&pk0a[0]);
+                         __m256 _2k0as,k0r,k0alp,sinc,pir,div;
+                         __m256 facr,faci,arr,ari,t0r,t0i,t0;
+                         __m256 cer,cei,resr,resi;
                         const __m256 _2  = _mm256_set1_ps(2.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         _2k0as = _mm256_add_ps(_2,_mm256_mul_ps(k0a,k0a));
                         k0r    = _mm256_mul_ps(k0,r);
                         k0alp  = _mm256_mul_ps(k0a,alp);
-                        t0     = xsinf(k0alp);
+                        t0     = _mm256_sin_ps(k0alp);
                         arr    = Ir;
                         ari    = _mm256_sub_ps(k0r,pir);
                         sinc   = _mm256_div_ps(t0,k0alp);
-                        cexp_ymm8r4(arr,ari,&cer,&cei);
+                        cexp_ymm8c4(arr,ari,&cer,&cei);
                         div    = _mm256_div_ps(_2k0as,pi4);
                         t0     = _mm256_sqrt_ps(div);
                         facr   = _mm256_mul_ps(Er,t0);
@@ -3357,7 +3407,7 @@ namespace gms {
                    __m256 rcs_f4141_ymm8r4(const __m256 k0a) {
 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a));
                           return (rcs);
                  }
@@ -3370,9 +3420,9 @@ namespace gms {
 	           static inline
                    __m256 rcs_f4141_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pk0a) {
 
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a));
                           return (rcs);
                  }
@@ -3384,9 +3434,9 @@ namespace gms {
 	           static inline
                    __m256 rcs_f4141_ymm8r4_u(const float * __restrict   pk0a) {
 
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,k0a));
                           return (rcs);
                  }
@@ -3414,9 +3464,9 @@ namespace gms {
                                          __m256 * __restrict ESr,
                                          __m256 * __restrict ESi) {
 
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul;
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3435,7 +3485,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3464,19 +3514,19 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32)  ESr,
                                            float * __restrict __ATTR_ALIGN__(32)  ESi) {
 
-                        register __m256 EIr = _mm256_load_ps(&pEIr[0]);
-                        register __m256 EIi = _mm256_load_ps(&pEIi[0]);
-                        register __m256 r   = _mm256_load_ps(&pr[0]);
-                        register __m256 k0  = _mm256_load_ps(&pk0[0]);
-                        register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                        register __m256 phi = _mm256_load_ps(&pphi[0]);
-                        register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                        register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                        register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                        register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
+                         __m256 EIr = _mm256_load_ps(&pEIr[0]);
+                         __m256 EIi = _mm256_load_ps(&pEIi[0]);
+                         __m256 r   = _mm256_load_ps(&pr[0]);
+                         __m256 k0  = _mm256_load_ps(&pk0[0]);
+                         __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                         __m256 phi = _mm256_load_ps(&pphi[0]);
+                         __m256 eps0= _mm256_load_ps(&peps0[0]);
+                         __m256 eps1= _mm256_load_ps(&peps1[0]);
+                         __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                         __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3495,7 +3545,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3526,19 +3576,19 @@ namespace gms {
                                            float * __restrict   ESr,
                                            float * __restrict   ESi) {
 
-                        register __m256 EIr = _mm256_loadu_ps(&pEIr[0]);
-                        register __m256 EIi = _mm256_loadu_ps(&pEIi[0]);
-                        register __m256 r   = _mm256_loadu_ps(&pr[0]);
-                        register __m256 k0  = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                        register __m256 phi = _mm256_loadu_ps(&pphi[0]);
-                        register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                        register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                        register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                        register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
+                         __m256 EIr = _mm256_loadu_ps(&pEIr[0]);
+                         __m256 EIi = _mm256_loadu_ps(&pEIi[0]);
+                         __m256 r   = _mm256_loadu_ps(&pr[0]);
+                         __m256 k0  = _mm256_loadu_ps(&pk0[0]);
+                         __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                         __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                         __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                         __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                         __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                         __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3557,7 +3607,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3594,9 +3644,9 @@ namespace gms {
                                          __m256 * __restrict HSr,
                                          __m256 * __restrict HSi) {
 
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul;
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3615,7 +3665,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3644,19 +3694,19 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32)  HSr,
                                            float * __restrict __ATTR_ALIGN__(32)  HSi) {
 
-                        register __m256 HIr = _mm256_load_ps(&pHIr[0]);
-                        register __m256 HIi = _mm256_load_ps(&pHIi[0]);
-                        register __m256 r   = _mm256_load_ps(&pr[0]);
-                        register __m256 k0  = _mm256_load_ps(&pk0[0]);
-                        register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                        register __m256 phi = _mm256_load_ps(&pphi[0]);
-                        register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                        register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                        register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                        register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
+                         __m256 HIr = _mm256_load_ps(&pHIr[0]);
+                         __m256 HIi = _mm256_load_ps(&pHIi[0]);
+                         __m256 r   = _mm256_load_ps(&pr[0]);
+                         __m256 k0  = _mm256_load_ps(&pk0[0]);
+                         __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                         __m256 phi = _mm256_load_ps(&pphi[0]);
+                         __m256 eps0= _mm256_load_ps(&peps0[0]);
+                         __m256 eps1= _mm256_load_ps(&peps1[0]);
+                         __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                         __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3675,7 +3725,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3706,19 +3756,19 @@ namespace gms {
                                            float * __restrict  HSr,
                                            float * __restrict   HSi) {
 
-                        register __m256 HIr = _mm256_loadu_ps(&pHIr[0]);
-                        register __m256 HIi = _mm256_loadu_ps(&pHIi[0]);
-                        register __m256 r   = _mm256_loadu_ps(&pr[0]);
-                        register __m256 k0  = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                        register __m256 phi = _mm256_loadu_ps(&pphi[0]);
-                        register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                        register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                        register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                        register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                        register __m256 k0r,k0as,fracr,fraci,k0as2;
-                        register __m256 ear,eai,cer,cei,t0r,t0i;
-                        register __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
+                         __m256 HIr = _mm256_loadu_ps(&pHIr[0]);
+                         __m256 HIi = _mm256_loadu_ps(&pHIi[0]);
+                         __m256 r   = _mm256_loadu_ps(&pr[0]);
+                         __m256 k0  = _mm256_loadu_ps(&pk0[0]);
+                         __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                         __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                         __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                         __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                         __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                         __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                         __m256 k0r,k0as,fracr,fraci,k0as2;
+                         __m256 ear,eai,cer,cei,t0r,t0i;
+                         __m256 t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
                         const __m256 _1 = _mm256_set1_ps(1.0f);
                         k0r             = _mm256_mul_ps(k0,r);
                         const __m256 _2 = _mm256_set1_ps(2.0f);
@@ -3737,7 +3787,7 @@ namespace gms {
                         ear             = _mm256_sub_ps(k0r,pi4);
                         t2              = _mm256_add_ps(t1,t1);
                         eai             = Ir;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         t1              = _mm256_mul_ps(t2,cosp);
                         cer = _mm256_div_ps(cer,sk0r);
                         t3  = _mm256_sub_ps(t0,t1);
@@ -3769,8 +3819,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3801,15 +3851,15 @@ namespace gms {
                                             const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                             const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_load_ps(&pphi[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 pmu1= _mm256_load_ps(&pmu1[0]);
-                          register __m256 pmu0= _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 phi = _mm256_load_ps(&pphi[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 pmu1= _mm256_load_ps(&pmu1[0]);
+                           __m256 pmu0= _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3839,15 +3889,15 @@ namespace gms {
                                             const float * __restrict  pmu1,
                                             const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_loadu_ps(&pphi[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 pmu1= _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 pmu0= _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 pmu1= _mm256_loadu_ps(&pmu1[0]);
+                           __m256 pmu0= _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3883,8 +3933,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3914,15 +3964,15 @@ namespace gms {
                                             const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                             const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_load_ps(&pphi[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 pmu1= _mm256_load_ps(&pmu1[0]);
-                          register __m256 pmu0= _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 phi = _mm256_load_ps(&pphi[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 pmu1= _mm256_load_ps(&pmu1[0]);
+                           __m256 pmu0= _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3952,15 +4002,15 @@ namespace gms {
                                             const float * __restrict  pmu1,
                                             const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_loadu_ps(&pphi[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 pmu1= _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 pmu0= _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 pmu1= _mm256_loadu_ps(&pmu1[0]);
+                           __m256 pmu0= _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,cosp,sqr,t2,diff;
+                           __m256 rcs;
                           cosp             = _mm256_cos_ps(phi);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
@@ -3994,8 +4044,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4024,14 +4074,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                               const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4060,14 +4110,14 @@ namespace gms {
                                               const float * __restrict  pmu1,
                                               const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4101,8 +4151,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4131,14 +4181,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                               const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4167,14 +4217,14 @@ namespace gms {
                                               const float * __restrict  pmu1,
                                               const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4208,8 +4258,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4238,14 +4288,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                               const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4274,14 +4324,14 @@ namespace gms {
                                               const float * __restrict  pmu1,
                                               const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4315,8 +4365,8 @@ namespace gms {
                                             const __m256 mu1,
                                             const __m256 mu0) {
 
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4345,14 +4395,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmu1,
                                               const float * __restrict __ATTR_ALIGN__(32) pmu0) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_load_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_load_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_load_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_load_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_load_ps(&peps1[0]);
+                           __m256 eps0= _mm256_load_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_load_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_load_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4381,14 +4431,14 @@ namespace gms {
                                               const float * __restrict  pmu1,
                                               const float * __restrict  pmu0) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
-                          register __m256 eps1= _mm256_loadu_ps(&peps1[0]);
-                          register __m256 eps0= _mm256_loadu_ps(&peps0[0]);
-                          register __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
-                          register __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
-                          register __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
-                          register __m256 rcs;
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a3[0]);
+                           __m256 eps1= _mm256_loadu_ps(&peps1[0]);
+                           __m256 eps0= _mm256_loadu_ps(&peps0[0]);
+                           __m256 mu1 = _mm256_loadu_ps(&pmu1[0]);
+                           __m256 mu0 = _mm256_loadu_ps(&pmu0[0]);
+                           __m256 t0,t1,k0a3,epst,mut,sqr,t2,diff;
+                           __m256 rcs;
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           t0               = _mm256_mul_ps(pi4,_mm256_mul_ps(PI,a));
                           const __m256 _1  = _mm256_set1_ps(1.0f);
@@ -4424,21 +4474,21 @@ namespace gms {
                                           __m256 * __restrict Tini) {
 
                         const __m256 _1 = _mm256_set1_ps(1.0f);
-                        register __m256 sin2p,cosp,divr,divi,t1;
-                        register __m256 sqr1,sqi1,sqr2,sqi2,t0;
-                        register __m256 mulr,muli,t0r,t0i,t1r,t1i;
-                        register __m256 t2r,t2i,t3r,t3i;
+                         __m256 sin2p,cosp,divr,divi,t1;
+                         __m256 sqr1,sqi1,sqr2,sqi2,t0;
+                         __m256 mulr,muli,t0r,t0i,t1r,t1i;
+                         __m256 t2r,t2i,t3r,t3i;
                         cosp = _mm256_cos_ps(psi);
-                        t0   = xsinf(psi);
+                        t0   = _mm256_sin_ps(psi);
                         sin2p= _mm256_mul_ps(t0,t0);
                         cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_ps(_1,sin2p);
                         cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                         //t0r = _mm256_div_ps(t1,mulr);
                         //t0i = _mm256_div_ps(t1,muli);
                         cdiv_ymm8c4_s(t1,mulr,muli,&t0r,&t0i);
-                        csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_ps(sqr1,sqr1);
                         t2i = _mm256_setzero_ps();
                         cmul_ymm8c4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -4461,27 +4511,27 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) Tinr,
                                             float * __restrict __ATTR_ALIGN__(32) Tini) {
 
-                        register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                         __m256 mur  = _mm256_load_ps(&pmur[0]);
+                         __m256 mui  = _mm256_load_ps(&pmui[0]);
+                         __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256 psi  = _mm256_load_ps(&ppsi[0]);
                         const __m256 _1 = _mm256_set1_ps(1.0f);
-                        register __m256 sin2p,cosp,divr,divi,t1;
-                        register __m256 sqr1,sqi1,sqr2,sqi2,t0;
-                        register __m256 mulr,muli,t0r,t0i,t1r,t1i;
-                        register __m256 t2r,t2i,t3r,t3i,resr,resi;
+                         __m256 sin2p,cosp,divr,divi,t1;
+                         __m256 sqr1,sqi1,sqr2,sqi2,t0;
+                         __m256 mulr,muli,t0r,t0i,t1r,t1i;
+                         __m256 t2r,t2i,t3r,t3i,resr,resi;
                         cosp = _mm256_cos_ps(psi);
-                        t0   = xsinf(psi);
+                        t0   = _mm256_sin_ps(psi);
                         sin2p= _mm256_mul_ps(t0,t0);
                         cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_ps(_1,sin2p);
                         cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                         //t0r = _mm256_div_ps(t1,mulr);
                         //t0i = _mm256_div_ps(t1,muli);
                         cdiv_ymm8c4_s(t1,mulr,muli,&t0r,&t0i);
-                        csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_ps(sqr1,sqr1);
                         t2i = _mm256_setzero_ps();
                         cmul_ymm8c4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -4506,27 +4556,27 @@ namespace gms {
                                             float * __restrict  Tinr,
                                             float * __restrict  Tini) {
 
-                        register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                         __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                         __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
                         const __m256 _1 = _mm256_set1_ps(1.0f);
-                        register __m256 sin2p,cosp,divr,divi,t1;
-                        register __m256 sqr1,sqi1,sqr2,sqi2,t0;
-                        register __m256 mulr,muli,t0r,t0i,t1r,t1i;
-                        register __m256 t2r,t2i,t3r,t3i,resr,resi;
+                         __m256 sin2p,cosp,divr,divi,t1;
+                         __m256 sqr1,sqi1,sqr2,sqi2,t0;
+                         __m256 mulr,muli,t0r,t0i,t1r,t1i;
+                         __m256 t2r,t2i,t3r,t3i,resr,resi;
                         cosp = _mm256_cos_ps(psi);
-                        t0   = xsinf(psi);
+                        t0   = _mm256_sin_ps(psi);
                         sin2p= _mm256_mul_ps(t0,t0);
                         cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_ps(_1,sin2p);
                         cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                         //t0r = _mm256_div_ps(t1,mulr);
                         //t0i = _mm256_div_ps(t1,muli);
                         cdiv_ymm8c4_s(t1,mulr,muli,&t0r,&t0i);
-                        csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_ps(sqr1,sqr1);
                         t2i = _mm256_setzero_ps();
                         cmul_ymm8c4(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -4557,20 +4607,20 @@ namespace gms {
                                           __m256 * __restrict Tini) {
 
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,_2cosp,divr,divi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2;
-                         register __m256 sinp,sin2p,mulr,muli;
-                         register __m256 t0r,t0i,_1msp;
+                          __m256 cosp,_2cosp,divr,divi;
+                          __m256 sqr1,sqi1,sqr2,sqi2;
+                          __m256 sinp,sin2p,mulr,muli;
+                          __m256 t0r,t0i,_1msp;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          _2cosp = _mm256_add_ps(cosp,cosp);
                          sin2p  = _mm256_mul_ps(sinp,sinp);
                          _1msp  = _mm256_sub_ps(_1,sin2p);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cdiv_ymm8c4_s(_1msp,mulr,muli,&t0r,&t0i);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          //*Tinr = _mm256_fmadd_ps(sqr1,sqr2,cosp);
                          //*Tini = _mm256_fmadd_ps(sqi1,sqi2,cosp);
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
@@ -4591,26 +4641,26 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) Tinr,
                                             float * __restrict __ATTR_ALIGN__(32) Tini) {
 
-                         register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_load_ps(&pmur[0]);
+                          __m256 mui  = _mm256_load_ps(&pmui[0]);
+                          __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,_2cosp,divr,divi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2;
-                         register __m256 sinp,sin2p,mulr,muli;
-                         register __m256 t0r,t0i,_1msp;
+                          __m256 cosp,_2cosp,divr,divi;
+                          __m256 sqr1,sqi1,sqr2,sqi2;
+                          __m256 sinp,sin2p,mulr,muli;
+                          __m256 t0r,t0i,_1msp;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          _2cosp = _mm256_add_ps(cosp,cosp);
                          sin2p  = _mm256_mul_ps(sinp,sinp);
                          _1msp  = _mm256_sub_ps(_1,sin2p);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cdiv_ymm8c4_s(_1msp,mulr,muli,&t0r,&t0i);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          //_mm256_store_ps(&Tinr[0] ,_mm256_fmadd_ps(sqr1,sqr2,cosp));
                          //_mm256_store_ps(&Tini[0] ,_mm256_fmadd_ps(sqi1,sqi2,cosp));
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
@@ -4631,26 +4681,26 @@ namespace gms {
                                             float * __restrict  Tinr,
                                             float * __restrict  Tini) {
 
-                         register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                          __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,_2cosp,divr,divi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2;
-                         register __m256 sinp,sin2p,mulr,muli;
-                         register __m256 t0r,t0i,_1msp;
+                          __m256 cosp,_2cosp,divr,divi;
+                          __m256 sqr1,sqi1,sqr2,sqi2;
+                          __m256 sinp,sin2p,mulr,muli;
+                          __m256 t0r,t0i,_1msp;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          _2cosp = _mm256_add_ps(cosp,cosp);
                          sin2p  = _mm256_mul_ps(sinp,sinp);
                          _1msp  = _mm256_sub_ps(_1,sin2p);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cdiv_ymm8c4_s(_1msp,mulr,muli,&t0r,&t0i);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&divr,&divi);
                          _mm256_storeu_ps(&Tinr[0], _mm256_add_ps(divr,cosp));
                          _mm256_storeu_ps(&Tini[0], divi);
@@ -4676,22 +4726,22 @@ namespace gms {
 
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 divr,divi,sqr1,sqi1;
-                         register __m256 mulr,muli,sqr2,sqi2;
-                         register __m256 cosp,sinp,sin2p,t0r,t0i;
-                         register __m256 t1r,t1i;
-                         register __m256 numr,numi,denr,deni;
+                          __m256 divr,divi,sqr1,sqi1;
+                          __m256 mulr,muli,sqr2,sqi2;
+                          __m256 cosp,sinp,sin2p,t0r,t0i;
+                          __m256 t1r,t1i;
+                          __m256 numr,numi,denr,deni;
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&div);
                          cosp = _mm256_cos_ps(psi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
-                         sinp = xsinf(psi);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                         sinp = _mm256_sin_ps(psi);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          //_2sqr1 = _mm256_mul_ps(_2,sqr1);
                          t0r    = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_ps(_2,sqi1);
                          t0i    = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_ps(_2,t1r);
                          denr = _mm256_add_ps(cosp,t1r);
@@ -4714,29 +4764,29 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) Toutr,
                                             float * __restrict __ATTR_ALIGN__(32) Touti) {
 
-                         register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_load_ps(&pmur[0]);
+                          __m256 mui  = _mm256_load_ps(&pmui[0]);
+                          __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 divr,divi,sqr1,sqi1;
-                         register __m256 mulr,muli,sqr2,sqi2;
-                         register __m256 cosp,sinp,sin2p,t0r,t0i;
-                         register __m256 _2sqr1,_2sqi1,t1r,t1i;
-                         register __m256 numr,numi,denr,deni,resr,resi;
+                          __m256 divr,divi,sqr1,sqi1;
+                          __m256 mulr,muli,sqr2,sqi2;
+                          __m256 cosp,sinp,sin2p,t0r,t0i;
+                          __m256 _2sqr1,_2sqi1,t1r,t1i;
+                          __m256 numr,numi,denr,deni,resr,resi;
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&div);
                          cosp = _mm256_cos_ps(psi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
-                         sinp = xsinf(psi);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                         sinp = _mm256_sin_ps(psi);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          //_2sqr1 = _mm256_mul_ps(_2,sqr1);
                          t0r    = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_ps(_2,sqi1);
                          t0i    = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_ps(_2,t1r);
                          denr = _mm256_add_ps(cosp,t1r);
@@ -4760,29 +4810,29 @@ namespace gms {
                                             float * __restrict  Toutr,
                                             float * __restrict  Touti) {
 
-                         register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                          __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 divr,divi,sqr1,sqi1;
-                         register __m256 mulr,muli,sqr2,sqi2;
-                         register __m256 cosp,sinp,sin2p,t0r,t0i;
-                         register __m256 _2sqr1,_2sqi1,t1r,t1i;
-                         register __m256 numr,numi,denr,deni,resr,resi;
+                          __m256 divr,divi,sqr1,sqi1;
+                          __m256 mulr,muli,sqr2,sqi2;
+                          __m256 cosp,sinp,sin2p,t0r,t0i;
+                          __m256 _2sqr1,_2sqi1,t1r,t1i;
+                          __m256 numr,numi,denr,deni,resr,resi;
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&div);
                          cosp = _mm256_cos_ps(psi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
-                         sinp = xsinf(psi);
-                         csqrt_ymm8r4(divr,divi,&sqr1,&sqi1);
+                         sinp = _mm256_sin_ps(psi);
+                         csqrt_ymm8c4(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          //_2sqr1 = _mm256_mul_ps(_2,sqr1);
                          t0r    = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_ps(_2,sqi1);
                          t0i    = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_ps(_2,t1r);
                          denr = _mm256_add_ps(cosp,t1r);
@@ -4813,19 +4863,19 @@ namespace gms {
                                            __m256 * __restrict Touti) {
 
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,sinp,sin2p,sqr1,sqi1;
-                         register __m256 sqr2,sqi2,_2cosp,divr,divi;
-                         register __m256 mulr,muli,denr,deni,t0r,t0i;
+                          __m256 cosp,sinp,sin2p,sqr1,sqi1;
+                          __m256 sqr2,sqi2,_2cosp,divr,divi;
+                          __m256 mulr,muli,denr,deni,t0r,t0i;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          _2cosp= _mm256_add_ps(cosp,cosp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_ps(cosp,denr);
                          cdiv_ymm8c4_s(_2cosp,denr,deni,&t0r,&t0i);
@@ -4846,25 +4896,25 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) Toutr,
                                             float * __restrict __ATTR_ALIGN__(32) Touti) {
 
-                         register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_load_ps(&pmur[0]);
+                          __m256 mui  = _mm256_load_ps(&pmui[0]);
+                          __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,sinp,sin2p,sqr1,sqi1;
-                         register __m256 sqr2,sqi2,_2cosp,divr,divi;
-                         register __m256 mulr,muli,denr,deni,t0r,t0i;
+                          __m256 cosp,sinp,sin2p,sqr1,sqi1;
+                          __m256 sqr2,sqi2,_2cosp,divr,divi;
+                          __m256 mulr,muli,denr,deni,t0r,t0i;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          _2cosp= _mm256_add_ps(cosp,cosp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_sub_ps(_1,_mm256_mul_ps(muli,sin2p));
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_ps(cosp,denr);
                          cdiv_ymm8c4_s(_2cosp,denr,deni,&t0r,&t0i);
@@ -4885,25 +4935,25 @@ namespace gms {
                                             float * __restrict  Toutr,
                                             float * __restrict  Touti) {
 
-                         register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                          __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
                          const __m256 _1 = _mm256_set1_ps(1.0f);
-                         register __m256 cosp,sinp,sin2p,sqr1,sqi1;
-                         register __m256 sqr2,sqi2,_2cosp,divr,divi;
-                         register __m256 mulr,muli,denr,deni,t0r,t0i;
+                          __m256 cosp,sinp,sin2p,sqr1,sqi1;
+                          __m256 sqr2,sqi2,_2cosp,divr,divi;
+                          __m256 mulr,muli,denr,deni,t0r,t0i;
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_mul_ps(sinp,sinp);
                          _2cosp= _mm256_add_ps(cosp,cosp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_sub_ps(_1,_mm256_mul_ps(muli,sin2p));
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          cmul_ymm8c4(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_ps(cosp,denr);
                          cdiv_ymm8c4_s(_2cosp,denr,deni,&t0r,&t0i);
@@ -4930,12 +4980,12 @@ namespace gms {
                                            __m256 * __restrict Rini) {
                          
                          using namespace gms::math;
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
@@ -4944,8 +4994,8 @@ namespace gms {
                          cdiv_ymm8c4_s(sin2p,mulr,muli,&t0r,&t0i);
                          t0r = _mm256_sub_ps(_1,t0r);
                          t0i = negate_ymm8r4(t0i);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(cosp,sqr2);
                          sqi2 = _mm256_mul_ps(cosp,sqi2);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -4969,17 +5019,17 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Rini) {
 
                          using namespace gms::math;
-                         register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
+                          __m256 mur  = _mm256_load_ps(&pmur[0]);
+                          __m256 mui  = _mm256_load_ps(&pmui[0]);
+                          __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
@@ -4988,8 +5038,8 @@ namespace gms {
                          cdiv_ymm8c4_s(sin2p,mulr,muli,&t0r,&t0i);
                          t0r = _mm256_sub_ps(_1,t0r);
                          t0i = negate_ymm8r4(t0i);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(cosp,sqr2);
                          sqi2 = _mm256_mul_ps(cosp,sqi2);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -5015,17 +5065,17 @@ namespace gms {
                                              float * __restrict  Rini) {
 
                          using namespace gms::math;
-                         register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
+                          __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                          __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(mur,mui,epsr,epsi,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
@@ -5034,8 +5084,8 @@ namespace gms {
                          cdiv_ymm8c4_s(sin2p,mulr,muli,&t0r,&t0i);
                          t0r = _mm256_sub_ps(_1,t0r);
                          t0i = negate_ymm8r4(t0i);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(cosp,sqr2);
                          sqi2 = _mm256_mul_ps(cosp,sqi2);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -5066,19 +5116,19 @@ namespace gms {
                                            __m256 * __restrict Rinr,
                                            __m256 * __restrict Rini) {
 
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(sqr2,cosp);
                          sqi2 = _mm256_mul_ps(sqi2,cosp);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -5101,24 +5151,24 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Rinr,
                                              float * __restrict __ATTR_ALIGN__(32) Rini ) {
 
-                         register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
+                          __m256 mur  = _mm256_load_ps(&pmur[0]);
+                          __m256 mui  = _mm256_load_ps(&pmui[0]);
+                          __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(sqr2,cosp);
                          sqi2 = _mm256_mul_ps(sqi2,cosp);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -5143,24 +5193,24 @@ namespace gms {
                                              float * __restrict  Rinr,
                                              float * __restrict  Rini ) {
 
-                         register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                         register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 cosp,sinp,sin2p,divr,divi;
-                         register __m256 mulr,muli,denr,deni,numr,numi;
-                         register __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
+                          __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                          __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 cosp,sinp,sin2p,divr,divi;
+                          __m256 mulr,muli,denr,deni,numr,numi;
+                          __m256 sqr1,sqi1,sqr2,sqi2,t0r,t0i,resr,resi;
                          const __m256 _1 = _mm256_set1_ps(1.0f);
                          cosp = _mm256_cos_ps(psi);
-                         sinp = xsinf(psi);
+                         sinp = _mm256_sin_ps(psi);
                          sin2p= _mm256_add_ps(sinp,sinp);
                          cdiv_ymm8c4(epsr,epsi,mur,mui,&divr,&divi);
                          cmul_ymm8c4(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_ps(_1,_mm256_mul_ps(mulr,sin2p));
                          t0i = _mm256_mul_ps(muli,sin2p);
-                         csqrt_ymm8r4(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm8r4(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm8c4(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm8c4(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_ps(sqr2,cosp);
                          sqi2 = _mm256_mul_ps(sqi2,cosp);
                          numr = _mm256_sub_ps(sqr2,sqr1);
@@ -5189,10 +5239,10 @@ namespace gms {
                                            __m256 * __restrict Rexr,
                                            __m256 * __restrict Rexi) {
 
-                        register __m256 sqr1,sqi1,sqr2,sqi2;
-                        register __m256 difr,difi,sumr,sumi;
-                        csqrt_ymm8r4(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                         __m256 sqr1,sqi1,sqr2,sqi2;
+                         __m256 difr,difi,sumr,sumi;
+                        csqrt_ymm8c4(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_ps(sqr1,sqr2);
                         sumr = _mm256_add_ps(sqr1,sqr2);
                         difi = _mm256_sub_ps(sqi1,sqi2);
@@ -5212,14 +5262,14 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Rexr,
                                              float * __restrict __ATTR_ALIGN__(32) Rexi) {
 
-                        register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256 sqr1,sqi1,sqr2,sqi2;
-                        register __m256 difr,difi,sumr,sumi,resr,resi;
-                        csqrt_ymm8r4(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                         __m256 mur  = _mm256_load_ps(&pmur[0]);
+                         __m256 mui  = _mm256_load_ps(&pmui[0]);
+                         __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256 sqr1,sqi1,sqr2,sqi2;
+                         __m256 difr,difi,sumr,sumi,resr,resi;
+                        csqrt_ymm8c4(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_ps(sqr1,sqr2);
                         sumr = _mm256_add_ps(sqr1,sqr2);
                         difi = _mm256_sub_ps(sqi1,sqi2);
@@ -5241,14 +5291,14 @@ namespace gms {
                                              float * __restrict  Rexr,
                                              float * __restrict  Rexi) {
 
-                        register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 sqr1,sqi1,sqr2,sqi2;
-                        register __m256 difr,difi,sumr,sumi,resr,resi;
-                        csqrt_ymm8r4(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                         __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                         __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 sqr1,sqi1,sqr2,sqi2;
+                         __m256 difr,difi,sumr,sumi,resr,resi;
+                        csqrt_ymm8c4(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_ps(sqr1,sqr2);
                         sumr = _mm256_add_ps(sqr1,sqr2);
                         difi = _mm256_sub_ps(sqi1,sqi2);
@@ -5277,12 +5327,12 @@ namespace gms {
                                            __m256 * __restrict Tinr,
                                            __m256 * __restrict Tini) {
 
-                          register __m256 sqr1,sqi1,sqr2,sqi2;
-                          register __m256 sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm8r4(mur,mui,&sqr1,&sqi1);
+                           __m256 sqr1,sqi1,sqr2,sqi2;
+                           __m256 sumr,sumi,mu2r,mu2i;
+                          csqrt_ymm8c4(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_ps(sqr1,sqr1);
                           mu2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(mu2r,mu2i,sumr,sumi,*Tinr,*Tini);
@@ -5300,16 +5350,16 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Tinr,
                                              float * __restrict __ATTR_ALIGN__(32) Tini ) {
 
-                          register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                          register __m256 sqr1,sqi1,sqr2,sqi2,resr,resi;
-                          register __m256 sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm8r4(mur,mui,&sqr1,&sqi1);
+                           __m256 mur  = _mm256_load_ps(&pmur[0]);
+                           __m256 mui  = _mm256_load_ps(&pmui[0]);
+                           __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                           __m256 sqr1,sqi1,sqr2,sqi2,resr,resi;
+                           __m256 sumr,sumi,mu2r,mu2i;
+                          csqrt_ymm8c4(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_ps(sqr1,sqr1);
                           mu2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(mu2r,mu2i,sumr,sumi,&resr,&resi);
@@ -5329,16 +5379,16 @@ namespace gms {
                                              float * __restrict  Tinr,
                                              float * __restrict  Tini ) {
 
-                          register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                          register __m256 sqr1,sqi1,sqr2,sqi2,resr,resi;
-                          register __m256 sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm8r4(mur,mui,&sqr1,&sqi1);
+                           __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                           __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                           __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                           __m256 sqr1,sqi1,sqr2,sqi2,resr,resi;
+                           __m256 sumr,sumi,mu2r,mu2i;
+                          csqrt_ymm8c4(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_ps(sqr1,sqr1);
                           mu2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm8c4(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(mu2r,mu2i,sumr,sumi,&resr,&resi);
@@ -5364,12 +5414,12 @@ namespace gms {
                                            __m256 * __restrict Toutr,
                                            __m256 * __restrict Touti) {
 
-                          register __m256 sqr1,sqi1,sqr2,sqi2;
-                          register __m256 sumr,sumi,eps2r,eps2i;
-                          csqrt_ymm8r4(epsr,epsi,&sqr1,&sqi1);
+                           __m256 sqr1,sqi1,sqr2,sqi2;
+                           __m256 sumr,sumi,eps2r,eps2i;
+                          csqrt_ymm8c4(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_ps(sqr1,sqr1);
                           eps2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm8c4(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(eps2r,eps2i,sumr,sumi,*Toutr,*Touti);
@@ -5387,16 +5437,16 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Toutr,
                                              float * __restrict __ATTR_ALIGN__(32) Touti ) {
 
-                          register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                          register __m256 sqr1,sqi1,sqr2,sqi2;
-                          register __m256 sumr,sumi,eps2r,eps2i,resr,resi;
-                          csqrt_ymm8r4(epsr,epsi,&sqr1,&sqi1);
+                           __m256 mur  = _mm256_load_ps(&pmur[0]);
+                           __m256 mui  = _mm256_load_ps(&pmui[0]);
+                           __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                           __m256 sqr1,sqi1,sqr2,sqi2;
+                           __m256 sumr,sumi,eps2r,eps2i,resr,resi;
+                          csqrt_ymm8c4(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_ps(sqr1,sqr1);
                           eps2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm8c4(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(eps2r,eps2i,sumr,sumi,&resr,&resi);
@@ -5416,16 +5466,16 @@ namespace gms {
                                              float * __restrict  Toutr,
                                              float * __restrict Touti ) {
 
-                          register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                          register __m256 sqr1,sqi1,sqr2,sqi2;
-                          register __m256 sumr,sumi,eps2r,eps2i,resr,resi;
-                          csqrt_ymm8r4(epsr,epsi,&sqr1,&sqi1);
+                           __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                           __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                           __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                           __m256 sqr1,sqi1,sqr2,sqi2;
+                           __m256 sumr,sumi,eps2r,eps2i,resr,resi;
+                          csqrt_ymm8c4(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_ps(sqr1,sqr1);
                           eps2i = _mm256_add_ps(sqi1,sqi1);
-                          csqrt_ymm8r4(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm8c4(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_ps(sqr1,sqr2);
                           sumi = _mm256_add_ps(sqi1,sqi2);
                           cdiv_ymm8c4(eps2r,eps2i,sumr,sumi,&resr,&resi);
@@ -5451,7 +5501,7 @@ namespace gms {
                                            __m256 * __restrict Rintr,
                                            __m256 * __restrict Rinti) {
                         
-                        register __m256 t0r,t0i;
+                         __m256 t0r,t0i;
                         const __m256 n1 = _mm256_mul_ps(-1.0f);
                         Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
                         *Rintr = _mm256_mul_ps(n1,t0r);
@@ -5470,11 +5520,11 @@ namespace gms {
                                              float * __restrict __ATTR_ALIGN__(32) Rintr,
                                              float * __restrict __ATTR_ALIGN__(32) Rinti) {
                         
-                        register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256 t0r,t0i;
+                         __m256 mur  = _mm256_load_ps(&pmur[0]);
+                         __m256 mui  = _mm256_load_ps(&pmui[0]);
+                         __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256 t0r,t0i;
                         const __m256 n1 = _mm256_mul_ps(-1.0f);
                         Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
                         _mm256_store_ps(&Rintr[0] ,_mm256_mul_ps(n1,t0r));
@@ -5493,11 +5543,11 @@ namespace gms {
                                               float * __restrict  Rintr,
                                               float * __restrict  Rinti) {
                         
-                        register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                        register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 t0r,t0i;
+                         __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                         __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 t0r,t0i;
                         const __m256 n1 = _mm256_mul_ps(-1.0f);
                         Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
                         _mm256_storeu_ps(&Rintr[0] ,_mm256_mul_ps(n1,t0r));
@@ -5520,10 +5570,10 @@ namespace gms {
                                             const __m256 epsr,
                                             const __m256 epsi ) {
 
-                          register __m256 t0r,t0i;
-                          register __m256 cabs,rcs;
+                           __m256 t0r,t0i;
+                           __m256 cabs,rcs;
                           Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm8r4(t0r,t0i);
+                          cabs = cabs_ymm8c4(t0r,t0i);
                           rcs  = _mm256_mul_ps(cabs,_mm256_mul_ps(PI,a));
                           return (rcs);
                  }
@@ -5539,14 +5589,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pepsr,
                                               const float * __restrict __ATTR_ALIGN__(32) pepsi, ) {
 
-                          register __m256 mur  = _mm256_load_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_load_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_load_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_load_ps(&pepsi[0]);
-                          register __m256 t0r,t0i;
-                          register __m256 cabs,rcs;
+                           __m256 mur  = _mm256_load_ps(&pmur[0]);
+                           __m256 mui  = _mm256_load_ps(&pmui[0]);
+                           __m256 epsr = _mm256_load_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_load_ps(&pepsi[0]);
+                           __m256 t0r,t0i;
+                           __m256 cabs,rcs;
                           Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm8r4(t0r,t0i);
+                          cabs = cabs_ymm8c4(t0r,t0i);
                           rcs  = _mm256_mul_ps(cabs,_mm256_mul_ps(PI,a));
                           return (rcs);
                  }
@@ -5562,14 +5612,14 @@ namespace gms {
                                               const float * __restrict  pepsr,
                                               const float * __restrict  pepsi, ) {
 
-                          register __m256 mur  = _mm256_loadu_ps(&pmur[0]);
-                          register __m256 mui  = _mm256_loadu_ps(&pmui[0]);
-                          register __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
-                          register __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
-                          register __m256 t0r,t0i;
-                          register __m256 cabs,rcs;
+                           __m256 mur  = _mm256_loadu_ps(&pmur[0]);
+                           __m256 mui  = _mm256_loadu_ps(&pmui[0]);
+                           __m256 epsr = _mm256_loadu_ps(&pepsr[0]);
+                           __m256 epsi = _mm256_loadu_ps(&pepsi[0]);
+                           __m256 t0r,t0i;
+                           __m256 cabs,rcs;
                           Rext_f4164_ymm8r4(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm8r4(t0r,t0i);
+                          cabs = cabs_ymm8c4(t0r,t0i);
                           rcs  = _mm256_mul_ps(cabs,_mm256_mul_ps(PI,a));
                           return (rcs);
                  }
@@ -5600,10 +5650,10 @@ namespace gms {
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5629,7 +5679,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,_mm256_mul_ps(div2r,cosp));
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5652,25 +5702,25 @@ namespace gms {
                                                const float * __restrict __ATTR_ALIGN__(32) peps0r,
                                                const float * __restrict __ATTR_ALIGN__(32) peps0i) {
 
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 phi   = _mm256_load_ps(&pphi[0]);
-                          register __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
-                          register __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
-                          register __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
-                          register __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
-                          register __m256 eps1r = _mm256_load_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_load_ps(&peps1i[0]);
-                          register __m256 eps0r = _mm256_load_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_load_ps(&peps1r[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 phi   = _mm256_load_ps(&pphi[0]);
+                           __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
+                           __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
+                           __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
+                           __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
+                           __m256 eps1r = _mm256_load_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_load_ps(&peps1i[0]);
+                           __m256 eps0r = _mm256_load_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_load_ps(&peps1r[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5696,7 +5746,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,_mm256_mul_ps(div2r,cosp));
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5719,25 +5769,25 @@ namespace gms {
                                                const float * __restrict  peps0r,
                                                const float * __restrict  peps0i) {
 
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 phi   = _mm256_loadu_ps(&pphi[0]);
-                          register __m256 mu1r  = _mm256_loadu_ps(&pmu1r[0]);
-                          register __m256 mu1i  = _mm256_loadu_ps(&pmu1i[0]);
-                          register __m256 mu0r  = _mm256_loadu_ps(&pmu0r[0]);
-                          register __m256 mu0i  = _mm256_loadu_ps(&pmu0i[0]);
-                          register __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_loadu_ps(&peps1i[0]);
-                          register __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 phi   = _mm256_loadu_ps(&pphi[0]);
+                           __m256 mu1r  = _mm256_loadu_ps(&pmu1r[0]);
+                           __m256 mu1i  = _mm256_loadu_ps(&pmu1i[0]);
+                           __m256 mu0r  = _mm256_loadu_ps(&pmu0r[0]);
+                           __m256 mu0i  = _mm256_loadu_ps(&pmu0i[0]);
+                           __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_loadu_ps(&peps1i[0]);
+                           __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_loadu_ps(&peps1r[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 cosp,divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5763,7 +5813,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,_mm256_mul_ps(div2r,cosp));
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5793,10 +5843,10 @@ namespace gms {
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5821,7 +5871,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,div2i);
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5843,24 +5893,24 @@ namespace gms {
                                                const float * __restrict __ATTR_ALIGN__(32) peps0r,
                                                const float * __restrict __ATTR_ALIGN__(32) peps0i) {
 
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
-                          register __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
-                          register __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
-                          register __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
-                          register __m256 eps1r = _mm256_load_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_load_ps(&peps1i[0]);
-                          register __m256 eps0r = _mm256_load_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_load_ps(&peps1r[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
+                           __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
+                           __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
+                           __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
+                           __m256 eps1r = _mm256_load_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_load_ps(&peps1i[0]);
+                           __m256 eps0r = _mm256_load_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_load_ps(&peps1r[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5885,7 +5935,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,div2r);
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5907,24 +5957,24 @@ namespace gms {
                                                const float * __restrict  peps0r,
                                                const float * __restrict  peps0i) {
 
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 mu1r  = _mm256_loadu_ps(&pmu1r[0]);
-                          register __m256 mu1i  = _mm256_loadu_ps(&pmu1i[0]);
-                          register __m256 mu0r  = _mm256_loadu_ps(&pmu0r[0]);
-                          register __m256 mu0i  = _mm256_loadu_ps(&pmu0i[0]);
-                          register __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_loadu_ps(&peps1i[0]);
-                          register __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 mu1r  = _mm256_loadu_ps(&pmu1r[0]);
+                           __m256 mu1i  = _mm256_loadu_ps(&pmu1i[0]);
+                           __m256 mu0r  = _mm256_loadu_ps(&pmu0r[0]);
+                           __m256 mu0i  = _mm256_loadu_ps(&pmu0i[0]);
+                           __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_loadu_ps(&peps1i[0]);
+                           __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_loadu_ps(&peps1r[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -5949,7 +5999,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,div2r);
                           t1r   = _mm256_sub_ps(t0r,div2r);
                           t1i   = _mm256_sub_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -5980,10 +6030,10 @@ namespace gms {
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -6008,7 +6058,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,div2r);
                           t1r   = _mm256_add_ps(t0r,div2r);
                           t1i   = _mm256_add_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -6031,24 +6081,24 @@ namespace gms {
                                                const float * __restrict __ATTR_ALIGN__(32) peps0r,
                                                const float * __restrict __ATTR_ALIGN__(32) peps0i) {
 
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
-                          register __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
-                          register __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
-                          register __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
-                          register __m256 eps1r = _mm256_load_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_load_ps(&peps1i[0]);
-                          register __m256 eps0r = _mm256_load_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_load_ps(&peps1r[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 mu1r  = _mm256_load_ps(&pmu1r[0]);
+                           __m256 mu1i  = _mm256_load_ps(&pmu1i[0]);
+                           __m256 mu0r  = _mm256_load_ps(&pmu0r[0]);
+                           __m256 mu0i  = _mm256_load_ps(&pmu0i[0]);
+                           __m256 eps1r = _mm256_load_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_load_ps(&peps1i[0]);
+                           __m256 eps0r = _mm256_load_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_load_ps(&peps1r[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
-                          register __m256 divr,divi,e1mr,e1mi,t1r,t1i;
-                          register __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
-                          register __m256 div2r,div2i,numr,numi,denr,deni;
+                           __m256 pia,k0a03,rcs,a1a0,_1pa,_1ma,cabs;
+                           __m256 divr,divi,e1mr,e1mi,t1r,t1i;
+                           __m256 e0mr,e0mi,frac,a1a0s,t0r,t0i;
+                           __m256 div2r,div2i,numr,numi,denr,deni;
                           pia = _mm256_mul_ps(PI,a0);
                           k0a03 = _mm256_mul_ps(k0a0,
                                             _mm256_mul_ps(k0a0,k0a0));
@@ -6073,7 +6123,7 @@ namespace gms {
                           div2i = _mm256_mul_ps(_2,div2r);
                           t1r   = _mm256_add_ps(t0r,div2r);
                           t1i   = _mm256_add_ps(t0i,div2i);
-                          cabs  = cabs_ymm8r4(t1r,t1i);
+                          cabs  = cabs_ymm8c4(t1r,t1i);
                           rcs   = _mm256_mul_ps(frac,cabs);
                           return (rcs);
                }
@@ -6104,8 +6154,8 @@ namespace gms {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6134,17 +6184,17 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) A0r,
                                             float * __restrict __ATTR_ALIGN__(32) A0i) {
 
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 eps1r = _mm256_load_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_load_ps(&peps1i[0]); 
-                          register __m256 eps0r = _mm256_load_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_load_ps(&peps0i[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 eps1r = _mm256_load_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_load_ps(&peps1i[0]); 
+                           __m256 eps0r = _mm256_load_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_load_ps(&peps0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i,resr,resi;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i,resr,resi;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6176,17 +6226,17 @@ namespace gms {
                                           float * __restrict  A0r,
                                           float * __restrict  A0i) {
 
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_loadu_ps(&peps1i[0]); 
-                          register __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_loadu_ps(&peps0i[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_loadu_ps(&peps1i[0]); 
+                           __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_loadu_ps(&peps0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i,resr,resi;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i,resr,resi;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6229,8 +6279,8 @@ namespace gms {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6259,17 +6309,17 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) B0r,
                                             float * __restrict __ATTR_ALIGN__(32) B0i) {
 
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 mu1r = _mm256_load_ps(&pmu1r[0]);
-                          register __m256 mu1i = _mm256_load_ps(&pmu1i[0]); 
-                          register __m256 mu0r = _mm256_load_ps(&pmu0r[0]);
-                          register __m256 mu0i = _mm256_load_ps(&pmu0i[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 mu1r = _mm256_load_ps(&pmu1r[0]);
+                           __m256 mu1i = _mm256_load_ps(&pmu1i[0]); 
+                           __m256 mu0r = _mm256_load_ps(&pmu0r[0]);
+                           __m256 mu0i = _mm256_load_ps(&pmu0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i,resr,resi;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i,resr,resi;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6300,17 +6350,17 @@ namespace gms {
                                             float * __restrict  B0r,
                                             float * __restrict  B0i) {
 
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 mu1r = _mm256_loadu_ps(&pmu1r[0]);
-                          register __m256 mu1i = _mm256_loadu_ps(&pmu1i[0]); 
-                          register __m256 mu0r = _mm256_loadu_ps(&pmu0r[0]);
-                          register __m256 mu0i = _mm256_loadu_ps(&pmu0i[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 mu1r = _mm256_loadu_ps(&pmu1r[0]);
+                           __m256 mu1i = _mm256_loadu_ps(&pmu1i[0]); 
+                           __m256 mu0r = _mm256_loadu_ps(&pmu0r[0]);
+                           __m256 mu0i = _mm256_loadu_ps(&pmu0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
-                          register __m256 t0r,t0i,resr,resi;
+                           __m256 k0a02,fracr,fraci,divr,divi,a1a0,a1a0s,_1ma;
+                           __m256 t0r,t0i,resr,resi;
                           a1a0  = _mm256_div_ps(a1,a0);
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           a1a0s = _mm256_mul_ps(a1a0,a1a0);
@@ -6351,10 +6401,10 @@ namespace gms {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6395,19 +6445,19 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) A1r,
                                             float * __restrict __ATTR_ALIGN__(32) A1i) {
 
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 mu1r = _mm256_load_ps(&pmu1r[0]);
-                          register __m256 mu1i = _mm256_load_ps(&pmu1i[0]); 
-                          register __m256 mu0r = _mm256_load_ps(&pmu0r[0]);
-                          register __m256 mu0i = _mm256_load_ps(&pmu0i[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 mu1r = _mm256_load_ps(&pmu1r[0]);
+                           __m256 mu1i = _mm256_load_ps(&pmu1i[0]); 
+                           __m256 mu0r = _mm256_load_ps(&pmu0r[0]);
+                           __m256 mu0i = _mm256_load_ps(&pmu0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6450,19 +6500,19 @@ namespace gms {
                                             float * __restrict  A1r,
                                             float * __restrict A1i) {
 
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 mu1r = _mm256_loadu_ps(&pmu1r[0]);
-                          register __m256 mu1i = _mm256_loadu_ps(&pmu1i[0]); 
-                          register __m256 mu0r = _mm256_loadu_ps(&pmu0r[0]);
-                          register __m256 mu0i = _mm256_loadu_ps(&pmu0i[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 mu1r = _mm256_loadu_ps(&pmu1r[0]);
+                           __m256 mu1i = _mm256_loadu_ps(&pmu1i[0]); 
+                           __m256 mu0r = _mm256_loadu_ps(&pmu0r[0]);
+                           __m256 mu0i = _mm256_loadu_ps(&pmu0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6516,10 +6566,10 @@ namespace gms {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6560,19 +6610,19 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) B1r,
                                             float * __restrict __ATTR_ALIGN__(32) B1i) {
 
-                          register __m256 a1    = _mm256_load_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                          register __m256 eps1r = _mm256_load_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_load_ps(&peps1i[0]); 
-                          register __m256 eps0r = _mm256_load_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_load_ps(&peps0i[0]);
+                           __m256 a1    = _mm256_load_ps(&pa1[0]);
+                           __m256 a0    = _mm256_load_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                           __m256 eps1r = _mm256_load_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_load_ps(&peps1i[0]); 
+                           __m256 eps0r = _mm256_load_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_load_ps(&peps0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6615,19 +6665,19 @@ namespace gms {
                                             float * __restrict  B1r,
                                             float * __restrict  B1i) {
 
-                          register __m256 a1    = _mm256_loadu_ps(&pa1[0]);
-                          register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                          register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                          register __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
-                          register __m256 eps1i = _mm256_loadu_ps(&peps1i[0]); 
-                          register __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
-                          register __m256 eps0i = _mm256_loadu_ps(&peps0i[0]);
+                           __m256 a1    = _mm256_loadu_ps(&pa1[0]);
+                           __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                           __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                           __m256 eps1r = _mm256_loadu_ps(&peps1r[0]);
+                           __m256 eps1i = _mm256_loadu_ps(&peps1i[0]); 
+                           __m256 eps0r = _mm256_loadu_ps(&peps0r[0]);
+                           __m256 eps0i = _mm256_loadu_ps(&peps0i[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
                           const __m256 pi4= _mm256_set1_ps(0.78539816339744830961566084582f);
-                          register __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
-                          register __m256 divr,divi,divrs,divis,t1r,t1i;
-                          register __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
-                          register __m256 numr,numi,denr,deni,fracr,fraci;
+                           __m256 k0a02,a1a0,a1a0s,_1ma,ratr,rati;
+                           __m256 divr,divi,divrs,divis,t1r,t1i;
+                           __m256 sqpr,sqpi,sqmr,sqmi,t0r,t0i,resr,resi;
+                           __m256 numr,numi,denr,deni,fracr,fraci;
                           k0a02 = _mm256_mul_ps(k0a,k0a);
                           fraci = Ir;
                           a1a0  = _mm256_div_ps(a1,a0);
@@ -6675,7 +6725,7 @@ namespace gms {
 
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf = _mm256_set1_ps(0.5f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          k0ah = _mm256_mul_ps(hlf,k0a2);
                          *A0r = _mm256_mul_ps(pi4,k0ah);
@@ -6692,10 +6742,10 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) A0i) {
 
                    
-                         register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                          __m256 k0a = _mm256_load_ps(&pk0a[0]);
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf = _mm256_set1_ps(0.5f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          k0ah = _mm256_mul_ps(hlf,k0a2);
                         _mm256_store_ps(&A0r[0] ,mm512_mul_ps(pi4,k0ah));
@@ -6712,10 +6762,10 @@ namespace gms {
                                             float * __restrict  A0i) {
 
                    
-                         register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                          __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf = _mm256_set1_ps(0.5f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          k0ah = _mm256_mul_ps(hlf,k0a2);
                          _mm256_store_ups(&A0r[0] ,mm512_mul_ps(pi4,k0ah));
@@ -6807,7 +6857,7 @@ namespace gms {
 
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 c0 = _mm256_set1_ps(1.8992f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          k0ah = _mm256_mul_ps(c0,k0a2);
                          *B1r = _mm256_mul_ps(pi4,k0ah));
@@ -6824,10 +6874,10 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) B1i) {
 
                    
-                         register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                          __m256 k0a = _mm256_load_ps(&pk0a[0]);
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 c0 = _mm256_set1_ps(1.8992f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          _mm256_store_ps(&B1i[0] ,Ir);
                          k0ah = _mm256_mul_ps(c0,k0a2);
@@ -6844,10 +6894,10 @@ namespace gms {
                                             float * __restrict  B1i) {
 
                    
-                         register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                          __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                          const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 c0 = _mm256_set1_ps(1.8992f);
-                         register __m256 k0a2,k0ah;
+                          __m256 k0a2,k0ah;
                          k0a2 = _mm256_mul_ps(k0a,k0a);
                          _mm256_store_ps(&B1i[0] ,Ir);
                          k0ah = _mm256_mul_ps(c0,k0a2);
@@ -6871,7 +6921,7 @@ namespace gms {
 
                           const __m256 c0   = _mm256_set1_ps(0.0625f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,k0a3;
+                           __m256 rcs,t0,k0a3;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t0   = _mm256_mul_ps(pipi,a);
                           rcs  = _mm256_mul_ps(k0a3,t0);
@@ -6886,11 +6936,11 @@ namespace gms {
                    __m256 rcs_f41163_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]); 
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]); 
                           const __m256 c0   = _mm256_set1_ps(0.0625f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,k0a3;
+                           __m256 rcs,t0,k0a3;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t0   = _mm256_mul_ps(pipi,a);
                           rcs  = _mm256_mul_ps(k0a3,t0);
@@ -6905,11 +6955,11 @@ namespace gms {
                    __m256 rcs_f41163_ymm8r4_u(const float * __restrict  pa,
                                              const float * __restrict  pk0a) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]); 
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]); 
                           const __m256 c0   = _mm256_set1_ps(0.0625f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,k0a3;
+                           __m256 rcs,t0,k0a3;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t0   = _mm256_mul_ps(pipi,a);
                           rcs  = _mm256_mul_ps(k0a3,t0);
@@ -6935,7 +6985,7 @@ namespace gms {
 
                           const __m256 c0   = _mm256_set1_ps(0.03607f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,cosp,k0a3,cos2p;
+                           __m256 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(c0,_mm256_mul_ps(pipi,a));
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
@@ -6953,12 +7003,12 @@ namespace gms {
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                                const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]); 
-                          register __m256 phi = _mm256_load_ps(&pphi[0]);
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]); 
+                           __m256 phi = _mm256_load_ps(&pphi[0]);
                           const __m256 c0   = _mm256_set1_ps(0.03607f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,cosp,k0a3,cos2p;
+                           __m256 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(c0,_mm256_mul_ps(pipi,a));
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
@@ -6976,12 +7026,12 @@ namespace gms {
                                                const float * __restrict  pk0a,
                                                const float * __restrict  pphi) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]); 
-                          register __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]); 
+                           __m256 phi = _mm256_loadu_ps(&pphi[0]);
                           const __m256 c0   = _mm256_set1_ps(0.03607f);
                           const __m256 pipi = _mm256_set1_ps( 9.869604401089358618834490999876f);
-                          register __m256 rcs,t0,cosp,k0a3,cos2p;
+                           __m256 rcs,t0,cosp,k0a3,cos2p;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(c0,_mm256_mul_ps(pipi,a));
                           k0a3  = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
@@ -7007,7 +7057,7 @@ namespace gms {
                                           __m256 * __restrict A0i) {
 
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a2;
+                         __m256 k0a2;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         *A0r = _mm256_mul_ps(pi4,k0a2);
                         *A0i = Ir;
@@ -7022,9 +7072,9 @@ namespace gms {
                                             float * __restrict __ATTR_ALIGN__(32) A0r,
                                             float * __restrict __ATTR_ALIGN__(32) A0i) {
 
-                        register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                         __m256 k0a = _mm256_load_ps(&pk0a[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a2;
+                         __m256 k0a2;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         _mm256_store_ps(&A0i[0], Ir);
                         _mm256_store_ps(&A0r[0], _mm256_mul_ps(pi4,k0a2));
@@ -7039,9 +7089,9 @@ namespace gms {
                                             float * __restrict  A0r,
                                             float * __restrict  A0i) {
 
-                        register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                         __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a2;
+                         __m256 k0a2;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         _mm256_storeu_ps(&A0i[0], Ir);
                         _mm256_storeu_ps(&A0r[0], _mm256_mul_ps(pi4,k0a2));
@@ -7132,7 +7182,7 @@ namespace gms {
 
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 c0  = _mm256_set1_ps(0.43616f);
-                        register __m256 k0a2,t0;
+                         __m256 k0a2,t0;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         t0   = _mm256_mul_ps(c0,k0a2);
                         *B1i = Ir;
@@ -7148,10 +7198,10 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) B1r,
                                           float * __restrict __ATTR_ALIGN__(32) B1i) {
 
-                        register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                         __m256 k0a = _mm256_load_ps(&pk0a[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 c0  = _mm256_set1_ps(0.43616f);
-                        register __m256 k0a2,t0;
+                         __m256 k0a2,t0;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         t0   = _mm256_mul_ps(c0,k0a2);
                         _mm256_store_ps(&B1i[0] ,Ir);
@@ -7167,14 +7217,14 @@ namespace gms {
                                           float * __restrict  B1r,
                                           float * __restrict  B1i) {
 
-                        register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                         __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 c0  = _mm256_set1_ps(0.43616f);
-                        register __m256 k0a2,t0;
+                         __m256 k0a2,t0;
                         k0a2 = _mm256_mul_ps(k0a,k0a);
                         t0   = _mm256_mul_ps(c0,k0a2);
                         _mm256_storeu_ps(&B1i[0] ,Ir);
-                        _mm256_storeu_ps(&B1r[0] ,,_mm256_mul_ps(pi4,t0));
+                        _mm256_storeu_ps(&B1r[0] ,_mm256_mul_ps(pi4,t0));
                 }
 
 
@@ -7194,7 +7244,7 @@ namespace gms {
 
                           const __m256 qtr = _mm256_set1_ps(0.25f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 a4,k0a3,rcs;
+                           __m256 a4,k0a3,rcs;
                           a4   = _mm256_mul_ps(a,qtr);
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           rcs  = _mm256_mul_ps(k0a3,_mm256_mul_ps(pip,a4));
@@ -7209,11 +7259,11 @@ namespace gms {
                    __m256 rcs_f14166_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
                           const __m256 qtr = _mm256_set1_ps(0.25f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 a4,k0a3,rcs;
+                           __m256 a4,k0a3,rcs;
                           a4   = _mm256_mul_ps(a,qtr);
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           rcs  = _mm256_mul_ps(k0a3,_mm256_mul_ps(pip,a4));
@@ -7228,11 +7278,11 @@ namespace gms {
                    __m256 rcs_f14166_ymm8r4_u(const float * __restrict pa,
                                                const float * __restrict  pk0a) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 qtr = _mm256_set1_ps(0.25f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 a4,k0a3,rcs;
+                           __m256 a4,k0a3,rcs;
                           a4   = _mm256_mul_ps(a,qtr);
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           rcs  = _mm256_mul_ps(k0a3,_mm256_mul_ps(pip,a4));
@@ -7258,7 +7308,7 @@ namespace gms {
 
                           const __m256 c0  = _mm256_set1_ps(0.19024f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 cosp,cos2p,k0a3,rcs,t1;
+                           __m256 cosp,cos2p,k0a3,rcs,t1;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t1   = _mm256_mul_ps(_mm256_mul_ps(c0,pip),
                                                _mm256_mul_ps(a,k0a3));
@@ -7277,12 +7327,12 @@ namespace gms {
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                                const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256 a   = _mm256_load_ps(&pa[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_load_ps(&pphi[0]);
+                           __m256 a   = _mm256_load_ps(&pa[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 phi = _mm256_load_ps(&pphi[0]);
                           const __m256 c0  = _mm256_set1_ps(0.19024f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 cosp,cos2p,k0a3,rcs,t1;
+                           __m256 cosp,cos2p,k0a3,rcs,t1;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t1   = _mm256_mul_ps(_mm256_mul_ps(c0,pip),
                                                _mm256_mul_ps(a,k0a3));
@@ -7300,12 +7350,12 @@ namespace gms {
                                                const float * __restrict  pk0a,
                                                const float * __restrict  pphi) {
 
-                          register __m256 a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256 a   = _mm256_loadu_ps(&pa[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 phi = _mm256_loadu_ps(&pphi[0]);
                           const __m256 c0  = _mm256_set1_ps(0.19024f);
                           const __m256 pip = _mm256_set1_ps(9.869604401089358618834490999876f);
-                          register __m256 cosp,cos2p,k0a3,rcs,t1;
+                           __m256 cosp,cos2p,k0a3,rcs,t1;
                           k0a3 = _mm256_mul_ps(k0a,_mm256_mul_ps(k0a,k0a));
                           t1   = _mm256_mul_ps(_mm256_mul_ps(c0,pip),
                                                _mm256_mul_ps(a,k0a3));
@@ -7349,12 +7399,12 @@ namespace gms {
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1;
+                         __m256 murp1,muip1,murm1,muim1,k0a02;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         k0a0 = _mm256_mul_ps(k0,a0);
@@ -7367,7 +7417,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = epsi;
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7378,7 +7428,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         ear    = t0;
                         t1     = _mm256_sqrt_ps(k0r);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7419,28 +7469,28 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) Ezr,
                                            float * __restrict __ATTR_ALIGN__(32) Ezi) {
 
-                        register __m256 E0r = _mm256_load_ps(&pE0r[0]);
-                        register __m256 E0i = _mm256_load_ps(&pE0i[0]);
-                        register __m256 psi = _mm256_load_ps(&ppsi[0]);
-                        register __m256 k0  = _mm256_load_ps(&pk0[0]);
-                        register __m256 z   = _mm256_load_ps(&pz[0]);
-                        register __m256 r   = _mm256_load_ps(&pr[0]);
-                        register __m256 a0  = _mm256_load_ps(&pa0[0]);
-                        register __m256 epsr= _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi= _mm256_load_ps(&pepsi[0]);
-                        register __m256 pmur= _mm256_load_ps(&pmur[0]);
-                        register __m256 pmui= _mm256_load_ps(&pmui[0]);
+                         __m256 E0r = _mm256_load_ps(&pE0r[0]);
+                         __m256 E0i = _mm256_load_ps(&pE0i[0]);
+                         __m256 psi = _mm256_load_ps(&ppsi[0]);
+                         __m256 k0  = _mm256_load_ps(&pk0[0]);
+                         __m256 z   = _mm256_load_ps(&pz[0]);
+                         __m256 r   = _mm256_load_ps(&pr[0]);
+                         __m256 a0  = _mm256_load_ps(&pa0[0]);
+                         __m256 epsr= _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi= _mm256_load_ps(&pepsi[0]);
+                         __m256 pmur= _mm256_load_ps(&pmur[0]);
+                         __m256 pmui= _mm256_load_ps(&pmui[0]);
                         const __m256 spi2 = _mm256_set1_ps(0.886226925452758013649083741671f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1;
+                         __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         k0a0 = _mm256_mul_ps(k0,a0);
@@ -7453,7 +7503,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = epsi;
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7464,7 +7514,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         ear    = t0;
                         t1     = _mm256_sqrt_ps(k0r);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7506,28 +7556,28 @@ namespace gms {
                                            float * __restrict  Ezr,
                                            float * __restrict  Ezi) {
 
-                        register __m256 E0r = _mm256_loadu_ps(&pE0r[0]);
-                        register __m256 E0i = _mm256_loadu_ps(&pE0i[0]);
-                        register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
-                        register __m256 k0  = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 z   = _mm256_loadu_ps(&pz[0]);
-                        register __m256 r   = _mm256_loadu_ps(&pr[0]);
-                        register __m256 a0  = _mm256_loadu_ps(&pa0[0]);
-                        register __m256 epsr= _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi= _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 pmur= _mm256_loadu_ps(&pmur[0]);
-                        register __m256 pmui= _mm256_loadu_ps(&pmui[0]);
+                         __m256 E0r = _mm256_loadu_ps(&pE0r[0]);
+                         __m256 E0i = _mm256_loadu_ps(&pE0i[0]);
+                         __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                         __m256 k0  = _mm256_loadu_ps(&pk0[0]);
+                         __m256 z   = _mm256_loadu_ps(&pz[0]);
+                         __m256 r   = _mm256_loadu_ps(&pr[0]);
+                         __m256 a0  = _mm256_loadu_ps(&pa0[0]);
+                         __m256 epsr= _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi= _mm256_loadu_ps(&pepsi[0]);
+                         __m256 pmur= _mm256_loadu_ps(&pmur[0]);
+                         __m256 pmui= _mm256_loadu_ps(&pmui[0]);
                         const __m256 spi2 = _mm256_set1_ps(0.886226925452758013649083741671f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1;
+                         __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         k0a0 = _mm256_mul_ps(k0,a0);
@@ -7540,7 +7590,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = epsi;
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7551,7 +7601,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         ear    = t0;
                         t1     = _mm256_sqrt_ps(k0r);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7610,12 +7660,12 @@ namespace gms {
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
+                         __m256 murp1,muip1,murm1,muim1,k0a02;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         k0a0 = _mm256_mul_ps(k0,a0);
@@ -7630,7 +7680,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = _mm256_sub_ps(epsi,_1)
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = _mm256_setzero_ps();
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7642,7 +7692,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         eai    = t0;
                         t1     = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7687,29 +7737,29 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) Hpi) {
 
 
-                        register __m256 E0r = _mm256_load_ps(&pE0r[0]);
-                        register __m256 E0i = _mm256_load_ps(&pE0i[0]);
-                        register __m256 psi = _mm256_load_ps(&ppsi[0]);
-                        register __m256 k0  = _mm256_load_ps(&pk0[0]);
-                        register __m256 z   = _mm256_load_ps(&pz[0]);
-                        register __m256 r   = _mm256_load_ps(&pr[0]);
-                        register __m256 a0  = _mm256_load_ps(&pa0[0]);
-                        register __m256 epsr= _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi= _mm256_load_ps(&pepsi[0]);
-                        register __m256 pmur= _mm256_load_ps(&pmur[0]);
-                        register __m256 pmui= _mm256_load_ps(&pmui[0]);
+                         __m256 E0r = _mm256_load_ps(&pE0r[0]);
+                         __m256 E0i = _mm256_load_ps(&pE0i[0]);
+                         __m256 psi = _mm256_load_ps(&ppsi[0]);
+                         __m256 k0  = _mm256_load_ps(&pk0[0]);
+                         __m256 z   = _mm256_load_ps(&pz[0]);
+                         __m256 r   = _mm256_load_ps(&pr[0]);
+                         __m256 a0  = _mm256_load_ps(&pa0[0]);
+                         __m256 epsr= _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi= _mm256_load_ps(&pepsi[0]);
+                         __m256 pmur= _mm256_load_ps(&pmur[0]);
+                         __m256 pmui= _mm256_load_ps(&pmui[0]);
                         const __m256 e0u0 = _mm256_set1_ps(0.000007036193308495678572187302f);
                         const __m256 spi2 = _mm256_set1_ps(0.886226925452758013649083741671f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
+                         __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         rat  = _mm256_div_ps(eps0,mu0);
@@ -7723,7 +7773,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = _mm256_sub_ps(epsi,_1)
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = _mm256_setzero_ps();
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7735,7 +7785,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         eai    = t0;
                         t1     = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7781,29 +7831,29 @@ namespace gms {
                                            float * __restrict  Hpi) {
 
 
-                        register __m256 E0r = _mm256_loadu_ps(&pE0r[0]);
-                        register __m256 E0i = _mm256_loadu_ps(&pE0i[0]);
-                        register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
-                        register __m256 k0  = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 z   = _mm256_loadu_ps(&pz[0]);
-                        register __m256 r   = _mm256_loadu_ps(&pr[0]);
-                        register __m256 a0  = _mm256_loadu_ps(&pa0[0]);
-                        register __m256 epsr= _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi= _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 pmur= _mm256_loadu_ps(&pmur[0]);
-                        register __m256 pmui= _mm256_loadu_ps(&pmui[0]);
+                         __m256 E0r = _mm256_loadu_ps(&pE0r[0]);
+                         __m256 E0i = _mm256_loadu_ps(&pE0i[0]);
+                         __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                         __m256 k0  = _mm256_loadu_ps(&pk0[0]);
+                         __m256 z   = _mm256_loadu_ps(&pz[0]);
+                         __m256 r   = _mm256_loadu_ps(&pr[0]);
+                         __m256 a0  = _mm256_loadu_ps(&pa0[0]);
+                         __m256 epsr= _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi= _mm256_loadu_ps(&pepsi[0]);
+                         __m256 pmur= _mm256_loadu_ps(&pmur[0]);
+                         __m256 pmui= _mm256_loadu_ps(&pmui[0]);
                         const __m256 e0u0 = _mm256_set1_ps(0.000007036193308495678572187302f);
                         const __m256 spi2 = _mm256_set1_ps(0.886226925452758013649083741671f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 _2  = _mm256_set1_ps(2.0f);
-                        register __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
-                        register __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
-                        register __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
-                        register __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
-                        register __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
-                        register __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
+                         __m256 k0r,k0z,k0a0,cosp,cosps,cos2ps,sinps,sin2ps;
+                         __m256 epsrp1,epsip1,epsrm1,epsim1,rat,spirat;
+                         __m256 murp1,muip1,murm1,muim1,k0a02,resr,resi;
+                         __m256 mul1r,mul1i,mul2r,mul2i,mul3r,mul3i,t0r,t0i,t2r,t2i;
+                         __m256 ear,eai,t0,t1,cer,cei,fracr,fraci,scosps;
+                         __m256 frer,frei,div1r,div1i,div2r,div2i,numr,numi,t1r,t1i;
                         k0r  = _mm256_mul_ps(k0,r);
                         k0z  = _mm256_mul_ps(k0,z);
                         rat  = _mm256_div_ps(eps0,mu0);
@@ -7818,7 +7868,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         scosps = _mm256_sqrt_ps(cosps);
                         epsim1 = _mm256_sub_ps(epsi,_1)
-                        sinps= xsinf(psi);
+                        sinps= _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = _mm256_setzero_ps();
                         cos2ps= _mm256_mul_ps(cosps,cosps);
@@ -7830,7 +7880,7 @@ namespace gms {
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                         eai    = t0;
                         t1     = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         fracr = _mm256_mul_ps(E0r,scosps);
                         fraci = _mm256_mul_ps(E0i,scosps);
                         cmul_ymm8c4(fracr,fraci,cer,cei,&frer,&frei);
@@ -7885,9 +7935,9 @@ namespace gms {
                         const __m256 spi2 = _mm256_set1_ps(2.506628274631000502415765284811f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i;
-                        register __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i;
+                         __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         t0    = _mm256_mul_ps(k0r,cosp);
@@ -7897,15 +7947,15 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinph  = xsinf(psi);
+                        sinph  = _mm256_sin_ps(psi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         sinpsp = _mm256_mul_ps(sinps,sinph);
                         ear    = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
                         fracr = _mm256_div_ps(fracr,den);
                         t0r   = _mm256_mul_ps(spi2,_mm256_mul_ps(fracr,k0a02));
@@ -7938,22 +7988,22 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Ephr,
                                           float * __restrict __ATTR_ALIGN__(32) Ephi) {
 
-                        register __m256 E0r   = _mm256_load_ps(&pE0r[0]);
-                        register __m256 E0i   = _mm256_load_ps(&pE0i[0]);
-                        register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                        register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                        register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                        register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                        register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                         __m256 E0r   = _mm256_load_ps(&pE0r[0]);
+                         __m256 E0i   = _mm256_load_ps(&pE0i[0]);
+                         __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                         __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                         __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                         __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                         __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_load_ps(&pmur[0]);
+                         __m256 mui   = _mm256_load_ps(&pmui[0]); 
                         const __m256 spi2 = _mm256_set1_ps(2.506628274631000502415765284811f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,resr,resi;
-                        register __m256 cosp,sinps,sinph,k0a02,cosps,sinpsp,mulr,muli;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,resr,resi;
+                         __m256 cosp,sinps,sinph,k0a02,cosps,sinpsp,mulr,muli;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         t0    = _mm256_mul_ps(k0r,cosp);
@@ -7963,15 +8013,15 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinph   = xsinf(phi);
+                        sinph   = _mm256_sin_ps(phi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         sinpsp = _mm256_mul_ps(sinps,sinph);
                         ear    = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
                         fracr = _mm256_div_ps(fracr,den);
                         t0r   = _mm256_mul_ps(spi2,_mm256_mul_ps(fracr,k0a02));
@@ -8005,22 +8055,22 @@ namespace gms {
                                           float * __restrict Ephr,
                                           float * __restrict  Ephi) {
 
-                        register __m256 E0r   = _mm256_loadu_ps(&pE0r[0]);
-                        register __m256 E0i   = _mm256_loadu_ps(&pE0i[0]);
-                        register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                        register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                        register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                        register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                        register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                         __m256 E0r   = _mm256_loadu_ps(&pE0r[0]);
+                         __m256 E0i   = _mm256_loadu_ps(&pE0i[0]);
+                         __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                         __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                         __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                         __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                         __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                         const __m256 spi2 = _mm256_set1_ps(2.506628274631000502415765284811f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,resr,resi;
-                        register __m256 cosp,sinps,sinph,k0a02,cosps,sinpsp,mulr,muli;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,resr,resi;
+                         __m256 cosp,sinps,sinph,k0a02,cosps,sinpsp,mulr,muli;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         t0    = _mm256_mul_ps(k0r,cosp);
@@ -8030,15 +8080,15 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinph   = xsinf(phi);
+                        sinph   = _mm256_sin_ps(phi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         sinpsp = _mm256_mul_ps(sinps,sinph);
                         ear    = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
                         fracr = _mm256_div_ps(fracr,den);
                         t0r   = _mm256_mul_ps(spi2,_mm256_mul_ps(fracr,k0a02));
@@ -8085,9 +8135,9 @@ namespace gms {
                         const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
-                        register __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
+                         __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         eai   = Ir;
@@ -8096,16 +8146,16 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinp   = xsinf(phi);
+                        sinp   = _mm256_sin_ps(phi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         scosp  = _mm256_sqrt_ps(cosp);
                         sinpsp = _mm256_mul_ps(sinps,sinp);
                         ear   = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cer = _mm256_mul_ps(scosp,cer);
                         cei = _mm256_mul_ps(scosp,cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
@@ -8140,22 +8190,22 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Hzr,
                                           float * __restrict __ATTR_ALIGN__(32) Hzi ) {
 
-                        register __m256 E0r   = _mm256_load_ps(&pE0r[0]);
-                        register __m256 E0i   = _mm256_load_ps(&pE0i[0]);
-                        register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                        register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                        register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                        register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                        register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                         __m256 E0r   = _mm256_load_ps(&pE0r[0]);
+                         __m256 E0i   = _mm256_load_ps(&pE0i[0]);
+                         __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                         __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                         __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                         __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                         __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_load_ps(&pmur[0]);
+                         __m256 mui   = _mm256_load_ps(&pmui[0]); 
                         const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
-                        register __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli,resr,resi;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
+                         __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli,resr,resi;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         eai   = Ir;
@@ -8164,16 +8214,16 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinp   = xsinf(phi);
+                        sinp   = _mm256_sin_ps(phi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         scosp  = _mm256_sqrt_ps(cosp);
                         sinpsp = _mm256_mul_ps(sinps,sinp);
                         eai    = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cer = _mm256_mul_ps(scosp,cer);
                         cei = _mm256_mul_ps(scosp,cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
@@ -8209,22 +8259,22 @@ namespace gms {
                                           float * __restrict  Hzr,
                                           float * __restrict  Hzi ) {
 
-                        register __m256 E0r   = _mm256_loadu_ps(&pE0r[0]);
-                        register __m256 E0i   = _mm256_loadu_ps(&pE0i[0]);
-                        register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                        register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                        register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                        register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                        register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                         __m256 E0r   = _mm256_loadu_ps(&pE0r[0]);
+                         __m256 E0i   = _mm256_loadu_ps(&pE0i[0]);
+                         __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                         __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                         __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                         __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                         __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                         const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                         const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
-                        register __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli,resr,resi;
-                        register __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
+                         __m256 ear,eai,cer,cei,den,t0,fracr,fraci,t0r,t0i,scosp;
+                         __m256 cosp,sinps,sinp,k0a02,cosps,sinpsp,mulr,muli,resr,resi;
+                         __m256 emum1r,emum1i,epsp1r,epsp1i,murp1,muip1,t1r,t1i;
                         k0a02 = _mm256_mul_ps(k0a0,k0a0);
                         cosp  = _mm256_cos_ps(phi);
                         eai   = Ir;
@@ -8233,16 +8283,16 @@ namespace gms {
                         emum1r = _mm256_sub_ps(emum1r,_1);
                         epsp1r = _mm256_add_ps(epsr,_1);
                         epsp1i = epsi;
-                        sinps  = xsinf(psi);
+                        sinps  = _mm256_sin_ps(psi);
                         murp1  = _mm256_add_ps(mur,_1);
                         muip1  = mui;
-                        sinp   = xsinf(phi);
+                        sinp   = _mm256_sin_ps(phi);
                         cosps  = _mm256_cos_ps(psi);
                         t0     = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosp,pi4));
                         scosp  = _mm256_sqrt_ps(cosp);
                         sinpsp = _mm256_mul_ps(sinps,sinp);
                         ear    = t0;
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         cer = _mm256_mul_ps(scosp,cer);
                         cei = _mm256_mul_ps(scosp,cei);
                         cmul_ymm8c4(E0r,E0i,cer,cei,&fracr,&fraci);
@@ -8292,22 +8342,22 @@ namespace gms {
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 scosps,sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 scosps,sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
                          scosps= _mm256_sqrt_ps(cosps);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(k0r);
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = _mm256_mul_ps(H0r,scosps);
@@ -8359,37 +8409,37 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Hzr,
                                           float * __restrict __ATTR_ALIGN__(32) Hzi) {
 
-                         register __m256 H0r   = _mm256_load_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_load_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_load_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_load_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 spi2 = _mm256_set1_ps(1.253314137315500251207882642406f);
                          const __m256 _2   = _mm256_set1_ps(2.0f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 scosps,sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 scosps,sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
                          scosps= _mm256_sqrt_ps(cosps);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(k0r);
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = _mm256_mul_ps(H0r,scosps);
@@ -8443,37 +8493,37 @@ namespace gms {
                                           float * __restrict  Hzr,
                                           float * __restrict Hzi) {
 
-                         register __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 spi2 = _mm256_set1_ps(1.253314137315500251207882642406f);
                          const __m256 _2   = _mm256_set1_ps(2.0f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 scosps,sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 scosps,sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                           cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
                          scosps= _mm256_sqrt_ps(cosps);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(k0r);
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = _mm256_mul_ps(H0r,scosps);
@@ -8541,21 +8591,21 @@ namespace gms {
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = H0r;
@@ -8608,36 +8658,36 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Epr,
                                           float * __restrict __ATTR_ALIGN__(32) Epi) {
 
-                         register __m256 H0r   = _mm256_load_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_load_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_load_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_load_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                          const __m256 _2   = _mm256_set1_ps(2.0f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = H0r;
@@ -8691,36 +8741,36 @@ namespace gms {
                                           float * __restrict  Epr,
                                           float * __restrict  Epi) {
 
-                         register __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                          const __m256 _2   = _mm256_set1_ps(2.0f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
-                         register __m256 sinps,cosps,k0a02,sk0r;
-                         register __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
-                         register __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
-                         register __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
-                         register __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                          __m256 sinps,cosps,k0a02,sk0r;
+                          __m256 cos2ps,sin2ps,cosp,mul1r,mul1i,resr,resi;
+                          __m256 mul2r,mul2i,mul3r,mul3i,t0,t1r,t1i;
+                          __m256 murm1,muim1,epsrm1,epsim1,numr,numi;
+                          __m256 murp1,muip1,epsrp1,epsip1,mucsr,mucsi;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(hlf,_mm256_mul_ps(k0a,k0a));
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          t0    = _mm256_fmadd_ps(k0z,sinps,_mm256_fmadd_ps(k0r,cosps,pi4));
                          sk0r  = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          eai   = Ir;
                          ear   = t0;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          cosp  = _mm256_cos_ps(phi);
                          murm1 = _mm256_sub_ps(mur,_1);
                          fracr = H0r;
@@ -8786,17 +8836,17 @@ namespace gms {
                          const __m256 s2pi = _mm256_set1_ps(2.506628274631000502415765284811f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          eai   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          ear   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm256_mul_ps(sinps,sinph);
@@ -8836,30 +8886,30 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Hpr,
                                           float * __restrict __ATTR_ALIGN__(32) Hpi) {
 
-                         register __m256 H0r   = _mm256_load_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_load_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_load_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_load_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 s2pi = _mm256_set1_ps(2.506628274631000502415765284811f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph,resr,resi;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph,resr,resi;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          ear   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          eai   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm256_mul_ps(sinps,sinph);
@@ -8902,30 +8952,30 @@ namespace gms {
                                           float * __restrict  Hpr,
                                           float * __restrict  Hpi) {
 
-                         register __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 s2pi = _mm256_set1_ps(2.506628274631000502415765284811f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph,resr,resi;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph,resr,resi;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          ear   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          eai   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(_mm256_mul_ps(k0r,cosps));
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          spsph = _mm256_mul_ps(sinps,sinph);
@@ -8980,17 +9030,17 @@ namespace gms {
                          const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          eai   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          ear   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(k0r);
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          fracr = _mm256_mul_ps(fracr,cosps);
@@ -9033,30 +9083,30 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) Hzr,
                                           float * __restrict __ATTR_ALIGN__(32) Hzi ) {
                          
-                         register __m256 H0r   = _mm256_load_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_load_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_load_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_load_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_load_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_load_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph,resr,resi;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph,resr,resi;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          ear   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          eai   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(k0r);
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          fracr = _mm256_mul_ps(fracr,cosps);
@@ -9101,30 +9151,30 @@ namespace gms {
                                           float * __restrict  Hzr,
                                           float * __restrict  Hzi ) {
                          
-                         register __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
-                         register __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
-                         register __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 H0r   = _mm256_loadu_ps(&pH0r[0]);
+                          __m256 H0i   = _mm256_loadu_ps(&pH0i[0]);
+                          __m256 k0z   = _mm256_loadu_ps(&pk0z[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 e0u0 = _mm256_set1_ps(0.00001763712109284471382861586f);
                          const __m256 pi4  = _mm256_set1_ps(0.78539816339744830961566084582f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 sinps,cosps,scpk0r,sinph,resr,resi;
-                         register __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
-                         register __m256 spsph,epsrp1,epsip1,murp1,muip1;
-                         register __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
-                         sinps = xsinf(psi);
+                          __m256 sinps,cosps,scpk0r,sinph,resr,resi;
+                          __m256 k0a02,mul1r,mul1i,mul2r,mul2i,divr,divi;
+                          __m256 spsph,epsrp1,epsip1,murp1,muip1;
+                          __m256 fracr,fraci,ear,eai,cer,cei,t0r,t0i;
+                         sinps = _mm256_sin_ps(psi);
                          ear   = Ir;
                          cosps = _mm256_cos_ps(psi);
                          k0a02 = _mm256_mul_ps(k0a,k0a);
-                         sinph = xsinf(phi);
+                         sinph = _mm256_sin_ps(phi);
                          eai   = _mm256_fmadd_ps(k0z,sinps,_mm256_fmsub_ps(k0r,cosps,pi4));
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          scpk0r = _mm256_sqrt_ps(k0r);
                          cmul_ymm8c4(H0r,H0i,cer,cei,&fracr,&fraci);
                          fracr = _mm256_mul_ps(fracr,cosps);
@@ -9175,10 +9225,10 @@ namespace gms {
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9187,7 +9237,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(psi);
+                         sinps  = _mm256_sin_ps(psi);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9209,7 +9259,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(epsrcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(epsicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9228,21 +9278,21 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
 
-                         register __m256 a0   = _mm256_load_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 a0   = _mm256_load_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9251,7 +9301,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = _mm256_sin_ps(ps);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9273,7 +9323,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(epsrcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(epsicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9292,21 +9342,21 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
 
-                         register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 epsrcps,epsicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9315,7 +9365,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = _mm256_sin_ps(ps);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9337,7 +9387,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(epsrcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(epsicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9367,10 +9417,10 @@ namespace gms {
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9379,7 +9429,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = _mm256_sin_ps(ps);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9401,7 +9451,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(murcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(muicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9420,21 +9470,21 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
 
-                         register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 a0    = _mm256_load_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9443,7 +9493,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = _mm256_sin_ps(ps);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9465,7 +9515,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(murcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(muicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9484,21 +9534,21 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
 
-                         register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 _4 = _mm256_set1_ps(4.0f);
                          const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2 = _mm256_set1_ps(2.0f);
-                         register __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
-                         register __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
-                         register __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
-                         register __m256 t1r,t1i,cabs;
+                          __m256 rcs,k0a03,frac,cosp,cos2ps,cosps,sinps,sin2ps,spia,t0,t0r,t0i;
+                          __m256 epsrm1,epsim1,epsrp1,epsip1,murm1,muim1,murp1,muip1,numr,numi;
+                          __m256 murcps,muicps,divr,divi,mul1r,mul1i,mul2r,mul2i,mul3r,mul3i;
+                          __m256 t1r,t1i,cabs;
                          k0a03  = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrm1 = _mm256_sub_ps(epsr,_1);
                          spia   = _mm256_mul_ps(spi,a0);
@@ -9507,7 +9557,7 @@ namespace gms {
                          epsrp1 = _mm256_add_ps(epsr,_1);
                          cos2ps = _mm256_mul_ps(cosps,cosps);
                          epsip1 = _mm256_setzero_ps();
-                         sinps  = xsinf(ps);
+                         sinps  = _mm256_sin_ps(ps);
                          murm1  = _mm256_sub_ps(mur,_1);
                          sin2ps = _mm256_mul_ps(sinps,sinps);
                          muim1  = _mm256_sub_ps(mui,_1);
@@ -9529,7 +9579,7 @@ namespace gms {
                          t1r  = _mm256_sub_ps(murcps,t0r);
                          t0i  = _mm256_mul_ps(_2,_mm256_mul_ps(divi,cosp));
                          t1i  = _mm256_sub_ps(muicps,t0i);
-                         cabs = cabs_ymm8r4(t1r,t1i);
+                         cabs = cabs_ymm8c4(t1r,t1i);
                          rcs  = _mm256_mul_ps(cabs,frac);
                          return (rcs);
                  }
@@ -9560,9 +9610,9 @@ namespace gms {
                          const __m256 _4  = _mm256_set1_ps(4.0f);
                          const __m256 spi = _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2  = _mm256_set1_ps(2.0f);
-                         register __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
-                         register __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
-                         register __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
+                          __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
+                          __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
+                          __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
                          k0a03 = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrp1= _mm256_add_ps(epsr,_1);
                          cosps = _mm256_cos_ps(psi);
@@ -9573,17 +9623,17 @@ namespace gms {
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          muip1 = _mm256_setzero_ps();
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mul1r,&mul1i);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          mul1r = _mm256_sub_ps(mul1r,_1);
                          mul1i = _mm256_sub_ps(mul1i,_1);
-                         sinp  = xsinf(phi);
+                         sinp  = _mm256_sin_ps(phi);
                          cmul_ymm8c4(epsrp1,epsip1,murp1,muip1,&mul2r,&mul2i);
                          frac  = _mm256_mul_ps(k0a03,_mm256_div_ps(spi4,cos2ps));
                          t0    = _mm256_mul_ps(sinps,sinp);
                          cdiv_ymm8c4(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_ps(divr,t0);
                          divi = _mm256_mul_ps(divi,t0);
-                         cabs = cabs_ymm8r4(divr,divi);
+                         cabs = cabs_ymm8c4(divr,divi);
                          rcs  = _mm256_mul_ps(frac,cabs);
                          return (rcs);
                  }
@@ -9602,20 +9652,20 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
 
-                         register __m256 a0    = _mm256_load_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_load_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_load_ps(&pmui[0]); 
+                          __m256 a0    = _mm256_load_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_load_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_load_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_load_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_load_ps(&pmur[0]);
+                          __m256 mui   = _mm256_load_ps(&pmui[0]); 
                          const __m256 _4  = _mm256_set1_ps(4.0f);
                          const __m256 spi = _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2  = _mm256_set1_ps(2.0f);
-                         register __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
-                         register __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
-                         register __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
+                          __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
+                          __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
+                          __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
                          k0a03 = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrp1= _mm256_add_ps(epsr,_1);
                          cosps = _mm256_cos_ps(psi);
@@ -9626,17 +9676,17 @@ namespace gms {
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          muip1 = _mm256_setzero_ps();
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mul1r,&mul1i);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          mul1r = _mm256_sub_ps(mul1r,_1);
                          mul1i = _mm256_sub_ps(mul1i,_1);
-                         sinp  = xsinf(phi);
+                         sinp  = _mm256_sin_ps(phi);
                          cmul_ymm8c4(epsrp1,epsip1,murp1,muip1,&mul2r,&mul2i);
                          frac  = _mm256_mul_ps(k0a03,_mm256_div_ps(spi4,cos2ps));
                          t0    = _mm256_mul_ps(sinps,sinp);
                          cdiv_ymm8c4(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_ps(divr,t0);
                          divi = _mm256_mul_ps(divi,t0);
-                         cabs = cabs_ymm8r4(divr,divi);
+                         cabs = cabs_ymm8c4(divr,divi);
                          rcs  = _mm256_mul_ps(frac,cabs);
                          return (rcs);
                  }
@@ -9655,20 +9705,20 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
 
-                         register __m256 a0    = _mm256_loadu_ps(&pa0[0]);
-                         register __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
-                         register __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                         register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                         register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                         register __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
+                          __m256 a0    = _mm256_loadu_ps(&pa0[0]);
+                          __m256 k0a0  = _mm256_loadu_ps(&pk0a0[0]);
+                          __m256 psi   = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 pphi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                          __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                          __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                          __m256 mui   = _mm256_loadu_ps(&pmui[0]); 
                          const __m256 _4  = _mm256_set1_ps(4.0f);
                          const __m256 spi = _mm256_set1_ps(9.869604401089358618834490999876f);
                          const __m256 _2  = _mm256_set1_ps(2.0f);
-                         register __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
-                         register __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
-                         register __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
+                          __m256 spi4,rcs,cos2ps,sinps,sinp,k0a03;
+                          __m256 frac,divr,divi,mul1r,mul1i,mul2r,mul2i;
+                          __m256 epsrp1,epsip1,murp1,muip1,t0,cabs;
                          k0a03 = _mm256_mul_ps(k0a0,_mm256_mul_ps(k0a0,k0a0));
                          epsrp1= _mm256_add_ps(epsr,_1);
                          cosps = _mm256_cos_ps(psi);
@@ -9679,17 +9729,17 @@ namespace gms {
                          cos2ps= _mm256_mul_ps(cosps,cosps);
                          muip1 = _mm256_setzero_ps();
                          cmul_ymm8c4(epsr,epsi,mur,mui,&mul1r,&mul1i);
-                         sinps = xsinf(psi);
+                         sinps = _mm256_sin_ps(psi);
                          mul1r = _mm256_sub_ps(mul1r,_1);
                          mul1i = _mm256_sub_ps(mul1i,_1);
-                         sinp  = xsinf(phi);
+                         sinp  = _mm256_sin_ps(phi);
                          cmul_ymm8c4(epsrp1,epsip1,murp1,muip1,&mul2r,&mul2i);
                          frac  = _mm256_mul_ps(k0a03,_mm256_div_ps(spi4,cos2ps));
                          t0    = _mm256_mul_ps(sinps,sinp);
                          cdiv_ymm8c4(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_ps(divr,t0);
                          divi = _mm256_mul_ps(divi,t0);
-                         cabs = cabs_ymm8r4(divr,divi);
+                         cabs = cabs_ymm8c4(divr,divi);
                          rcs  = _mm256_mul_ps(frac,cabs);
                          return (rcs);
                  }
@@ -9721,8 +9771,8 @@ namespace gms {
 
                        const __m256 thrd = _mm256_set1_ps(0.333333333333333333333333333333f);
                        const __m256 _1   = _mm256_set1_ps(1.0f);
-                       register __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
-                       register __m256 num,rat,den,t0r,t0i,mulr,muli;
+                        __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
+                        __m256 num,rat,den,t0r,t0i,mulr,muli;
                        cpsii = _mm256_cos_ps(psii);
                        k02   = _mm256_mul_ps(thrd,_mm256_mul_ps(k0,k0));
                        ir    = _mm256_rcp14_ps(r);
@@ -9731,7 +9781,7 @@ namespace gms {
                        eai   = _mm256_mul_ps(k0,r);
                        den   = _mm256_sub_ps(ln4ha,_1);
                        h3    = _mm256_mul_ps(h,_mm256_mul_ps(h,h));
-                       cexp_ymm8r4(ear,eai,&cer,&cei);
+                       cexp_ymm8c4(ear,eai,&cer,&cei);
                        cer   = _mm256_mul_ps(cer,ir);
                        num   = _mm256_mul_ps(h3,_mm256_mul_ps(cpsis,cpsii));
                        cei   = _mm256_mul_ps(cei,ir);
@@ -9759,18 +9809,18 @@ namespace gms {
                                           float * __restrict __ATTR_ALIGN__(32) ESr,
                                           float * __restrict __ATTR_ALIGN__(32) ESi) {
 
-                       register __m256 EIr  = _mm256_load_ps(&pEIr[0]);
-                       register __m256 EIi  = _mm256_load_ps(&pEIi[0]);
-                       register __m256 r    = _mm256_load_ps(&pr[0]);
-                       register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                       register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                       register __m256 psis = _mm256_load_ps(&ppsis[0]);
-                       register __m256 h    = _mm256_load_ps(&ph[0]);
-                       register __m256 ln4ha= _mm256_load_ps(&pln4ha[0]);
+                        __m256 EIr  = _mm256_load_ps(&pEIr[0]);
+                        __m256 EIi  = _mm256_load_ps(&pEIi[0]);
+                        __m256 r    = _mm256_load_ps(&pr[0]);
+                        __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        __m256 psii = _mm256_load_ps(&ppsii[0]);
+                        __m256 psis = _mm256_load_ps(&ppsis[0]);
+                        __m256 h    = _mm256_load_ps(&ph[0]);
+                        __m256 ln4ha= _mm256_load_ps(&pln4ha[0]);
                        const __m256 thrd = _mm256_set1_ps(0.333333333333333333333333333333f);
                        const __m256 _1   = _mm256_set1_ps(1.0f);
-                       register __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
-                       register __m256 num,rat,den,t0r,t0i,mulr,muli;
+                        __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
+                        __m256 num,rat,den,t0r,t0i,mulr,muli;
                        cpsii = _mm256_cos_ps(psii);
                        k02   = _mm256_mul_ps(thrd,_mm256_mul_ps(k0,k0));
                        ir    = _mm256_rcp14_ps(r);
@@ -9779,7 +9829,7 @@ namespace gms {
                        eai   = _mm256_mul_ps(k0,r);
                        den   = _mm256_sub_ps(ln4ha,_1);
                        h3    = _mm256_mul_ps(h,_mm256_mul_ps(h,h));
-                       cexp_ymm8r4(ear,eai,&cer,&cei);
+                       cexp_ymm8c4(ear,eai,&cer,&cei);
                        cer   = _mm256_mul_ps(cer,ir);
                        num   = _mm256_mul_ps(h3,_mm256_mul_ps(cpsis,cpsii));
                        cei   = _mm256_mul_ps(cei,ir);
@@ -9807,18 +9857,18 @@ namespace gms {
                                           float * __restrict  ESr,
                                           float * __restrict  ESi) {
 
-                       register __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
-                       register __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
-                       register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                       register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                       register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                       register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
-                       register __m256 h    = _mm256_loadu_ps(&ph[0]);
-                       register __m256 ln4ha= _mm256_loadu_ps(&pln4ha[0]);
+                        __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
+                        __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
+                        __m256 r    = _mm256_loadu_ps(&pr[0]);
+                        __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                        __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                        __m256 h    = _mm256_loadu_ps(&ph[0]);
+                        __m256 ln4ha= _mm256_loadu_ps(&pln4ha[0]);
                        const __m256 thrd = _mm256_set1_ps(0.333333333333333333333333333333f);
                        const __m256 _1   = _mm256_set1_ps(1.0f);
-                       register __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
-                       register __m256 num,rat,den,t0r,t0i,mulr,muli;
+                        __m256 ir,k02,ear,eai,cer,cei,h3,cpsii,cpsis;
+                        __m256 num,rat,den,t0r,t0i,mulr,muli;
                        cpsii = _mm256_cos_ps(psii);
                        k02   = _mm256_mul_ps(thrd,_mm256_mul_ps(k0,k0));
                        ir    = _mm256_rcp14_ps(r);
@@ -9827,7 +9877,7 @@ namespace gms {
                        eai   = _mm256_mul_ps(k0,r);
                        den   = _mm256_sub_ps(ln4ha,_1);
                        h3    = _mm256_mul_ps(h,_mm256_mul_ps(h,h));
-                       cexp_ymm8r4(ear,eai,&cer,&cei);
+                       cexp_ymm8c4(ear,eai,&cer,&cei);
                        cer   = _mm256_mul_ps(cer,ir);
                        num   = _mm256_mul_ps(h3,_mm256_mul_ps(cpsis,cpsii));
                        cei   = _mm256_mul_ps(cei,ir);
@@ -9861,8 +9911,8 @@ namespace gms {
 
                           const __m256 _4pi9 = _mm256_set1_ps(1.396263401595463661538952614791f);
                           const __m256 _1    = _mm256_set1_ps(1.0f);
-                          register __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
-                          register __m256 k04,h6,rcs,t1,h2,rat,frac;
+                           __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
+                           __m256 k04,h6,rcs,t1,h2,rat,frac;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -9892,15 +9942,15 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32)  ppsis,
                                               const float * __restrict __ATTR_ALIGN__(32)  pln4h) {
 
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                          register __m256 h    = _mm256_load_ps(&ph[0]);
-                          register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_load_ps(&ppsis[0]);
-                          register __m256 pln4h= _mm256_load_ps(&pln4h[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]);
+                           __m256 h    = _mm256_load_ps(&ph[0]);
+                           __m256 psii = _mm256_load_ps(&ppsii[0]);
+                           __m256 psis = _mm256_load_ps(&ppsis[0]);
+                           __m256 pln4h= _mm256_load_ps(&pln4h[0]);
                           const __m256 _4pi9 = _mm256_set1_ps(1.396263401595463661538952614791f);
                           const __m256 _1    = _mm256_set1_ps(1.0f);
-                          register __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
-                          register __m256 k04,h6,rcs,t1,h2,rat,frac;
+                           __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
+                           __m256 k04,h6,rcs,t1,h2,rat,frac;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -9930,15 +9980,15 @@ namespace gms {
                                               const float * __restrict   ppsis,
                                               const float * __restrict   pln4h) {
 
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                          register __m256 h    = _mm256_loadu_ps(&ph[0]);
-                          register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
-                          register __m256 pln4h= _mm256_loadu_ps(&pln4h[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                           __m256 h    = _mm256_loadu_ps(&ph[0]);
+                           __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                           __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                           __m256 pln4h= _mm256_loadu_ps(&pln4h[0]);
                           const __m256 _4pi9 = _mm256_set1_ps(1.396263401595463661538952614791f);
                           const __m256 _1    = _mm256_set1_ps(1.0f);
-                          register __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
-                          register __m256 k04,h6,rcs,t1,h2,rat,frac;
+                           __m256 cpsii,cpsis,c2psii,c2psis,den,num,t0;
+                           __m256 k04,h6,rcs,t1,h2,rat,frac;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -9975,7 +10025,7 @@ namespace gms {
 
                           const __m256 _4pi45 = _mm256_set1_ps(0.279252680319092732307790522958f);
                           const __m256 _1     = _mm256_set1_ps(1.0f);
-                          register __m256 rcs,den,inv,k04,h6,h2,t0,t1;
+                           __m256 rcs,den,inv,k04,h6,h2,t0,t1;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -9998,12 +10048,12 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ph,
                                               const float * __restrict __ATTR_ALIGN__(32) pln4h) {
 
-                          register __m256 k0  = _mm256_load_ps(&pk0[0]);
-                          register __m256 h   = _mm256_load_ps(&ph[0]);
-                          register __m256 ln4h= _mm256_load_ps(&pln4h[0]);
+                           __m256 k0  = _mm256_load_ps(&pk0[0]);
+                           __m256 h   = _mm256_load_ps(&ph[0]);
+                           __m256 ln4h= _mm256_load_ps(&pln4h[0]);
                           const __m256 _4pi45 = _mm256_set1_ps(0.279252680319092732307790522958f);
                           const __m256 _1     = _mm256_set1_ps(1.0f);
-                          register __m256 rcs,den,inv,k04,h6,h2,t0,t1;
+                           __m256 rcs,den,inv,k04,h6,h2,t0,t1;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -10026,12 +10076,12 @@ namespace gms {
                                               const float * __restrict  ph,
                                               const float * __restrict  pln4h) {
 
-                          register __m256 k0  = _mm256_loadu_ps(&pk0[0]);
-                          register __m256 h   = _mm256_loadu_ps(&ph[0]);
-                          register __m256 ln4h= _mm256_loadu_ps(&pln4h[0]);
+                           __m256 k0  = _mm256_loadu_ps(&pk0[0]);
+                           __m256 h   = _mm256_loadu_ps(&ph[0]);
+                           __m256 ln4h= _mm256_loadu_ps(&pln4h[0]);
                           const __m256 _4pi45 = _mm256_set1_ps(0.279252680319092732307790522958f);
                           const __m256 _1     = _mm256_set1_ps(1.0f);
-                          register __m256 rcs,den,inv,k04,h6,h2,t0,t1;
+                           __m256 rcs,den,inv,k04,h6,h2,t0,t1;
                           h2     = _mm256_mul_ps(h,h);
                           k04    = _mm256_mul_ps(_mm256_mul_ps(k0,k0),
                                               _mm256_mul_ps(k0,k0));
@@ -10068,18 +10118,18 @@ namespace gms {
                                          __m256 * __restrict ESi) {
 
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                          __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         spsis= xsinf(psis);
+                         spsis= _mm256_sin_ps(psis);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,_mm256_mul_ps(spsis,cosp));
@@ -10105,27 +10155,27 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) ESr,
                                            float * __restrict __ATTR_ALIGN__(32)  ESi) {
 
-                         register __m256 EIr  = _mm256_load_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_load_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                         register __m256 r    = _mm256_load_ps(&pr[0]);
-                         register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                         register __m256 psis = _mm256_load_ps(&ppsis[0]);
-                         register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 a    = _mm256_load_ps(&a[0]);
+                          __m256 EIr  = _mm256_load_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_load_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_load_ps(&pk0[0]);
+                          __m256 r    = _mm256_load_ps(&pr[0]);
+                          __m256 psii = _mm256_load_ps(&ppsii[0]);
+                          __m256 psis = _mm256_load_ps(&ppsis[0]);
+                          __m256 phi  = _mm256_load_ps(&pphi[0]);
+                          __m256 a    = _mm256_load_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                          __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         spsis= xsinf(psis);
+                         spsis= _mm256_sin_ps(psis);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,_mm256_mul_ps(spsis,cosp));
@@ -10153,27 +10203,27 @@ namespace gms {
                                            float * __restrict  ESr,
                                            float * __restrict   ESi) {
 
-                         register __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                         register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                         register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                         register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
-                         register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 a    = _mm256_loadu_ps(&a[0]);
+                          __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                          __m256 r    = _mm256_loadu_ps(&pr[0]);
+                          __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                          __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                          __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 a    = _mm256_loadu_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                          __m256 ir,a3,k02,cosp,spsii,spsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         spsis= xsinf(psis);
+                         spsis= _mm256_sin_ps(psis);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,_mm256_mul_ps(spsis,cosp));
@@ -10208,17 +10258,17 @@ namespace gms {
                                          __m256 * __restrict ESi) {
 
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,sinp,spsii,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                          __m256 ir,a3,k02,sinp,spsii,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         sinp = xsinf(phi);
+                         sinp = _mm256_sin_ps(phi);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,sinp);
@@ -10243,25 +10293,25 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) ESr,
                                            float * __restrict __ATTR_ALIGN__(32)  ESi) {
 
-                         register __m256 EIr  = _mm256_load_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_load_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                         register __m256 r    = _mm256_load_ps(&pr[0]);
-                         register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                         register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 a    = _mm256_load_ps(&a[0]);
+                          __m256 EIr  = _mm256_load_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_load_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_load_ps(&pk0[0]);
+                          __m256 r    = _mm256_load_ps(&pr[0]);
+                          __m256 psii = _mm256_load_ps(&ppsii[0]);
+                          __m256 phi  = _mm256_load_ps(&pphi[0]);
+                          __m256 a    = _mm256_load_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,sinp,spsii,t0,t1,resr,resi;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                          __m256 ir,a3,k02,sinp,spsii,t0,t1,resr,resi;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         sinp = xsinf(phi);
+                         sinp = _mm256_sin_ps(phi);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,sinp);
@@ -10288,25 +10338,25 @@ namespace gms {
                                            float * __restrict  ESr,
                                            float * __restrict  ESi) {
 
-                         register __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                         register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                         register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                         register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 a    = _mm256_loadu_ps(&a[0]);
+                          __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                          __m256 r    = _mm256_loadu_ps(&pr[0]);
+                          __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                          __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 a    = _mm256_loadu_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
-                         register __m256 ir,a3,k02,sinp,spsii,t0,t1,resr,resi;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                          __m256 ir,a3,k02,sinp,spsii,t0,t1,resr,resi;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
-                         sinp = xsinf(phi);
+                         sinp = _mm256_sin_ps(phi);
                          k02  = _mm256_mul_ps(k0,k0);
                          ear  = _mm256_mul_ps(k0,r);
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
-                         spsii= xsinf(psii);
+                         spsii= _mm256_sin_ps(psii);
                          t0r  = _mm256_mul_ps(t0,_mm256_mul_ps(cer,ir));
                          t0i  = _mm256_mul_ps(t0,_mm256_mul_ps(cei,ir)); 
                          t1   = _mm256_mul_ps(spsii,sinp);
@@ -10404,8 +10454,8 @@ namespace gms {
 
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
                          const __m256 hlf   = _mm256_set1_ps(0.5f);
-                         register __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
+                          __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
                          cpsis= _mm256_cos_ps(psis);
@@ -10413,7 +10463,7 @@ namespace gms {
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
                          cpsii= _mm256_cos_ps(psii);
                          cpsii= _mm256_mul_ps(hlf,cpsii);
@@ -10442,18 +10492,18 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) ESr,
                                            float * __restrict __ATTR_ALIGN__(32)  ESi) {
 
-                         register __m256 EIr  = _mm256_load_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_load_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                         register __m256 r    = _mm256_load_ps(&pr[0]);
-                         register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                         register __m256 psis = _mm256_load_ps(&ppsis[0]);
-                         register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                         register __m256 a    = _mm256_load_ps(&a[0]);
+                          __m256 EIr  = _mm256_load_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_load_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_load_ps(&pk0[0]);
+                          __m256 r    = _mm256_load_ps(&pr[0]);
+                          __m256 psii = _mm256_load_ps(&ppsii[0]);
+                          __m256 psis = _mm256_load_ps(&ppsis[0]);
+                          __m256 phi  = _mm256_load_ps(&pphi[0]);
+                          __m256 a    = _mm256_load_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
                          const __m256 hlf   = _mm256_set1_ps(0.5f);
-                         register __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                          __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
                          cpsis= _mm256_cos_ps(psis);
@@ -10461,7 +10511,7 @@ namespace gms {
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
                          cpsii= _mm256_cos_ps(psii);
                          cpsii= _mm256_mul_ps(hlf,cpsii);
@@ -10492,18 +10542,18 @@ namespace gms {
                                            float * __restrict  ESr,
                                            float * __restrict  ESi) {
 
-                         register __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
-                         register __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
-                         register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                         register __m256 r    = _mm256_loadu_ps(&pr[0]);
-                         register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                         register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
-                         register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                         register __m256 a    = _mm256_loadu_ps(&a[0]);
+                          __m256 EIr  = _mm256_loadu_ps(&pEIr[0]);
+                          __m256 EIi  = _mm256_loadu_ps(&pEIi[0]);
+                          __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                          __m256 r    = _mm256_loadu_ps(&pr[0]);
+                          __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                          __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                          __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                          __m256 a    = _mm256_loadu_ps(&a[0]);
                          const __m256 _43pi = _mm256_set1_ps(0.424413181578387562050356702327f);
                          const __m256 hlf   = _mm256_set1_ps(0.5f);
-                         register __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
-                         register __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
+                          __m256 ir,a3,k02,cosp,cpsii,cpsis,t0,t1;
+                          __m256 ear,eai,cer,cei,t0r,t0i,t1r,t1i,resr,resi;
                          a3   = _mm256_mul_ps(a,_mm256_mul_ps(a,a));
                          ir   = _mm256_rcp14_ps(r);
                          cpsis= _mm256_cos_ps(psis);
@@ -10511,7 +10561,7 @@ namespace gms {
                          ear  = _mm256_mul_ps(k0,r);
                          cosp = _mm256_cos_ps(phi); 
                          eai  = Ir;
-                         cexp_ymm8r4(ear,eai,&cer,&cei);
+                         cexp_ymm8c4(ear,eai,&cer,&cei);
                          t0   = _mm256_mul_ps(_43pi,k02);
                          cpsii= _mm256_cos_ps(psii);
                          cpsii= _mm256_mul_ps(hlf,cpsii);
@@ -10545,18 +10595,18 @@ namespace gms {
                                             const __m256 phi) {
 
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
-                          register __m256 s2psii,s2psis,cos2p,t2;
+                           __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
+                           __m256 s2psii,s2psis,cos2p,t2;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           cos2p = _mm256_mul_ps(cosp,cosp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
                           a6    = _mm256_mul_ps(t1,_mm256_mul_ps(t1,t1));
-                          spsis = xsinf(psis);
+                          spsis = _mm256_sin_ps(psis);
                           s2psis= _mm256_mul_ps(psis,psis);
                           t3    = _mm256_mul_ps(s2psii,_mm256_mul_ps(s2psis,cosp));
                           rcs   = _mm256_mul_ps(t2,_mm256_mul_ps(a6,t3));
@@ -10574,24 +10624,24 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsis,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256  k0  = _mm256_load_ps(&pk0[0]);
-                          register __m256  a   = _mm256_load_ps(&pa[0]);
-                          register __m256  psii= _mm256_load_ps(&ppsii[0]);
-                          register __m256  psis= _mm256_load_ps(&ppsis[0]);
-                          register __m256  phi = _mm256_load_ps(&pphi[0]);
+                           __m256  k0  = _mm256_load_ps(&pk0[0]);
+                           __m256  a   = _mm256_load_ps(&pa[0]);
+                           __m256  psii= _mm256_load_ps(&ppsii[0]);
+                           __m256  psis= _mm256_load_ps(&ppsis[0]);
+                           __m256  phi = _mm256_load_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
-                          register __m256 s2psii,s2psis,cos2p,t2;
+                           __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
+                           __m256 s2psii,s2psis,cos2p,t2;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           cos2p = _mm256_mul_ps(cosp,cosp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
                           a6    = _mm256_mul_ps(t1,_mm256_mul_ps(t1,t1));
-                          spsis = xsinf(psis);
+                          spsis = _mm256_sin_ps(psis);
                           s2psis= _mm256_mul_ps(psis,psis);
                           t3    = _mm256_mul_ps(s2psii,_mm256_mul_ps(s2psis,cosp));
                           rcs   = _mm256_mul_ps(t2,_mm256_mul_ps(a6,t3));
@@ -10609,24 +10659,24 @@ namespace gms {
                                               const float * __restrict  ppsis,
                                               const float * __restrict  pphi) {
 
-                          register __m256  k0  = _mm256_loadu_ps(&pk0[0]);
-                          register __m256  a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256  psii= _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  psis= _mm256_loadu_ps(&ppsis[0]);
-                          register __m256  phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256  k0  = _mm256_loadu_ps(&pk0[0]);
+                           __m256  a   = _mm256_loadu_ps(&pa[0]);
+                           __m256  psii= _mm256_loadu_ps(&ppsii[0]);
+                           __m256  psis= _mm256_loadu_ps(&ppsis[0]);
+                           __m256  phi = _mm256_loadu_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
-                          register __m256 s2psii,s2psis,cos2p,t2;
+                           __m256 rcs,k04,a6,t0,t1,spsii,spsis,cosp;
+                           __m256 s2psii,s2psis,cos2p,t2;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           cos2p = _mm256_mul_ps(cosp,cosp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
                           a6    = _mm256_mul_ps(t1,_mm256_mul_ps(t1,t1));
-                          spsis = xsinf(psis);
+                          spsis = _mm256_sin_ps(psis);
                           s2psis= _mm256_mul_ps(psis,psis);
                           t3    = _mm256_mul_ps(s2psii,_mm256_mul_ps(s2psis,cosp));
                           rcs   = _mm256_mul_ps(t2,_mm256_mul_ps(a6,t3));
@@ -10651,13 +10701,13 @@ namespace gms {
                                             const __m256 phi) {
 
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,sinp;
-                          register __m256 s2psii,sin2p,t2;
-                          sinp  = xsinf(phi);
+                           __m256 rcs,k04,a6,t0,t1,spsii,sinp;
+                           __m256 s2psii,sin2p,t2;
+                          sinp  = _mm256_sin_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           sin2p = _mm256_mul_ps(sinp,sinp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
@@ -10677,18 +10727,18 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256  k0  = _mm256_load_ps(&pk0[0]);
-                          register __m256  a   = _mm256_load_ps(&pa[0]);
-                          register __m256  psii= _mm256_load_ps(&ppsii[0]);
-                          register __m256  phi = _mm256_load_ps(&pphi[0]);
+                           __m256  k0  = _mm256_load_ps(&pk0[0]);
+                           __m256  a   = _mm256_load_ps(&pa[0]);
+                           __m256  psii= _mm256_load_ps(&ppsii[0]);
+                           __m256  phi = _mm256_load_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,sinp;
-                          register __m256 s2psii,sin2p,t2;
-                          sinp  = xsinf(phi);
+                           __m256 rcs,k04,a6,t0,t1,spsii,sinp;
+                           __m256 s2psii,sin2p,t2;
+                          sinp  = _mm256_sin_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           sin2p = _mm256_mul_ps(sinp,sinp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
@@ -10708,18 +10758,18 @@ namespace gms {
                                               const float * __restrict  ppsii,
                                               const float * __restrict  pphi) {
 
-                          register __m256  k0  = _mm256_loadu_ps(&pk0[0]);
-                          register __m256  a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256  psii= _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256  k0  = _mm256_loadu_ps(&pk0[0]);
+                           __m256  a   = _mm256_loadu_ps(&pa[0]);
+                           __m256  psii= _mm256_loadu_ps(&ppsii[0]);
+                           __m256  phi = _mm256_loadu_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
-                          register __m256 rcs,k04,a6,t0,t1,spsii,sinp;
-                          register __m256 s2psii,sin2p,t2;
-                          sinp  = xsinf(phi);
+                           __m256 rcs,k04,a6,t0,t1,spsii,sinp;
+                           __m256 s2psii,sin2p,t2;
+                          sinp  = _mm256_sin_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           sin2p = _mm256_mul_ps(sinp,sinp);
                           t1    = _mm256_mul_ps(a,a);
-                          spsii = xsinf(psii);
+                          spsii = _mm256_sin_ps(psii);
                           k04   = _mm256_mul_ps(t0,t0);
                           t2    = _mm256_mul_ps(_64pi9,_mm256_mul_ps(k04,k04));
                           s2psii= _mm256_mul_ps(spsii,spsii);
@@ -10746,7 +10796,7 @@ namespace gms {
                                             const __m256 psis,
                                             const __m256 phi) {
 
-                          register __m256 rcs;
+                           __m256 rcs;
                           rcs = rcs_f4323_ymm8r4(k0,a,psis,phi);
                           return (rcs);
                 }
@@ -10761,7 +10811,7 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsis,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                           register __m256 rcs;
+                            __m256 rcs;
                            rcs = rcs_f4323_ymm8r4_a(pk0,pa,ppsis,pphi);
                            return (rcs);
                 }
@@ -10776,7 +10826,7 @@ namespace gms {
                                               const float * __restrict  ppsis,
                                               const float * __restrict  pphi) {
 
-                           register __m256 rcs;
+                            __m256 rcs;
                            rcs = rcs_f4323_ymm8r4_u(pk0,pa,ppsis,pphi);
                            return (rcs);
                 }
@@ -10801,8 +10851,8 @@ namespace gms {
 
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
                           const __m256 hlf    = _mm256_set1_ps(0.5f);
-                          register __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
-                          register __m256 t2,term;
+                           __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
+                           __m256 t2,term;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           t1    = _mm256_mul_ps(a,a);
@@ -10829,15 +10879,15 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256  k0  = _mm256_load_ps(&pk0[0]);
-                          register __m256  a   = _mm256_load_ps(&pa[0]);
-                          register __m256  psis= _mm256_load_ps(&ppsis[0]);
-                          register __m256  psii= _mm256_load_ps(&ppsii[0]);
-                          register __m256  phi = _mm256_load_ps(&pphi[0]);
+                           __m256  k0  = _mm256_load_ps(&pk0[0]);
+                           __m256  a   = _mm256_load_ps(&pa[0]);
+                           __m256  psis= _mm256_load_ps(&ppsis[0]);
+                           __m256  psii= _mm256_load_ps(&ppsii[0]);
+                           __m256  phi = _mm256_load_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
                           const __m256 hlf    = _mm256_set1_ps(0.5f);
-                          register __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
-                          register __m256 t2,term;
+                           __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
+                           __m256 t2,term;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           t1    = _mm256_mul_ps(a,a);
@@ -10864,15 +10914,15 @@ namespace gms {
                                                 const float * __restrict  ppsii,
                                                 const float * __restrict  pphi) {
 
-                          register __m256  k0  = _mm256_loadu_ps(&pk0[0]);
-                          register __m256  a   = _mm256_loadu_ps(&pa[0]);
-                          register __m256  psis= _mm256_loadu_ps(&ppsis[0]);
-                          register __m256  psii= _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  phi = _mm256_loadu_ps(&pphi[0]);
+                           __m256  k0  = _mm256_loadu_ps(&pk0[0]);
+                           __m256  a   = _mm256_loadu_ps(&pa[0]);
+                           __m256  psis= _mm256_loadu_ps(&ppsis[0]);
+                           __m256  psii= _mm256_loadu_ps(&ppsii[0]);
+                           __m256  phi = _mm256_loadu_ps(&pphi[0]);
                           const __m256 _64pi9 = _mm256_set1_ps(2.263536968418066997601902412409f);
                           const __m256 hlf    = _mm256_set1_ps(0.5f);
-                          register __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
-                          register __m256 t2,term;
+                           __m256 rcs,k04,a6,t0,t1,cpsii,cpsis,cosp;
+                           __m256 t2,term;
                           cosp  = _mm256_cos_ps(phi);
                           t0    = _mm256_mul_ps(k0,k0);
                           t1    = _mm256_mul_ps(a,a);
@@ -10910,12 +10960,12 @@ namespace gms {
                                            const __m256 psi) {
 
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
+                           __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
                           _2k0h = _mm256_add_ps(k0h,k0h);
-                          spsi  = xsinf(psi);
+                          spsi  = _mm256_sin_ps(psi);
                           arg  = _mm256_mul_ps(_2k0h,spsi);
                           _2spsi = _mm256_add_ps(spsi,spsi); 
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1 = _mm256_div_ps(sarg,_2spsi);
                           return (a1); 
                  }
@@ -10928,15 +10978,15 @@ namespace gms {
                    __m256 a1_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 k0h = _mm256_load_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_load_ps(&pk0h[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
+                           __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
                           _2k0h = _mm256_add_ps(k0h,k0h);
-                          spsi  = xsinf(psi);
+                          spsi  = _mm256_sin_ps(psi);
                           arg  = _mm256_mul_ps(_2k0h,spsi);
                           _2spsi = _mm256_add_ps(spsi,spsi); 
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1 = _mm256_div_ps(sarg,_2spsi);
                           return (a1); 
                  }
@@ -10949,15 +10999,15 @@ namespace gms {
                    __m256 a1_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
 
-                          register __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
+                           __m256 a1,_2k0h,spsi,arg,_2spsi,sarg;
                           _2k0h = _mm256_add_ps(k0h,k0h);
-                          spsi  = xsinf(psi);
+                          spsi  = _mm256_sin_ps(psi);
                           arg  = _mm256_mul_ps(_2k0h,spsi);
                           _2spsi = _mm256_add_ps(spsi,spsi); 
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1 = _mm256_div_ps(sarg,_2spsi);
                           return (a1); 
                  }
@@ -10971,11 +11021,11 @@ namespace gms {
                                            const __m256 psi) {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_sub_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -10988,14 +11038,14 @@ namespace gms {
                    __m256 a2_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
    
-                          register __m256 k0h = _mm256_load_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_load_ps(&pk0h[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_sub_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -11008,14 +11058,14 @@ namespace gms {
                    __m256 a2_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
    
-                          register __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_sub_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -11029,11 +11079,11 @@ namespace gms {
                                            const __m256 psi) {
 
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_add_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -11046,14 +11096,14 @@ namespace gms {
                    __m256 a3_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
    
-                          register __m256 k0h = _mm256_load_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_load_ps(&pk0h[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_add_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -11066,14 +11116,14 @@ namespace gms {
                    __m256 a3_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
    
-                          register __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 _1 = _mm256_set1_ps(1.0f);
-                          register __m256 a2,spsi,_1msp,arg,sarg;
-                          spsi = xsinf(psi);
+                           __m256 a2,spsi,_1msp,arg,sarg;
+                          spsi = _mm256_sin_ps(psi);
                           _1msp= _mm256_add_ps(_1,spsi);
                           arg  = _mm256_mul_ps(k0h,_1msp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           a2   = _mm256_div_ps(sarg,_1msp);
                           return (a2);
                 }
@@ -11093,9 +11143,9 @@ namespace gms {
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(om,_mm256_add_ps(om2,spi));
@@ -11109,13 +11159,13 @@ namespace gms {
 	           static inline
                    __m256 F1_f4331_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(om,_mm256_add_ps(om2,spi));
@@ -11129,13 +11179,13 @@ namespace gms {
 	           static inline
                    __m256 F1_f4331_ymm8r4_u(const float * __restrict  pk0a) {
 
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(om,_mm256_add_ps(om2,spi));
@@ -11152,9 +11202,9 @@ namespace gms {
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(PI,_mm256_add_ps(om2,spi));
@@ -11168,13 +11218,13 @@ namespace gms {
 	           static inline
                    __m256 F2_f4331_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(PI,_mm256_add_ps(om2,spi));
@@ -11188,13 +11238,13 @@ namespace gms {
 	           static inline
                    __m256 F2_f4331_ymm8r4_u(const float * __restrict  pk0a) {
 
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 c0 = _mm256_set1_ps(0.8905f);
                           const __m256 spi= _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 n2 = _mm256_set1_ps(-2.0f);
-                          register __m256 F1,om,om2,arg,larg;
+                           __m256 F1,om,om2,arg,larg;
                           arg = _mm256_mul_ps(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           om  = _mm256_mul_ps(n2,larg);
                           om2 = _mm256_mul_ps(om,om);
                           F1  = _mm256_div_ps(PI,_mm256_add_ps(om2,spi));
@@ -11221,17 +11271,17 @@ namespace gms {
                           const __m256 n2  = _mm256_set1_ps(-2.0f);
                           const __m256 c1  = _mm256_set1_ps(0.8905f);
                           const __m256 _0  = _mm256_setzero_ps();
-                          register __m256 L,om,del,ck0h,sk0h,t0;
-                          register __m256 ar1,ar2,lar1,lar2;
+                           __m256 L,om,del,ck0h,sk0h,t0;
+                           __m256 ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_ps(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 = _mm256_log_ps(ar1);
                           ar2  = _mm256_div_ps(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_ps(ar2);
                           om   = _mm256_mul_ps(n2,lar1);
                           del  = _mm256_mul_ps(hlf,lar2);
                           ck0h = _mm256_cos_ps(k0h);
                           t0   = _mm256_sub_ps(_0,_mm256sub_ps(om,del));
-                          sk0h = xsinf(k0h);
+                          sk0h = _mm256_sin_ps(k0h);
                           L    = _mm256_fmadd_ps(pi4,sk0h,_mm256_mul_ps(ck0h,t0));
                           return (L);
                 }
@@ -11244,25 +11294,25 @@ namespace gms {
                    __m256 L_f4334_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 k0h = _mm256_load_ps(&pk0h[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0h = _mm256_load_ps(&pk0h[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           const __m256 c0  = _mm256_set1_ps(4.11f);
                           const __m256 hlf = _mm256_set1_ps(-0.5f);
                           const __m256 n2  = _mm256_set1_ps(-2.0f);
                           const __m256 c1  = _mm256_set1_ps(0.8905f);
                           const __m256 _0  = _mm256_setzero_ps();
-                          register __m256 L,om,del,ck0h,sk0h,t0;
-                          register __m256 ar1,ar2,lar1,lar2;
+                           __m256 L,om,del,ck0h,sk0h,t0;
+                           __m256 ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_ps(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 = _mm256_log_ps(ar1);
                           ar2  = _mm256_div_ps(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_ps(ar2);
                           om   = _mm256_mul_ps(n2,lar1);
                           del  = _mm256_mul_ps(hlf,lar2);
                           ck0h = _mm256_cos_ps(k0h);
                           t0   = _mm256_sub_ps(_0,_mm256sub_ps(om,del));
-                          sk0h = xsinf(k0h);
+                          sk0h = _mm256_sin_ps(k0h);
                           L    = _mm256_fmadd_ps(pi4,sk0h,_mm256_mul_ps(ck0h,t0));
                           return (L);
                 }
@@ -11275,25 +11325,25 @@ namespace gms {
                    __m256 L_f4334_ymm8r4_u(const float * __restrict pk0h,
                                             const float * __restrict pk0a) {
 
-                          register __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           const __m256 c0  = _mm256_set1_ps(4.11f);
                           const __m256 hlf = _mm256_set1_ps(-0.5f);
                           const __m256 n2  = _mm256_set1_ps(-2.0f);
                           const __m256 c1  = _mm256_set1_ps(0.8905f);
                           const __m256 _0  = _mm256_setzero_ps();
-                          register __m256 L,om,del,ck0h,sk0h,t0;
-                          register __m256 ar1,ar2,lar1,lar2;
+                           __m256 L,om,del,ck0h,sk0h,t0;
+                           __m256 ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_ps(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 = _mm256_log_ps(ar1);
                           ar2  = _mm256_div_ps(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_ps(ar2);
                           om   = _mm256_mul_ps(n2,lar1);
                           del  = _mm256_mul_ps(hlf,lar2);
                           ck0h = _mm256_cos_ps(k0h);
                           t0   = _mm256_sub_ps(_0,_mm256sub_ps(om,del));
-                          sk0h = xsinf(k0h);
+                          sk0h = _mm256_sin_ps(k0h);
                           L    = _mm256_fmadd_ps(pi4,sk0h,_mm256_mul_ps(ck0h,t0));
                           return (L);
                 }
@@ -11315,11 +11365,11 @@ namespace gms {
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(7.12f);
-                          register __m256 ar,lar,sk0h,ck0h;
-                          register __m256 S,t0;
+                           __m256 ar,lar,sk0h,ck0h;
+                           __m256 S,t0;
                           ar  = _mm256_mul_ps(c0,k0a);
-                          lar = xlogf(ar);
-                          sk0h= xsinf(k0h);
+                          lar = _mm256_log_ps(ar);
+                          sk0h= _mm256_sin_ps(k0h);
                           ck0h= _mm256_cos_ps(k0h);
                           t0  = _mm256_mul_ps(hlf,lar);
                           S   = _mm256_fmsub_ps(t0,sk0h,
@@ -11335,16 +11385,16 @@ namespace gms {
                    __m256 S_f4335_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0h) {
 
-                          register __m256 k0h = _mm256_load_ps(&pk0h[0]);
-                          register __m256 k0a = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0h = _mm256_load_ps(&pk0h[0]);
+                           __m256 k0a = _mm256_load_ps(&pk0a[0]);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(7.12f);
-                          register __m256 ar,lar,sk0h,ck0h;
-                          register __m256 S,t0;
+                           __m256 ar,lar,sk0h,ck0h;
+                           __m256 S,t0;
                           ar  = _mm256_mul_ps(c0,k0a);
-                          lar = xlogf(ar);
-                          sk0h= xsinf(k0h);
+                          lar = _mm256_log_ps(ar);
+                          sk0h= _mm256_sin_ps(k0h);
                           ck0h= _mm256_cos_ps(k0h);
                           t0  = _mm256_mul_ps(hlf,lar);
                           S   = _mm256_fmsub_ps(t0,sk0h,
@@ -11360,16 +11410,16 @@ namespace gms {
                    __m256 S_f4335_ymm8r4_u(const float * __restrict  pk0a,
                                             const float * __restrict  pk0h) {
 
-                          register __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0h = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 k0a = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(7.12f);
-                          register __m256 ar,lar,sk0h,ck0h;
-                          register __m256 S,t0;
+                           __m256 ar,lar,sk0h,ck0h;
+                           __m256 S,t0;
                           ar  = _mm256_mul_ps(c0,k0a);
-                          lar = xlogf(ar);
-                          sk0h= xsinf(k0h);
+                          lar = _mm256_log_ps(ar);
+                          sk0h= _mm256_sin_ps(k0h);
                           ck0h= _mm256_cos_ps(k0h);
                           t0  = _mm256_mul_ps(hlf,lar);
                           S   = _mm256_fmsub_ps(t0,sk0h,
@@ -11393,7 +11443,7 @@ namespace gms {
                                            const __m256 k0a) {
 
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 G2,L,S,num,den;
+                           __m256 G2,L,S,num,den;
                           L = L_f4334_ymm8r4(k0h,k0a);
                           S = S_f4335_ymm8r4(k0a,k0h);
                           num = _mm256_mul_ps(hlf,S);
@@ -11411,7 +11461,7 @@ namespace gms {
                                            const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 G2,L,S,num,den;
+                           __m256 G2,L,S,num,den;
                           L = L_f4334_ymm8r4_a(pk0h,pk0a);
                           S = S_f4335_ymm8r4_a(pk0a,pk0h);
                           num = _mm256_mul_ps(hlf,S);
@@ -11429,7 +11479,7 @@ namespace gms {
                                              const float * __restrict  pk0a) {
 
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 G2,L,S,num,den;
+                           __m256 G2,L,S,num,den;
                           L = L_f4334_ymm8r4_a(pk0h,pk0a);
                           S = S_f4335_ymm8r4_a(pk0a,pk0h);
                           num = _mm256_mul_ps(hlf,S);
@@ -11449,10 +11499,10 @@ namespace gms {
                          const __m256 hlf = _mm256_set1_ps(0.5f);
                          const __m256 n2  = _mm256_set1_ps(-2.0f);
                          const __m256 c0  = _mm256_set1_ps(0.8905f);
-                         register __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
+                          __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm8r4(k0h,k0a);
                          S = S_f4335_ymm8r4(k0a,k0h);
-                         ln= xlogf(_mm256_mul_ps(k0a,c0));
+                         ln= _mm256_log_ps(_mm256_mul_ps(k0a,c0));
                          om= _mm256_mul_ps(n2,ln); 
                          G2= G2_f4332_ymm8r4(k0h,k0a);
                          om2= _mm256_add_ps(om,om);
@@ -11473,15 +11523,15 @@ namespace gms {
                    __m256 G1_f4332_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                         register __m256 k0h  = _mm256_load_ps(&pk0h[0]);
-                         register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                          __m256 k0h  = _mm256_load_ps(&pk0h[0]);
+                          __m256 k0a  = _mm256_load_ps(&pk0a[0]);
                          const __m256 hlf = _mm256_set1_ps(0.5f);
                          const __m256 n2  = _mm256_set1_ps(-2.0f);
                          const __m256 c0  = _mm256_set1_ps(0.8905f);
-                         register __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
+                          __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm8r4(k0h,k0a);
                          S = S_f4335_ymm8r4(k0a,k0h);
-                         ln= xlogf(_mm256_mul_ps(k0a,c0));
+                         ln= _mm256_log_ps(_mm256_mul_ps(k0a,c0));
                          om= _mm256_mul_ps(n2,ln); 
                          G2= G2_f4332_ymm8r4(k0h,k0a);
                          om2= _mm256_add_ps(om,om);
@@ -11502,15 +11552,15 @@ namespace gms {
                    __m256 G1_f4332_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  pk0a) {
 
-                         register __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
-                         register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                          __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
+                          __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
                          const __m256 hlf = _mm256_set1_ps(0.5f);
                          const __m256 n2  = _mm256_set1_ps(-2.0f);
                          const __m256 c0  = _mm256_set1_ps(0.8905f);
-                         register __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
+                          __m256 G1,L,S,om,G2,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm8r4(k0h,k0a);
                          S = S_f4335_ymm8r4(k0a,k0h);
-                         ln= xlogf(_mm256_mul_ps(k0a,c0));
+                         ln= _mm256_log_ps(_mm256_mul_ps(k0a,c0));
                          om= _mm256_mul_ps(n2,ln); 
                          G2= G2_f4332_ymm8r4(k0h,k0a);
                          om2= _mm256_add_ps(om,om);
@@ -11540,7 +11590,7 @@ namespace gms {
 
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 H2,L,S,num,den,arg;
+                           __m256 H2,L,S,num,den,arg;
                           arg  = _mm256_mul_ps(pi2,k0h);
                           L    = L_f4334_ymm8r4(k0h,k0a);
                           S    = S_f4335_ymm8r4(k0a,k0h);
@@ -11558,11 +11608,11 @@ namespace gms {
                    __m256 H2_f4333_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
-                          register __m256 k0h  = _mm256_load_ps(&pk0h[0]);
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0h  = _mm256_load_ps(&pk0h[0]);
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 H2,L,S,num,den,arg;
+                           __m256 H2,L,S,num,den,arg;
                           arg  = _mm256_mul_ps(pi2,k0h);
                           L    = L_f4334_ymm8r4(k0h,k0a);
                           S    = S_f4335_ymm8r4(k0a,k0h);
@@ -11580,11 +11630,11 @@ namespace gms {
                    __m256 H2_f4333_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  pk0a) {
 
-                          register __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
-                          register __m256 H2,L,S,num,den,arg;
+                           __m256 H2,L,S,num,den,arg;
                           arg  = _mm256_mul_ps(pi2,k0h);
                           L    = L_f4334_ymm8r4(k0h,k0a);
                           S    = S_f4335_ymm8r4(k0a,k0h);
@@ -11602,17 +11652,17 @@ namespace gms {
                    __m256 H1_f4333_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0h) {
 
-                          register __m256 k0h  = _mm256_load_ps(&pk0h[0]);
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0h  = _mm256_load_ps(&pk0h[0]);
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 n2  = _mm256_set1_ps(-2.0f);
                           const __m256 c0  = _mm256_set1_ps(0.8905f);
-                          register __m256 H1,H2,om,ar,lar,L,S,num,den;
-                          register __m256 om2,t0,arg;
+                           __m256 H1,H2,om,ar,lar,L,S,num,den;
+                           __m256 om2,t0,arg;
                           ar = _mm256_mul_ps(k0a,c0);
                           arg= _mm256_mul_ps(k0h,pi2);
-                          lar= xlogf(ar);
+                          lar= _mm256_log_ps(ar);
                           om = _mm256_mul_ps(n2,lar);
                           L  = L_f4334_ymm8r4(k0h,k0a);
                           om2= _mm256_add_ps(om,om);
@@ -11634,17 +11684,17 @@ namespace gms {
                    __m256 H1_f4333_ymm8r4_u(const float * __restrict  pk0a,
                                              const float * __restrict  pk0h) {
 
-                          register __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0h  = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 n2  = _mm256_set1_ps(-2.0f);
                           const __m256 c0  = _mm256_set1_ps(0.8905f);
-                          register __m256 H1,H2,om,ar,lar,L,S,num,den;
-                          register __m256 om2,t0,arg;
+                           __m256 H1,H2,om,ar,lar,L,S,num,den;
+                           __m256 om2,t0,arg;
                           ar = _mm256_mul_ps(k0a,c0);
                           arg= _mm256_mul_ps(k0h,pi2);
-                          lar= xlogf(ar);
+                          lar= _mm256_log_ps(ar);
                           om = _mm256_mul_ps(n2,lar);
                           L  = L_f4334_ymm8r4(k0h,k0a);
                           om2= _mm256_add_ps(om,om);
@@ -11680,11 +11730,11 @@ namespace gms {
 
                           const __m256 _16pi = _mm256_set1_ps(50.265482457436691815402294132472f);
                           const __m256 _2    = _mm256_set1_ps(2.0f);
-                          register __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
-                          register __m256 cgami,cgams,c2gami,c2gams,sinps;
-                          register __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
-                          register __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
-                          register __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
+                           __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
+                           __m256 cgami,cgams,c2gami,c2gams,sinps;
+                           __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
+                           __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
+                           __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
                           b0     = _mm256_div_ps(_16pi,_mm256_mul_ps(k0,k0));
                           a1     = a1_f4330_ymm8r4(k0h,psi);
                           _2a1   = _mm256_add_ps(a1,a1);
@@ -11698,12 +11748,12 @@ namespace gms {
                           a2     = a2_f4330_ymm8r4(k0h,psi);
                           first  = _mm256_mul_ps(b0,_mm256_mul_ps(c2gami,c2gams));
                           G2     = G1_f4332_ymm8r4(k0h,k0a);
-                          sinps  = xsinf(psi);
+                          sinps  = _mm256_sin_ps(psi);
                           a3     = a3_f4330_ymm8r4(k0h,psi);
                           H1     = H1_f4333_ymm8r4(k0h,k0a);
                           arg    = _mm256_mul_ps(k0h,sinps);
                           H2     = H2_f4333_ymm8r4(k0h,k0a);
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1s    = _mm256_mul_ps(a1,a1);
                           carg   = _mm256_cos_ps(arg);
                           x0     = _mm256_add_ps(a2,a3);
@@ -11748,19 +11798,19 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
 
-                          register __m256 k0     = _mm256_load_ps(&pk0[0]);
-                          register __m256 gami   = _mm256_load_ps(&pgami[0]);
-                          register __m256 gams   = _mm256_load_ps(&pgams[0]);
-                          register __m256 k0h    = _mm256_load_ps(&pk0h[0]);
-                          register __m256 k0a    = _mm256_load_ps(&pk0a[0]);
-                          register __m256 psi    = _mm256_load_ps(&ppsi[0]);  
+                           __m256 k0     = _mm256_load_ps(&pk0[0]);
+                           __m256 gami   = _mm256_load_ps(&pgami[0]);
+                           __m256 gams   = _mm256_load_ps(&pgams[0]);
+                           __m256 k0h    = _mm256_load_ps(&pk0h[0]);
+                           __m256 k0a    = _mm256_load_ps(&pk0a[0]);
+                           __m256 psi    = _mm256_load_ps(&ppsi[0]);  
                           const __m256 _16pi = _mm256_set1_ps(50.265482457436691815402294132472f);
                           const __m256 _2    = _mm256_set1_ps(2.0f);
-                          register __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
-                          register __m256 cgami,cgams,c2gami,c2gams,sinps;
-                          register __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
-                          register __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
-                          register __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
+                           __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
+                           __m256 cgami,cgams,c2gami,c2gams,sinps;
+                           __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
+                           __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
+                           __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
                           b0     = _mm256_div_ps(_16pi,_mm256_mul_ps(k0,k0));
                           a1     = a1_f4330_ymm8r4(k0h,psi);
                           _2a1   = _mm256_add_ps(a1,a1);
@@ -11774,12 +11824,12 @@ namespace gms {
                           a2     = a2_f4330_ymm8r4(k0h,psi);
                           first  = _mm256_mul_ps(b0,_mm256_mul_ps(c2gami,c2gams));
                           G2     = G1_f4332_ymm8r4(k0h,k0a);
-                          sinps  = xsinf(psi);
+                          sinps  = _mm256_sin_ps(psi);
                           a3     = a3_f4330_ymm8r4(k0h,psi);
                           H1     = H1_f4333_ymm8r4(k0h,k0a);
                           arg    = _mm256_mul_ps(k0h,sinps);
                           H2     = H2_f4333_ymm8r4(k0h,k0a);
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1s    = _mm256_mul_ps(a1,a1);
                           carg   = _mm256_cos_ps(arg);
                           x0     = _mm256_add_ps(a2,a3);
@@ -11824,19 +11874,19 @@ namespace gms {
                                               const float * __restrict  ppsi) {
 
 
-                          register __m256 k0     = _mm256_loadu_ps(&pk0[0]);
-                          register __m256 gami   = _mm256_loadu_ps(&pgami[0]);
-                          register __m256 gams   = _mm256_loadu_ps(&pgams[0]);
-                          register __m256 k0h    = _mm256_loadu_ps(&pk0h[0]);
-                          register __m256 k0a    = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 psi    = _mm256_loadu_ps(&ppsi[0]);  
+                           __m256 k0     = _mm256_loadu_ps(&pk0[0]);
+                           __m256 gami   = _mm256_loadu_ps(&pgami[0]);
+                           __m256 gams   = _mm256_loadu_ps(&pgams[0]);
+                           __m256 k0h    = _mm256_loadu_ps(&pk0h[0]);
+                           __m256 k0a    = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 psi    = _mm256_loadu_ps(&ppsi[0]);  
                           const __m256 _16pi = _mm256_set1_ps(50.265482457436691815402294132472f);
                           const __m256 _2    = _mm256_set1_ps(2.0f);
-                          register __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
-                          register __m256 cgami,cgams,c2gami,c2gams,sinps;
-                          register __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
-                          register __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
-                          register __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
+                           __m256 rcs,a1,a2,a3,F1,F2,G1,G2,H1,H2,first;
+                           __m256 cgami,cgams,c2gami,c2gams,sinps;
+                           __m256 arg,sarg,carg,t0,t1,t2,t3,t4,x0,x1,t5,b0;
+                           __m256 a1s,F1F2,G1G2,a2pa3,a2ma3,H1H2,a2sma3s;
+                           __m256 GHGH,_2a1,FGFG,FHFH,tmp1,tmp2,tmp3;
                           b0     = _mm256_div_ps(_16pi,_mm256_mul_ps(k0,k0));
                           a1     = a1_f4330_ymm8r4(k0h,psi);
                           _2a1   = _mm256_add_ps(a1,a1);
@@ -11850,12 +11900,12 @@ namespace gms {
                           a2     = a2_f4330_ymm8r4(k0h,psi);
                           first  = _mm256_mul_ps(b0,_mm256_mul_ps(c2gami,c2gams));
                           G2     = G1_f4332_ymm8r4(k0h,k0a);
-                          sinps  = xsinf(psi);
+                          sinps  = _mm256_sin_ps(psi);
                           a3     = a3_f4330_ymm8r4(k0h,psi);
                           H1     = H1_f4333_ymm8r4(k0h,k0a);
                           arg    = _mm256_mul_ps(k0h,sinps);
                           H2     = H2_f4333_ymm8r4(k0h,k0a);
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           a1s    = _mm256_mul_ps(a1,a1);
                           carg   = _mm256_cos_ps(arg);
                           x0     = _mm256_add_ps(a2,a3);
@@ -11907,10 +11957,10 @@ namespace gms {
                                             const __m256 g0 )  {//wavelength coeff
 
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(pi2,spsii);
                           cpsis = _mm256_cos_ps(psis);
@@ -11942,16 +11992,16 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsis,
                                               const float * __restrict __ATTR_ALIGN__(32) pg0 )  {//wavelength coeff
 
-                          register __m256  gammi = _mm256_load_ps(&pgammi[0]);
-                          register __m256  gamms = _mm256_load_ps(&pgamms[0]);
-                          register __m256  psii  = _mm256_load_ps(&ppsii[0]);
-                          register __m256  psis  = _mm256_load_ps(&ppsis[0]);
-                          register __m256  g0    = _mm256_load_ps(&pg0[0]);
+                           __m256  gammi = _mm256_load_ps(&pgammi[0]);
+                           __m256  gamms = _mm256_load_ps(&pgamms[0]);
+                           __m256  psii  = _mm256_load_ps(&ppsii[0]);
+                           __m256  psis  = _mm256_load_ps(&ppsis[0]);
+                           __m256  g0    = _mm256_load_ps(&pg0[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(pi2,spsii);
                           cpsis = _mm256_cos_ps(psis);
@@ -11984,16 +12034,16 @@ namespace gms {
                                               const float * __restrict  ppsis,
                                               const float * __restrict  pg0 )  {//wavelength coeff
 
-                          register __m256  gammi = _mm256_loadu_ps(&pgammi[0]);
-                          register __m256  gamms = _mm256_loadu_ps(&pgamms[0]);
-                          register __m256  psii  = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  psis  = _mm256_loadu_ps(&ppsis[0]);
-                          register __m256  g0    = _mm256_loadu_ps(&pg0[0]);
+                           __m256  gammi = _mm256_loadu_ps(&pgammi[0]);
+                           __m256  gamms = _mm256_loadu_ps(&pgamms[0]);
+                           __m256  psii  = _mm256_loadu_ps(&ppsii[0]);
+                           __m256  psis  = _mm256_loadu_ps(&ppsis[0]);
+                           __m256  g0    = _mm256_loadu_ps(&pg0[0]);
                           const __m256 pi2 = _mm256_set1_ps(1.57079632679489661923132169164f);
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(pi2,spsii);
                           cpsis = _mm256_cos_ps(psis);
@@ -12034,10 +12084,10 @@ namespace gms {
                                             const __m256 g0 )  {//wavelength coeff
 
                          
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(PI,spsii);
                           cpsii = _mm256_mul_ps(cpsii,cpsii);
@@ -12049,10 +12099,10 @@ namespace gms {
                           cgami = _mm256_cos_ps(gammi);
                           c2gami= _mm256_mul_ps(cgami,cgami);
                           t0    = _mm256_mul_ps(g0,_mm256_mul_ps(c2gami,c2gams));
-                          c1    = xsinf(carg1);
+                          c1    = _mm256_sin_ps(carg1);
                           rat1  = _mm256_div_ps(c1,cpsii);
                           tmp0  = _mm256_mul_ps(rat1,rat1);
-                          c2    = xsinf(carg2);
+                          c2    = _mm256_sin_ps(carg2);
                           rat2  = _mm256_div_ps(c2,cpsis);
                           tmp1  = _mm256_mul_ps(rat2,rat2);
                           t1    = _mm256_mul_ps(tmp0,tmp1);
@@ -12073,15 +12123,15 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pg0 )  {//wavelength coeff
 
                          
-                          register __m256  gammi = _mm256_load_ps(&pgammi[0]);
-                          register __m256  gamms = _mm256_load_ps(&pgamms[0]);
-                          register __m256  psii  = _mm256_load_ps(&ppsii[0]);
-                          register __m256  psis  = _mm256_load_ps(&ppsis[0]);
-                          register __m256  g0    = _mm256_load_ps(&pg0[0]);
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256  gammi = _mm256_load_ps(&pgammi[0]);
+                           __m256  gamms = _mm256_load_ps(&pgamms[0]);
+                           __m256  psii  = _mm256_load_ps(&ppsii[0]);
+                           __m256  psis  = _mm256_load_ps(&ppsis[0]);
+                           __m256  g0    = _mm256_load_ps(&pg0[0]);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(PI,spsii);
                           cpsii = _mm256_mul_ps(cpsii,cpsii);
@@ -12093,10 +12143,10 @@ namespace gms {
                           cgami = _mm256_cos_ps(gammi);
                           c2gami= _mm256_mul_ps(cgami,cgami);
                           t0    = _mm256_mul_ps(g0,_mm256_mul_ps(c2gami,c2gams));
-                          c1    = xsinf(carg1);
+                          c1    = _mm256_sin_ps(carg1);
                           rat1  = _mm256_div_ps(c1,cpsii);
                           tmp0  = _mm256_mul_ps(rat1,rat1);
-                          c2    = xsinf(carg2);
+                          c2    = _mm256_sin_ps(carg2);
                           rat2  = _mm256_div_ps(c2,cpsis);
                           tmp1  = _mm256_mul_ps(rat2,rat2);
                           t1    = _mm256_mul_ps(tmp0,tmp1);
@@ -12116,15 +12166,15 @@ namespace gms {
                                               const float * __restrict  pg0 )  {//wavelength coeff
 
                          
-                          register __m256  gammi = _mm256_loadu_ps(&pgammi[0]);
-                          register __m256  gamms = _mm256_loadu_ps(&pgamms[0]);
-                          register __m256  psii  = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  psis  = _mm256_loadu_ps(&ppsis[0]);
-                          register __m256  g0    = _mm256_loadu_ps(&pg0[0]);
-                          register __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
-                          register __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                           __m256  gammi = _mm256_loadu_ps(&pgammi[0]);
+                           __m256  gamms = _mm256_loadu_ps(&pgamms[0]);
+                           __m256  psii  = _mm256_loadu_ps(&ppsii[0]);
+                           __m256  psis  = _mm256_loadu_ps(&ppsis[0]);
+                           __m256  g0    = _mm256_loadu_ps(&pg0[0]);
+                           __m256 rcs,cgami,cgams,c2gami,c2gams,t0,carg1,carg2;
+                           __m256 spsii,spsis,cpsii,cpsis,rat1,rat2,t1,c1,c2,tmp0,tmp1;
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           cpsii = _mm256_cos_ps(psii);
                           carg1 = _mm256_mul_ps(PI,spsii);
                           cpsii = _mm256_mul_ps(cpsii,cpsii);
@@ -12136,10 +12186,10 @@ namespace gms {
                           cgami = _mm256_cos_ps(gammi);
                           c2gami= _mm256_mul_ps(cgami,cgami);
                           t0    = _mm256_mul_ps(g0,_mm256_mul_ps(c2gami,c2gams));
-                          c1    = xsinf(carg1);
+                          c1    = _mm256_sin_ps(carg1);
                           rat1  = _mm256_div_ps(c1,cpsii);
                           tmp0  = _mm256_mul_ps(rat1,rat1);
-                          c2    = xsinf(carg2);
+                          c2    = _mm256_sin_ps(carg2);
                           rat2  = _mm256_div_ps(c2,cpsis);
                           tmp1  = _mm256_mul_ps(rat2,rat2);
                           t1    = _mm256_mul_ps(tmp0,tmp1);
@@ -12164,19 +12214,19 @@ namespace gms {
                                             const __m256 psii) {
 
                            const __m256 _4 = _mm256_set1_ps(4.0f);
-                           register __m256 k0h,x0,term1,cpsis,c2psis,rcs;
-                           register __m256 term2,spsii,spsis,arg,sarg,rat;
+                            __m256 k0h,x0,term1,cpsis,c2psis,rcs;
+                            __m256 term2,spsii,spsis,arg,sarg,rat;
                            k0h   = _mm256_mul_ps(_4,_mm256_mul_ps(k0,h));
                            x0    = _mm256_mul_ps(k0h,k0h);
                            cpsis = _mm256_cos_ps(psis);
                            term1 = _mm256_div_ps(x0,PI);
                            c2psis= _mm256_mul_ps(cpsis,cpsis);
                            term1 = _mm256_mul_ps(term1,_mm256_mul_ps(c2psis,rcs_inf));
-                           spsis = xsinf(psis);
-                           spsii = xsinf(psii);
+                           spsis = _mm256_sin_ps(psis);
+                           spsii = _mm256_sin_ps(psii);
                            x0    = _mm256_add_ps(spsis,spsii);
                            arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                           sarg  = xsinf(arg);
+                           sarg  = _mm256_sin_ps(arg);
                            rat   = _mm256_div_ps(sarg,arg);
                            term2 = _mm256_mul_ps(rat,rat);
                            rcs   = _mm256_mul_ps(term1,term2);
@@ -12194,25 +12244,25 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsis,
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii) {
 
-                           register __m256 prcs_inf  = _mm256_load_ps(&prcs_inf[0]);
-                           register __m256 k0        = _mm256_load_ps(&pk0[0]);
-                           register __m256 ph        = _mm256_load_ps(&ph[0]);
-                           register __m256 psis      = _mm256_load_ps(&ppsis[0]);
-                           register __m256 ppsis     = _mm256_load_ps(&ppsii[0]);
+                            __m256 prcs_inf  = _mm256_load_ps(&prcs_inf[0]);
+                            __m256 k0        = _mm256_load_ps(&pk0[0]);
+                            __m256 ph        = _mm256_load_ps(&ph[0]);
+                            __m256 psis      = _mm256_load_ps(&ppsis[0]);
+                            __m256 ppsis     = _mm256_load_ps(&ppsii[0]);
                            const __m256 _4 = _mm256_set1_ps(4.0f);
-                           register __m256 k0h,x0,term1,cpsis,c2psis,rcs;
-                           register __m256 term2,spsii,spsis,arg,sarg,rat;
+                            __m256 k0h,x0,term1,cpsis,c2psis,rcs;
+                            __m256 term2,spsii,spsis,arg,sarg,rat;
                            k0h   = _mm256_mul_ps(_4,_mm256_mul_ps(k0,h));
                            x0    = _mm256_mul_ps(k0h,k0h);
                            cpsis = _mm256_cos_ps(psis);
                            term1 = _mm256_div_ps(x0,PI);
                            c2psis= _mm256_mul_ps(cpsis,cpsis);
                            term1 = _mm256_mul_ps(term1,_mm256_mul_ps(c2psis,rcs_inf));
-                           spsis = xsinf(psis);
-                           spsii = xsinf(psii);
+                           spsis = _mm256_sin_ps(psis);
+                           spsii = _mm256_sin_ps(psii);
                            x0    = _mm256_add_ps(spsis,spsii);
                            arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                           sarg  = xsinf(arg);
+                           sarg  = _mm256_sin_ps(arg);
                            rat   = _mm256_div_ps(sarg,arg);
                            term2 = _mm256_mul_ps(rat,rat);
                            rcs   = _mm256_mul_ps(term1,term2);
@@ -12230,25 +12280,25 @@ namespace gms {
                                               const float * __restrict  ppsis,
                                               const float * __restrict  ppsii) {
 
-                           register __m256 prcs_inf  = _mm256_loadu_ps(&prcs_inf[0]);
-                           register __m256 k0        = _mm256_loadu_ps(&pk0[0]);
-                           register __m256 ph        = _mm256_loadu_ps(&ph[0]);
-                           register __m256 psis      = _mm256_loadu_ps(&ppsis[0]);
-                           register __m256 ppsis     = _mm256_loadu_ps(&ppsii[0]);
+                            __m256 prcs_inf  = _mm256_loadu_ps(&prcs_inf[0]);
+                            __m256 k0        = _mm256_loadu_ps(&pk0[0]);
+                            __m256 ph        = _mm256_loadu_ps(&ph[0]);
+                            __m256 psis      = _mm256_loadu_ps(&ppsis[0]);
+                            __m256 ppsis     = _mm256_loadu_ps(&ppsii[0]);
                            const __m256 _4 = _mm256_set1_ps(4.0f);
-                           register __m256 k0h,x0,term1,cpsis,c2psis,rcs;
-                           register __m256 term2,spsii,spsis,arg,sarg,rat;
+                            __m256 k0h,x0,term1,cpsis,c2psis,rcs;
+                            __m256 term2,spsii,spsis,arg,sarg,rat;
                            k0h   = _mm256_mul_ps(_4,_mm256_mul_ps(k0,h));
                            x0    = _mm256_mul_ps(k0h,k0h);
                            cpsis = _mm256_cos_ps(psis);
                            term1 = _mm256_div_ps(x0,PI);
                            c2psis= _mm256_mul_ps(cpsis,cpsis);
                            term1 = _mm256_mul_ps(term1,_mm256_mul_ps(c2psis,rcs_inf));
-                           spsis = xsinf(psis);
-                           spsii = xsinf(psii);
+                           spsis = _mm256_sin_ps(psis);
+                           spsii = _mm256_sin_ps(psii);
                            x0    = _mm256_add_ps(spsis,spsii);
                            arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                           sarg  = xsinf(arg);
+                           sarg  = _mm256_sin_ps(arg);
                            rat   = _mm256_div_ps(sarg,arg);
                            term2 = _mm256_mul_ps(rat,rat);
                            rcs   = _mm256_mul_ps(term1,term2);
@@ -12277,9 +12327,9 @@ namespace gms {
                           const __m256 c0 = _mm256_set1_ps(12.566370614359172953850573533118f);
                           const __m256 c1 = _mm256_set1_ps(2.467401100272339654708622749969f);
                           const __m256 c2 = _mm256_set1_ps(0.8905f);
-                          register __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
-                          register __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
-                          register __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
+                           __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
+                           __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
+                           __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
                           fac    = _mm256_mul_ps(c0,_mm256_mul_ps(h,h));
                           arg2   = _mm256_mul_ps(k0a,c2);
                           cpsii  = _mm256_cos_ps(psii);
@@ -12294,14 +12344,14 @@ namespace gms {
                           c2gams = _mm256_mul_ps(cgams,cgams);
                           x0     = _mm256_mul_ps(c2gams,c2gami);
                           term1  = _mm256_mul_ps(fac,_mm256_mul_ps(rat1,x0));
-                          larg   = xlogf(arg2);
-                          spsii  = xsinf(psii);
+                          larg   = _mm256_log_ps(arg2);
+                          spsii  = _mm256_sin_ps(psii);
                           x1     = _mm256_fmadd_ps(larg,larg,c1);
                           inv    = _mm256_rcp14_ps(x1);
-                          spsis  = xsinf(psis);
+                          spsis  = _mm256_sin_ps(psis);
                           x0     = _mm256_add_ps(spsii,spsis);
                           arg    = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           rat2   = _mm256_div_ps(sarg,arg);
                           term2  = _mm256_mul_ps(rat2,rat2);
                           rcs    = _mm256_mul_ps(term1,_mm256_mul_ps(inv,term2));
@@ -12321,19 +12371,19 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32)  pgams,
                                               const float * __restrict __ATTR_ALIGN__(32)  pgami) {
 
-                          register __m256 h    = _mm256_load_ps(&ph[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]); 
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                          register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_load_ps(&ppsis[0]);
-                          register __m256 gams = _mm256_load_ps(&pgams[0]);
-                          register __m256 gami = _mm256_load_ps(&pgami[0]);
+                           __m256 h    = _mm256_load_ps(&ph[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]); 
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 psii = _mm256_load_ps(&ppsii[0]);
+                           __m256 psis = _mm256_load_ps(&ppsis[0]);
+                           __m256 gams = _mm256_load_ps(&pgams[0]);
+                           __m256 gami = _mm256_load_ps(&pgami[0]);
                           const __m256 c0 = _mm256_set1_ps(12.566370614359172953850573533118f);
                           const __m256 c1 = _mm256_set1_ps(2.467401100272339654708622749969f);
                           const __m256 c2 = _mm256_set1_ps(0.8905f);
-                          register __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
-                          register __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
-                          register __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
+                           __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
+                           __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
+                           __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
                           fac    = _mm256_mul_ps(c0,_mm256_mul_ps(h,h));
                           arg2   = _mm256_mul_ps(k0a,c2);
                           cpsii  = _mm256_cos_ps(psii);
@@ -12348,14 +12398,14 @@ namespace gms {
                           c2gams = _mm256_mul_ps(cgams,cgams);
                           x0     = _mm256_mul_ps(c2gams,c2gami);
                           term1  = _mm256_mul_ps(fac,_mm256_mul_ps(rat1,x0));
-                          larg   = xlogf(arg2);
-                          spsii  = xsinf(psii);
+                          larg   = _mm256_log_ps(arg2);
+                          spsii  = _mm256_sin_ps(psii);
                           x1     = _mm256_fmadd_ps(larg,larg,c1);
                           inv    = _mm256_rcp14_ps(x1);
-                          spsis  = xsinf(psis);
+                          spsis  = _mm256_sin_ps(psis);
                           x0     = _mm256_add_ps(spsii,spsis);
                           arg    = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           rat2   = _mm256_div_ps(sarg,arg);
                           term2  = _mm256_mul_ps(rat2,rat2);
                           rcs    = _mm256_mul_ps(term1,_mm256_mul_ps(inv,term2));
@@ -12376,19 +12426,19 @@ namespace gms {
                                               const float * __restrict   pgams,
                                               const float * __restrict   pgami) {
 
-                          register __m256 h    = _mm256_loadu_ps(&ph[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
-                          register __m256 gams = _mm256_loadu_ps(&pgams[0]);
-                          register __m256 gami = _mm256_loadu_ps(&pgami[0]);
+                           __m256 h    = _mm256_loadu_ps(&ph[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                           __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                           __m256 gams = _mm256_loadu_ps(&pgams[0]);
+                           __m256 gami = _mm256_loadu_ps(&pgami[0]);
                           const __m256 c0 = _mm256_set1_ps(12.566370614359172953850573533118f);
                           const __m256 c1 = _mm256_set1_ps(2.467401100272339654708622749969f);
                           const __m256 c2 = _mm256_set1_ps(0.8905f);
-                          register __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
-                          register __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
-                          register __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
+                           __m256 term1,term2,term3,cgami,cgams,c2gami,c2gams;
+                           __m256 rcs,inv,arg,sarg,rat1,rat2,x0,x1,arg2,larg;
+                           __m256 cpsii,cpsis,fac,c2psii,c2psis,spsii,spsis;
                           fac    = _mm256_mul_ps(c0,_mm256_mul_ps(h,h));
                           arg2   = _mm256_mul_ps(k0a,c2);
                           cpsii  = _mm256_cos_ps(psii);
@@ -12403,14 +12453,14 @@ namespace gms {
                           c2gams = _mm256_mul_ps(cgams,cgams);
                           x0     = _mm256_mul_ps(c2gams,c2gami);
                           term1  = _mm256_mul_ps(fac,_mm256_mul_ps(rat1,x0));
-                          larg   = xlogf(arg2);
-                          spsii  = xsinf(psii);
+                          larg   = _mm256_log_ps(arg2);
+                          spsii  = _mm256_sin_ps(psii);
                           x1     = _mm256_fmadd_ps(larg,larg,c1);
                           inv    = _mm256_rcp14_ps(x1);
-                          spsis  = xsinf(psis);
+                          spsis  = _mm256_sin_ps(psis);
                           x0     = _mm256_add_ps(spsii,spsis);
                           arg    = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
-                          sarg   = xsinf(arg);
+                          sarg   = _mm256_sin_ps(arg);
                           rat2   = _mm256_div_ps(sarg,arg);
                           term2  = _mm256_mul_ps(rat2,rat2);
                           rcs    = _mm256_mul_ps(term1,_mm256_mul_ps(inv,term2));
@@ -12439,18 +12489,18 @@ namespace gms {
                          const __m256 pi24 = _mm256_set1_ps(2.467401100272339654708622749969f);
                          const __m256 _2pi = _mm256_set1_ps(6.283185307179586476925286766559f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
-                         register __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
-                         register __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
-                         register __m256 x0,x1;
+                          __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
+                          __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
+                          __m256 x0,x1;
                          k0h   = _mm256_mul_ps(k0,h);
                          t0    = _mm256_mul_ps(_2pi,_mm256_mul_ps(h,h));
                          x0    = _mm256_add_ps(k0h,k0h);
-                         spsi  = xsinf(psi);
+                         spsi  = _mm256_sin_ps(psi);
                          arg   = _mm256_mul_ps(x0,spsi);
                          cpsi  = _mm256_cos_ps(psi);
                          arg2  = _mm256_mul_ps(cpsi,_mm256_mul_ps(k0a,c0));
                          larg  = _mm256_fmadd_ps(arg2,arg2,pi24);
-                         sarg  = xsinf(arg);
+                         sarg  = _mm256_sin_ps(arg);
                          cgams = _mm256_cos_ps(gams);
                          rat   = _mm256_div_ps(sarg,arg);
                          cgami = _mm256_cos_ps(gami);
@@ -12475,27 +12525,27 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32)  pgami,
                                               const float * __restrict __ATTR_ALIGN__(32)  ppsi) {
 
-                         register __m256 h    = _mm256_load_ps(&ph[0]);
-                         register __m256 k0   = _mm256_load_ps(&pk0[0]); 
-                         register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                         register __m256 psi  = _mm256_load_ps(&ppsi[0]);
-                         register __m256 gams = _mm256_load_ps(&pgams[0]);
-                         register __m256 gami = _mm256_load_ps(&pgami[0]);
+                          __m256 h    = _mm256_load_ps(&ph[0]);
+                          __m256 k0   = _mm256_load_ps(&pk0[0]); 
+                          __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                          __m256 psi  = _mm256_load_ps(&ppsi[0]);
+                          __m256 gams = _mm256_load_ps(&pgams[0]);
+                          __m256 gami = _mm256_load_ps(&pgami[0]);
                          const __m256 pi24 = _mm256_set1_ps(2.467401100272339654708622749969f);
                          const __m256 _2pi = _mm256_set1_ps(6.283185307179586476925286766559f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
-                         register __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
-                         register __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
-                         register __m256 x0,x1;
+                          __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
+                          __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
+                          __m256 x0,x1;
                          k0h   = _mm256_mul_ps(k0,h);
                          t0    = _mm256_mul_ps(_2pi,_mm256_mul_ps(h,h));
                          x0    = _mm256_add_ps(k0h,k0h);
-                         spsi  = xsinf(psi);
+                         spsi  = _mm256_sin_ps(psi);
                          arg   = _mm256_mul_ps(x0,spsi);
                          cpsi  = _mm256_cos_ps(psi);
                          arg2  = _mm256_mul_ps(cpsi,_mm256_mul_ps(k0a,c0));
                          larg  = _mm256_fmadd_ps(arg2,arg2,pi24);
-                         sarg  = xsinf(arg);
+                         sarg  = _mm256_sin_ps(arg);
                          cgams = _mm256_cos_ps(gams);
                          rat   = _mm256_div_ps(sarg,arg);
                          cgami = _mm256_cos_ps(gami);
@@ -12520,27 +12570,27 @@ namespace gms {
                                               const float * __restrict   pgami,
                                               const float * __restrict   ppsi) {
 
-                         register __m256 h    = _mm256_loadu_ps(&ph[0]);
-                         register __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
-                         register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                         register __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
-                         register __m256 gams = _mm256_loadu_ps(&pgams[0]);
-                         register __m256 gami = _mm256_loadu_ps(&pgami[0]);
+                          __m256 h    = _mm256_loadu_ps(&ph[0]);
+                          __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
+                          __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                          __m256 psi  = _mm256_loadu_ps(&ppsi[0]);
+                          __m256 gams = _mm256_loadu_ps(&pgams[0]);
+                          __m256 gami = _mm256_loadu_ps(&pgami[0]);
                          const __m256 pi24 = _mm256_set1_ps(2.467401100272339654708622749969f);
                          const __m256 _2pi = _mm256_set1_ps(6.283185307179586476925286766559f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
-                         register __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
-                         register __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
-                         register __m256 x0,x1;
+                          __m256 rat1,arg,sarg,arg2,larg2,k0h,t0,rat;
+                          __m256 rcs,cpsi,cgami,cgams,c2gami,c2gams,spsi;
+                          __m256 x0,x1;
                          k0h   = _mm256_mul_ps(k0,h);
                          t0    = _mm256_mul_ps(_2pi,_mm256_mul_ps(h,h));
                          x0    = _mm256_add_ps(k0h,k0h);
-                         spsi  = xsinf(psi);
+                         spsi  = _mm256_sin_ps(psi);
                          arg   = _mm256_mul_ps(x0,spsi);
                          cpsi  = _mm256_cos_ps(psi);
                          arg2  = _mm256_mul_ps(cpsi,_mm256_mul_ps(k0a,c0));
                          larg  = _mm256_fmadd_ps(arg2,arg2,pi24);
-                         sarg  = xsinf(arg);
+                         sarg  = _mm256_sin_ps(arg);
                          cgams = _mm256_cos_ps(gams);
                          rat   = _mm256_div_ps(sarg,arg);
                          cgami = _mm256_cos_ps(gami);
@@ -12574,7 +12624,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12596,7 +12646,7 @@ namespace gms {
 	           static inline
                    __m256 M1_f4350_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12604,7 +12654,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12626,7 +12676,7 @@ namespace gms {
 	           static inline
                    __m256 M1_f4350_ymm8r4_u(const float * __restrict  ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12634,7 +12684,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12663,7 +12713,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12685,7 +12735,7 @@ namespace gms {
 	           static inline
                    __m256 M2_f4350_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12693,7 +12743,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12715,7 +12765,7 @@ namespace gms {
 	           static inline
                    __m256 M2_f4350_ymm8r4_u(const float * __restrict  ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12723,7 +12773,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,M2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12760,7 +12810,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12782,7 +12832,7 @@ namespace gms {
 	           static inline
                    __m256 N1_f4351_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12791,7 +12841,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12813,7 +12863,7 @@ namespace gms {
 	           static inline
                    __m256 N1_f4351_ymm8r4_u(const float * __restrict  ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12822,7 +12872,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12852,7 +12902,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12874,7 +12924,7 @@ namespace gms {
 	           static inline
                    __m256 N2_f4351_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12883,7 +12933,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12905,7 +12955,7 @@ namespace gms {
 	           static inline
                    __m256 N2_f4351_ymm8r4_u(const float * __restrict  ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
@@ -12914,7 +12964,7 @@ namespace gms {
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
                           const __m256 c3 = _mm256_set1_ps(0.666666666666666666666666666667f);
                           const __m256 _2 = _mm256_set1_ps(2.0f);
-                          register __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
+                           __m256 inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg1= _mm256_cos_ps(arg1);
                           x0   = _mm256_fmadd_ps(_2,psi,PI);
@@ -12949,7 +12999,7 @@ namespace gms {
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 G,inv,arg,carg,x0;
+                           __m256 G,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -12965,13 +13015,13 @@ namespace gms {
 	           static inline
                    __m256 G_f4352_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 _2 = _mm256_set1_ps(-2.0f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 G,inv,arg,carg,x0;
+                           __m256 G,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -12987,13 +13037,13 @@ namespace gms {
 	           static inline
                    __m256 G_f4352_ymm8r4_u(const float * __restrict  ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 _2 = _mm256_set1_ps(-2.0f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 G,inv,arg,carg,x0;
+                           __m256 G,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -13014,7 +13064,7 @@ namespace gms {
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 F,inv,arg,carg,x0;
+                           __m256 F,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -13030,13 +13080,13 @@ namespace gms {
 	           static inline
                    __m256 F_f4352_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
-                          register __m256 psi = _mm256_load_ps(&ppsi[0]);
+                           __m256 psi = _mm256_load_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 _2 = _mm256_set1_ps(-2.0f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 F,inv,arg,carg,x0;
+                           __m256 F,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -13052,13 +13102,13 @@ namespace gms {
 	           static inline
                    __m256 F_f4352_ymm8r4_u(const float * __restrict ppsi) {
 
-                          register __m256 psi = _mm256_loadu_ps(&ppsi[0]);
+                           __m256 psi = _mm256_loadu_ps(&ppsi[0]);
                           const __m256 c0 = _mm256_set1_ps(0.333333333333333333333333333333333333333333f);
                           const __m256 _2 = _mm256_set1_ps(-2.0f);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
                           const __m256 c2 = _mm256_set1_ps(0.577350269189625764509148780502f);
-                          register __m256 F,inv,arg,carg,x0;
+                           __m256 F,inv,arg,carg,x0;
                           arg = _mm256_mul_ps(_mm256_mul_ps(_4,psi),c0);
                           carg= _mm256_cos_ps(arg);
                           x0  = _mm256_add_ps(c1,carg);
@@ -13087,21 +13137,21 @@ namespace gms {
 
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,trm3;
-                          register __m256 cphi,cpsis,c2psis,cpsii,c2psii;
-                          register __m256 spsii,spsis,arg,sarg,x0,x1;
+                           __m256 rcs,trm1,trm2,trm3;
+                           __m256 cphi,cpsis,c2psis,cpsii,c2psii;
+                           __m256 spsii,spsis,arg,sarg,x0,x1;
                           x0    = _mm256_mul_ps(h,h);
                           x1    = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,x0));
                           cpsii = _mm256_cos_ps(psi);
                           cphi  = _mm256_cos_ps(x1);
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           x0    = _mm256_add_ps(spsii,spsis);
                           c2psis= _mm256_mul_ps(cpsis,cpsis);
                           arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
                           x1    = _mm256_mul_ps(c2psis,cphi);
-                          sarg  = xsinf(arg);
+                          sarg  = _mm256_sin_ps(arg);
                           trm2  = _mm256_div_ps(x1,cpsii);
                           trm3  = _mm256_div_ps(sarg,arg);
                           x1    = _mm256_mul_ps(trm1,trm2);
@@ -13122,29 +13172,29 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii,
                                               const float * __restrict __ATTR_ALIGN__(32) ppsis) {
 
-                          register __m256 k0a  = _mm256_load_ps(&pk0a[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                          register __m256 h    = _mm256_load_ps(&ph[0]);
-                          register __m256 phi  = _mm256_load_ps(&pphi[0]);
-                          register __m256 psii = _mm256_load_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_load_ps(&ppsis[0]);
+                           __m256 k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]);
+                           __m256 h    = _mm256_load_ps(&ph[0]);
+                           __m256 phi  = _mm256_load_ps(&pphi[0]);
+                           __m256 psii = _mm256_load_ps(&ppsii[0]);
+                           __m256 psis = _mm256_load_ps(&ppsis[0]);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,trm3;
-                          register __m256 cphi,cpsis,c2psis,cpsii,c2psii;
-                          register __m256 spsii,spsis,arg,sarg,x0,x1;
+                           __m256 rcs,trm1,trm2,trm3;
+                           __m256 cphi,cpsis,c2psis,cpsii,c2psii;
+                           __m256 spsii,spsis,arg,sarg,x0,x1;
                           x0    = _mm256_mul_ps(h,h);
                           x1    = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,x0));
                           cpsii = _mm256_cos_ps(psi);
                           cphi  = _mm256_cos_ps(x1);
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           x0    = _mm256_add_ps(spsii,spsis);
                           c2psis= _mm256_mul_ps(cpsis,cpsis);
                           arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
                           x1    = _mm256_mul_ps(c2psis,cphi);
-                          sarg  = xsinf(arg);
+                          sarg  = _mm256_sin_ps(arg);
                           trm2  = _mm256_div_ps(x1,cpsii);
                           trm3  = _mm256_div_ps(sarg,arg);
                           x1    = _mm256_mul_ps(trm1,trm2);
@@ -13165,29 +13215,29 @@ namespace gms {
                                               const float * __restrict  ppsii,
                                               const float * __restrict  ppsis) {
 
-                          register __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                          register __m256 h    = _mm256_loadu_ps(&ph[0]);
-                          register __m256 phi  = _mm256_loadu_ps(&pphi[0]);
-                          register __m256 psii = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256 psis = _mm256_loadu_ps(&ppsis[0]);
+                           __m256 k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                           __m256 h    = _mm256_loadu_ps(&ph[0]);
+                           __m256 phi  = _mm256_loadu_ps(&pphi[0]);
+                           __m256 psii = _mm256_loadu_ps(&ppsii[0]);
+                           __m256 psis = _mm256_loadu_ps(&ppsis[0]);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,trm3;
-                          register __m256 cphi,cpsis,c2psis,cpsii,c2psii;
-                          register __m256 spsii,spsis,arg,sarg,x0,x1;
+                           __m256 rcs,trm1,trm2,trm3;
+                           __m256 cphi,cpsis,c2psis,cpsii,c2psii;
+                           __m256 spsii,spsis,arg,sarg,x0,x1;
                           x0    = _mm256_mul_ps(h,h);
                           x1    = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,x0));
                           cpsii = _mm256_cos_ps(psi);
                           cphi  = _mm256_cos_ps(x1);
-                          spsii = xsinf(psii);
-                          spsis = xsinf(psis);
+                          spsii = _mm256_sin_ps(psii);
+                          spsis = _mm256_sin_ps(psis);
                           x0    = _mm256_add_ps(spsii,spsis);
                           c2psis= _mm256_mul_ps(cpsis,cpsis);
                           arg   = _mm256_mul_ps(k0,_mm256_mul_ps(x0,h));
                           x1    = _mm256_mul_ps(c2psis,cphi);
-                          sarg  = xsinf(arg);
+                          sarg  = _mm256_sin_ps(arg);
                           trm2  = _mm256_div_ps(x1,cpsii);
                           trm3  = _mm256_div_ps(sarg,arg);
                           x1    = _mm256_mul_ps(trm1,trm2);
@@ -13214,8 +13264,8 @@ namespace gms {
 
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,phi2;
-                          register __m256 h2,cpsii,cphi,x0;
+                           __m256 rcs,trm1,phi2;
+                           __m256 h2,cpsii,cphi,x0;
                           h2    = _mm256_mul_ps(h,h);
                           phi2  = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
@@ -13236,14 +13286,14 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256  k0a  = _mm256_load_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_load_ps(&ph[0]);
-                          register __m256  psii = _mm256_load_ps(&ppsii[0]);
-                          register __m256  phi  = _mm256_load_ps(&pphi[0]);
+                           __m256  k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256  h    = _mm256_load_ps(&ph[0]);
+                           __m256  psii = _mm256_load_ps(&ppsii[0]);
+                           __m256  phi  = _mm256_load_ps(&pphi[0]);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,phi2;
-                          register __m256 h2,cpsii,cphi,x0;
+                           __m256 rcs,trm1,phi2;
+                           __m256 h2,cpsii,cphi,x0;
                           h2    = _mm256_mul_ps(h,h);
                           phi2  = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
@@ -13264,14 +13314,14 @@ namespace gms {
                                               const float * __restrict  ppsii,
                                               const float * __restrict  pphi) {
 
-                          register __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_loadu_ps(&ph[0]);
-                          register __m256  psii = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  phi  = _mm256_loadu_ps(&pphi[0]);
+                           __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256  h    = _mm256_loadu_ps(&ph[0]);
+                           __m256  psii = _mm256_loadu_ps(&ppsii[0]);
+                           __m256  phi  = _mm256_loadu_ps(&pphi[0]);
                           const __m256 c1 = _mm256_set1_ps(0.5f);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,phi2;
-                          register __m256 h2,cpsii,cphi,x0;
+                           __m256 rcs,trm1,phi2;
+                           __m256 h2,cpsii,cphi,x0;
                           h2    = _mm256_mul_ps(h,h);
                           phi2  = _mm256_mul_ps(c1,phi);
                           trm1  = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
@@ -13301,17 +13351,17 @@ namespace gms {
                                             const __m256 psii) {
 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,cpsii,spsii;
-                          register __m256 x0,x1,k0h,h2,arg,sarg;
+                           __m256 rcs,trm1,trm2,cpsii,spsii;
+                           __m256 x0,x1,k0h,h2,arg,sarg;
                           k0h  = _mm256_mul_ps(k0,h);
                           h2   = _mm256_mul_ps(h,h);
                           x0   = _mm256_add_ps(k0h,k0h); 
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           cpsii= _mm256_cos_ps(psi);
-                          spsii= xsinf(psi);
+                          spsii= _mm256_sin_ps(psi);
                           trm1 = _mm256_mul_ps(x1,cpsii);
                           arg  = _mm256_mul_ps(x0,spsii);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x0   = _mm256_div_ps(sarg,arg);
                           trm2 = _mm256_mul_ps(x0,x0);
                           rcs  = _mm256_mul_ps(trm1,trm2);
@@ -13328,22 +13378,22 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) ppsii) {
 
-                          register __m256  k0a  = _mm256_load_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_load_ps(&ph[0]);
-                          register __m256  psii = _mm256_load_ps(&ppsii[0]);
-                          register __m256  k0   = _mm256_load_ps(&pk0[0]);
+                           __m256  k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256  h    = _mm256_load_ps(&ph[0]);
+                           __m256  psii = _mm256_load_ps(&ppsii[0]);
+                           __m256  k0   = _mm256_load_ps(&pk0[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,cpsii,spsii;
-                          register __m256 x0,x1,k0h,h2,arg,sarg;
+                           __m256 rcs,trm1,trm2,cpsii,spsii;
+                           __m256 x0,x1,k0h,h2,arg,sarg;
                           k0h  = _mm256_mul_ps(k0,h);
                           h2   = _mm256_mul_ps(h,h);
                           x0   = _mm256_add_ps(k0h,k0h); 
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           cpsii= _mm256_cos_ps(psi);
-                          spsii= xsinf(psi);
+                          spsii= _mm256_sin_ps(psi);
                           trm1 = _mm256_mul_ps(x1,cpsii);
                           arg  = _mm256_mul_ps(x0,spsii);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x0   = _mm256_div_ps(sarg,arg);
                           trm2 = _mm256_mul_ps(x0,x0);
                           rcs  = _mm256_mul_ps(trm1,trm2);
@@ -13360,22 +13410,22 @@ namespace gms {
                                               const float * __restrict  pk0,
                                               const float * __restrict  ppsii) {
 
-                          register __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_loadu_ps(&ph[0]);
-                          register __m256  psii = _mm256_loadu_ps(&ppsii[0]);
-                          register __m256  k0   = _mm256_loadu_ps(&pk0[0]);
+                           __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256  h    = _mm256_loadu_ps(&ph[0]);
+                           __m256  psii = _mm256_loadu_ps(&ppsii[0]);
+                           __m256  k0   = _mm256_loadu_ps(&pk0[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,trm1,trm2,cpsii,spsii;
-                          register __m256 x0,x1,k0h,h2,arg,sarg;
+                           __m256 rcs,trm1,trm2,cpsii,spsii;
+                           __m256 x0,x1,k0h,h2,arg,sarg;
                           k0h  = _mm256_mul_ps(k0,h);
                           h2   = _mm256_mul_ps(h,h);
                           x0   = _mm256_add_ps(k0h,k0h); 
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           cpsii= _mm256_cos_ps(psi);
-                          spsii= xsinf(psi);
+                          spsii= _mm256_sin_ps(psi);
                           trm1 = _mm256_mul_ps(x1,cpsii);
                           arg  = _mm256_mul_ps(x0,spsii);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x0   = _mm256_div_ps(sarg,arg);
                           trm2 = _mm256_mul_ps(x0,x0);
                           rcs  = _mm256_mul_ps(trm1,trm2);
@@ -13398,7 +13448,7 @@ namespace gms {
                                             const __m256 h) {
 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,h2;
+                           __m256 rcs,h2;
                           h2 = _mm256_mul_ps(h,h);
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           return (rcs); 
@@ -13412,10 +13462,10 @@ namespace gms {
                    __m256 rcs_f4356_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             const float * __restrict __ATTR_ALIGN__(32) ph) {
 
-                          register __m256  k0a  = _mm256_load_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_load_ps(&ph[0]);
+                           __m256  k0a  = _mm256_load_ps(&pk0a[0]);
+                           __m256  h    = _mm256_load_ps(&ph[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,h2;
+                           __m256 rcs,h2;
                           h2 = _mm256_mul_ps(h,h);
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           return (rcs); 
@@ -13429,10 +13479,10 @@ namespace gms {
                    __m256 rcs_f4356_ymm8r4_u(const float * __restrict  pk0a,
                                             const float * __restrict  ph) {
 
-                          register __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
-                          register __m256  h    = _mm256_loadu_ps(&ph[0]);
+                           __m256  k0a  = _mm256_loadu_ps(&pk0a[0]);
+                           __m256  h    = _mm256_loadu_ps(&ph[0]);
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,h2;
+                           __m256 rcs,h2;
                           h2 = _mm256_mul_ps(h,h);
                           rcs = _mm256_mul_ps(_4,_mm256_mul_ps(k0a,h2));
                           return (rcs); 
@@ -13464,12 +13514,12 @@ namespace gms {
                          const __m256 imp  = _mm256_set1_ps(1.57079632679489661923132169164f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 ab2,c0k0,arg,larg;
-                         register __m256 invr,invi;
+                          __m256 ab2,c0k0,arg,larg;
+                          __m256 invr,invi;
                          ab2  = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                          c0k0 = _mm256_mul_ps(c0,k0);
                          arg  = _mm256_mul_ps(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_ps(arg);
                          cdiv_ymm8c4(_1,_1,larg,imn,&invr,&invi);
                          *TMr = _mm256_mul_ps(imp,invr);
                          *TMi = _mm256_mul_ps(imp,invi);
@@ -13486,20 +13536,20 @@ namespace gms {
                                          float * __restrict __ATTR_ALIGN__(32) TMr,
                                          float * __restrict __ATTR_ALIGN__(32) TMi) {
 
-                         register __m256 a = _mm256_load_ps(&pa[0]);
-                         register __m256 b = _mm256_load_ps(&pb[0]);
-                         register __m256 k0= _mm256_load_ps(&pk0[0]);
+                          __m256 a = _mm256_load_ps(&pa[0]);
+                          __m256 b = _mm256_load_ps(&pb[0]);
+                          __m256 k0= _mm256_load_ps(&pk0[0]);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
                          const __m256 imn  = _mm256_set1_ps(-1.57079632679489661923132169164f);
                          const __m256 imp  = _mm256_set1_ps(1.57079632679489661923132169164f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 ab2,c0k0,arg,larg;
-                         register __m256 invr,invi;
+                          __m256 ab2,c0k0,arg,larg;
+                          __m256 invr,invi;
                          ab2  = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                          c0k0 = _mm256_mul_ps(c0,k0);
                          arg  = _mm256_mul_ps(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_ps(arg);
                          cdiv_ymm8c4(_1,_1,larg,imn,&invr,&invi);
                          _mm256_store_ps(&TMr[0], _mm256_mul_ps(imp,invr));
                          _mm256_store_ps(&TMi[0], _mm256_mul_ps(imp,invi));
@@ -13516,20 +13566,20 @@ namespace gms {
                                            float * __restrict  TMr,
                                            float * __restrict  TMi) {
 
-                         register __m256 a = _mm256_loadu_ps(&pa[0]);
-                         register __m256 b = _mm256_loadu_ps(&pb[0]);
-                         register __m256 k0= _mm256_loadu_ps(&pk0[0]);
+                          __m256 a = _mm256_loadu_ps(&pa[0]);
+                          __m256 b = _mm256_loadu_ps(&pb[0]);
+                          __m256 k0= _mm256_loadu_ps(&pk0[0]);
                          const __m256 hlf  = _mm256_set1_ps(0.5f);
                          const __m256 imn  = _mm256_set1_ps(-1.57079632679489661923132169164f);
                          const __m256 imp  = _mm256_set1_ps(1.57079632679489661923132169164f);
                          const __m256 c0   = _mm256_set1_ps(0.8905f);
                          const __m256 _1   = _mm256_set1_ps(1.0f);
-                         register __m256 ab2,c0k0,arg,larg;
-                         register __m256 invr,invi;
+                          __m256 ab2,c0k0,arg,larg;
+                          __m256 invr,invi;
                          ab2  = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                          c0k0 = _mm256_mul_ps(c0,k0);
                          arg  = _mm256_mul_ps(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_ps(arg);
                          cdiv_ymm8c4(_1,_1,larg,imn,&invr,&invi);
                          _mm256_storeu_ps(&TMr[0], _mm256_mul_ps(imp,invr));
                          _mm256_storeu_ps(&TMi[0], _mm256_mul_ps(imp,invi));
@@ -13550,17 +13600,17 @@ namespace gms {
 
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
-                        register __m256 cphi2,sphi2;
+                         __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
+                         __m256 cphi2,sphi2;
                         k0a2  = _mm256_mul_ps(k0a,k0a);
                         ba    = _mm256_div_ps(b,a);
                         cphi1 = _mm256_cos_ps(phi1);
                         _1ba  = _mm256_add_ps(_1,ba);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         x0    = _mm256_mul_ps(pi4,k0a2);
                         cphi2 = _mm256_cos_ps(phi2);
                         x1    = _mm256_add_ps(ba,_1ba);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         trm1  = _mm256_mul_ps(x0,x1);
                         x0    = _mm256_fmadd_ps(cphi2,cphi1,_mm256_mul_ps(sphi2,sphi1));
                         trm2  = _mm256_mul_ps(ba,x0);
@@ -13582,24 +13632,24 @@ namespace gms {
                                            float * __restrict __ATTR_ALIGN__(32) TEr,
                                            float * __restrict __ATTR_ALIGN__(32) TEi) {
 
-                        register __m256 a    = _mm256_load_ps(&pa[0]);
-                        register __m256 b    = _mm256_load_ps(&pb[0]);
-                        register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        register __m256 phi1 = _mm256_load_ps(&phi1[0]);
-                        register __m256 phi2 = _mm256_load_ps(&phi2[0]);
+                         __m256 a    = _mm256_load_ps(&pa[0]);
+                         __m256 b    = _mm256_load_ps(&pb[0]);
+                         __m256 k0   = _mm256_load_ps(&pk0[0]);
+                         __m256 phi1 = _mm256_load_ps(&phi1[0]);
+                         __m256 phi2 = _mm256_load_ps(&phi2[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
-                        register __m256 cphi2,sphi2;
+                         __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
+                         __m256 cphi2,sphi2;
                         k0a2  = _mm256_mul_ps(k0a,k0a);
                         ba    = _mm256_div_ps(b,a);
                         cphi1 = _mm256_cos_ps(phi1);
                         _1ba  = _mm256_add_ps(_1,ba);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         x0    = _mm256_mul_ps(pi4,k0a2);
                         cphi2 = _mm256_cos_ps(phi2);
                         x1    = _mm256_add_ps(ba,_1ba);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         trm1  = _mm256_mul_ps(x0,x1);
                         x0    = _mm256_fmadd_ps(cphi2,cphi1,_mm256_mul_ps(sphi2,sphi1));
                         trm2  = _mm256_mul_ps(ba,x0);
@@ -13621,24 +13671,24 @@ namespace gms {
                                            __m256 * __restrict TEr,
                                            __m256 * __restrict TEi) {
 
-                        register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
-                        register __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
+                         __m256 a    = _mm256_loadu_ps(&pa[0]);
+                         __m256 b    = _mm256_loadu_ps(&pb[0]);
+                         __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                         __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
+                         __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
-                        register __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
-                        register __m256 cphi2,sphi2;
+                         __m256 k0a2,ba,cphi1,sphi1,trm1,trm2,_1ba,x0,x1;
+                         __m256 cphi2,sphi2;
                         k0a2  = _mm256_mul_ps(k0a,k0a);
                         ba    = _mm256_div_ps(b,a);
                         cphi1 = _mm256_cos_ps(phi1);
                         _1ba  = _mm256_add_ps(_1,ba);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         x0    = _mm256_mul_ps(pi4,k0a2);
                         cphi2 = _mm256_cos_ps(phi2);
                         x1    = _mm256_add_ps(ba,_1ba);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         trm1  = _mm256_mul_ps(x0,x1);
                         x0    = _mm256_fmadd_ps(cphi2,cphi1,_mm256_mul_ps(sphi2,sphi1));
                         trm2  = _mm256_mul_ps(ba,x0);
@@ -13666,12 +13716,12 @@ namespace gms {
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(0.8905f);
                           const __m256 pi24= _mm256_set1_ps(2.467401100272339654708622749969f);
-                          register __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
+                           __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
                           abh = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                           c0k0= _mm256_mul_ps(c0,k0);
                           num = _mm256_mul_ps(pi2,abh);
                           arg = _mm256_mul_ps(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           x0  = _mm256_fmadd_ps(larg,larg,pi24);
                           sqr1= _mm256_sqrt_ps(_mm256_mul_ps(k0,abh));
                           sqr2= _mm256_sqrt_ps(x0);
@@ -13691,19 +13741,19 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32)  pb,
                                               const float * __restrict __ATTR_ALIGN__(32)  pk0) {
 
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]);
                           const __m256 pi2 = _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(0.8905f);
                           const __m256 pi24= _mm256_set1_ps(2.467401100272339654708622749969f);
-                          register __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
+                           __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
                           abh = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                           c0k0= _mm256_mul_ps(c0,k0);
                           num = _mm256_mul_ps(pi2,abh);
                           arg = _mm256_mul_ps(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           x0  = _mm256_fmadd_ps(larg,larg,pi24);
                           sqr1= _mm256_sqrt_ps(_mm256_mul_ps(k0,abh));
                           sqr2= _mm256_sqrt_ps(x0);
@@ -13722,19 +13772,19 @@ namespace gms {
                                               const float * __restrict   pb,
                                               const float * __restrict   pk0) {
 
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]);
                           const __m256 pi2 = _mm256_set1_ps(9.869604401089358618834490999876f);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(0.8905f);
                           const __m256 pi24= _mm256_set1_ps(2.467401100272339654708622749969f);
-                          register __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
+                           __m256 rcs,abh,k0abh,num,sqr1,sqr2,c0k0,arg,larg,x0,den,x1;
                           abh = _mm256_mul_ps(_mm256_add_ps(a,b),hlf);
                           c0k0= _mm256_mul_ps(c0,k0);
                           num = _mm256_mul_ps(pi2,abh);
                           arg = _mm256_mul_ps(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_ps(arg);
                           x0  = _mm256_fmadd_ps(larg,larg,pi24);
                           sqr1= _mm256_sqrt_ps(_mm256_mul_ps(k0,abh));
                           sqr2= _mm256_sqrt_ps(x0);
@@ -13750,7 +13800,7 @@ namespace gms {
                          TM-case, formula 4.4-15
                       */
 
-#include "GMS_simd_utils.hpp"
+
 
 
                     /*
@@ -13763,16 +13813,16 @@ namespace gms {
 	           __ATTR_OPTIMIZE_O3__
 	           __ATTR_VECTORCALL__
 	           static inline
-                   __mmask16 
+                   __mmask8
                    TM_f4415_helper_ymm8r4(const __m256 k0,
                                            const __m256 a,
                                            const __m256 phi1,
                                            const __m256 phi2,
                                            const __m256 b) {
                       const __m256 c0 = _mm256_set1_ps(0.166666666666666666666666666667f);
-                      register __m256 a2,b2,sphi1,cphi1,trm1,trm2,root6;
-                      register __m256 k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
-                      __mmask16 m;
+                       __m256 a2,b2,sphi1,cphi1,trm1,trm2,root6;
+                       __m256 k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
+                      __mmask8 m;
                       k02  = _mm256_mul_ps(k0,k0);
                       a2   = _mm256_mul_ps(a,a);
                       k0a2 = _mm256_mul_ps(k02,a2);
@@ -13781,7 +13831,7 @@ namespace gms {
                       cphi1= _mm256_cos_ps(phi1);
                       absp = _mm256_abs_ps(_mm256_sub_ps(phi2,phi1));
                       cphi1s = _mm256_mul_ps(cphi1,cphi1)
-                      sphi1= xsinf(phi1);
+                      sphi1= _mm256_sin_ps(phi1);
                       trm1 = _mm256_sub_ps(PI,absp);
                       sphi1s = _mm256_mul_ps(sphi1,sphi1);
                       trm2 = _mm256_fmadd_ps(k02a2,sphi1s,_mm256_mul_ps(k02b2,cphi1s));
@@ -13805,16 +13855,16 @@ namespace gms {
                                          bool & status) {
 
                         using namespace gms::math;
-                        __mmask16 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
+                        __mmask8 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
                         }
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 ip4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
-                        register __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
-                        register __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
+                         __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
+                         __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
+                         __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
                         arg1  = _mm256_mul_ps(_mm256_sub_ps(phi2,phi1),hlf);
                         a2    = _mm256_mul_ps(a,a);
                         b2    = _mm256_mul_ps(b,b);
@@ -13824,14 +13874,14 @@ namespace gms {
                         a2b2  = _mm256_mul_ps(a2,b2);
                         b2a2  = _mm256_div_ps(b2,a2);
                         cphi1 = _mm256_cos_ps(phi1);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         trm1  = _mm256_sqrt_ps(_mm256_mul_ps(PI,carg1));
                         cphi2 = _mm256_cos_ps(phi2);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         cphis = _mm256_add_ps(cphi1,cphi2);
                         carg2 = _mm256_cos_ps(arg2);
                         sphis = _mm256_add_ps(sphi1,sphi2);
-                        sarg2 = xsinf(arg2);
+                        sarg2 = _mm256_sin_ps(arg2);
                         x0    = _mm256_mul_ps(carg2,carg2);
                         x1    = _mm256_mul_ps(sarg2,sarg2);
                         rhod  = _mm256_fmadd_ps(a2,x0,_mm256_mul_ps(b2,x1));
@@ -13851,7 +13901,7 @@ namespace gms {
                         eai   = _mm256_mul_ps(nIi,_mm256_mul_ps(k0a,frat));
                         eai   = _mm256_add_ps(eai,ip4);
                         
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         x1    = _mm256_mul_ps(trm1,x0);
                         *TMr = _mm256_mul_ps(x1,cer);
                         *TMi = _mm256_mul_ps(x1,cei);
@@ -13874,21 +13924,21 @@ namespace gms {
 
                         using namespace gms::math;
 
-                        register __m256 phi1 = _mm256_load_ps(&phi1[0]);
-                        register __m256 phi2 = _mm256_load_ps(&phi2[0]);
-                        register __m256 a    = _mm256_load_ps(&pa[0]);
-                        register __m256 b    = _mm256_load_ps(&pb[0]);
-                        register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                        __mmask16 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
+                         __m256 phi1 = _mm256_load_ps(&phi1[0]);
+                         __m256 phi2 = _mm256_load_ps(&phi2[0]);
+                         __m256 a    = _mm256_load_ps(&pa[0]);
+                         __m256 b    = _mm256_load_ps(&pb[0]);
+                         __m256 k0   = _mm256_load_ps(&pk0[0]);
+                        __mmask8 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
                         }
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 ip4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
-                        register __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
-                        register __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
+                         __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
+                         __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
+                         __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
                         arg1  = _mm256_mul_ps(_mm256_sub_ps(phi2,phi1),hlf);
                         a2    = _mm256_mul_ps(a,a);
                         b2    = _mm256_mul_ps(b,b);
@@ -13898,14 +13948,14 @@ namespace gms {
                         a2b2  = _mm256_mul_ps(a2,b2);
                         b2a2  = _mm256_div_ps(b2,a2);
                         cphi1 = _mm256_cos_ps(phi1);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         trm1  = _mm256_sqrt_ps(_mm256_mul_ps(PI,carg1));
                         cphi2 = _mm256_cos_ps(phi2);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         cphis = _mm256_add_ps(cphi1,cphi2);
                         carg2 = _mm256_cos_ps(arg2);
                         sphis = _mm256_add_ps(sphi1,sphi2);
-                        sarg2 = xsinf(arg2);
+                        sarg2 = _mm256_sin_ps(arg2);
                         x0    = _mm256_mul_ps(carg2,carg2);
                         x1    = _mm256_mul_ps(sarg2,sarg2);
                         rhod  = _mm256_fmadd_ps(a2,x0,_mm256_mul_ps(b2,x1));
@@ -13924,7 +13974,7 @@ namespace gms {
                         x0    = _mm256_mul_ps(_mm256_sqrt_ps(_mm256_mul_ps(k0,rhorat)),hlf);
                         eai   = _mm256_mul_ps(nIi,_mm256_mul_ps(k0a,frat));
                         eai   = _mm256_add_ps(ear,ip4);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         x1    = _mm256_mul_ps(trm1,x0);
                         _mm256_store_ps(&TMr[0] ,_mm256_mul_ps(x1,cer));
                         _mm256_store_ps(&TMi[0] ,_mm256_mul_ps(x1,cei));
@@ -13947,21 +13997,21 @@ namespace gms {
                                          bool & status) {
 
                         using namespace gms::math;
-                        register __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
-                        register __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
-                        register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                        __mmask16 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
+                         __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
+                         __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
+                         __m256 a    = _mm256_loadu_ps(&pa[0]);
+                         __m256 b    = _mm256_loadu_ps(&pb[0]);
+                         __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                        __mmask8 m = TM_f4415_helper_ymm8r4(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
                         }
                         const __m256 hlf = _mm256_set1_ps(0.5f);
                         const __m256 ip4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
-                        register __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
-                        register __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
+                         __m256 arg1,arg2,carg1,carg2,sarg2,sqr1,ear,eai,cer,cei,trm1;
+                         __m256 f,rho,a2b2,a2,b2,b2a2,k0a,cphi2,cphi1,sphi1,sphi2,frat;
+                         __m256 cphis,sphis,rhod,rhorat,x0,x1,tmp1,tmp2,b2a2s,carg2s,sarg2s;
                         arg1  = _mm256_mul_ps(_mm256_sub_ps(phi2,phi1),hlf);
                         a2    = _mm256_mul_ps(a,a);
                         b2    = _mm256_mul_ps(b,b);
@@ -13971,14 +14021,14 @@ namespace gms {
                         a2b2  = _mm256_mul_ps(a2,b2);
                         b2a2  = _mm256_div_ps(b2,a2);
                         cphi1 = _mm256_cos_ps(phi1);
-                        sphi1 = xsinf(phi1);
+                        sphi1 = _mm256_sin_ps(phi1);
                         trm1  = _mm256_sqrt_ps(_mm256_mul_ps(PI,carg1));
                         cphi2 = _mm256_cos_ps(phi2);
-                        sphi2 = xsinf(phi2);
+                        sphi2 = _mm256_sin_ps(phi2);
                         cphis = _mm256_add_ps(cphi1,cphi2);
                         carg2 = _mm256_cos_ps(arg2);
                         sphis = _mm256_add_ps(sphi1,sphi2);
-                        sarg2 = xsinf(arg2);
+                        sarg2 = _mm256_sin_ps(arg2);
                         x0    = _mm256_mul_ps(carg2,carg2);
                         x1    = _mm256_mul_ps(sarg2,sarg2);
                         rhod  = _mm256_fmadd_ps(a2,x0,_mm256_mul_ps(b2,x1));
@@ -13997,7 +14047,7 @@ namespace gms {
                         x0    = _mm256_mul_ps(_mm256_sqrt_ps(_mm256_mul_ps(k0,rhorat)),hlf);
                         eai   = _mm256_mul_ps(nIi,_mm256_mul_ps(k0a,frat));
                         eai   = _mm256_add_ps(eai,ip4);
-                        cexp_ymm8r4(ear,eai,&cer,&cei);
+                        cexp_ymm8c4(ear,eai,&cer,&cei);
                         x1    = _mm256_mul_ps(trm1,x0);
                         _mm256_storeu_ps(&TMr[0] ,_mm256_mul_ps(x1,cer));
                         _mm256_storeu_ps(&TMi[0] ,_mm256_mul_ps(x1,cei));
@@ -14105,15 +14155,15 @@ namespace gms {
 
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 arg,carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 arg,carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           arg  = _mm256_mul_ps(_mm256_add_ps(phi2,phi1),hlf);
                           b2   = _mm256_mul_ps(b,b);
                           carg = _mm256_cos_ps(arg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           carg2= _mm256_mul_ps(carg,carg);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
@@ -14132,21 +14182,21 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pb) {
 
-                          register __m256 phi1 = _mm256_load_ps(&pphi1[0]);
-                          register __m256 phi2 = _mm256_load_ps(&pphi2[0]);
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 phi1 = _mm256_load_ps(&pphi1[0]);
+                           __m256 phi2 = _mm256_load_ps(&pphi2[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 arg,carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 arg,carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           arg  = _mm256_mul_ps(_mm256_add_ps(phi2,phi1),hlf);
                           b2   = _mm256_mul_ps(b,b);
                           carg = _mm256_cos_ps(arg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           carg2= _mm256_mul_ps(carg,carg);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
@@ -14165,21 +14215,21 @@ namespace gms {
                                               const float * __restrict  pa,
                                               const float * __restrict  pb) {
 
-                          register __m256 phi1 = _mm256_loadu_ps(&pphi1[0]);
-                          register __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 phi1 = _mm256_loadu_ps(&pphi1[0]);
+                           __m256 phi2 = _mm256_loadu_ps(&pphi2[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
                           const __m256 hlf = _mm256_set1_ps(0.5f);
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 arg,carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 arg,carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           arg  = _mm256_mul_ps(_mm256_add_ps(phi2,phi1),hlf);
                           b2   = _mm256_mul_ps(b,b);
                           carg = _mm256_cos_ps(arg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           carg2= _mm256_mul_ps(carg,carg);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
@@ -14206,15 +14256,15 @@ namespace gms {
                                             const __m256 phi) {
 
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           carg = _mm256_cos_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           carg2= _mm256_mul_ps(carg,carg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(phi);
+                          sarg = _mm256_sin_ps(phi);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
                           pow32= _mm256_pow_ps(x0,c0);
@@ -14231,19 +14281,19 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pb,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi) {
 
-                          register __m256 phi2 = _mm256_load_ps(&pphi[0]);
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 phi2 = _mm256_load_ps(&pphi[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           carg = _mm256_cos_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           carg2= _mm256_mul_ps(carg,carg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(phi);
+                          sarg = _mm256_sin_ps(phi);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
                           pow32= _mm256_pow_ps(x0,c0);
@@ -14260,19 +14310,19 @@ namespace gms {
                                               const float * __restrict  pb,
                                               const float * __restrict  pphi) {
 
-                          register __m256 phi2 = _mm256_loadu_ps(&pphi[0]);
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 phi2 = _mm256_loadu_ps(&pphi[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
                           const __m256 c0  = _mm256_set1_ps(1.5f);
-                          register __m256 rcs,a2,b2,a2b2,num;
-                          register __m256 carg,carg2,sarg,sarg2;
-                          register __m256 pow32,x0;
+                           __m256 rcs,a2,b2,a2b2,num;
+                           __m256 carg,carg2,sarg,sarg2;
+                           __m256 pow32,x0;
                           a2   = _mm256_mul_ps(a,a);
                           carg = _mm256_cos_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           carg2= _mm256_mul_ps(carg,carg);
                           num  = _mm256_mul_ps(PI,_mm256_mul_ps(a2,b2));
-                          sarg = xsinf(phi);
+                          sarg = _mm256_sin_ps(phi);
                           sarg2= _mm256_mul_ps(sarg,sarg);
                           x0   = _mm256_fmadd_ps(a2,carg2,_mm256_mul_ps(b2,sarg2));
                           pow32= _mm256_pow_ps(x0,c0);
@@ -14299,8 +14349,8 @@ namespace gms {
                                            const __m256 phi2,
                                            const __m256 b) {
                       const __m256 c0 = _mm256_set1_ps(0.166666666666666666666666666667f);
-                      register __m256 a2,b2,sphi1,cphi1,trm1,trm2,root6;
-                      register __m256 k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
+                       __m256 a2,b2,sphi1,cphi1,trm1,trm2,root6;
+                       __m256 k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
                       __mmask16 m;
                       k02  = _mm256_mul_ps(k0,k0);
                       a2   = _mm256_mul_ps(a,a);
@@ -14310,7 +14360,7 @@ namespace gms {
                       cphi1= _mm256_cos_ps(phi1);
                       trm1 = _mm256_sub_ps(phi1,phi2);
                       cphi1s = _mm256_add_ps(PI,_mm256_mul_ps(cphi1,cphi1));
-                      sphi1= xsinf(phi1);
+                      sphi1= _mm256_sin_ps(phi1);
                       sphi1s = _mm256_mul_ps(sphi1,sphi1);
                       trm2 = _mm256_fmadd_ps(k02a2,sphi1s,_mm256_mul_ps(k02b2,cphi1s));
                       x0   = _mm256_pow_ps(trm2,c0);
@@ -14337,13 +14387,13 @@ namespace gms {
                              status = false;
                              return;
                           }
-                          register __m256 T,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0;
+                           __m256 T,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14351,7 +14401,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           k0c  = negate_ymm8r4(k0c);
                           rat  = _mm256_div_ps(sarg,arg);
                           T    = _mm256_mul_ps(k0c,rat);
@@ -14372,23 +14422,23 @@ namespace gms {
                                           bool & status) {
 
                           using namespace gms::math;
-                          register __m256 phi1 = _mm256_load_ps(&phi1[0]);
-                          register __m256 phi2 = _mm256_load_ps(&phi2[0]);
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                          __mmask16 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
+                           __m256 phi1 = _mm256_load_ps(&phi1[0]);
+                           __m256 phi2 = _mm256_load_ps(&phi2[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]);
+                          __mmask8 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
                           }
-                          register __m256 T,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0;
+                           __m256 T,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14396,7 +14446,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           k0c  = negate_ymm8r4(k0c);
                           rat  = _mm256_div_ps(sarg,arg);
                           T    = _mm256_mul_ps(k0c,rat);
@@ -14417,23 +14467,23 @@ namespace gms {
                                           bool & status) {
 
                           using namespace gms::math;
-                          register __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
-                          register __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                          __mmask16 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
+                           __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
+                           __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                          __mmask8 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
                           }
-                          register __m256 T,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0;
+                           __m256 T,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14441,7 +14491,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           k0c  = negate_ymm8r4(k0c);
                           rat  = _mm256_div_ps(sarg,arg);
                           T    = _mm256_mul_ps(k0c,rat);
@@ -14469,19 +14519,19 @@ namespace gms {
                                           bool & status) {
 
                          
-                          __mmask16 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
+                          __mmask8 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
                           }
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0,x1,x2;
+                           __m256 rcs,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0,x1,x2;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14489,7 +14539,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0c,k0c));
                           rat  = _mm256_div_ps(sarg,arg);
                           x2   = _mm256_mul_ps(rat,rat);
@@ -14511,24 +14561,24 @@ namespace gms {
                                               bool & status) {
 
                           
-                          register __m256 phi1 = _mm256_load_ps(&phi1[0]);
-                          register __m256 phi2 = _mm256_load_ps(&phi2[0]);
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]);
-                          __mmask16 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
+                           __m256 phi1 = _mm256_load_ps(&phi1[0]);
+                           __m256 phi2 = _mm256_load_ps(&phi2[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]);
+                          __mmask8 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
                           }
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0,x1,x2;
+                           __m256 rcs,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0,x1,x2;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14536,7 +14586,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0c,k0c));
                           rat  = _mm256_div_ps(sarg,arg);
                           x2   = _mm256_mul_ps(rat,rat);
@@ -14558,24 +14608,24 @@ namespace gms {
                                               bool & status) {
 
                           
-                          register __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
-                          register __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]);
-                          __mmask16 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
+                           __m256 phi1 = _mm256_loadu_ps(&phi1[0]);
+                           __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]);
+                          __mmask8 m = T_f4423_helper_ymm8r4(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
                           }
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,k0c,c,alp,a2,b2;
-                          register __m256 sphi,sphi2,cphi,cphi2;
-                          register __m256 arg,sarg,rat,x0,x1,x2;
+                           __m256 rcs,k0c,c,alp,a2,b2;
+                           __m256 sphi,sphi2,cphi,cphi2;
+                           __m256 arg,sarg,rat,x0,x1,x2;
                           a2   = _mm256_mul_ps(a,a);
                           alp  = _mm256_add_ps(PI,_mm256_sub_ps(phi2,phi1));
                           b2   = _mm256_mul_ps(b,b);
-                          sphi = xsinf(phi1);
+                          sphi = _mm256_sin_ps(phi1);
                           cphi = _mm256_cos_ps(phi1);
                           sphi2= _mm256_mul_ps(sphi,sphi);
                           cphi2= _mm256_mul_ps(cphi,cphi);
@@ -14583,7 +14633,7 @@ namespace gms {
                           c    = _mm256_sqrt_ps(x0);
                           k0c  = _mm256_mul_ps(k0,c);
                           arg  = _mm256_mul_ps(k0c,alp);
-                          sarg = xsinf(arg);
+                          sarg = _mm256_sin_ps(arg);
                           x1   = _mm256_mul_ps(_4,_mm256_mul_ps(k0c,k0c));
                           rat  = _mm256_div_ps(sarg,arg);
                           x2   = _mm256_mul_ps(rat,rat);
@@ -14609,10 +14659,10 @@ namespace gms {
                                             const __m256 phi) {
 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,_4k0,a2,b2,sphi,sphi2;
-                          register __m256 cphi,cphi2;
+                           __m256 rcs,_4k0,a2,b2,sphi,sphi2;
+                           __m256 cphi,cphi2;
                           a2   = _mm256_mul_ps(a,a);
-                          sphi = xsinf(phi);
+                          sphi = _mm256_sin_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           cphi = _mm256_cos_ps(phi);
                           _4k0 = _mm256_mul_ps(_4,k0);
@@ -14633,15 +14683,15 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32)  pb,
                                               const float * __restrict __ATTR_ALIGN__(32)  pphi) {
 
-                          register __m256 phi2 = _mm256_load_ps(&phi2[0]);
-                          register __m256 a    = _mm256_load_ps(&pa[0]);
-                          register __m256 b    = _mm256_load_ps(&pb[0]);
-                          register __m256 k0   = _mm256_load_ps(&pk0[0]); 
+                           __m256 phi2 = _mm256_load_ps(&phi2[0]);
+                           __m256 a    = _mm256_load_ps(&pa[0]);
+                           __m256 b    = _mm256_load_ps(&pb[0]);
+                           __m256 k0   = _mm256_load_ps(&pk0[0]); 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,_4k0,a2,b2,sphi,sphi2;
-                          register __m256 cphi,cphi2;
+                           __m256 rcs,_4k0,a2,b2,sphi,sphi2;
+                           __m256 cphi,cphi2;
                           a2   = _mm256_mul_ps(a,a);
-                          sphi = xsinf(phi);
+                          sphi = _mm256_sin_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           cphi = _mm256_cos_ps(phi);
                           _4k0 = _mm256_mul_ps(_4,k0);
@@ -14662,15 +14712,15 @@ namespace gms {
                                               const float * __restrict   pb,
                                               const float * __restrict  pphi) {
 
-                          register __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
-                          register __m256 a    = _mm256_loadu_ps(&pa[0]);
-                          register __m256 b    = _mm256_loadu_ps(&pb[0]);
-                          register __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
+                           __m256 phi2 = _mm256_loadu_ps(&phi2[0]);
+                           __m256 a    = _mm256_loadu_ps(&pa[0]);
+                           __m256 b    = _mm256_loadu_ps(&pb[0]);
+                           __m256 k0   = _mm256_loadu_ps(&pk0[0]); 
                           const __m256 _4 = _mm256_set1_ps(4.0f);
-                          register __m256 rcs,_4k0,a2,b2,sphi,sphi2;
-                          register __m256 cphi,cphi2;
+                           __m256 rcs,_4k0,a2,b2,sphi,sphi2;
+                           __m256 cphi,cphi2;
                           a2   = _mm256_mul_ps(a,a);
-                          sphi = xsinf(phi);
+                          sphi = _mm256_sin_ps(phi);
                           b2   = _mm256_mul_ps(b,b);
                           cphi = _mm256_cos_ps(phi);
                           _4k0 = _mm256_mul_ps(_4,k0);
@@ -14707,15 +14757,15 @@ namespace gms {
 
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = epsi;
                         cphi2  = _mm256_cos_ps(phi2);
@@ -14724,7 +14774,7 @@ namespace gms {
                         muim1  = mui;
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         facr   = _mm256_setzero_ps();
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -14760,26 +14810,26 @@ namespace gms {
                                          float * __restrict __ATTR_ALIGN__(32) TMr,
                                          float * __restrict __ATTR_ALIGN__(32) TMi) {
 
-                        register __m256 k0    = _mm256_load_ps(&pk0[0]);
-                        register __m256 a     = _mm256_load_ps(&pa[0]);
-                        register __m256 b     = _mm256_load_ps(&pb[0]);
-                        register __m256 phi1  = _mm256_load_ps(&pphi1[0]);
-                        register __m256 phi2  = _mm256_load_ps(&pphi2[0]);
-                        register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_load_ps(&pmui[0]);
+                         __m256 k0    = _mm256_load_ps(&pk0[0]);
+                         __m256 a     = _mm256_load_ps(&pa[0]);
+                         __m256 b     = _mm256_load_ps(&pb[0]);
+                         __m256 phi1  = _mm256_load_ps(&pphi1[0]);
+                         __m256 phi2  = _mm256_load_ps(&pphi2[0]);
+                         __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_load_ps(&pmur[0]);
+                         __m256 mui   = _mm256_load_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         cphi2  = _mm256_cos_ps(phi2);
@@ -14788,7 +14838,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         facr   = Ir;
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -14824,26 +14874,26 @@ namespace gms {
                                          float * __restrict  TMr,
                                          float * __restrict  TMi) {
 
-                        register __m256 k0    = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 a     = _mm256_loadu_ps(&pa[0]);
-                        register __m256 b     = _mm256_loadu_ps(&pb[0]);
-                        register __m256 phi1  = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256 phi2  = _mm256_loadu_ps(&pphi2[0]);
-                        register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_loadu_ps(&pmui[0]);
+                         __m256 k0    = _mm256_loadu_ps(&pk0[0]);
+                         __m256 a     = _mm256_loadu_ps(&pa[0]);
+                         __m256 b     = _mm256_loadu_ps(&pb[0]);
+                         __m256 phi1  = _mm256_loadu_ps(&pphi1[0]);
+                         __m256 phi2  = _mm256_loadu_ps(&pphi2[0]);
+                         __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui   = _mm256_loadu_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         cphi2  = _mm256_cos_ps(phi2);
@@ -14852,7 +14902,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         facr   = Ir;
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -14898,15 +14948,15 @@ namespace gms {
 
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = epsi;
                         cphi2  = _mm256_cos_ps(phi2);
@@ -14915,7 +14965,7 @@ namespace gms {
                         muim1  = mui;
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         faci   = Ir;
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -14951,26 +15001,26 @@ namespace gms {
                                          float * __restrict __ATTR_ALIGN__(32) TEr,
                                          float * __restrict __ATTR_ALIGN__(32) TEi) {
 
-                        register __m256 k0    = _mm256_load_ps(&pk0[0]);
-                        register __m256 a     = _mm256_load_ps(&pa[0]);
-                        register __m256 b     = _mm256_load_ps(&pb[0]);
-                        register __m256 phi1  = _mm256_load_ps(&pphi1[0]);
-                        register __m256 phi2  = _mm256_load_ps(&pphi2[0]);
-                        register __m256 epsr  = _mm256_load_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_load_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_load_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_load_ps(&pmui[0]);
+                         __m256 k0    = _mm256_load_ps(&pk0[0]);
+                         __m256 a     = _mm256_load_ps(&pa[0]);
+                         __m256 b     = _mm256_load_ps(&pb[0]);
+                         __m256 phi1  = _mm256_load_ps(&pphi1[0]);
+                         __m256 phi2  = _mm256_load_ps(&pphi2[0]);
+                         __m256 epsr  = _mm256_load_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_load_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_load_ps(&pmur[0]);
+                         __m256 mui   = _mm256_load_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         cphi2  = _mm256_cos_ps(phi2);
@@ -14979,7 +15029,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         facr   = Ir;
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -15015,26 +15065,26 @@ namespace gms {
                                          float * __restrict  TEr,
                                          float * __restrict  TEi) {
 
-                        register __m256 k0    = _mm256_loadu_ps(&pk0[0]);
-                        register __m256 a     = _mm256_loadu_ps(&pa[0]);
-                        register __m256 b     = _mm256_loadu_ps(&pb[0]);
-                        register __m256 phi1  = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256 phi2  = _mm256_loadu_ps(&pphi2[0]);
-                        register __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256 mur   = _mm256_loadu_ps(&pmur[0]);
-                        register __m256 mui   = _mm256_loadu_ps(&pmui[0]);
+                         __m256 k0    = _mm256_loadu_ps(&pk0[0]);
+                         __m256 a     = _mm256_loadu_ps(&pa[0]);
+                         __m256 b     = _mm256_loadu_ps(&pb[0]);
+                         __m256 phi1  = _mm256_loadu_ps(&pphi1[0]);
+                         __m256 phi2  = _mm256_loadu_ps(&pphi2[0]);
+                         __m256 epsr  = _mm256_loadu_ps(&pepsr[0]);
+                         __m256 epsi  = _mm256_loadu_ps(&pepsi[0]);
+                         __m256 mur   = _mm256_loadu_ps(&pmur[0]);
+                         __m256 mui   = _mm256_loadu_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
-                        register __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
+                         __m256 k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i;
+                         __m256 facr,faci,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi;
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
                         ba     = _mm256_div_ps(b,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         cphi2  = _mm256_cos_ps(phi2);
@@ -15043,7 +15093,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         facr   = Ir;
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
@@ -15089,10 +15139,10 @@ namespace gms {
                                         
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15100,7 +15150,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = epsi;
@@ -15111,7 +15161,7 @@ namespace gms {
                         muim1  = mui;
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15125,7 +15175,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15145,21 +15195,21 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
                                         
-                        register __m256  k0   = _mm256_load_ps(&pk0[0]);
-                        register __m256  a    = _mm256_load_ps(&pa[0]);
-                        register __m256  b    = _mm256_load_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_load_ps(&pphi1[0]);
-                        register __m256  phi2 = _mm256_load_ps(&pphi2[0]);
-                        register __m256  epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_load_ps(&pmui[0]);
+                         __m256  k0   = _mm256_load_ps(&pk0[0]);
+                         __m256  a    = _mm256_load_ps(&pa[0]);
+                         __m256  b    = _mm256_load_ps(&pb[0]);
+                         __m256  phi1 = _mm256_load_ps(&pphi1[0]);
+                         __m256  phi2 = _mm256_load_ps(&pphi2[0]);
+                         __m256  epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_load_ps(&pmur[0]);
+                         __m256  mui  = _mm256_load_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15167,7 +15217,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
@@ -15178,7 +15228,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15192,7 +15242,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15212,21 +15262,21 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
                                         
-                        register __m256  k0   = _mm256_loadu_ps(&pk0[0]);
-                        register __m256  a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256  b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256  phi2 = _mm256_loadu_ps(&pphi2[0]);
-                        register __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_loadu_ps(&pmui[0]);
+                         __m256  k0   = _mm256_loadu_ps(&pk0[0]);
+                         __m256  a    = _mm256_loadu_ps(&pa[0]);
+                         __m256  b    = _mm256_loadu_ps(&pb[0]);
+                         __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
+                         __m256  phi2 = _mm256_loadu_ps(&pphi2[0]);
+                         __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256  mui  = _mm256_loadu_ps(&pmui[0]);
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi2,cphi1,sphi2,sphi1,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15234,7 +15284,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
@@ -15245,7 +15295,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(epsrm1,murm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(epsim1,muim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15259,7 +15309,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15292,10 +15342,10 @@ namespace gms {
                                          
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15304,7 +15354,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = epsi;
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15314,7 +15364,7 @@ namespace gms {
                         muim1  = mui;
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15328,7 +15378,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15348,21 +15398,21 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
                               
-                        register __m256  k0   = _mm256_load_ps(&pk0[0]);
-                        register __m256  a    = _mm256_load_ps(&pa[0]);
-                        register __m256  b    = _mm256_load_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_load_ps(&pphi1[0]);
-                        register __m256  phi2 = _mm256_load_ps(&pphi2[0]);
-                        register __m256  epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_load_ps(&pmui[0]);           
+                         __m256  k0   = _mm256_load_ps(&pk0[0]);
+                         __m256  a    = _mm256_load_ps(&pa[0]);
+                         __m256  b    = _mm256_load_ps(&pb[0]);
+                         __m256  phi1 = _mm256_load_ps(&pphi1[0]);
+                         __m256  phi2 = _mm256_load_ps(&pphi2[0]);
+                         __m256  epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_load_ps(&pmur[0]);
+                         __m256  mui  = _mm256_load_ps(&pmui[0]);           
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15371,7 +15421,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15381,7 +15431,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15395,7 +15445,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15416,21 +15466,21 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
                               
-                        register __m256  k0   = _mm256_loadu_ps(&pk0[0]);
-                        register __m256  a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256  b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256  phi2 = _mm256_loadu_ps(&pphi2[0]);
-                        register __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_loadu_ps(&pmui[0]);           
+                         __m256  k0   = _mm256_loadu_ps(&pk0[0]);
+                         __m256  a    = _mm256_loadu_ps(&pa[0]);
+                         __m256  b    = _mm256_loadu_ps(&pb[0]);
+                         __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
+                         __m256  phi2 = _mm256_loadu_ps(&pphi2[0]);
+                         __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256  mui  = _mm256_loadu_ps(&pmui[0]);           
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi2,cphi1,sphi2,sphi1,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,cphit,sphit,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15439,7 +15489,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15449,7 +15499,7 @@ namespace gms {
                         muim1  = _mm256_sub_ps(mui,_1);
                         _1ba   = _mm256_add_ps(_1,ba);
                         t0r    = _mm256_sub_ps(murm1,epsrm1);
-                        sphi2  = xsinf(phi2);
+                        sphi2  = _mm256_sin_ps(phi2);
                         t0i    = _mm256_sub_ps(muim1,epsim1);
                         sphit  = _mm256_mul_ps(sphi2,sphi1);
                         fac    = _mm256_mul_ps(_mm256_mul_ps(pia,pi4),
@@ -15463,7 +15513,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15494,10 +15544,10 @@ namespace gms {
                                         
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15505,7 +15555,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
@@ -15528,7 +15578,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15548,20 +15598,20 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
                                  
                                  
-                        register __m256  k0   = _mm256_load_ps(&pk0[0]);
-                        register __m256  a    = _mm256_load_ps(&pa[0]);
-                        register __m256  b    = _mm256_load_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_load_ps(&pphi1[0]);
-                        register __m256  epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_load_ps(&pmui[0]);              
+                         __m256  k0   = _mm256_load_ps(&pk0[0]);
+                         __m256  a    = _mm256_load_ps(&pa[0]);
+                         __m256  b    = _mm256_load_ps(&pb[0]);
+                         __m256  phi1 = _mm256_load_ps(&pphi1[0]);
+                         __m256  epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_load_ps(&pmur[0]);
+                         __m256  mui  = _mm256_load_ps(&pmui[0]);              
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15569,7 +15619,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
@@ -15592,7 +15642,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15612,20 +15662,20 @@ namespace gms {
                                               const float * __restrict  pmui) {
                                  
                                  
-                        register __m256  k0   = _mm256_loadu_ps(&pk0[0]);
-                        register __m256  a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256  b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_loadu_ps(&pmui[0]);              
+                         __m256  k0   = _mm256_loadu_ps(&pk0[0]);
+                         __m256  a    = _mm256_loadu_ps(&pa[0]);
+                         __m256  b    = _mm256_loadu_ps(&pb[0]);
+                         __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
+                         __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256  mui  = _mm256_loadu_ps(&pmui[0]);              
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
-                        register __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
+                         __m256 rcs,k0a,k0a2,ba,epsrm1,epsim1,murm1,muim1,k0a3;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,murpba,muipba,b2,a2,pia;
+                         __m256 murmba,muimba,t0r,t0i,t1r,t1i,t2r,t2i,b2a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,cabs;
                         b2     = _mm256_mul_ps(b,b);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15633,7 +15683,7 @@ namespace gms {
                         pia    = _mm256_mul_ps(PI,a);
                         a2     = _mm256_mul_ps(a,a);
                         epsrm1 = _mm256_sub_ps(epsr,_1);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         b2a2   = _mm256_div_ps(b2,a2)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
@@ -15656,7 +15706,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15687,10 +15737,10 @@ namespace gms {
                                          
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15699,7 +15749,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15721,7 +15771,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15740,20 +15790,20 @@ namespace gms {
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
                                               const float * __restrict __ATTR_ALIGN__(32) pmui) {
                                 
-                        register __m256  k0   = _mm256_load_ps(&pk0[0]);
-                        register __m256  a    = _mm256_load_ps(&pa[0]);
-                        register __m256  b    = _mm256_load_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_load_ps(&pphi1[0]);
-                        register __m256  epsr = _mm256_load_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_load_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_load_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_load_ps(&pmui[0]);           
+                         __m256  k0   = _mm256_load_ps(&pk0[0]);
+                         __m256  a    = _mm256_load_ps(&pa[0]);
+                         __m256  b    = _mm256_load_ps(&pb[0]);
+                         __m256  phi1 = _mm256_load_ps(&pphi1[0]);
+                         __m256  epsr = _mm256_load_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_load_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_load_ps(&pmur[0]);
+                         __m256  mui  = _mm256_load_ps(&pmui[0]);           
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15762,7 +15812,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15784,7 +15834,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
@@ -15803,20 +15853,20 @@ namespace gms {
                                               const float * __restrict  pmur,
                                               const float * __restrict  pmui) {
                                 
-                        register __m256  k0   = _mm256_loadu_ps(&pk0[0]);
-                        register __m256  a    = _mm256_loadu_ps(&pa[0]);
-                        register __m256  b    = _mm256_loadu_ps(&pb[0]);
-                        register __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
-                        register __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
-                        register __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
-                        register __m256  mur  = _mm256_loadu_ps(&pmur[0]);
-                        register __m256  mui  = _mm256_loadu_ps(&pmui[0]);           
+                         __m256  k0   = _mm256_loadu_ps(&pk0[0]);
+                         __m256  a    = _mm256_loadu_ps(&pa[0]);
+                         __m256  b    = _mm256_loadu_ps(&pb[0]);
+                         __m256  phi1 = _mm256_loadu_ps(&pphi1[0]);
+                         __m256  epsr = _mm256_loadu_ps(&pepsr[0]);
+                         __m256  epsi = _mm256_loadu_ps(&pepsi[0]);
+                         __m256  mur  = _mm256_loadu_ps(&pmur[0]);
+                         __m256  mui  = _mm256_loadu_ps(&pmui[0]);           
                         const __m256 _1  = _mm256_set1_ps(1.0f);
                         const __m256 pi4 = _mm256_set1_ps(0.78539816339744830961566084582f);
-                        register __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
-                        register __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
-                        register __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
-                        register __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
+                         __m256 rcs,k0a,k0a2,k0a3,ba,epsrm1,epsim1,murm1,muim1;
+                         __m256 cphi1,sphi1,cphi1s,sphi1s,epsrpba,epsipba,cabs;
+                         __m256 epsrmba,epsimba,t0r,t0i,t1r,t1i,t2r,t2i,b2,a2;
+                         __m256 fac,_1ba,t3r,t3i,tmpr,tmpi,b2a2,pia;
                         a2     = _mm256_mul_ps(a,a);
                         k0a    = _mm256_mul_ps(k0,a);
                         cphi1  = _mm256_cos_ps(phi1);
@@ -15825,7 +15875,7 @@ namespace gms {
                         epsrm1 = _mm256_sub_ps(epsr,_1);
                         b2a2   = _mm256_div_ps(b2,a2);
                         pia    = _mm256_mul_ps(PI,a);
-                        sphi1  = xsinf(phi1)
+                        sphi1  = _mm256_sin_ps(phi1)
                         k0a2   = _mm256_mul_ps(k0a,k0a);
                         epsim1 = _mm256_sub_ps(epsi,_1);
                         k0a3   = _mm256_mul_ps(k0a,k0a2);
@@ -15851,7 +15901,7 @@ namespace gms {
                         t3r    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1r,t2r));
                         t3i    = _mm256_mul_ps(_1ba,_mm256_add_ps(t1i,t2i));
                         cmul_ymm8c4(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm8r4(tmpr,tmpi);
+                        cabs   = cabs_ymm8c4(tmpr,tmpi);
                         rcs    = _mm256_mul_ps(fac,cabs);
                         return (rcs);
                 }
