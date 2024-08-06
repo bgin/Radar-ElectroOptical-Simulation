@@ -2728,9 +2728,8 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Hs_f4146_ymm4r8(const __m256d HIr,
@@ -2780,8 +2779,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Hs_f4146_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pHIr,
@@ -2810,12 +2808,12 @@ namespace gms {
                          __m256d k0r,k0as,fracr,fraci,k0as2;
                          __m256d ear,eai,cer,cei,t0r,t0i;
                          __m256d t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
-                        const __m256d _1 = _mm256_set1_pd(1.0f);
+                        const __m256d _1 = _mm256_set1_pd(1.0);
                         k0r             = _mm256_mul_pd(k0,r);
-                        const __m256d _2 = _mm256_set1_pd(2.0f);
+                        const __m256d _2 = _mm256_set1_pd(2.0);
                         sk0r            = _mm256_sqrt_pd(k0r);
                         k0as            = _mm256_mul_pd(k0a,k0a);
-                        const __m256d hlf= _mm256_set1_pd(0.5f);
+                        const __m256d hlf= _mm256_set1_pd(0.5);
                         k0as2           = _mm256_mul_pd(hlf,k0as);
                         const __m256d pi4= _mm256_set1_pd(0.78539816339744830961566084582);
                         cosp            = _mm256_cos_pd(phi);
@@ -2843,8 +2841,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Hs_f4146_ymm4r8_u(const double * __restrict   pHIr,
@@ -2873,12 +2870,12 @@ namespace gms {
                          __m256d k0r,k0as,fracr,fraci,k0as2;
                          __m256d ear,eai,cer,cei,t0r,t0i;
                          __m256d t0,t1,cosp,t2,sk0r,t3,mul,resr,resi;
-                        const __m256d _1 = _mm256_set1_pd(1.0f);
+                        const __m256d _1 = _mm256_set1_pd(1.0);
                         k0r             = _mm256_mul_pd(k0,r);
-                        const __m256d _2 = _mm256_set1_pd(2.0f);
+                        const __m256d _2 = _mm256_set1_pd(2.0);
                         sk0r            = _mm256_sqrt_pd(k0r);
                         k0as            = _mm256_mul_pd(k0a,k0a);
-                        const __m256d hlf= _mm256_set1_pd(0.5f);
+                        const __m256d hlf= _mm256_set1_pd(0.5);
                         k0as2           = _mm256_mul_pd(hlf,k0as);
                         const __m256d pi4= _mm256_set1_pd(0.78539816339744830961566084582);
                         cosp            = _mm256_cos_pd(phi);
@@ -2912,8 +2909,7 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4147_ymm4r8(const __m256d a,
@@ -2945,8 +2941,7 @@ namespace gms {
 
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4147_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -2984,8 +2979,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4147_ymm4r8_u(const double * __restrict  pa,
@@ -3029,8 +3023,7 @@ namespace gms {
                    */   
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4148_ymm4r8(const __m256d a,
@@ -3060,9 +3053,8 @@ namespace gms {
                 }  
 
 
-                  __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4148_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -3100,8 +3092,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4148_ymm4r8_u(const double * __restrict  pa,
@@ -3144,8 +3135,7 @@ namespace gms {
                     */
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4149_ymm4r8(const __m256d a,
@@ -3175,8 +3165,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4149_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -3212,8 +3201,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4149_ymm4r8_u(const double * __restrict  pa,
@@ -3254,8 +3242,7 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4150_ymm4r8(const __m256d a,
@@ -3285,8 +3272,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4150_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -3321,9 +3307,8 @@ namespace gms {
                    }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4150_ymm4r8_u(const double * __restrict  pa,
@@ -3364,8 +3349,7 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4151_ymm4r8(const __m256d a,
@@ -3395,8 +3379,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4151_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -3431,9 +3414,8 @@ namespace gms {
                    }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4151_ymm4r8_u(const double * __restrict  pa,
@@ -3474,8 +3456,7 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4152_ymm4r8(const __m256d a,
@@ -3505,8 +3486,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4152_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -3542,8 +3522,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4152_ymm4r8_u(const double * __restrict  pa,
@@ -3584,8 +3563,7 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4172_ymm4r8(const __m256d mur,
@@ -3607,10 +3585,10 @@ namespace gms {
                         cdiv_ymm4c8(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_pd(_1,sin2p);
                         cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                         t0r = _mm256_div_pd(t1,mulr);
                         t0i = _mm256_div_pd(t1,muli);
-                        csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_pd(sqr1,sqr1);
                         t2i = _mm256_add_pd(sqi1,sqi1);
                         cmul_ymm4c8(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -3622,8 +3600,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4172_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -3650,10 +3627,10 @@ namespace gms {
                         cdiv_ymm4c8(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_pd(_1,sin2p);
                         cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                         t0r = _mm256_div_pd(t1,mulr);
                         t0i = _mm256_div_pd(t1,muli);
-                        csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_pd(sqr1,sqr1);
                         t2i = _mm256_add_pd(sqi1,sqi1);
                         cmul_ymm4c8(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -3667,8 +3644,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4172_ymm4r8_u(const double * __restrict  pmur,
@@ -3684,7 +3660,7 @@ namespace gms {
                          __m256d epsr = _mm256_loadu_pd(&pepsr[0]);
                          __m256d epsi = _mm256_loadu_pd(&pepsi[0]);
                          __m256d psi  = _mm256_loadu_pd(&ppsi[0]);
-                        const __m256d _1 = _mm256_set1_pd(1.0f);
+                        const __m256d _1 = _mm256_set1_pd(1.0);
                          __m256d sin2p,cosp,divr,divi,t1;
                          __m256d sqr1,sqi1,sqr2,sqi2,t0;
                          __m256d mulr,muli,t0r,t0i,t1r,t1i;
@@ -3695,10 +3671,10 @@ namespace gms {
                         cdiv_ymm4c8(mur,mui,epsr,epsi,&divr,&divi);
                         t1   = _mm256_sub_pd(_1,sin2p);
                         cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
-                        csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                        csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                         t0r = _mm256_div_pd(t1,mulr);
                         t0i = _mm256_div_pd(t1,muli);
-                        csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                        csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                         t2r = _mm256_add_pd(sqr1,sqr1);
                         t2i = _mm256_add_pd(sqi1,sqi1);
                         cmul_ymm4c8(t2r,t2i,sqr2,sqi2,&t1r,&t1i);//numerator
@@ -3717,8 +3693,7 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_ymm4r8(const __m256d mur,
@@ -3743,16 +3718,15 @@ namespace gms {
                          cdiv_ymm4c8(epsr,epsi,mur,mui,&divr,&divi);
                          t0r = _mm256_div_pd(_1msp,mulr);
                          t0i = _mm256_div_pd(_1msp,muli);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          *Tinr = _mm256_fmadd_pd(sqr1,sqr2,cosp);
                          *Tini = _mm256_fmadd_pd(sqi1,sqi2,cosp);
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -3782,16 +3756,15 @@ namespace gms {
                          cdiv_ymm4c8(epsr,epsi,mur,mui,&divr,&divi);
                          t0r = _mm256_div_pd(_1msp,mulr);
                          t0i = _mm256_div_pd(_1msp,muli);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          _mm256_store_pd(&Tinr[0] ,_mm256_fmadd_pd(sqr1,sqr2,cosp));
                          _mm256_store_pd(&Tini[0] ,_mm256_fmadd_pd(sqi1,sqi2,cosp));
                  }
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4173_ymm4r8_u(const double * __restrict  pmur,
@@ -3821,8 +3794,8 @@ namespace gms {
                          cdiv_ymm4c8(epsr,epsi,mur,mui,&divr,&divi);
                          t0r = _mm256_div_pd(_1msp,mulr);
                          t0i = _mm256_div_pd(_1msp,muli);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          _mm256_storeu_pd(&Tinr[0] ,_mm256_fmadd_pd(sqr1,sqr2,cosp));
                          _mm256_storeu_pd(&Tini[0] ,_mm256_fmadd_pd(sqi1,sqi2,cosp));
                  }
@@ -3834,8 +3807,7 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_ymm4r8(const __m256d mur,
@@ -3857,13 +3829,13 @@ namespace gms {
                          cosp = _mm256_cos_pd(psi);
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          sinp =  _mm256_sin_pd(psi);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_pd(sinp,sinp);
                          //_2sqr1 = _mm256_mul_pd(_2,sqr1);
                          t0r    = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_pd(_2,sqi1);
                          t0i    = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_pd(_2,t1r);
                          denr = _mm256_add_pd(cosp,t1r);
@@ -3874,9 +3846,8 @@ namespace gms {
 
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -3903,13 +3874,13 @@ namespace gms {
                          cosp = _mm256_cos_pd(psi);
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          sinp =  _mm256_sin_pd(psi);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_pd(sinp,sinp);
                          //_2sqr1 = _mm256_mul_pd(_2,sqr1);
                          t0r    = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_pd(_2,sqi1);
                          t0i    = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_pd(_2,t1r);
                          denr = _mm256_add_pd(cosp,t1r);
@@ -3921,9 +3892,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4174_ymm4r8_u(const double * __restrict pmur,
@@ -3950,13 +3920,13 @@ namespace gms {
                          cosp = _mm256_cos_pd(psi);
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          sinp =  _mm256_sin_pd(psi);
-                         csqrt_ymm4r8(divr,divi,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr1,&sqi1);
                          sin2p= _mm256_mul_pd(sinp,sinp);
                          //_2sqr1 = _mm256_mul_pd(_2,sqr1);
                          t0r    = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          //_2sqi1 = _mm256_mul_pd(_2,sqi1);
                          t0i    = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,t0r,t0i,&t1r,&t1i);
                          numr = _mm256_mul_pd(_2,t1r);
                          denr = _mm256_add_pd(cosp,t1r);
@@ -3975,8 +3945,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_ymm4r8(const __m256d mur,
@@ -3999,8 +3968,8 @@ namespace gms {
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_pd(cosp,denr);
                          deni = _mm256_add_pd(cosp,deni);
@@ -4009,9 +3978,8 @@ namespace gms {
                  }
 
 
-                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4039,8 +4007,8 @@ namespace gms {
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_pd(cosp,denr);
                          deni = _mm256_add_pd(cosp,deni);
@@ -4050,8 +4018,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4175_ymm4r8_u(const double * __restrict  pmur,
@@ -4079,8 +4046,8 @@ namespace gms {
                          cmul_ymm4c8(epsr,epsi,mur,mui,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          cmul_ymm4c8(sqr1,sqi1,sqr2,sqi2,&denr,&deni);
                          denr = _mm256_add_pd(cosp,denr);
                          deni = _mm256_add_pd(cosp,deni);
@@ -4095,8 +4062,7 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_ymm4r8( const __m256d mur,
@@ -4118,8 +4084,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,mulr));
                          t0i = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,muli));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(cosp,sqr2);
                          sqi2 = _mm256_mul_pd(cosp,sqi2);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4131,8 +4097,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_ymm4r8_a( const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4159,8 +4124,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,mulr));
                          t0i = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,muli));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(cosp,sqr2);
                          sqi2 = _mm256_mul_pd(cosp,sqi2);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4174,8 +4139,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4176_ymm4r8_u( const double * __restrict  pmur,
@@ -4202,8 +4166,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,mulr));
                          t0i = _mm256_sub_pd(_1,_mm256_div_pd(sin2p,muli));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(cosp,sqr2);
                          sqi2 = _mm256_mul_pd(cosp,sqi2);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4221,10 +4185,8 @@ namespace gms {
                            Formula 4.1-77
                     */
 
-
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_ymm4r8( const __m256d mur,
@@ -4246,8 +4208,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(sqr2,cosp);
                          sqi2 = _mm256_mul_pd(sqi2,cosp);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4259,8 +4221,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_ymm4r8_a( const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4287,8 +4248,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(sqr2,cosp);
                          sqi2 = _mm256_mul_pd(sqi2,cosp);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4302,8 +4263,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rin_f4177_ymm4r8_u( const double * __restrict  pmur,
@@ -4330,8 +4290,8 @@ namespace gms {
                          cmul_ymm4c8(mur,mui,epsr,epsi,&mulr,&muli);
                          t0r = _mm256_sub_pd(_1,_mm256_mul_pd(mulr,sin2p));
                          t0i = _mm256_sub_pd(_1,_mm256_mul_pd(muli,sin2p));
-                         csqrt_ymm4r8(t0r,t0i,&sqr1,&sqi1);
-                         csqrt_ymm4r8(divr,divi,&sqr2,&sqi2);
+                         csqrt_ymm4c8(t0r,t0i,&sqr1,&sqi1);
+                         csqrt_ymm4c8(divr,divi,&sqr2,&sqi2);
                          sqr2 = _mm256_mul_pd(sqr2,cosp);
                          sqi2 = _mm256_mul_pd(sqi2,cosp);
                          numr = _mm256_sub_pd(sqr2,sqr1);
@@ -4349,9 +4309,9 @@ namespace gms {
                           Formula 4.1-64
                       */
 
+                  
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_ymm4r8(const __m256d mur,
@@ -4363,8 +4323,8 @@ namespace gms {
 
                          __m256d sqr1,sqi1,sqr2,sqi2;
                          __m256d difr,difi,sumr,sumi;
-                        csqrt_ymm4r8(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                        csqrt_ymm4c8(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_pd(sqr1,sqr2);
                         sumr = _mm256_add_pd(sqr1,sqr2);
                         difi = _mm256_sub_pd(sqi1,sqi2);
@@ -4373,9 +4333,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4391,8 +4350,8 @@ namespace gms {
                          __m256d epsi = _mm256_load_pd(&pepsi[0]);
                          __m256d sqr1,sqi1,sqr2,sqi2;
                          __m256d difr,difi,sumr,sumi,resr,resi;
-                        csqrt_ymm4r8(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                        csqrt_ymm4c8(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_pd(sqr1,sqr2);
                         sumr = _mm256_add_pd(sqr1,sqr2);
                         difi = _mm256_sub_pd(sqi1,sqi2);
@@ -4404,8 +4363,7 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rext_f4164_ymm4r8_u(const double * __restrict  pmur,
@@ -4421,8 +4379,8 @@ namespace gms {
                          __m256d epsi = _mm256_loadu_pd(&pepsi[0]);
                          __m256d sqr1,sqi1,sqr2,sqi2;
                          __m256d difr,difi,sumr,sumi,resr,resi;
-                        csqrt_ymm4r8(mur,mui,&sqr1,sqi1);
-                        csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                        csqrt_ymm4c8(mur,mui,&sqr1,sqi1);
+                        csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                         difr = _mm256_sub_pd(sqr1,sqr2);
                         sumr = _mm256_add_pd(sqr1,sqr2);
                         difi = _mm256_sub_pd(sqi1,sqi2);
@@ -4441,8 +4399,7 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_ymm4r8( const __m256d mur,
@@ -4454,10 +4411,10 @@ namespace gms {
 
                            __m256d sqr1,sqi1,sqr2,sqi2;
                            __m256d sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm4r8(mur,mui,&sqr1,&sqi1);
+                          csqrt_ymm4c8(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_pd(sqr1,sqr1);
                           mu2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(mu2r,mu2i,sumr,sumi,*Tinr,*Tini);
@@ -4465,8 +4422,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_ymm4r8_a( const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4482,10 +4438,10 @@ namespace gms {
                            __m256d epsi = _mm256_load_pd(&pepsi[0]);
                            __m256d sqr1,sqi1,sqr2,sqi2,resr,resi;
                            __m256d sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm4r8(mur,mui,&sqr1,&sqi1);
+                          csqrt_ymm4c8(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_pd(sqr1,sqr1);
                           mu2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(mu2r,mu2i,sumr,sumi,&resr,&resi);
@@ -4495,8 +4451,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tin_f4167_ymm4r8_u( const double * __restrict  pmur,
@@ -4512,10 +4467,10 @@ namespace gms {
                            __m256d epsi = _mm256_loadu_pd(&pepsi[0]);
                            __m256d sqr1,sqi1,sqr2,sqi2,resr,resi;
                            __m256d sumr,sumi,mu2r,mu2i;
-                          csqrt_ymm4r8(mur,mui,&sqr1,&sqi1);
+                          csqrt_ymm4c8(mur,mui,&sqr1,&sqi1);
                           mu2r = _mm256_add_pd(sqr1,sqr1);
                           mu2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(epsr,epsi,&sqr2,&sqi2);
+                          csqrt_ymm4c8(epsr,epsi,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(mu2r,mu2i,sumr,sumi,&resr,&resi);
@@ -4530,9 +4485,8 @@ namespace gms {
                    */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_ymm4r8( const __m256d mur,
@@ -4544,10 +4498,10 @@ namespace gms {
 
                            __m256d sqr1,sqi1,sqr2,sqi2;
                            __m256d sumr,sumi,eps2r,eps2i;
-                          csqrt_ymm4r8(epsr,epsi,&sqr1,&sqi1);
+                          csqrt_ymm4c8(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_pd(sqr1,sqr1);
                           eps2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm4c8(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(eps2r,eps2i,sumr,sumi,*Toutr,*Touti);
@@ -4555,8 +4509,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_ymm4r8_a(  const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4572,10 +4525,10 @@ namespace gms {
                            __m256d epsi = _mm256_load_pd(&pepsi[0]);
                            __m256d sqr1,sqi1,sqr2,sqi2;
                            __m256d sumr,sumi,eps2r,eps2i,resr,resi;
-                          csqrt_ymm4r8(epsr,epsi,&sqr1,&sqi1);
+                          csqrt_ymm4c8(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_pd(sqr1,sqr1);
                           eps2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm4c8(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(eps2r,eps2i,sumr,sumi,&resr,&resi);
@@ -4584,9 +4537,8 @@ namespace gms {
                 }
 
 
-                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Tout_f4168_ymm4r8_u(  const double * __restrict  pmur,
@@ -4602,10 +4554,10 @@ namespace gms {
                            __m256d epsi = _mm256_loadu_pd(&pepsi[0]);
                            __m256d sqr1,sqi1,sqr2,sqi2;
                            __m256d sumr,sumi,eps2r,eps2i,resr,resi;
-                          csqrt_ymm4r8(epsr,epsi,&sqr1,&sqi1);
+                          csqrt_ymm4c8(epsr,epsi,&sqr1,&sqi1);
                           eps2r = _mm256_add_pd(sqr1,sqr1);
                           eps2i = _mm256_add_pd(sqi1,sqi1);
-                          csqrt_ymm4r8(mur,mui,&sqr2,&sqi2);
+                          csqrt_ymm4c8(mur,mui,&sqr2,&sqi2);
                           sumr = _mm256_add_pd(sqr1,sqr2);
                           sumi = _mm256_add_pd(sqi1,sqi2);
                           cdiv_ymm4c8(eps2r,eps2i,sumr,sumi,&resr,&resi);
@@ -4621,8 +4573,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rint_f4169_ymm4r8(const __m256d mur,
@@ -4641,8 +4592,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rint_f4169_ymm4r8_a( const double * __restrict __ATTR_ALIGN__(32) pmur,
@@ -4657,16 +4607,15 @@ namespace gms {
                          __m256d epsr = _mm256_load_pd(&pepsr[0]);
                          __m256d epsi = _mm256_load_pd(&pepsi[0]);
                          __m256d t0r,t0i;
-                        const __m256d n1 = _mm256_mul_pd(-1.0f);
+                        const __m256d n1 = _mm256_mul_pd(-1.0);
                         Rext_f4164_ymm4r8(mur,mui,epsr,epsi,&t0r,&t0i);
                         _mm256_store_pd(&Rintr[0] ,_mm256_mul_pd(n1,t0r));
                         _mm256_store_pd(&Rinti[0] ,_mm256_mul_pd(n1,t0i));
                  }
 
 
-                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void Rint_f4169_ymm4r8_u( const double * __restrict pmur,
@@ -4681,7 +4630,7 @@ namespace gms {
                          __m256d epsr = _mm256_loadu_pd(&pepsr[0]);
                          __m256d epsi = _mm256_loadu_pd(&pepsi[0]);
                          __m256d t0r,t0i;
-                        const __m256d n1 = _mm256_mul_pd(-1.0f);
+                        const __m256d n1 = _mm256_mul_pd(-1.0);
                         Rext_f4164_ymm4r8(mur,mui,epsr,epsi,&t0r,&t0i);
                         _mm256_storeu_pd(&Rintr[0] ,_mm256_mul_pd(n1,t0r));
                         _mm256_storeu_pd(&Rinti[0] ,_mm256_mul_pd(n1,t0i));
@@ -4694,8 +4643,7 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4191_ymm4r8(const __m256d a,
@@ -4707,7 +4655,7 @@ namespace gms {
                            __m256d t0r,t0i;
                            __m256d cabs,rcs;
                           Rext_f4164_ymm4r8(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm4r8(t0r,t0i);
+                          cabs = cabs_ymm4c8(t0r,t0i);
                           rcs  = _mm256_mul_pd(cabs,_mm256_mul_pd(PI,a));
                           return (rcs);
                  }
@@ -4731,7 +4679,7 @@ namespace gms {
                            __m256d t0r,t0i;
                            __m256d cabs,rcs;
                           Rext_f4164_ymm4r8(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm4r8(t0r,t0i);
+                          cabs = cabs_ymm4c8(t0r,t0i);
                           rcs  = _mm256_mul_pd(cabs,_mm256_mul_pd(PI,a));
                           return (rcs);
                  }
@@ -4755,7 +4703,7 @@ namespace gms {
                            __m256d t0r,t0i;
                            __m256d cabs,rcs;
                           Rext_f4164_ymm4r8(mur,mui,epsr,epsi,&t0r,&t0i);
-                          cabs = cabs_ymm4r8(t0r,t0i);
+                          cabs = cabs_ymm4c8(t0r,t0i);
                           rcs  = _mm256_mul_pd(cabs,_mm256_mul_pd(PI,a));
                           return (rcs);
                  }
@@ -4816,7 +4764,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,_mm256_mul_pd(div2r,cosp));
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -4884,7 +4832,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,_mm256_mul_pd(div2r,cosp));
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -4952,7 +4900,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,_mm256_mul_pd(div2r,cosp));
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -5011,7 +4959,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,div2r);
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -5076,7 +5024,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,div2r);
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -5141,7 +5089,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,div2r);
                           t1r   = _mm256_sub_pd(t0r,div2r);
                           t1i   = _mm256_sub_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -5201,7 +5149,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,div2r);
                           t1r   = _mm256_add_pd(t0r,div2r);
                           t1i   = _mm256_add_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -5266,7 +5214,7 @@ namespace gms {
                           div2i = _mm256_mul_pd(_2,div2r);
                           t1r   = _mm256_add_pd(t0r,div2r);
                           t1i   = _mm256_add_pd(t0i,div2i);
-                          cabs  = cabs_ymm4r8(t1r,t1i);
+                          cabs  = cabs_ymm4c8(t1r,t1i);
                           rcs   = _mm256_mul_pd(frac,cabs);
                           return (rcs);
                }
@@ -8490,7 +8438,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(epsrcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(epsicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8555,7 +8503,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(epsrcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(epsicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8620,7 +8568,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(epsrcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(epsicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8685,7 +8633,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(murcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(muicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8750,7 +8698,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(murcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(muicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8815,7 +8763,7 @@ namespace gms {
                          t1r  = _mm256_sub_pd(murcps,t0r);
                          t0i  = _mm256_mul_pd(_2,_mm256_mul_pd(divi,cosp));
                          t1i  = _mm256_sub_pd(muicps,t0i);
-                         cabs = cabs_ymm4r8(t1r,t1i);
+                         cabs = cabs_ymm4c8(t1r,t1i);
                          rcs  = _mm256_mul_pd(cabs,frac);
                          return (rcs);
                  }
@@ -8870,7 +8818,7 @@ namespace gms {
                          cdiv_ymm4c8(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_pd(divr,t0);
                          divi = _mm256_mul_pd(divi,t0);
-                         cabs = cabs_ymm4r8(divr,divi);
+                         cabs = cabs_ymm4c8(divr,divi);
                          rcs  = _mm256_mul_pd(frac,cabs);
                          return (rcs);
                  }
@@ -8924,7 +8872,7 @@ namespace gms {
                          cdiv_ymm4c8(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_pd(divr,t0);
                          divi = _mm256_mul_pd(divi,t0);
-                         cabs = cabs_ymm4r8(divr,divi);
+                         cabs = cabs_ymm4c8(divr,divi);
                          rcs  = _mm256_mul_pd(frac,cabs);
                          return (rcs);
                  }
@@ -8978,7 +8926,7 @@ namespace gms {
                          cdiv_ymm4c8(mul1r,mul1i,mul2r,mul2i,&divr,&divi);
                          divr = _mm256_mul_pd(divr,t0);
                          divi = _mm256_mul_pd(divi,t0);
-                         cabs = cabs_ymm4r8(divr,divi);
+                         cabs = cabs_ymm4c8(divr,divi);
                          rcs  = _mm256_mul_pd(frac,cabs);
                          return (rcs);
                  }
@@ -14573,7 +14521,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14643,7 +14591,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14713,7 +14661,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14785,7 +14733,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14855,7 +14803,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14926,7 +14874,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -14994,7 +14942,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -15061,7 +15009,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -15128,7 +15076,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -15196,7 +15144,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -15262,7 +15210,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
@@ -15328,7 +15276,7 @@ namespace gms {
                         t3r    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1r,t2r));
                         t3i    = _mm256_mul_pd(_1ba,_mm256_add_pd(t1i,t2i));
                         cmul_ymm4c8(t0r,t0i,t3r,t3i,&tmpr,&tmpi);
-                        cabs   = cabs_ymm4r8(tmpr,tmpi);
+                        cabs   = cabs_ymm4c8(tmpr,tmpi);
                         rcs    = _mm256_mul_pd(fac,cabs);
                         return (rcs);
                 }
