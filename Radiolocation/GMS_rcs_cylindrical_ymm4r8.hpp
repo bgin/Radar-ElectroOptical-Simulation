@@ -10375,7 +10375,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(om,_mm256_add_pd(om2,spi));
@@ -10396,7 +10396,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(om,_mm256_add_pd(om2,spi));
@@ -10417,7 +10417,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(om,_mm256_add_pd(om2,spi));
@@ -10437,7 +10437,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(PI,_mm256_add_pd(om2,spi));
@@ -10458,7 +10458,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(PI,_mm256_add_pd(om2,spi));
@@ -10479,7 +10479,7 @@ namespace gms {
                           const __m256d n2 = _mm256_set1_pd(-2.0f);
                            __m256d F1,om,om2,arg,larg;
                           arg = _mm256_mul_pd(k0a,c0);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           om  = _mm256_mul_pd(n2,larg);
                           om2 = _mm256_mul_pd(om,om);
                           F1  = _mm256_div_pd(PI,_mm256_add_pd(om2,spi));
@@ -10510,9 +10510,9 @@ namespace gms {
                            __m256d L,om,del,ck0h,sk0h,t0;
                            __m256d ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_pd(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 =_mm256_log_pd(ar1);
                           ar2  = _mm256_div_pd(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_pd(ar2);
                           om   = _mm256_mul_pd(n2,lar1);
                           del  = _mm256_mul_pd(hlf,lar2);
                           ck0h = _mm256_cos_pd(k0h);
@@ -10542,9 +10542,9 @@ namespace gms {
                            __m256d L,om,del,ck0h,sk0h,t0;
                            __m256d ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_pd(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 =_mm256_log_pd(ar1);
                           ar2  = _mm256_div_pd(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_pd(ar2);
                           om   = _mm256_mul_pd(n2,lar1);
                           del  = _mm256_mul_pd(hlf,lar2);
                           ck0h = _mm256_cos_pd(k0h);
@@ -10574,9 +10574,9 @@ namespace gms {
                            __m256d L,om,del,ck0h,sk0h,t0;
                            __m256d ar1,ar2,lar1,lar2;
                           ar1  = _mm256_mul_pd(k0a,c1);
-                          lar1 =xlogf(ar1);
+                          lar1 =_mm256_log_pd(ar1);
                           ar2  = _mm256_div_pd(k0h,c0);
-                          lar2 = xlogf(ar2);
+                          lar2 = _mm256_log_pd(ar2);
                           om   = _mm256_mul_pd(n2,lar1);
                           del  = _mm256_mul_pd(hlf,lar2);
                           ck0h = _mm256_cos_pd(k0h);
@@ -10607,7 +10607,7 @@ namespace gms {
                            __m256d ar,lar,sk0h,ck0h;
                            __m256d S,t0;
                           ar  = _mm256_mul_pd(c0,k0a);
-                          lar = xlogf(ar);
+                          lar = _mm256_log_pd(ar);
                           sk0h=  _mm256_sin_pd(k0h);
                           ck0h= _mm256_cos_pd(k0h);
                           t0  = _mm256_mul_pd(hlf,lar);
@@ -10633,7 +10633,7 @@ namespace gms {
                            __m256d ar,lar,sk0h,ck0h;
                            __m256d S,t0;
                           ar  = _mm256_mul_pd(c0,k0a);
-                          lar = xlogf(ar);
+                          lar = _mm256_log_pd(ar);
                           sk0h=  _mm256_sin_pd(k0h);
                           ck0h= _mm256_cos_pd(k0h);
                           t0  = _mm256_mul_pd(hlf,lar);
@@ -10659,7 +10659,7 @@ namespace gms {
                            __m256d ar,lar,sk0h,ck0h;
                            __m256d S,t0;
                           ar  = _mm256_mul_pd(c0,k0a);
-                          lar = xlogf(ar);
+                          lar = _mm256_log_pd(ar);
                           sk0h=  _mm256_sin_pd(k0h);
                           ck0h= _mm256_cos_pd(k0h);
                           t0  = _mm256_mul_pd(hlf,lar);
@@ -10747,7 +10747,7 @@ namespace gms {
                           __m256d G1,L,S,om,G1,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm4r8(k0h,k0a);
                          S = S_f4335_ymm4r8(k0a,k0h);
-                         ln= xlogf(_mm256_mul_pd(k0a,c0));
+                         ln= _mm256_log_pd(_mm256_mul_pd(k0a,c0));
                          om= _mm256_mul_pd(m2,ln); 
                          G2= G2_f4332_ymm4r8(k0h,k0a);
                          om2= _mm256_add_pd(om,om);
@@ -10777,7 +10777,7 @@ namespace gms {
                           __m256d G1,L,S,om,G1,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm4r8(k0h,k0a);
                          S = S_f4335_ymm4r8(k0a,k0h);
-                         ln= xlogf(_mm256_mul_pd(k0a,c0));
+                         ln= _mm256_log_pd(_mm256_mul_pd(k0a,c0));
                          om= _mm256_mul_pd(m2,ln); 
                          G2= G2_f4332_ymm4r8(k0h,k0a);
                          om2= _mm256_add_pd(om,om);
@@ -10807,7 +10807,7 @@ namespace gms {
                           __m256d G1,L,S,om,G1,ln,num,den,om2,t0,rat;
                          L = L_f4334_ymm4r8(k0h,k0a);
                          S = S_f4335_ymm4r8(k0a,k0h);
-                         ln= xlogf(_mm256_mul_pd(k0a,c0));
+                         ln= _mm256_log_pd(_mm256_mul_pd(k0a,c0));
                          om= _mm256_mul_pd(m2,ln); 
                          G2= G2_f4332_ymm4r8(k0h,k0a);
                          om2= _mm256_add_pd(om,om);
@@ -10913,7 +10913,7 @@ namespace gms {
                            __m256d om2,t0,arg;
                           ar = _mm256_mul_pd(k0a,c0);
                           arg= _mm256_mul_pd(k0h,pi2);
-                          lar= xlogf(ar);
+                          lar= _mm256_log_pd(ar);
                           om = _mm256_mul_pd(n2,lar);
                           L  = L_f4334_ymm4r8(k0h,k0a);
                           om2= _mm256_add_pd(om,om);
@@ -10946,7 +10946,7 @@ namespace gms {
                            __m256d om2,t0,arg;
                           ar = _mm256_mul_pd(k0a,c0);
                           arg= _mm256_mul_pd(k0h,pi2);
-                          lar= xlogf(ar);
+                          lar= _mm256_log_pd(ar);
                           om = _mm256_mul_pd(n2,lar);
                           L  = L_f4334_ymm4r8(k0h,k0a);
                           om2= _mm256_add_pd(om,om);
@@ -11609,7 +11609,7 @@ namespace gms {
                           c2gams = _mm256_mul_pd(cgams,cgams);
                           x0     = _mm256_mul_pd(c2gams,c2gami);
                           term1  = _mm256_mul_pd(fac,_mm256_mul_pd(rat1,x0));
-                          larg   = xlogf(arg2);
+                          larg   = _mm256_log_pd(arg2);
                           spsii  =  _mm256_sin_pd(psii);
                           x1     = _mm256_fmadd_pd(larg,larg,c1);
                           inv    = _mm256_rcp14_pd(x1);
@@ -11664,7 +11664,7 @@ namespace gms {
                           c2gams = _mm256_mul_pd(cgams,cgams);
                           x0     = _mm256_mul_pd(c2gams,c2gami);
                           term1  = _mm256_mul_pd(fac,_mm256_mul_pd(rat1,x0));
-                          larg   = xlogf(arg2);
+                          larg   = _mm256_log_pd(arg2);
                           spsii  =  _mm256_sin_pd(psii);
                           x1     = _mm256_fmadd_pd(larg,larg,c1);
                           inv    = _mm256_rcp14_pd(x1);
@@ -11720,7 +11720,7 @@ namespace gms {
                           c2gams = _mm256_mul_pd(cgams,cgams);
                           x0     = _mm256_mul_pd(c2gams,c2gami);
                           term1  = _mm256_mul_pd(fac,_mm256_mul_pd(rat1,x0));
-                          larg   = xlogf(arg2);
+                          larg   = _mm256_log_pd(arg2);
                           spsii  =  _mm256_sin_pd(psii);
                           x1     = _mm256_fmadd_pd(larg,larg,c1);
                           inv    = _mm256_rcp14_pd(x1);
@@ -12072,9 +12072,8 @@ namespace gms {
 
                    */
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N1_f4351_ymm4r8(const __m256d psi) {
@@ -12103,22 +12102,21 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N1_f4351_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) ppsi) {
 
                            __m256d psi = _mm256_load_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
-                          const __m256d n4 = _mm256_set1_pd(-4.0f);
-                          const __m256d n1 = _mm256_set1_pd(-1.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
+                          const __m256d n4 = _mm256_set1_pd(-4.0);
+                          const __m256d n1 = _mm256_set1_pd(-1.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                           const __m256d c3 = _mm256_set1_pd(0.666666666666666666666666666667);
-                          const __m256d _2 = _mm256_set1_pd(2.0f);
+                          const __m256d _2 = _mm256_set1_pd(2.0);
                            __m256d inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
                           carg1= _mm256_cos_pd(arg1);
@@ -12136,21 +12134,20 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N1_f4351_ymm4r8_u(const double * __restrict  ppsi) {
 
                            __m256d psi = _mm256_loadu_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
-                          const __m256d n4 = _mm256_set1_pd(-4.0f);
-                          const __m256d n1 = _mm256_set1_pd(-1.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
+                          const __m256d n4 = _mm256_set1_pd(-4.0);
+                          const __m256d n1 = _mm256_set1_pd(-1.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                           const __m256d c3 = _mm256_set1_pd(0.666666666666666666666666666667);
-                          const __m256d _2 = _mm256_set1_pd(2.0f);
+                          const __m256d _2 = _mm256_set1_pd(2.0);
                            __m256d inv1,inv2,N1,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
                           carg1= _mm256_cos_pd(arg1);
@@ -12167,21 +12164,20 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N2_f4351_ymm4r8(const __m256d psi) {
 
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
-                          const __m256d n4 = _mm256_set1_pd(-4.0f);
-                          const __m256d n1 = _mm256_set1_pd(-1.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
+                          const __m256d n4 = _mm256_set1_pd(-4.0);
+                          const __m256d n1 = _mm256_set1_pd(-1.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                           const __m256d c3 = _mm256_set1_pd(0.666666666666666666666666666667);
-                          const __m256d _2 = _mm256_set1_pd(2.0f);
+                          const __m256d _2 = _mm256_set1_pd(2.0);
                            __m256d inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
                           carg1= _mm256_cos_pd(arg1);
@@ -12198,19 +12194,18 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N2_f4351_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) ppsi) {
 
                            __m256d psi = _mm256_load_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
-                          const __m256d n4 = _mm256_set1_pd(-4.0f);
-                          const __m256d n1 = _mm256_set1_pd(-1.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
+                          const __m256d n4 = _mm256_set1_pd(-4.0);
+                          const __m256d n1 = _mm256_set1_pd(-1.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                           const __m256d c3 = _mm256_set1_pd(0.666666666666666666666666666667);
                           const __m256d _2 = _mm256_set1_pd(2.0f);
@@ -12231,21 +12226,20 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d N2_f4351_ymm4r8_u(const double * __restrict  ppsi) {
 
                            __m256d psi = _mm256_loadu_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
-                          const __m256d n4 = _mm256_set1_pd(-4.0f);
-                          const __m256d n1 = _mm256_set1_pd(-1.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
+                          const __m256d n4 = _mm256_set1_pd(-4.0);
+                          const __m256d n1 = _mm256_set1_pd(-1.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                           const __m256d c3 = _mm256_set1_pd(0.666666666666666666666666666667);
-                          const __m256d _2 = _mm256_set1_pd(2.0f);
+                          const __m256d _2 = _mm256_set1_pd(2.0);
                            __m256d inv1,inv2,N2,arg1,arg2,carg1,carg2,x0,x1;
                           arg1 = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
                           carg1= _mm256_cos_pd(arg1);
@@ -12271,16 +12265,15 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d G_f4352_ymm4r8(const __m256d psi) {
 
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d G,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12292,18 +12285,17 @@ namespace gms {
                   }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d G_f4352_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) ppsi) {
 
                            __m256d psi = _mm256_load_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d G,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12315,18 +12307,17 @@ namespace gms {
                   }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d G_f4352_ymm4r8_u(const double * __restrict  ppsi) {
 
                            __m256d psi = _mm256_loadu_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d G,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12338,17 +12329,16 @@ namespace gms {
                   }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d F_f4352_ymm4r8(const __m256d psi) {
 
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d F,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12361,17 +12351,16 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d F_f4352_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) ppsi) {
 
                            __m256d psi = _mm256_load_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d F,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12384,17 +12373,16 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d F_f4352_ymm4r8_u(const double * __restrict ppsi) {
 
                            __m256d psi = _mm256_loadu_pd(&ppsi[0]);
-                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333f);
-                          const __m256d _2 = _mm256_set1_pd(-2.0f);
-                          const __m256d c1 = _mm256_set1_pd(0.5f);
-                          const __m256d _4 = _mm256_set1_pd(4.0f);
+                          const __m256d c0 = _mm256_set1_pd(0.333333333333333333333333333333333333333333);
+                          const __m256d _2 = _mm256_set1_pd(-2.0);
+                          const __m256d c1 = _mm256_set1_pd(0.5);
+                          const __m256d _4 = _mm256_set1_pd(4.0);
                           const __m256d c2 = _mm256_set1_pd(0.577350269189625764509148780502);
                            __m256d F,inv,arg,carg,x0;
                           arg = _mm256_mul_pd(_mm256_mul_pd(_4,psi),c0);
@@ -12413,8 +12401,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4353_ymm4r8(const __m256d k0a,
@@ -12450,9 +12437,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4353_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -12495,8 +12481,7 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4353_ymm4r8_u(const double * __restrict  pk0a,
@@ -12544,10 +12529,9 @@ namespace gms {
                             Formula 4.3-54
                        */
 
-                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
+                   __ATTR_VECTORCALL__ 
 	           static inline
                    __m256d rcs_f4354_ymm4r8(const __m256d k0a,
                                             const __m256d h,
@@ -12570,8 +12554,7 @@ namespace gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4354_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -12598,9 +12581,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4354_ymm4r8_u(const double * __restrict  pk0a,
@@ -12635,9 +12617,8 @@ namespace gms {
                      */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4354_ymm4r8(const __m256d k0a,
@@ -12664,9 +12645,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4354_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -12698,8 +12678,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4354_ymm4r8_u(const double * __restrict  pk0a,
@@ -12737,9 +12716,8 @@ namespace gms {
                    */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4356_ymm4r8(const __m256d k0a,
@@ -12753,9 +12731,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4356_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -12771,9 +12748,8 @@ namespace gms {
                 }
 
 
-                  __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4356_ymm4r8_u(const double * __restrict  pk0a,
@@ -12800,8 +12776,7 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4411_ymm4r8(const __m256d a,
@@ -12820,16 +12795,15 @@ namespace gms {
                          ab2  = _mm256_mul_pd(_mm256_add_pd(a,b),hlf);
                          c0k0 = _mm256_mul_pd(c0,k0);
                          arg  = _mm256_mul_pd(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_pd(arg);
                          cdiv_ymm4c8(_1,_1,larg,imn,&invr,&invi);
                          *TMr = _mm256_mul_pd(imp,invr);
                          *TMi = _mm256_mul_pd(imp,invi);
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4411_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -12851,16 +12825,15 @@ namespace gms {
                          ab2  = _mm256_mul_pd(_mm256_add_pd(a,b),hlf);
                          c0k0 = _mm256_mul_pd(c0,k0);
                          arg  = _mm256_mul_pd(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_pd(arg);
                          cdiv_ymm4c8(_1,_1,larg,imn,&invr,&invi);
                          _mm256_store_pd(&TMr[0], _mm256_mul_pd(imp,invr));
                          _mm256_store_pd(&TMi[0], _mm256_mul_pd(imp,invi));
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4411_ymm4r8_u(const double * __restrict  pa,
@@ -12882,16 +12855,15 @@ namespace gms {
                          ab2  = _mm256_mul_pd(_mm256_add_pd(a,b),hlf);
                          c0k0 = _mm256_mul_pd(c0,k0);
                          arg  = _mm256_mul_pd(ab2,c0k0);
-                         larg = xlogf(arg);
+                         larg = _mm256_log_pd(arg);
                          cdiv_ymm4c8(_1,_1,larg,imn,&invr,&invi);
                          _mm256_storeu_pd(&TMr[0], _mm256_mul_pd(imp,invr));
                          _mm256_storeu_pd(&TMi[0], _mm256_mul_pd(imp,invi));
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4412_ymm4r8(const __m256d k0a,
@@ -12924,9 +12896,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4412_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -12965,8 +12936,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4412_ymm4r8_u(const double * __restrict  pk0a,
@@ -13010,9 +12980,8 @@ namespace gms {
                   */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4413_ymm4r8(const __m256d a,
@@ -13028,7 +12997,7 @@ namespace gms {
                           c0k0= _mm256_mul_pd(c0,k0);
                           num = _mm256_mul_pd(pi2,abh);
                           arg = _mm256_mul_pd(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           x0  = _mm256_fmadd_pd(larg,larg,pi24);
                           sqr1= _mm256_sqrt_pd(_mm256_mul_pd(k0,abh));
                           sqr2= _mm256_sqrt_pd(x0);
@@ -13041,8 +13010,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4413_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32)  pa,
@@ -13061,7 +13029,7 @@ namespace gms {
                           c0k0= _mm256_mul_pd(c0,k0);
                           num = _mm256_mul_pd(pi2,abh);
                           arg = _mm256_mul_pd(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           x0  = _mm256_fmadd_pd(larg,larg,pi24);
                           sqr1= _mm256_sqrt_pd(_mm256_mul_pd(k0,abh));
                           sqr2= _mm256_sqrt_pd(x0);
@@ -13073,8 +13041,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4413_ymm4r8_u(const double * __restrict   pa,
@@ -13093,7 +13060,7 @@ namespace gms {
                           c0k0= _mm256_mul_pd(c0,k0);
                           num = _mm256_mul_pd(pi2,abh);
                           arg = _mm256_mul_pd(c0k0,abh);
-                          larg= xlogf(arg);
+                          larg= _mm256_log_pd(arg);
                           x0  = _mm256_fmadd_pd(larg,larg,pi24);
                           sqr1= _mm256_sqrt_pd(_mm256_mul_pd(k0,abh));
                           sqr2= _mm256_sqrt_pd(x0);
@@ -13119,11 +13086,10 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
-                   __mmask16 
+                   __mmask8 
                    TM_f4415_helper_ymm4r8(const __m256d k0,
                                            const __m256d a,
                                            const __m256d phi1,
@@ -13132,7 +13098,7 @@ namespace gms {
                       const __m256d c0 = _mm256_set1_pd(0.166666666666666666666666666667f);
                        __m256d a2,b2,sphi1,cphi1,trm1,trm2,root6;
                        __m256d k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
-                      __mmask16 m;
+                      __mmask8 m;
                       k02  = _mm256_mul_pd(k0,k0);
                       a2   = _mm256_mul_pd(a,a);
                       k0a2 = _mm256_mul_pd(k02,a2);
@@ -13166,7 +13132,7 @@ namespace gms {
                                          bool & status) {
 
                         using namespace gms::math;
-                        __mmask16 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
+                        __mmask8 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
@@ -13240,7 +13206,7 @@ namespace gms {
                          __m256d a    = _mm256_load_pd(&pa[0]);
                          __m256d b    = _mm256_load_pd(&pb[0]);
                          __m256d k0   = _mm256_load_pd(&pk0[0]);
-                        __mmask16 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
+                        __mmask8 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
@@ -13314,7 +13280,7 @@ namespace gms {
                          __m256d a    = _mm256_loadu_pd(&pa[0]);
                          __m256d b    = _mm256_loadu_pd(&pb[0]);
                          __m256d k0   = _mm256_loadu_pd(&pk0[0]);
-                        __mmask16 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
+                        __mmask8 m = TM_f4415_helper_ymm4r8(k0,a,phi1,phi2,b);
                         if(!m) {
                            status = false;
                            return;
@@ -13489,9 +13455,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4419_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pphi1,
@@ -13523,9 +13488,8 @@ namespace gms {
                  }
 
 
-                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4419_ymm4r8_u(const double * __restrict  pphi1,
@@ -13564,10 +13528,8 @@ namespace gms {
                       */
 
 
-                     
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4420_ymm4r8(const __m256d a,
@@ -13593,8 +13555,7 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4420_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -13622,9 +13583,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4420_ymm4r8_u(const double * __restrict  pa,
@@ -13660,11 +13620,10 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
-                   __mmask16 
+                   __mmask8 
                    T_f4423_helper_ymm4r8( const __m256d k0,
                                            const __m256d a,
                                            const __m256d phi1,
@@ -13673,7 +13632,7 @@ namespace gms {
                       const __m256d c0 = _mm256_set1_pd(0.166666666666666666666666666667f);
                        __m256d a2,b2,sphi1,cphi1,trm1,trm2,root6;
                        __m256d k02,absp,sphi1s,cphi1s,k0a2,k0b2,x0;
-                      __mmask16 m;
+                      __mmask8 m;
                       k02  = _mm256_mul_pd(k0,k0);
                       a2   = _mm256_mul_pd(a,a);
                       k0a2 = _mm256_mul_pd(k02,a2);
@@ -13692,9 +13651,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d T_f4423_ymm4r8(const __m256d a,
@@ -13705,7 +13663,7 @@ namespace gms {
                                           bool & status) {
 
                           using namespace gms::math;
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13733,9 +13691,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d T_f4423_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -13751,7 +13708,7 @@ namespace gms {
                            __m256d a    = _mm256_load_pd(&pa[0]);
                            __m256d b    = _mm256_load_pd(&pb[0]);
                            __m256d k0   = _mm256_load_pd(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13779,9 +13736,8 @@ namespace gms {
                  }
 
 
-                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d T_f4423_ymm4r8_u(const double * __restrict pa,
@@ -13797,7 +13753,7 @@ namespace gms {
                            __m256d a    = _mm256_loadu_pd(&pa[0]);
                            __m256d b    = _mm256_loadu_pd(&pb[0]);
                            __m256d k0   = _mm256_loadu_pd(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13832,9 +13788,8 @@ namespace gms {
                      */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4424_ymm4r8(const __m256d a,
@@ -13845,7 +13800,7 @@ namespace gms {
                                           bool & status) {
 
                          
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13875,9 +13830,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4424_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pa,
@@ -13893,7 +13847,7 @@ namespace gms {
                            __m256d a    = _mm256_load_pd(&pa[0]);
                            __m256d b    = _mm256_load_pd(&pb[0]);
                            __m256d k0   = _mm256_load_pd(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13924,8 +13878,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4424_ymm4r8_u(const double * __restrict  pa,
@@ -13941,7 +13894,7 @@ namespace gms {
                            __m256d a    = _mm256_loadu_pd(&pa[0]);
                            __m256d b    = _mm256_loadu_pd(&pb[0]);
                            __m256d k0   = _mm256_loadu_pd(&pk0[0]);
-                          __mmask16 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
+                          __mmask8 m = TM_f4423_helper_ymm4r8(k0,a,phi1,phi2,b);
                           if(!m) {
                              status = false;
                              return;
@@ -13978,8 +13931,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4425_ymm4r8(const __m256d k0,
@@ -14003,9 +13955,8 @@ namespace gms {
                  }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4425_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32)  pk0,
@@ -14034,8 +13985,7 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4425_ymm4r8_u(const double * __restrict   pk0,
@@ -14070,9 +14020,8 @@ namespace gms {
                           TM-case, formula 4.4-26
                      */
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_ymm4r8(const __m256d k0,
@@ -14127,9 +14076,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -14193,9 +14141,8 @@ namespace gms {
                 }
 
 
-                  __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                   __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TM_f4426_ymm4r8_u(const double * __restrict  pk0,
@@ -14267,9 +14214,8 @@ namespace gms {
                      */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                     __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_ymm4r8(const __m256d k0,
@@ -14324,9 +14270,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -14390,9 +14335,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    void TE_f4427_ymm4r8_u(const double * __restrict  pk0,
@@ -14466,9 +14410,8 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4428_ymm4r8(const __m256d k0,
@@ -14527,9 +14470,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                     __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4428_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -14597,9 +14539,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4428_ymm4r8_u(const double * __restrict  pk0,
@@ -14679,8 +14620,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4429_ymm4r8(const __m256d k0,
@@ -14740,8 +14680,7 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4429_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -14810,9 +14749,8 @@ namespace gms {
 
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4429_ymm4r8_u(const double * __restrict pk0,
@@ -14890,9 +14828,8 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4430_ymm4r8(const __m256d k0,
@@ -14948,9 +14885,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4430_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -15015,9 +14951,8 @@ namespace gms {
                 }
 
 
-                  __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4430_ymm4r8_u(const double * __restrict pk0,
@@ -15092,9 +15027,8 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4431_ymm4r8(const __m256d k0,
@@ -15150,9 +15084,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                  __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4431_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -15216,9 +15149,8 @@ namespace gms {
                 }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4431_ymm4r8_u(const double * __restrict  pk0,
@@ -15292,9 +15224,8 @@ namespace gms {
                     */
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4432_ymm4r8(const __m256d k0,
@@ -15311,8 +15242,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4432_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -15330,8 +15260,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4432_ymm4r8_u(const double * __restrict  pk0,
@@ -15358,10 +15287,9 @@ namespace gms {
 
                    */
 
-
+                 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4433_ymm4r8(const __m256d k0,
@@ -15378,8 +15306,7 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4433_ymm4r8_a(const double * __restrict __ATTR_ALIGN__(32) pk0,
@@ -15396,9 +15323,8 @@ namespace gms {
                }
 
 
-                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
+                    __ATTR_ALWAYS_INLINE__
+	           __ATTR_OPTIMIZE_O3__
                    __ATTR_VECTORCALL__
 	           static inline
                    __m256d rcs_f4433_ymm4r8_u(const double * __restrict  pk0,
