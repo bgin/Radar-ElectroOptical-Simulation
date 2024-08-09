@@ -68,9 +68,9 @@ namespace gms {
                          cylinder-parallel,formula 4.1-19
                     */
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f419_zmm8r8(const __m512d a,
                                            const __m512d k0a) {
@@ -90,9 +90,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f419_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                            const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -114,9 +114,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f419_zmm8r8_u(const double * __restrict  pa,
                                              const double * __restrict  pk0a) {
@@ -144,9 +144,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4120_zmm8r8(const __m512d a,
                                             const __m512d k0a) {
@@ -163,9 +163,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4120_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -184,9 +184,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4120_zmm8r8_u(const double * __restrict  pa,
                                             const double * __restrict  pk0a) {
@@ -210,9 +210,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4121_zmm8r8(const __m512d a,
                                             const __m512d k0a) {
@@ -222,9 +222,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4121_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -234,9 +234,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4121_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a) {
@@ -252,9 +252,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4122_zmm8r8(const __m512d phi,
                                             const __m512d a,
@@ -274,9 +274,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4122_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -299,9 +299,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4122_zmm8r8_u(const double * __restrict  pphi,
                                               const double * __restrict  pa,
@@ -329,9 +329,9 @@ namespace gms {
                    */
  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4123_zmm8r8(const __m512d a,
                                             const __m512d k0a) {
@@ -341,9 +341,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4123_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -353,9 +353,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4123_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a) {
@@ -370,9 +370,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4124_zmm8r8(const __m512d a,
                                             const __m512d k0a) {
@@ -388,9 +388,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4124_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -408,9 +408,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4124_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a) {
@@ -434,9 +434,9 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kz_f4125_zmm8r8(const __m512d eps0,
                                          const __m512d mu0,
@@ -463,9 +463,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kz_f4125_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) peps0,
                                            const  double * __restrict __ATTR_ALIGN__(64) pmu0,
@@ -498,9 +498,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kz_f4125_zmm8r8_u(const  double * __restrict  peps0,
                                            const  double * __restrict  pmu0,
@@ -539,9 +539,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kph_f4126_zmm8r8(const __m512d Hr,
                                           const __m512d Hi,
@@ -554,9 +554,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kph_f4126_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) Hr,
                                             const double * __restrict __ATTR_ALIGN__(64) Hi,
@@ -569,9 +569,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Kph_f4126_zmm8r8_u(const double * __restrict  Hr,
                                             const double * __restrict  Hi,
@@ -590,9 +590,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Iz_f4127_zmm8r8(const __m512d eps0,
                                          const __m512d mu0,
@@ -623,9 +623,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Iz_f4127_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) peps0,
                                            const  double * __restrict __ATTR_ALIGN__(64) pmu0,
@@ -663,9 +663,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Iz_f4127_zmm8r8_u(const  double * __restrict  peps0,
                                            const  double * __restrict  pmu0,
@@ -711,9 +711,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4129_zmm8r8(const __m512d phi2,
                                          const __m512d a,
@@ -774,9 +774,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4129_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi2,
                                            const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -844,9 +844,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4129_zmm8r8_u(const double * __restrict  pphi2,
                                            const double * __restrict  pa,
@@ -922,9 +922,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4131_zmm8r8(const __m512d phi2,
                                          const __m512d a,
@@ -985,9 +985,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4131_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi2,
                                            const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -1055,9 +1055,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4131_zmm8r8_u(const double * __restrict  pphi2,
                                            const double * __restrict  pa,
@@ -1135,9 +1135,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4130_zmm8r8(const __m512d Er,
                                          const __m512d Ei,
@@ -1201,9 +1201,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4130_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEr,
                                            const double * __restrict __ATTR_ALIGN__(64) pEi,
@@ -1274,9 +1274,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4130_zmm8r8_a(const double * __restrict  pEr,
                                            const double * __restrict  pEi,
@@ -1357,9 +1357,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4132_zmm8r8(const __m512d Hr,
                                          const __m512d Hi,
@@ -1424,9 +1424,9 @@ namespace gms {
 
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4132_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64)  pHr,
                                            const  double * __restrict __ATTR_ALIGN__(64)  pHi,
@@ -1497,9 +1497,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4132_zmm8r8_u(const  double * __restrict  pHr,
                                            const  double * __restrict  pHi,
@@ -1577,9 +1577,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4133_zmm8r8(const __m512d Er,
                                          const __m512d Ei,
@@ -1623,9 +1623,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4133_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEr,
                                            const double * __restrict __ATTR_ALIGN__(64) pEi,
@@ -1677,9 +1677,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EO_f4133_zmm8r8_u(const double * __restrict  pEr,
                                            const double * __restrict  pEi,
@@ -1738,9 +1738,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4135_zmm8r8(const __m512d Hr,
                                          const __m512d Hi,
@@ -1784,9 +1784,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4135_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pHr,
                                            const double * __restrict __ATTR_ALIGN__(64) pHi,
@@ -1837,9 +1837,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HO_f4135_zmm8r8_u(const double * __restrict  pHr,
                                            const double * __restrict  pHi,
@@ -1897,9 +1897,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4134_zmm8r8(const __m512d Er,
                                          const __m512d Ei,
@@ -1952,9 +1952,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4134_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEr,
                                          const double * __restrict __ATTR_ALIGN__(64) pEi,
@@ -2013,9 +2013,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void EC_f4134_zmm8r8_u(const double * __restrict  pEr,
                                            const double * __restrict  pEi,
@@ -2082,9 +2082,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4136_zmm8r8(const __m512d Hr,
                                          const __m512d Hi,
@@ -2137,9 +2137,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4136_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pHr,
                                            const double * __restrict __ATTR_ALIGN__(64) pHi,
@@ -2197,9 +2197,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void HC_f4136_zmm8r8_u(const double * __restrict  pHr,
                                            const double * __restrict  pHi,
@@ -2263,9 +2263,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4137_zmm8r8(const __m512d a,
                                             const __m512d phi2) {
@@ -2278,9 +2278,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4137_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pphi2) {
@@ -2295,9 +2295,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4137_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pphi2) {
@@ -2318,9 +2318,9 @@ namespace gms {
 
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4138_zmm8r8(const __m512d a) {
 
@@ -2329,9 +2329,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4138_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa) {
 
@@ -2341,9 +2341,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4138_zmm8r8_u(const double * __restrict  pa) {
 
@@ -2359,9 +2359,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4140_zmm8r8(const __m512d k0a,
                                             const __m512d alpha) {
@@ -2379,9 +2379,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4140_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                               const double * __restrict __ATTR_ALIGN__(64) palpha) {
@@ -2401,9 +2401,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4140_zmm8r8_u(const double * __restrict  pk0a,
                                               const double * __restrict  palpha) {
@@ -2431,9 +2431,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4139_zmm8r8(const __m512d Er,
                                          const __m512d Ei,
@@ -2468,9 +2468,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4139_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEr,
                                            const double * __restrict __ATTR_ALIGN__(64) pEi,
@@ -2513,9 +2513,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4139_zmm8r8_u(const double * __restrict  pEr,
                                            const double * __restrict  pEi,
@@ -2564,9 +2564,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4141_zmm8r8(const __m512d k0a) {
 
@@ -2579,9 +2579,9 @@ namespace gms {
                 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4141_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pk0a) {
 
@@ -2594,9 +2594,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4141_zmm8r8_u(const double * __restrict   pk0a) {
 
@@ -2614,9 +2614,9 @@ namespace gms {
                     */
 
                     __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4145_zmm8r8(const __m512d EIr,
                                          const __m512d EIi,
@@ -2665,9 +2665,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4145_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEIr,
                                            const double * __restrict __ATTR_ALIGN__(64) pEIi,
@@ -2728,9 +2728,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Es_f4145_zmm8r8_u(const double * __restrict  pEIr,
                                            const double * __restrict  pEIi,
@@ -2797,9 +2797,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hs_f4146_zmm8r8(const __m512d HIr,
                                          const __m512d HIi,
@@ -2848,9 +2848,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hs_f4146_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pHIr,
                                            const double * __restrict __ATTR_ALIGN__(64) pHIi,
@@ -2911,9 +2911,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hs_f4146_zmm8r8_u(const double * __restrict   pHIr,
                                            const double * __restrict   pHIi,
@@ -2980,9 +2980,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4147_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3013,9 +3013,9 @@ namespace gms {
 
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4147_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3052,9 +3052,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4147_zmm8r8_u(const double * __restrict  pa,
                                             const double * __restrict  pk0a,
@@ -3097,9 +3097,9 @@ namespace gms {
                    */   
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4148_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3129,9 +3129,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4148_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3168,9 +3168,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4148_zmm8r8_u(const double * __restrict  pa,
                                             const double * __restrict pk0a,
@@ -3212,9 +3212,9 @@ namespace gms {
                     */
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4149_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3243,9 +3243,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4149_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3280,9 +3280,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4149_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a,
@@ -3322,9 +3322,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4150_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3353,9 +3353,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4150_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3390,9 +3390,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4150_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a,
@@ -3432,9 +3432,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4151_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3463,9 +3463,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4151_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3500,9 +3500,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4151_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a,
@@ -3542,9 +3542,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4152_zmm8r8(const __m512d a,
                                             const __m512d k0a,
@@ -3573,9 +3573,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4152_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -3610,9 +3610,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4152_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pk0a,
@@ -3652,9 +3652,9 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4172_zmm8r8(const __m512d mur,
                                           const __m512d mui,
@@ -3690,9 +3690,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4172_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pmur,
                                             const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -3735,9 +3735,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4172_zmm8r8_u(const double * __restrict  pmur,
                                             const double * __restrict  pmui,
@@ -3785,9 +3785,9 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4173_zmm8r8(const __m512d mur,
                                           const __m512d mui,
@@ -3819,9 +3819,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4173_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pmur,
                                             const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -3858,9 +3858,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4173_zmm8r8_u(const double * __restrict  pmur,
                                             const double * __restrict  pmui,
@@ -3902,9 +3902,9 @@ namespace gms {
                        */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4174_zmm8r8(const __m512d mur,
                                           const __m512d mui,
@@ -3943,9 +3943,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4174_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pmur,
                                             const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -3990,9 +3990,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4174_zmm8r8_u(const double * __restrict pmur,
                                             const double * __restrict  pmui,
@@ -4043,9 +4043,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4175_zmm8r8(const __m512d mur,
                                            const __m512d mui,
@@ -4078,9 +4078,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	           __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4175_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pmur,
                                             const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4118,9 +4118,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4175_zmm8r8_u(const double * __restrict  pmur,
                                             const double * __restrict  pmui,
@@ -4163,9 +4163,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4176_zmm8r8( const __m512d mur,
                                            const __m512d mui,
@@ -4199,9 +4199,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4176_zmm8r8_a( const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4242,9 +4242,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4176_zmm8r8_u( const double * __restrict  pmur,
                                              const double * __restrict  pmui,
@@ -4291,9 +4291,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4177_zmm8r8( const __m512d mur,
                                            const __m512d mui,
@@ -4327,9 +4327,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4177_zmm8r8_a( const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4370,9 +4370,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rin_f4177_zmm8r8_u( const double * __restrict  pmur,
                                              const double * __restrict  pmui,
@@ -4418,9 +4418,9 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rext_f4164_zmm8r8(const __m512d mur,
                                            const __m512d mui,
@@ -4442,9 +4442,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rext_f4164_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4472,9 +4472,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rext_f4164_zmm8r8_u(const double * __restrict  pmur,
                                              const double * __restrict  pmui,
@@ -4509,9 +4509,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4167_zmm8r8( const __m512d mur,
                                            const __m512d mui,
@@ -4533,9 +4533,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4167_zmm8r8_a( const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4563,9 +4563,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tin_f4167_zmm8r8_u( const double * __restrict  pmur,
                                              const double * __restrict  pmui,
@@ -4599,9 +4599,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4168_zmm8r8( const __m512d mur,
                                            const __m512d mui,
@@ -4623,9 +4623,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4168_zmm8r8_a(  const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4653,9 +4653,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Tout_f4168_zmm8r8_u(  const double * __restrict  pmur,
                                              const double * __restrict  pmui,
@@ -4689,9 +4689,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rint_f4169_zmm8r8(const __m512d mur,
                                            const __m512d mui,
@@ -4709,9 +4709,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rint_f4169_zmm8r8_a( const double * __restrict __ATTR_ALIGN__(64) pmur,
                                              const double * __restrict __ATTR_ALIGN__(64) pmui,
@@ -4733,9 +4733,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Rint_f4169_zmm8r8_u( const double * __restrict pmur,
                                               const double * __restrict  pmui,
@@ -4762,9 +4762,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4191_zmm8r8(const __m512d a,
                                             const __m512d mur,
@@ -4782,9 +4782,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4191_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pmur,
@@ -4806,9 +4806,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4191_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pmur,
@@ -4835,9 +4835,9 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41104_zmm8r8(const __m512d a0,
                                              const __m512d a1,
@@ -4891,9 +4891,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41104_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                                const double * __restrict __ATTR_ALIGN__(64) pa1,
@@ -4959,9 +4959,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41104_zmm8r8_u(const double * __restrict  pa0,
                                                const double * __restrict  pa1,
@@ -5032,9 +5032,9 @@ namespace gms {
                   */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41105_zmm8r8(const __m512d a0,
                                              const __m512d a1,
@@ -5086,9 +5086,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41105_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                                const double * __restrict __ATTR_ALIGN__(64) pa1,
@@ -5151,9 +5151,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41105_zmm8r8_u(const double * __restrict  pa0,
                                                const double * __restrict  pa1,
@@ -5222,9 +5222,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41106_zmm8r8(const __m512d a0,
                                              const __m512d a1,
@@ -5276,9 +5276,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41106_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                                const double * __restrict __ATTR_ALIGN__(64) pa1,
@@ -5350,9 +5350,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41124_zmm8r8(const __m512d a1,
                                           const __m512d a0,
@@ -5384,9 +5384,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41124_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) pa1,
                                             const  double * __restrict __ATTR_ALIGN__(64) pa0,
@@ -5428,9 +5428,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41124_zmm8r8_u(const  double * __restrict  pa1,
                                           const  double * __restrict pa0,
@@ -5481,9 +5481,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41126_zmm8r8(const __m512d a1,
                                           const __m512d a0,
@@ -5515,9 +5515,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41126_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) pa1,
                                             const  double * __restrict __ATTR_ALIGN__(64) pa0,
@@ -5558,9 +5558,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41126_zmm8r8_u(const  double * __restrict  pa1,
                                             const  double * __restrict  pa0,
@@ -5609,9 +5609,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41125_zmm8r8(const __m512d a1,
                                           const __m512d a0,
@@ -5657,9 +5657,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41125_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) pa1,
                                             const  double * __restrict __ATTR_ALIGN__(64) pa0,
@@ -5714,9 +5714,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41125_zmm8r8_u(const  double * __restrict  pa1,
                                             const  double * __restrict  pa0,
@@ -5780,9 +5780,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41127_zmm8r8(const __m512d a1,
                                           const __m512d a0,
@@ -5828,9 +5828,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41127_zmm8r8_a(const  double * __restrict __ATTR_ALIGN__(64) pa1,
                                             const  double * __restrict __ATTR_ALIGN__(64) pa0,
@@ -5885,9 +5885,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41127_zmm8r8_u(const  double * __restrict  pa1,
                                             const  double * __restrict  pa0,
@@ -5951,9 +5951,9 @@ namespace gms {
                     
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41162_zmm8r8(const __m512d k0a,
                                           __m512d * __restrict A0r,
@@ -5970,9 +5970,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41162_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                             double * __restrict __ATTR_ALIGN__(64) A0r,
@@ -5991,9 +5991,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41162_zmm8r8_u(const double * __restrict  pk0a,
                                             double * __restrict  A0r,
@@ -6014,9 +6014,9 @@ namespace gms {
                  
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41162_zmm8r8(__m512d * __restrict B0r,
                                           __m512d * __restrict B0i) {
@@ -6027,9 +6027,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41162_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) B0r,
                                           double * __restrict __ATTR_ALIGN__(64) B0i) {
@@ -6040,9 +6040,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41162_zmm8r8_u(double * __restrict  B0r,
                                           double * __restrict  B0i) {
@@ -6053,9 +6053,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41162_zmm8r8(__m512d * __restrict A1r,
                                           __m512d * __restrict A1i) {
@@ -6066,9 +6066,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41162_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) A1r,
                                           double * __restrict __ATTR_ALIGN__(64) A1i) {
@@ -6079,9 +6079,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41162_zmm8r8_u(double * __restrict  A1r,
                                             double * __restrict  A1i) {
@@ -6092,9 +6092,9 @@ namespace gms {
 
 
                       __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41162_zmm8r8(const __m512d k0a,
                                           __m512d * __restrict B1r,
@@ -6111,9 +6111,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41162_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                             double * __restrict __ATTR_ALIGN__(64) B1r,
@@ -6132,9 +6132,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41162_zmm8r8_u(const double * __restrict  pk0a,
                                             double * __restrict  B1r,
@@ -6160,9 +6160,9 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41163_zmm8r8(const __m512d a,
                                              const __m512d k0a) {
@@ -6178,9 +6178,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41163_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                              const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -6198,9 +6198,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41163_zmm8r8_u(const double * __restrict  pa,
                                              const double * __restrict  pk0a) {
@@ -6226,9 +6226,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41164_zmm8r8(const __m512d a,
                                              const __m512d k0a,
@@ -6247,9 +6247,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41164_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                                const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -6271,9 +6271,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f41164_zmm8r8_u(const double * __restrict  pa,
                                                const double * __restrict  pk0a,
@@ -6302,9 +6302,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41165_zmm8r8(const __m512d k0a,
                                           __m512d * __restrict A0r,
@@ -6319,9 +6319,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41165_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                             double * __restrict __ATTR_ALIGN__(64) A0r,
@@ -6337,9 +6337,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A0_f41165_zmm8r8_u(const double * __restrict  pk0a,
                                             double * __restrict  A0r,
@@ -6355,9 +6355,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41165_zmm8r8(__m512d * __restrict A0r,
                                           __m512d * __restrict A0i) {
@@ -6369,9 +6369,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41165_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) A0r,
                                             double * __restrict __ATTR_ALIGN__(64) A0i) {
@@ -6382,9 +6382,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void A1_f41165_zmm8r8_u(double * __restrict  A0r,
                                             double * __restrict  A0i) {
@@ -6395,9 +6395,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41165_zmm8r8(__m512d * __restrict B0r,
                                           __m512d * __restrict B0i) {
@@ -6409,9 +6409,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41165_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) B0r,
                                             double * __restrict __ATTR_ALIGN__(64) B0i) {
@@ -6422,9 +6422,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B0_f41165_zmm8r8_u(double * __restrict  B0r,
                                             double * __restrict  B0i) {
@@ -6435,9 +6435,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41165_zmm8r8(const __m512d k0a,
                                           __m512d * __restrict B1r,
@@ -6454,9 +6454,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41165_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                           double * __restrict __ATTR_ALIGN__(64) B1r,
@@ -6474,9 +6474,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void B1_f41165_zmm8r8_u(const double * __restrict  pk0a,
                                           double * __restrict  B1r,
@@ -6501,9 +6501,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14166_zmm8r8(const __m512d a,
                                              const __m512d k0a) {
@@ -6519,9 +6519,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14166_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                                const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -6539,9 +6539,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14166_zmm8r8_u(const double * __restrict pa,
                                                const double * __restrict  pk0a) {
@@ -6567,9 +6567,9 @@ namespace gms {
                  
  
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14167_zmm8r8(const __m512d a,
                                              const __m512d k0a,
@@ -6589,9 +6589,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14167_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                                const double * __restrict __ATTR_ALIGN__(64) pk0a,
@@ -6613,9 +6613,9 @@ namespace gms {
                }
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f14167_zmm8r8_u(const double * __restrict  pa,
                                                const double * __restrict  pk0a,
@@ -6647,9 +6647,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4248_zmm8r8(const __m512d E0r,
                                          const __m512d E0i,
@@ -6722,9 +6722,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4248_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pE0r,
                                            const double * __restrict __ATTR_ALIGN__(64) pE0i,
@@ -6810,9 +6810,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4248_zmm8r8_u(const double * __restrict  pE0r,
                                            const double * __restrict  pE0i,
@@ -6908,9 +6908,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hp_f4251_zmm8r8(const __m512d E0r,
                                          const __m512d E0i,
@@ -6989,9 +6989,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hp_f4251_zmm8r8_a(  const double * __restrict __ATTR_ALIGN__(64) pE0r,
                                            const double * __restrict __ATTR_ALIGN__(64) pE0i,
@@ -7084,9 +7084,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hp_f4251_zmm8r8_u(  const double * __restrict  pE0r,
                                            const double * __restrict  pE0i,
@@ -7188,9 +7188,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4249_zmm8r8(const __m512d E0r,
                                           const __m512d E0i,
@@ -7246,9 +7246,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4249_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pE0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pE0i,
@@ -7315,9 +7315,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4249_zmm8r8_u(const double * __restrict pE0r,
                                           const double * __restrict  pE0i,
@@ -7394,9 +7394,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4250_zmm8r8( const __m512d E0r,
                                           const __m512d E0i,
@@ -7454,9 +7454,9 @@ namespace gms {
 
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4250_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pE0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pE0i,
@@ -7525,9 +7525,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4250_zmm8r8_u(const double * __restrict  pE0r,
                                           const double * __restrict pE0i,
@@ -7605,9 +7605,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4252_zmm8r8(const __m512d H0r,
                                          const __m512d H0i,
@@ -7678,9 +7678,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4252_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pH0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pH0i,
@@ -7763,9 +7763,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hz_f4252_zmm8r8_u(const double * __restrict  pH0r,
                                           const double * __restrict  pH0i,
@@ -7857,9 +7857,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4255_zmm8r8(const __m512d H0r,
                                          const __m512d H0i,
@@ -7930,9 +7930,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4255_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pH0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pH0i,
@@ -8014,9 +8014,9 @@ namespace gms {
 
 
                       __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Eph_f4255_zmm8r8_u(const double * __restrict pH0r,
                                           const double * __restrict  pH0i,
@@ -8107,9 +8107,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hph_f4253_zmm8r8(const __m512d H0r,
                                           const __m512d H0i,
@@ -8162,9 +8162,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hph_f4253_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pH0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pH0i,
@@ -8229,9 +8229,9 @@ namespace gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Hph_f4253_zmm8r8_u(const double * __restrict  pH0r,
                                           const double * __restrict pH0i,
@@ -8305,9 +8305,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4254_zmm8r8( const __m512d H0r,
                                           const __m512d H0i,
@@ -8362,9 +8362,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4254_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pH0r,
                                           const double * __restrict __ATTR_ALIGN__(64) pH0i,
@@ -8431,9 +8431,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void Ez_f4254_zmm8r8_u(const double * __restrict  pH0r,
                                           const double * __restrict pH0i,
@@ -8508,9 +8508,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4256_zmm8r8(const __m512d a0,
                                             const __m512d k0a0,
@@ -8565,9 +8565,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4256_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a0,
@@ -8630,9 +8630,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4256_zmm8r8_u(const double * __restrict  pa0,
                                               const double * __restrict  pk0a0,
@@ -8703,9 +8703,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4258_zmm8r8(const __m512d a0,
                                             const __m512d k0a0,
@@ -8760,9 +8760,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4258_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a0,
@@ -8825,9 +8825,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4258_zmm8r8_u(const double * __restrict  pa0,
                                               const double * __restrict  pk0a0,
@@ -8899,9 +8899,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4257_zmm8r8(const __m512d a0,
                                             const __m512d k0a0,
@@ -8945,9 +8945,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4257_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa0,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0a0,
@@ -8999,9 +8999,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4257_zmm8r8_u(const double * __restrict  pa0,
                                               const double * __restrict  pk0a0,
@@ -9062,9 +9062,9 @@ namespace gms {
 
                     
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f439_zmm8r8(const __m512d EIr,
                                         const __m512d EIi,
@@ -9103,9 +9103,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f439_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pEIr,
                                           const double * __restrict __ATTR_ALIGN__(64) pEIi,
@@ -9152,9 +9152,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f439_zmm8r8_u(const double * __restrict  pEIr,
                                           const double * __restrict  pEIi,
@@ -9210,9 +9210,9 @@ namespace gms {
                     */
                   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4310_zmm8r8(const __m512d k0,
                                             const __m512d h,
@@ -9244,9 +9244,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4310_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pk0,
                                               const double * __restrict __ATTR_ALIGN__(64)  ph,
@@ -9283,9 +9283,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4310_zmm8r8_u(const double * __restrict   pk0,
                                               const double * __restrict   ph,
@@ -9329,9 +9329,9 @@ namespace gms {
 
                    
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4311_zmm8r8(const __m512d k0,
                                             const __m512d h,
@@ -9355,9 +9355,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4311_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) ph,
@@ -9384,9 +9384,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4311_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  ph,
@@ -9419,9 +9419,9 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4318_zmm8r8(const __m512d EIr,
                                          const __m512d EIi,
@@ -9458,9 +9458,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4318_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pEIr,
                                            const double * __restrict __ATTR_ALIGN__(64)  pEIi,
@@ -9507,9 +9507,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4318_zmm8r8_u(const double * __restrict   pEIr,
                                            const double * __restrict   pEIi,
@@ -9563,9 +9563,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4319_zmm8r8(const __m512d EIr,
                                          const __m512d EIi,
@@ -9600,9 +9600,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4319_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pEIr,
                                            const double * __restrict __ATTR_ALIGN__(64)  pEIi,
@@ -9646,9 +9646,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4319_zmm8r8_u(const double * __restrict   pEIr,
                                            const double * __restrict   pEIi,
@@ -9699,9 +9699,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4320_zmm8r8(const __m512d EIr,
                                          const __m512d EIi,
@@ -9718,9 +9718,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4320_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pEIr,
                                            const double * __restrict __ATTR_ALIGN__(64)  pEIi,
@@ -9737,9 +9737,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4320_zmm8r8_u(const double * __restrict   pEIr,
                                            const double * __restrict   pEIi,
@@ -9763,9 +9763,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4321_zmm8r8(const __m512d EIr,
                                          const __m512d EIi,
@@ -9804,9 +9804,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4321_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pEIr,
                                            const double * __restrict __ATTR_ALIGN__(64)  pEIi,
@@ -9855,9 +9855,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void ES_f4321_zmm8r8_u(const double * __restrict   pEIr,
                                            const double * __restrict   pEIi,
@@ -9913,9 +9913,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4322_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -9944,9 +9944,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4322_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -9980,9 +9980,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4322_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -10023,9 +10023,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4323_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -10051,9 +10051,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4323_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -10083,9 +10083,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4323_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -10122,9 +10122,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4324_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -10138,9 +10138,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4324_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -10154,9 +10154,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4324_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -10177,9 +10177,9 @@ namespace gms {
 
   
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4325_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -10208,9 +10208,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4325_zmm8r8_a(  const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -10244,9 +10244,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4325_zmm8r8_u(  const double * __restrict  pk0,
                                                 const double * __restrict  pa,
@@ -10293,9 +10293,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a1_f4330_zmm8r8(const __m512d k0h,
                                            const __m512d psi) {
@@ -10313,9 +10313,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a1_f4330_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                              const double * __restrict __ATTR_ALIGN__(64) ppsi) {
@@ -10335,9 +10335,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a1_f4330_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  ppsi) {
@@ -10357,9 +10357,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a2_f4330_zmm8r8(const __m512d k0h,
                                            const __m512d psi) {
@@ -10376,9 +10376,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a2_f4330_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                              const double * __restrict __ATTR_ALIGN__(64) ppsi) {
@@ -10397,9 +10397,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a2_f4330_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  ppsi) {
@@ -10418,9 +10418,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a3_f4330_zmm8r8(const __m512d k0h,
                                            const __m512d psi) {
@@ -10437,9 +10437,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a3_f4330_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                              const double * __restrict __ATTR_ALIGN__(64) ppsi) {
@@ -10458,9 +10458,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d a3_f4330_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  ppsi) {
@@ -10484,9 +10484,9 @@ namespace gms {
                       */
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F1_f4331_zmm8r8(const __m512d k0a) {
 
@@ -10504,9 +10504,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F1_f4331_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a) {
 
@@ -10525,9 +10525,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F1_f4331_zmm8r8_u(const double * __restrict  pk0a) {
 
@@ -10546,9 +10546,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F2_f4331_zmm8r8(const __m512d k0a) {
 
@@ -10566,9 +10566,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F2_f4331_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a) {
 
@@ -10587,9 +10587,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F2_f4331_zmm8r8_u(const double * __restrict  pk0a) {
 
@@ -10614,9 +10614,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d L_f4334_zmm8r8(const __m512d k0h,
                                           const __m512d k0a) {
@@ -10644,9 +10644,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d L_f4334_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -10676,9 +10676,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d L_f4334_zmm8r8_u(const double * __restrict pk0h,
                                             const double * __restrict pk0a) {
@@ -10714,9 +10714,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d S_f4335_zmm8r8(const __m512d k0a,
                                           const __m512d k0h) {
@@ -10738,9 +10738,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d S_f4335_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                             const double * __restrict __ATTR_ALIGN__(64) pk0h) {
@@ -10764,9 +10764,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d S_f4335_zmm8r8_u(const double * __restrict  pk0a,
                                             const double * __restrict  pk0h) {
@@ -10797,9 +10797,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G2_f4332_zmm8r8(const __m512d k0h,
                                            const __m512d k0a) {
@@ -10816,9 +10816,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G2_f4332_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                            const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -10835,9 +10835,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G2_f4332_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  pk0a) {
@@ -10854,9 +10854,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G1_f4332_zmm8r8(const __m512d k0h,
                                            const __m512d k0a) {
@@ -10882,9 +10882,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G1_f4332_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                              const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -10912,9 +10912,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G1_f4332_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  pk0a) {
@@ -10949,9 +10949,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d H2_f4333_zmm8r8(const __m512d k0h,
                                            const __m512d k0a) {
@@ -10970,9 +10970,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d H2_f4333_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0h,
                                              const double * __restrict __ATTR_ALIGN__(64) pk0a) {
@@ -10993,9 +10993,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d H2_f4333_zmm8r8_u(const double * __restrict  pk0h,
                                              const double * __restrict  pk0a) {
@@ -11016,9 +11016,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d H1_f4333_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                              const double * __restrict __ATTR_ALIGN__(64) pk0h) {
@@ -11049,9 +11049,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d H1_f4333_zmm8r8_u(const double * __restrict  pk0a,
                                              const double * __restrict  pk0h) {
@@ -11090,9 +11090,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4329_zmm8r8(const __m512d k0,
                                             const __m512d gami,
@@ -11160,9 +11160,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4329_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pgami,
@@ -11237,9 +11237,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4329_zmm8r8_u(const double * __restrict pk0,
                                               const double * __restrict  pgami,
@@ -11322,9 +11322,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4337_zmm8r8(const __m512d gammi,
                                             const __m512d gamms,
@@ -11359,9 +11359,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4337_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pgammi,
                                               const double * __restrict __ATTR_ALIGN__(64) pgamms,
@@ -11402,9 +11402,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4337_zmm8r8_u(const double * __restrict  pgammi,
                                               const double * __restrict  pgamms,
@@ -11452,9 +11452,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4340_zmm8r8(const __m512d gammi,
                                             const __m512d gamms,
@@ -11492,9 +11492,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4340_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pgammi,
                                               const double * __restrict __ATTR_ALIGN__(64) pgamms,
@@ -11536,9 +11536,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4340_zmm8r8_u(const double * __restrict  pgammi,
                                               const double * __restrict  pgamms,
@@ -11585,9 +11585,9 @@ namespace gms {
                       */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4343_zmm8r8(const __m512d rcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                             const __m512d k0,
@@ -11617,9 +11617,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4343_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                               const double * __restrict __ATTR_ALIGN__(64) pk0,
@@ -11654,9 +11654,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4343_zmm8r8_u(const double * __restrict  prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                               const double * __restrict  pk0,
@@ -11697,9 +11697,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4344_zmm8r8(const __m512d h,
                                             const __m512d k0,
@@ -11745,9 +11745,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4344_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  ph,
                                               const double * __restrict __ATTR_ALIGN__(64)  pk0,
@@ -11801,9 +11801,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4344_zmm8r8_u(const double * __restrict   ph,
                                               const double * __restrict   pk0,
@@ -11863,9 +11863,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4345_zmm8r8(const __m512d psi,
                                             const __m512d k0a,
@@ -11903,9 +11903,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4345_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  ph,
                                               const double * __restrict __ATTR_ALIGN__(64)  pk0,
@@ -11949,9 +11949,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4345_zmm8r8_u(const double * __restrict   ph,
                                               const double * __restrict   pk0,
@@ -12002,9 +12002,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M1_f4350_zmm8r8(const __m512d psi) {
 
@@ -12032,9 +12032,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M1_f4350_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12063,9 +12063,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M1_f4350_zmm8r8_u(const double * __restrict  ppsi) {
 
@@ -12094,9 +12094,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M2_f4350_zmm8r8(const __m512d psi) {
 
@@ -12124,9 +12124,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M2_f4350_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12155,9 +12155,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d M2_f4350_zmm8r8_u(const double * __restrict  ppsi) {
 
@@ -12193,9 +12193,9 @@ namespace gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N1_f4351_zmm8r8(const __m512d psi) {
 
@@ -12224,9 +12224,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N1_f4351_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12256,9 +12256,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N1_f4351_zmm8r8_u(const double * __restrict  ppsi) {
 
@@ -12288,9 +12288,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N2_f4351_zmm8r8(const __m512d psi) {
 
@@ -12319,9 +12319,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N2_f4351_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12351,9 +12351,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d N2_f4351_zmm8r8_u(const double * __restrict  ppsi) {
 
@@ -12391,9 +12391,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G_f4352_zmm8r8(const __m512d psi) {
 
@@ -12413,9 +12413,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G_f4352_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12436,9 +12436,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d G_f4352_zmm8r8_u(const double * __restrict  ppsi) {
 
@@ -12459,9 +12459,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F_f4352_zmm8r8(const __m512d psi) {
 
@@ -12481,9 +12481,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F_f4352_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) ppsi) {
 
@@ -12504,9 +12504,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d F_f4352_zmm8r8_u(const double * __restrict ppsi) {
 
@@ -12533,9 +12533,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4353_zmm8r8(const __m512d k0a,
                                             const __m512d k0,
@@ -12571,9 +12571,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4353_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                               const double * __restrict __ATTR_ALIGN__(64) pk0,
@@ -12615,9 +12615,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4353_zmm8r8_u(const double * __restrict  pk0a,
                                               const double * __restrict  pk0,
@@ -12665,9 +12665,9 @@ namespace gms {
                        */
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8(const __m512d k0a,
                                             const __m512d h,
@@ -12690,9 +12690,9 @@ namespace gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                               const double * __restrict __ATTR_ALIGN__(64) ph,
@@ -12719,9 +12719,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8_u(const double * __restrict  pk0a,
                                               const double * __restrict  ph,
@@ -12756,9 +12756,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8(const __m512d k0a,
                                             const __m512d h,
@@ -12785,9 +12785,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                               const double * __restrict __ATTR_ALIGN__(64) ph,
@@ -12818,9 +12818,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4354_zmm8r8_u(const double * __restrict  pk0a,
                                               const double * __restrict  ph,
@@ -12858,9 +12858,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4356_zmm8r8(const __m512d k0a,
                                             const __m512d h) {
@@ -12874,9 +12874,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4356_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                             const double * __restrict __ATTR_ALIGN__(64) ph) {
@@ -12892,9 +12892,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4356_zmm8r8_u(const double * __restrict  pk0a,
                                             const double * __restrict  ph) {
@@ -12920,9 +12920,9 @@ namespace gms {
                     */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4411_zmm8r8(const __m512d a,
                                          const __m512d b,
@@ -12948,9 +12948,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4411_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                          const double * __restrict __ATTR_ALIGN__(64) pb,
@@ -12979,9 +12979,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4411_zmm8r8_u(const double * __restrict  pa,
                                            const double * __restrict  pb,
@@ -13010,9 +13010,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4412_zmm8r8(const __m512d k0a,
                                          const __m512d a,
@@ -13045,9 +13045,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4412_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0a,
                                            const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -13085,9 +13085,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4412_zmm8r8_u(const double * __restrict  pk0a,
                                            const double * __restrict  pa,
@@ -13131,9 +13131,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4413_zmm8r8(const __m512d a,
                                             const __m512d b,
@@ -13161,9 +13161,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4413_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pa,
                                               const double * __restrict __ATTR_ALIGN__(64)  pb,
@@ -13193,9 +13193,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4413_zmm8r8_u(const double * __restrict   pa,
                                               const double * __restrict   pb,
@@ -13239,9 +13239,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __mmask16 
                    TM_f4415_helper_zmm8r8(const __m512d k0,
@@ -13272,9 +13272,9 @@ namespace gms {
                 }
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4415_zmm8r8(const __m512d phi1,
                                          const __m512d phi2,
@@ -13340,9 +13340,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4415_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi1,
                                          const double * __restrict __ATTR_ALIGN__(64) pphi2,
@@ -13415,9 +13415,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4415_zmm8r8_u(const double * __restrict  pphi1,
                                          const double * __restrict  pphi2,
@@ -13494,9 +13494,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4416_zmm8r8(const __m512d phi1,
                                          const __m512d phi2,
@@ -13520,9 +13520,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4416_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi1,
                                          const double * __restrict __ATTR_ALIGN__(64) pphi2,
@@ -13547,9 +13547,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4416_zmm8r8_u(const double * __restrict  pphi1,
                                          const double * __restrict  pphi2,
@@ -13580,9 +13580,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4419_zmm8r8(const __m512d phi1,
                                             const __m512d phi2,
@@ -13610,9 +13610,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4419_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pphi1,
                                               const double * __restrict __ATTR_ALIGN__(64) pphi2,
@@ -13644,9 +13644,9 @@ namespace gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4419_zmm8r8_u(const double * __restrict  pphi1,
                                               const double * __restrict  pphi2,
@@ -13686,9 +13686,9 @@ namespace gms {
 
                      
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4420_zmm8r8(const __m512d a,
                                             const __m512d b,
@@ -13713,9 +13713,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4420_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pb,
@@ -13743,9 +13743,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4420_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pb,
@@ -13780,9 +13780,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __mmask16 
                    T_f4423_helper_zmm8r8( const __m512d k0,
@@ -13813,9 +13813,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d T_f4423_zmm8r8(const __m512d a,
                                           const __m512d b,
@@ -13854,9 +13854,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d T_f4423_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                           const double * __restrict __ATTR_ALIGN__(64) pb,
@@ -13900,9 +13900,9 @@ namespace gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d T_f4423_zmm8r8_u(const double * __restrict pa,
                                           const double * __restrict  pb,
@@ -13953,9 +13953,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4424_zmm8r8(const __m512d a,
                                           const __m512d b,
@@ -13996,9 +13996,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4424_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pa,
                                               const double * __restrict __ATTR_ALIGN__(64) pb,
@@ -14044,9 +14044,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4424_zmm8r8_u(const double * __restrict  pa,
                                               const double * __restrict  pb,
@@ -14098,9 +14098,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4425_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -14124,9 +14124,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4425_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64)  pk0,
                                               const double * __restrict __ATTR_ALIGN__(64)  pa,
@@ -14154,9 +14154,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4425_zmm8r8_u(const double * __restrict   pk0,
                                               const double * __restrict   pa,
@@ -14191,9 +14191,9 @@ namespace gms {
                      */
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4426_zmm8r8(const __m512d k0,
                                          const __m512d a,
@@ -14248,9 +14248,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4426_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                          const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -14314,9 +14314,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TM_f4426_zmm8r8_u(const double * __restrict  pk0,
                                          const double * __restrict  pa,
@@ -14388,9 +14388,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4427_zmm8r8(const __m512d k0,
                                          const __m512d a,
@@ -14445,9 +14445,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4427_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                          const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -14511,9 +14511,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    void TE_f4427_zmm8r8_u(const double * __restrict  pk0,
                                          const double * __restrict  pa,
@@ -14587,9 +14587,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4428_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -14648,9 +14648,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4428_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -14718,9 +14718,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4428_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -14799,9 +14799,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4429_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -14860,9 +14860,9 @@ namespace gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4429_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -14931,9 +14931,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4429_zmm8r8_u(const double * __restrict pk0,
                                               const double * __restrict  pa,
@@ -15011,9 +15011,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4430_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -15069,9 +15069,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4430_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -15136,9 +15136,9 @@ namespace gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4430_zmm8r8_u(const double * __restrict pk0,
                                               const double * __restrict  pa,
@@ -15213,9 +15213,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4431_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -15271,9 +15271,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4431_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -15337,9 +15337,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4431_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -15413,9 +15413,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4432_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -15431,9 +15431,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4432_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -15450,9 +15450,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4432_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
@@ -15480,9 +15480,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4433_zmm8r8(const __m512d k0,
                                             const __m512d a,
@@ -15498,9 +15498,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4433_zmm8r8_a(const double * __restrict __ATTR_ALIGN__(64) pk0,
                                               const double * __restrict __ATTR_ALIGN__(64) pa,
@@ -15517,9 +15517,9 @@ namespace gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                   __ATTR_OPTIMIZE_O3__
+	           
+                   
 	           static inline
                    __m512d rcs_f4433_zmm8r8_u(const double * __restrict  pk0,
                                               const double * __restrict  pa,
