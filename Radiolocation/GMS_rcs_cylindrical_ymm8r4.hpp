@@ -77,7 +77,7 @@ namespace gms {
                          cylinder-parallel,formula 4.1-19
                     */
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_VECTORCALL__
+	           
 	           __ATTR_OPTIMIZE_O3__
 	           static inline
                    __m256 rcs_f419_ymm8r4(const __m256 a,
@@ -99,7 +99,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void rcs_f419_ymm8r4_unroll16x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -208,7 +208,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void rcs_f419_ymm8r4_unroll10x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -294,7 +294,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void rcs_f419_ymm8r4_unroll6x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -363,7 +363,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__ 
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f419_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                            const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -386,7 +386,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f419_ymm8r4_u(const float * __restrict  pa,
                                              const float * __restrict  pk0a) {
@@ -415,7 +415,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__ 
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f4120_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
@@ -433,7 +433,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void rcs_f4120_ymm8r4_unroll16x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -542,7 +542,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void rcs_f4120_ymm8r4_unroll10x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -628,7 +628,7 @@ namespace gms {
               
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void rcs_f4120_ymm8r4_unroll6x(const __m256 * __restrict __ATTR_ALIGN__(32) pa,
                                                    const __m256 * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -699,7 +699,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f4120_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -719,7 +719,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f4120_ymm8r4_u(const float * __restrict  pa,
                                             const float * __restrict  pk0a) {
@@ -744,7 +744,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__	           
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    __m256 rcs_f4121_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
@@ -755,7 +755,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4121_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -766,7 +766,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4121_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a) {
@@ -783,7 +783,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4122_ymm8r4(const __m256 phi,
                                             const __m256 a,
@@ -804,7 +804,7 @@ namespace gms {
                  
                    __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
 	           void rcs_f4122_ymm8r4_unroll16x(const __m256 * __restrict __ATTR_ALIGN__(32) pphi,
 	                                            const __m256 * __restrict __ATTR_ALIGN__(32) pa,
@@ -936,7 +936,7 @@ namespace gms {
 	       
 	            __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
 	           void rcs_f4122_ymm8r4_unroll10x(const __m256 * __restrict __ATTR_ALIGN__(32) pphi,
 	                                            const __m256 * __restrict __ATTR_ALIGN__(32) pa,
@@ -1039,7 +1039,7 @@ namespace gms {
 	       
 	            __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
 	           void rcs_f4122_ymm8r4_unroll6x(const __m256 * __restrict __ATTR_ALIGN__(32) pphi,
 	                                            const __m256 * __restrict __ATTR_ALIGN__(32) pa,
@@ -1123,7 +1123,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4122_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -1147,7 +1147,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4122_ymm8r4_u(const float * __restrict  pphi,
                                               const float * __restrict  pa,
@@ -1176,7 +1176,7 @@ namespace gms {
  
                    __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4123_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
@@ -1187,7 +1187,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4123_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -1198,7 +1198,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4123_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a) {
@@ -1214,7 +1214,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4124_ymm8r4(const __m256 a,
                                             const __m256 k0a) {
@@ -1231,7 +1231,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4124_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -1250,7 +1250,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4124_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a) {
@@ -1275,7 +1275,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kz_f4125_ymm8r4(const __m256 eps0,
                                          const __m256 mu0,
@@ -1303,7 +1303,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kz_f4125_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) peps0,
                                            const  float * __restrict __ATTR_ALIGN__(32) pmu0,
@@ -1337,7 +1337,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kz_f4125_ymm8r4_u(const  float * __restrict  peps0,
                                            const  float * __restrict  pmu0,
@@ -1377,7 +1377,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kph_f4126_ymm8r4(const __m256 Hr,
                                           const __m256 Hi,
@@ -1391,7 +1391,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kph_f4126_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) Hr,
                                             const float * __restrict __ATTR_ALIGN__(32) Hi,
@@ -1405,7 +1405,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Kph_f4126_ymm8r4_u(const float * __restrict  Hr,
                                             const float * __restrict  Hi,
@@ -1426,7 +1426,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Iz_f4127_ymm8r4(const __m256 eps0,
                                          const __m256 mu0,
@@ -1458,7 +1458,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Iz_f4127_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) peps0,
                                            const  float * __restrict __ATTR_ALIGN__(32) pmu0,
@@ -1497,7 +1497,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Iz_f4127_ymm8r4_u(const  float * __restrict  peps0,
                                            const  float * __restrict  pmu0,
@@ -1544,7 +1544,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EO_f4129_ymm8r4(const __m256 phi2,
                                          const __m256 a,
@@ -1605,7 +1605,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EO_f4129_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi2,
                                            const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -1673,7 +1673,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EO_f4129_ymm8r4_u(const float * __restrict  pphi2,
                                            const float * __restrict  pa,
@@ -1749,7 +1749,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4131_ymm8r4(const __m256 phi2,
                                          const __m256 a,
@@ -1810,7 +1810,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4131_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi2,
                                            const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -1878,7 +1878,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4131_ymm8r4_u(const float * __restrict  pphi2,
                                            const float * __restrict  pa,
@@ -1956,7 +1956,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4130_ymm8r4(const __m256 Er,
                                          const __m256 Ei,
@@ -2036,7 +2036,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4130_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEr,
                                            const float * __restrict __ATTR_ALIGN__(32) pEi,
@@ -2123,7 +2123,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	             __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4130_ymm8r4_a(const float * __restrict  pEr,
                                            const float * __restrict  pEi,
@@ -2220,7 +2220,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4132_ymm8r4(const __m256 Hr,
                                          const __m256 Hi,
@@ -2287,7 +2287,7 @@ namespace gms {
                    
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4132_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32)  pHr,
                                            const  float * __restrict __ATTR_ALIGN__(32)  pHi,
@@ -2359,7 +2359,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4132_ymm8r4_u(const  float * __restrict  pHr,
                                            const  float * __restrict  pHi,
@@ -2438,7 +2438,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EO_f4133_ymm8r4(const __m256 Er,
                                          const __m256 Ei,
@@ -2484,7 +2484,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__ 
+	            
 	           static inline
                    void EO_f4133_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEr,
                                            const float * __restrict __ATTR_ALIGN__(32) pEi,
@@ -2536,7 +2536,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EO_f4133_ymm8r4_u(const float * __restrict  pEr,
                                            const float * __restrict  pEi,
@@ -2595,7 +2595,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4135_ymm8r4(const __m256 Hr,
                                          const __m256 Hi,
@@ -2640,7 +2640,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4135_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pHr,
                                            const float * __restrict __ATTR_ALIGN__(32) pHi,
@@ -2693,7 +2693,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HO_f4135_ymm8r4_u(const float * __restrict  pHr,
                                            const float * __restrict  pHi,
@@ -2753,7 +2753,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4134_ymm8r4(const __m256 Er,
                                          const __m256 Ei,
@@ -2807,7 +2807,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4134_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEr,
                                          const float * __restrict __ATTR_ALIGN__(32) pEi,
@@ -2867,7 +2867,7 @@ namespace gms {
                   
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void EC_f4134_ymm8r4_u(const float * __restrict  pEr,
                                            const float * __restrict  pEi,
@@ -2935,7 +2935,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4136_ymm8r4(const __m256 Hr,
                                          const __m256 Hi,
@@ -2989,7 +2989,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4136_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pHr,
                                            const float * __restrict __ATTR_ALIGN__(32) pHi,
@@ -3048,7 +3048,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void HC_f4136_ymm8r4_u(const float * __restrict  pHr,
                                            const float * __restrict  pHi,
@@ -3113,7 +3113,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4137_ymm8r4(const __m256 a,
                                             const __m256 phi2) {
@@ -3127,7 +3127,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4137_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi2) {
@@ -3143,7 +3143,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4137_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pphi2) {
@@ -3165,7 +3165,7 @@ namespace gms {
                    
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4138_ymm8r4(const __m256 a) {
 
@@ -3175,7 +3175,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4138_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa) {
 
@@ -3186,7 +3186,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4138_ymm8r4_u(const float * __restrict  pa) {
 
@@ -3203,7 +3203,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4140_ymm8r4(const __m256 k0a,
                                             const __m256 alpha) {
@@ -3222,7 +3222,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4140_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(32) palpha) {
@@ -3243,7 +3243,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4140_ymm8r4_u(const float * __restrict  pk0a,
                                               const float * __restrict  palpha) {
@@ -3272,7 +3272,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4139_ymm8r4(const __m256 Er,
                                          const __m256 Ei,
@@ -3308,7 +3308,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4139_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEr,
                                            const float * __restrict __ATTR_ALIGN__(32) pEi,
@@ -3352,7 +3352,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4139_ymm8r4_u(const float * __restrict  pEr,
                                            const float * __restrict  pEi,
@@ -3402,7 +3402,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4141_ymm8r4(const __m256 k0a) {
 
@@ -3416,7 +3416,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4141_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pk0a) {
 
@@ -3430,7 +3430,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4141_ymm8r4_u(const float * __restrict   pk0a) {
 
@@ -3449,7 +3449,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4145_ymm8r4(const __m256 EIr,
                                          const __m256 EIi,
@@ -3499,7 +3499,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4145_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEIr,
                                            const float * __restrict __ATTR_ALIGN__(32) pEIi,
@@ -3561,7 +3561,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Es_f4145_ymm8r4_u(const float * __restrict  pEIr,
                                            const float * __restrict  pEIi,
@@ -3629,7 +3629,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hs_f4146_ymm8r4(const __m256 HIr,
                                          const __m256 HIi,
@@ -3679,7 +3679,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hs_f4146_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pHIr,
                                            const float * __restrict __ATTR_ALIGN__(32) pHIi,
@@ -3741,7 +3741,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hs_f4146_ymm8r4_u(const float * __restrict   pHIr,
                                            const float * __restrict   pHIi,
@@ -3809,7 +3809,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4147_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -3841,7 +3841,7 @@ namespace gms {
                    
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4147_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -3879,7 +3879,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4147_ymm8r4_u(const float * __restrict  pa,
                                             const float * __restrict  pk0a,
@@ -3923,7 +3923,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4148_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -3954,7 +3954,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4148_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -3992,7 +3992,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4148_ymm8r4_u(const float * __restrict  pa,
                                             const float * __restrict pk0a,
@@ -4035,7 +4035,7 @@ namespace gms {
                  
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4149_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -4065,7 +4065,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4149_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -4101,7 +4101,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4149_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a,
@@ -4142,7 +4142,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4150_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -4172,7 +4172,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4150_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -4208,7 +4208,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4150_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a,
@@ -4249,7 +4249,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4151_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -4279,7 +4279,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4151_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -4315,7 +4315,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4151_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a,
@@ -4356,7 +4356,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4152_ymm8r4(const __m256 a,
                                             const __m256 k0a,
@@ -4386,7 +4386,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4152_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -4422,7 +4422,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4152_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pk0a,
@@ -4463,7 +4463,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4172_ymm8r4(const __m256 mur,
                                           const __m256 mui,
@@ -4501,7 +4501,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4172_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pmur,
                                             const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -4546,7 +4546,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4172_ymm8r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4596,7 +4596,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4173_ymm8r4(const __m256 mur,
                                           const __m256 mui,
@@ -4631,7 +4631,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4173_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pmur,
                                             const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -4671,7 +4671,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4173_ymm8r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4714,7 +4714,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4174_ymm8r4(const __m256 mur,
                                           const __m256 mui,
@@ -4754,7 +4754,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4174_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pmur,
                                             const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -4800,7 +4800,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4174_ymm8r4_u(const float * __restrict pmur,
                                             const float * __restrict  pmui,
@@ -4852,7 +4852,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4175_ymm8r4(const __m256 mur,
                                            const __m256 mui,
@@ -4886,7 +4886,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4175_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pmur,
                                             const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -4925,7 +4925,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4175_ymm8r4_u(const float * __restrict  pmur,
                                             const float * __restrict  pmui,
@@ -4969,7 +4969,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4176_ymm8r4( const __m256 mur,
                                            const __m256 mui,
@@ -5008,7 +5008,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4176_ymm8r4_a( const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5054,7 +5054,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4176_ymm8r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5106,7 +5106,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4177_ymm8r4( const __m256 mur,
                                            const __m256 mui,
@@ -5141,7 +5141,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4177_ymm8r4_a( const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5183,7 +5183,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rin_f4177_ymm8r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5230,7 +5230,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rext_f4164_ymm8r4(const __m256 mur,
                                            const __m256 mui,
@@ -5253,7 +5253,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rext_f4164_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5282,7 +5282,7 @@ namespace gms {
                   
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rext_f4164_ymm8r4_u(const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5318,7 +5318,7 @@ namespace gms {
                   
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4167_ymm8r4( const __m256 mur,
                                            const __m256 mui,
@@ -5341,7 +5341,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4167_ymm8r4_a( const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5370,7 +5370,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tin_f4167_ymm8r4_u( const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5405,7 +5405,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4168_ymm8r4( const __m256 mur,
                                            const __m256 mui,
@@ -5428,7 +5428,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4168_ymm8r4_a(  const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5457,7 +5457,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Tout_f4168_ymm8r4_u(  const float * __restrict  pmur,
                                              const float * __restrict  pmui,
@@ -5492,7 +5492,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rint_f4169_ymm8r4(const __m256 mur,
                                            const __m256 mui,
@@ -5511,7 +5511,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rint_f4169_ymm8r4_a( const float * __restrict __ATTR_ALIGN__(32) pmur,
                                              const float * __restrict __ATTR_ALIGN__(32) pmui,
@@ -5534,7 +5534,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Rint_f4169_ymm8r4_u( const float * __restrict pmur,
                                               const float * __restrict  pmui,
@@ -5562,7 +5562,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4191_ymm8r4(const __m256 a,
                                             const __m256 mur,
@@ -5581,7 +5581,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4191_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pmur,
@@ -5604,7 +5604,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4191_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pmur,
@@ -5632,7 +5632,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41104_ymm8r4(const __m256 a0,
                                              const __m256 a1,
@@ -5687,7 +5687,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41104_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                                const float * __restrict __ATTR_ALIGN__(32) pa1,
@@ -5754,7 +5754,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41104_ymm8r4_u(const float * __restrict  pa0,
                                                const float * __restrict  pa1,
@@ -5826,7 +5826,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41105_ymm8r4(const __m256 a0,
                                              const __m256 a1,
@@ -5879,7 +5879,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41105_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                                const float * __restrict __ATTR_ALIGN__(32) pa1,
@@ -5943,7 +5943,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41105_ymm8r4_u(const float * __restrict  pa0,
                                                const float * __restrict  pa1,
@@ -6013,7 +6013,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41106_ymm8r4(const __m256 a0,
                                              const __m256 a1,
@@ -6066,8 +6066,8 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
-                   __ATTR_VECTORCALL__
+	           
+                   
 	           static inline
                    __m256 rcs_f41106_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                                const float * __restrict __ATTR_ALIGN__(32) pa1,
@@ -6140,7 +6140,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41124_ymm8r4(const __m256 a1,
                                           const __m256 a0,
@@ -6172,7 +6172,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41124_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) pa1,
                                             const  float * __restrict __ATTR_ALIGN__(32) pa0,
@@ -6214,7 +6214,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41124_ymm8r4_u(const  float * __restrict  pa1,
                                           const  float * __restrict pa0,
@@ -6265,7 +6265,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41126_ymm8r4(const __m256 a1,
                                           const __m256 a0,
@@ -6297,7 +6297,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41126_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) pa1,
                                             const  float * __restrict __ATTR_ALIGN__(32) pa0,
@@ -6338,7 +6338,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41126_ymm8r4_u(const  float * __restrict  pa1,
                                             const  float * __restrict  pa0,
@@ -6387,7 +6387,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41125_ymm8r4(const __m256 a1,
                                           const __m256 a0,
@@ -6433,7 +6433,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41125_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) pa1,
                                             const  float * __restrict __ATTR_ALIGN__(32) pa0,
@@ -6488,7 +6488,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41125_ymm8r4_u(const  float * __restrict  pa1,
                                             const  float * __restrict  pa0,
@@ -6552,7 +6552,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41127_ymm8r4(const __m256 a1,
                                           const __m256 a0,
@@ -6598,7 +6598,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41127_ymm8r4_a(const  float * __restrict __ATTR_ALIGN__(32) pa1,
                                             const  float * __restrict __ATTR_ALIGN__(32) pa0,
@@ -6653,7 +6653,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41127_ymm8r4_u(const  float * __restrict  pa1,
                                             const  float * __restrict  pa0,
@@ -6717,7 +6717,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41162_ymm8r4(const __m256 k0a,
                                           __m256 * __restrict A0r,
@@ -6735,7 +6735,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41162_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             float * __restrict __ATTR_ALIGN__(32) A0r,
@@ -6755,7 +6755,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41162_ymm8r4_u(const float * __restrict  pk0a,
                                             float * __restrict  A0r,
@@ -6777,7 +6777,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41162_ymm8r4(__m256 * __restrict B0r,
                                           __m256 * __restrict B0i) {
@@ -6789,7 +6789,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41162_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) B0r,
                                           float * __restrict __ATTR_ALIGN__(32) B0i) {
@@ -6801,7 +6801,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41162_ymm8r4_u(float * __restrict  B0r,
                                           float * __restrict  B0i) {
@@ -6813,7 +6813,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41162_ymm8r4(__m256 * __restrict A1r,
                                           __m256 * __restrict A1i) {
@@ -6825,7 +6825,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41162_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) A1r,
                                           float * __restrict __ATTR_ALIGN__(32) A1i) {
@@ -6837,7 +6837,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41162_ymm8r4_u(float * __restrict  A1r,
                                             float * __restrict  A1i) {
@@ -6849,7 +6849,7 @@ namespace gms {
                    
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41162_ymm8r4(const __m256 k0a,
                                           __m256 * __restrict B1r,
@@ -6867,7 +6867,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41162_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             float * __restrict __ATTR_ALIGN__(32) B1r,
@@ -6887,7 +6887,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41162_ymm8r4_u(const float * __restrict  pk0a,
                                             float * __restrict  B1r,
@@ -6914,7 +6914,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41163_ymm8r4(const __m256 a,
                                              const __m256 k0a) {
@@ -6931,7 +6931,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41163_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -6950,7 +6950,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41163_ymm8r4_u(const float * __restrict  pa,
                                              const float * __restrict  pk0a) {
@@ -6977,7 +6977,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41164_ymm8r4(const __m256 a,
                                              const __m256 k0a,
@@ -6997,7 +6997,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41164_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -7020,7 +7020,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f41164_ymm8r4_u(const float * __restrict  pa,
                                                const float * __restrict  pk0a,
@@ -7050,7 +7050,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41165_ymm8r4(const __m256 k0a,
                                           __m256 * __restrict A0r,
@@ -7066,7 +7066,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41165_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             float * __restrict __ATTR_ALIGN__(32) A0r,
@@ -7083,7 +7083,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A0_f41165_ymm8r4_u(const float * __restrict  pk0a,
                                             float * __restrict  A0r,
@@ -7100,7 +7100,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41165_ymm8r4(__m256 * __restrict A0r,
                                           __m256 * __restrict A0i) {
@@ -7113,7 +7113,7 @@ namespace gms {
                   
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41165_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) A0r,
                                             float * __restrict __ATTR_ALIGN__(32) A0i) {
@@ -7125,7 +7125,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void A1_f41165_ymm8r4_u(float * __restrict  A0r,
                                             float * __restrict  A0i) {
@@ -7137,7 +7137,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41165_ymm8r4(__m256 * __restrict B0r,
                                           __m256 * __restrict B0i) {
@@ -7150,7 +7150,7 @@ namespace gms {
                   
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41165_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) B0r,
                                             float * __restrict __ATTR_ALIGN__(32) B0i) {
@@ -7162,7 +7162,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B0_f41165_ymm8r4_u(float * __restrict  B0r,
                                             float * __restrict  B0i) {
@@ -7174,7 +7174,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41165_ymm8r4(const __m256 k0a,
                                           __m256 * __restrict B1r,
@@ -7192,7 +7192,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41165_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                           float * __restrict __ATTR_ALIGN__(32) B1r,
@@ -7211,7 +7211,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void B1_f41165_ymm8r4_u(const float * __restrict  pk0a,
                                           float * __restrict  B1r,
@@ -7237,7 +7237,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14166_ymm8r4(const __m256 a,
                                              const __m256 k0a) {
@@ -7254,7 +7254,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14166_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -7273,7 +7273,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14166_ymm8r4_u(const float * __restrict pa,
                                                const float * __restrict  pk0a) {
@@ -7300,7 +7300,7 @@ namespace gms {
  
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14167_ymm8r4(const __m256 a,
                                              const __m256 k0a,
@@ -7321,7 +7321,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14167_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                                const float * __restrict __ATTR_ALIGN__(32) pk0a,
@@ -7344,7 +7344,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f14167_ymm8r4_u(const float * __restrict  pa,
                                                const float * __restrict  pk0a,
@@ -7377,7 +7377,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4248_ymm8r4(const __m256 E0r,
                                          const __m256 E0i,
@@ -7452,7 +7452,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4248_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pE0r,
                                            const float * __restrict __ATTR_ALIGN__(32) pE0i,
@@ -7539,7 +7539,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4248_ymm8r4_u(const float * __restrict  pE0r,
                                            const float * __restrict  pE0i,
@@ -7637,7 +7637,7 @@ namespace gms {
                 /*   __ATTR_ALWAYS_INLINE__
                    
 	           
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void Hp_f4251_ymm8r4(const __m256 E0r,
                                          const __m256 E0i,
@@ -7719,7 +7719,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
                    
 	           
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void Hp_f4251_ymm8r4_a(  const float * __restrict __ATTR_ALIGN__(32) pE0r,
                                            const float * __restrict __ATTR_ALIGN__(32) pE0i,
@@ -7813,7 +7813,7 @@ namespace gms {
                    __ATTR_ALWAYS_INLINE__
                    
 	           
-                   __ATTR_VECTORCALL__
+                   
 	           static inline
                    void Hp_f4251_ymm8r4_u(  const float * __restrict  pE0r,
                                            const float * __restrict  pE0i,
@@ -7916,7 +7916,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4249_ymm8r4(const __m256 E0r,
                                           const __m256 E0i,
@@ -7972,7 +7972,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4249_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pE0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pE0i,
@@ -8039,7 +8039,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4249_ymm8r4_u(const float * __restrict pE0r,
                                           const float * __restrict  pE0i,
@@ -8116,7 +8116,7 @@ namespace gms {
                    
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4250_ymm8r4( const __m256 E0r,
                                           const __m256 E0i,
@@ -8174,7 +8174,7 @@ namespace gms {
                   
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4250_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pE0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pE0i,
@@ -8243,7 +8243,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4250_ymm8r4_u(const float * __restrict  pE0r,
                                           const float * __restrict pE0i,
@@ -8321,7 +8321,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4252_ymm8r4(const __m256 H0r,
                                          const __m256 H0i,
@@ -8393,7 +8393,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4252_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pH0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pH0i,
@@ -8477,7 +8477,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hz_f4252_ymm8r4_u(const float * __restrict  pH0r,
                                           const float * __restrict  pH0i,
@@ -8570,7 +8570,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4255_ymm8r4(const __m256 H0r,
                                          const __m256 H0i,
@@ -8642,7 +8642,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4255_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pH0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pH0i,
@@ -8725,7 +8725,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Eph_f4255_ymm8r4_u(const float * __restrict pH0r,
                                           const float * __restrict  pH0i,
@@ -8817,7 +8817,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hph_f4253_ymm8r4(const __m256 H0r,
                                           const __m256 H0i,
@@ -8870,7 +8870,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hph_f4253_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pH0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pH0i,
@@ -8936,7 +8936,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Hph_f4253_ymm8r4_u(const float * __restrict  pH0r,
                                           const float * __restrict pH0i,
@@ -9011,7 +9011,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4254_ymm8r4( const __m256 H0r,
                                           const __m256 H0i,
@@ -9067,7 +9067,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4254_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pH0r,
                                           const float * __restrict __ATTR_ALIGN__(32) pH0i,
@@ -9135,7 +9135,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void Ez_f4254_ymm8r4_u(const float * __restrict  pH0r,
                                           const float * __restrict pH0i,
@@ -9211,7 +9211,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4256_ymm8r4(const __m256 a0,
                                             const __m256 k0a0,
@@ -9267,7 +9267,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4256_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a0,
@@ -9331,7 +9331,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4256_ymm8r4_u(const float * __restrict  pa0,
                                               const float * __restrict  pk0a0,
@@ -9403,7 +9403,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4258_ymm8r4(const __m256 a0,
                                             const __m256 k0a0,
@@ -9459,7 +9459,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4258_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a0,
@@ -9523,7 +9523,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4258_ymm8r4_u(const float * __restrict  pa0,
                                               const float * __restrict  pk0a0,
@@ -9596,7 +9596,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4257_ymm8r4(const __m256 a0,
                                             const __m256 k0a0,
@@ -9641,7 +9641,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4257_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa0,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0a0,
@@ -9694,7 +9694,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4257_ymm8r4_u(const float * __restrict  pa0,
                                               const float * __restrict  pk0a0,
@@ -9756,7 +9756,7 @@ namespace gms {
                     
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f439_ymm8r4(const __m256 EIr,
                                         const __m256 EIi,
@@ -9796,7 +9796,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f439_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pEIr,
                                           const float * __restrict __ATTR_ALIGN__(32) pEIi,
@@ -9844,7 +9844,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f439_ymm8r4_u(const float * __restrict  pEIr,
                                           const float * __restrict  pEIi,
@@ -9901,7 +9901,7 @@ namespace gms {
                   
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4310_ymm8r4(const __m256 k0,
                                             const __m256 h,
@@ -9934,7 +9934,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4310_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pk0,
                                               const float * __restrict __ATTR_ALIGN__(32)  ph,
@@ -9972,7 +9972,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4310_ymm8r4_u(const float * __restrict   pk0,
                                               const float * __restrict   ph,
@@ -10017,7 +10017,7 @@ namespace gms {
                    
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4311_ymm8r4(const __m256 k0,
                                             const __m256 h,
@@ -10042,7 +10042,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4311_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) ph,
@@ -10070,7 +10070,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4311_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  ph,
@@ -10104,7 +10104,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4318_ymm8r4(const __m256 EIr,
                                          const __m256 EIi,
@@ -10142,7 +10142,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4318_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pEIr,
                                            const float * __restrict __ATTR_ALIGN__(32)  pEIi,
@@ -10190,7 +10190,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4318_ymm8r4_u(const float * __restrict   pEIr,
                                            const float * __restrict   pEIi,
@@ -10245,7 +10245,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4319_ymm8r4(const __m256 EIr,
                                          const __m256 EIi,
@@ -10281,7 +10281,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4319_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pEIr,
                                            const float * __restrict __ATTR_ALIGN__(32)  pEIi,
@@ -10326,7 +10326,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4319_ymm8r4_u(const float * __restrict   pEIr,
                                            const float * __restrict   pEIi,
@@ -10378,7 +10378,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4320_ymm8r4(const __m256 EIr,
                                          const __m256 EIi,
@@ -10396,7 +10396,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4320_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pEIr,
                                            const float * __restrict __ATTR_ALIGN__(32)  pEIi,
@@ -10414,7 +10414,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4320_ymm8r4_u(const float * __restrict   pEIr,
                                            const float * __restrict   pEIi,
@@ -10439,7 +10439,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4321_ymm8r4(const __m256 EIr,
                                          const __m256 EIi,
@@ -10479,7 +10479,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4321_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pEIr,
                                            const float * __restrict __ATTR_ALIGN__(32)  pEIi,
@@ -10529,7 +10529,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void ES_f4321_ymm8r4_u(const float * __restrict   pEIr,
                                            const float * __restrict   pEIi,
@@ -10586,7 +10586,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4322_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -10616,7 +10616,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4322_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -10651,7 +10651,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4322_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -10693,7 +10693,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4323_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -10720,7 +10720,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4323_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -10751,7 +10751,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4323_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -10789,7 +10789,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4324_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -10804,7 +10804,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4324_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -10819,7 +10819,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4324_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -10841,7 +10841,7 @@ namespace gms {
   
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4325_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -10871,7 +10871,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4325_ymm8r4_a(  const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -10906,7 +10906,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4325_ymm8r4_u(  const float * __restrict  pk0,
                                                 const float * __restrict  pa,
@@ -10954,7 +10954,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a1_f4330_ymm8r4(const __m256 k0h,
                                            const __m256 psi) {
@@ -10973,7 +10973,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a1_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
@@ -10994,7 +10994,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a1_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
@@ -11015,7 +11015,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a2_f4330_ymm8r4(const __m256 k0h,
                                            const __m256 psi) {
@@ -11033,7 +11033,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a2_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
@@ -11053,7 +11053,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a2_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
@@ -11073,7 +11073,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a3_f4330_ymm8r4(const __m256 k0h,
                                            const __m256 psi) {
@@ -11091,7 +11091,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a3_f4330_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) ppsi) {
@@ -11111,7 +11111,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 a3_f4330_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  ppsi) {
@@ -11136,7 +11136,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F1_f4331_ymm8r4(const __m256 k0a) {
 
@@ -11155,7 +11155,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F1_f4331_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
@@ -11175,7 +11175,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F1_f4331_ymm8r4_u(const float * __restrict  pk0a) {
 
@@ -11195,7 +11195,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F2_f4331_ymm8r4(const __m256 k0a) {
 
@@ -11214,7 +11214,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F2_f4331_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a) {
 
@@ -11234,7 +11234,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F2_f4331_ymm8r4_u(const float * __restrict  pk0a) {
 
@@ -11260,7 +11260,7 @@ namespace gms {
 
                       __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 L_f4334_ymm8r4(const __m256 k0h,
                                           const __m256 k0a) {
@@ -11289,7 +11289,7 @@ namespace gms {
 
                       __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 L_f4334_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -11320,7 +11320,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 L_f4334_ymm8r4_u(const float * __restrict pk0h,
                                             const float * __restrict pk0a) {
@@ -11357,7 +11357,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 S_f4335_ymm8r4(const __m256 k0a,
                                           const __m256 k0h) {
@@ -11380,7 +11380,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 S_f4335_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             const float * __restrict __ATTR_ALIGN__(32) pk0h) {
@@ -11405,7 +11405,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 S_f4335_ymm8r4_u(const float * __restrict  pk0a,
                                             const float * __restrict  pk0h) {
@@ -11437,7 +11437,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G2_f4332_ymm8r4(const __m256 k0h,
                                            const __m256 k0a) {
@@ -11455,7 +11455,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G2_f4332_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                            const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -11473,7 +11473,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G2_f4332_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  pk0a) {
@@ -11491,7 +11491,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G1_f4332_ymm8r4(const __m256 k0h,
                                            const __m256 k0a) {
@@ -11518,7 +11518,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G1_f4332_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -11547,7 +11547,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G1_f4332_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  pk0a) {
@@ -11583,7 +11583,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 H2_f4333_ymm8r4(const __m256 k0h,
                                            const __m256 k0a) {
@@ -11603,7 +11603,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 H2_f4333_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0h,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0a) {
@@ -11625,7 +11625,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 H2_f4333_ymm8r4_u(const float * __restrict  pk0h,
                                              const float * __restrict  pk0a) {
@@ -11647,7 +11647,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 H1_f4333_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                              const float * __restrict __ATTR_ALIGN__(32) pk0h) {
@@ -11679,7 +11679,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 H1_f4333_ymm8r4_u(const float * __restrict  pk0a,
                                              const float * __restrict  pk0h) {
@@ -11719,7 +11719,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4329_ymm8r4(const __m256 k0,
                                             const __m256 gami,
@@ -11788,7 +11788,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4329_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pgami,
@@ -11864,7 +11864,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4329_ymm8r4_u(const float * __restrict pk0,
                                               const float * __restrict  pgami,
@@ -11948,7 +11948,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4337_ymm8r4(const __m256 gammi,
                                             const __m256 gamms,
@@ -11984,7 +11984,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4337_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pgammi,
                                               const float * __restrict __ATTR_ALIGN__(32) pgamms,
@@ -12026,7 +12026,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4337_ymm8r4_u(const float * __restrict  pgammi,
                                               const float * __restrict  pgamms,
@@ -12075,7 +12075,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4340_ymm8r4(const __m256 gammi,
                                             const __m256 gamms,
@@ -12114,7 +12114,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4340_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pgammi,
                                               const float * __restrict __ATTR_ALIGN__(32) pgamms,
@@ -12157,7 +12157,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4340_ymm8r4_u(const float * __restrict  pgammi,
                                               const float * __restrict  pgamms,
@@ -12205,7 +12205,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4343_ymm8r4(const __m256 rcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                             const __m256 k0,
@@ -12236,7 +12236,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4343_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                               const float * __restrict __ATTR_ALIGN__(32) pk0,
@@ -12272,7 +12272,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4343_ymm8r4_u(const float * __restrict  prcs_inf, // rcs of inifnitely long cylinder (section 4.2)
                                               const float * __restrict  pk0,
@@ -12314,7 +12314,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4344_ymm8r4(const __m256 h,
                                             const __m256 k0,
@@ -12361,7 +12361,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4344_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  ph,
                                               const float * __restrict __ATTR_ALIGN__(32)  pk0,
@@ -12416,7 +12416,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4344_ymm8r4_u(const float * __restrict   ph,
                                               const float * __restrict   pk0,
@@ -12477,7 +12477,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4345_ymm8r4(const __m256 psi,
                                             const __m256 k0a,
@@ -12516,7 +12516,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4345_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  ph,
                                               const float * __restrict __ATTR_ALIGN__(32)  pk0,
@@ -12561,7 +12561,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4345_ymm8r4_u(const float * __restrict   ph,
                                               const float * __restrict   pk0,
@@ -12613,7 +12613,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M1_f4350_ymm8r4(const __m256 psi) {
 
@@ -12642,7 +12642,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M1_f4350_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -12672,7 +12672,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M1_f4350_ymm8r4_u(const float * __restrict  ppsi) {
 
@@ -12702,7 +12702,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M2_f4350_ymm8r4(const __m256 psi) {
 
@@ -12731,7 +12731,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M2_f4350_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -12761,7 +12761,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 M2_f4350_ymm8r4_u(const float * __restrict  ppsi) {
 
@@ -12798,7 +12798,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N1_f4351_ymm8r4(const __m256 psi) {
 
@@ -12828,7 +12828,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N1_f4351_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -12859,7 +12859,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N1_f4351_ymm8r4_u(const float * __restrict  ppsi) {
 
@@ -12890,7 +12890,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N2_f4351_ymm8r4(const __m256 psi) {
 
@@ -12920,7 +12920,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N2_f4351_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -12951,7 +12951,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 N2_f4351_ymm8r4_u(const float * __restrict  ppsi) {
 
@@ -12990,7 +12990,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G_f4352_ymm8r4(const __m256 psi) {
 
@@ -13011,7 +13011,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G_f4352_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -13033,7 +13033,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 G_f4352_ymm8r4_u(const float * __restrict  ppsi) {
 
@@ -13055,7 +13055,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F_f4352_ymm8r4(const __m256 psi) {
 
@@ -13076,7 +13076,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F_f4352_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) ppsi) {
 
@@ -13098,7 +13098,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 F_f4352_ymm8r4_u(const float * __restrict ppsi) {
 
@@ -13126,7 +13126,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4353_ymm8r4(const __m256 k0a,
                                             const __m256 k0,
@@ -13163,7 +13163,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4353_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(32) pk0,
@@ -13206,7 +13206,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4353_ymm8r4_u(const float * __restrict  pk0a,
                                               const float * __restrict  pk0,
@@ -13255,7 +13255,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4(const __m256 k0a,
                                             const __m256 h,
@@ -13279,7 +13279,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(32) ph,
@@ -13307,7 +13307,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4_u(const float * __restrict  pk0a,
                                               const float * __restrict  ph,
@@ -13343,7 +13343,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4(const __m256 k0a,
                                             const __m256 h,
@@ -13371,7 +13371,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(32) ph,
@@ -13403,7 +13403,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4354_ymm8r4_u(const float * __restrict  pk0a,
                                               const float * __restrict  ph,
@@ -13442,7 +13442,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4356_ymm8r4(const __m256 k0a,
                                             const __m256 h) {
@@ -13457,7 +13457,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4356_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                             const float * __restrict __ATTR_ALIGN__(32) ph) {
@@ -13474,7 +13474,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4356_ymm8r4_u(const float * __restrict  pk0a,
                                             const float * __restrict  ph) {
@@ -13501,7 +13501,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4411_ymm8r4(const __m256 a,
                                          const __m256 b,
@@ -13528,7 +13528,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4411_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                          const float * __restrict __ATTR_ALIGN__(32) pb,
@@ -13558,7 +13558,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4411_ymm8r4_u(const float * __restrict  pa,
                                            const float * __restrict  pb,
@@ -13588,7 +13588,7 @@ namespace gms {
 
                      __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4412_ymm8r4(const __m256 k0a,
                                          const __m256 a,
@@ -13622,7 +13622,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4412_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0a,
                                            const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -13661,7 +13661,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4412_ymm8r4_u(const float * __restrict  pk0a,
                                            const float * __restrict  pa,
@@ -13706,7 +13706,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4413_ymm8r4(const __m256 a,
                                             const __m256 b,
@@ -13735,7 +13735,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4413_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pa,
                                               const float * __restrict __ATTR_ALIGN__(32)  pb,
@@ -13766,7 +13766,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4413_ymm8r4_u(const float * __restrict   pa,
                                               const float * __restrict   pb,
@@ -13811,7 +13811,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __mmask8
                    TM_f4415_helper_ymm8r4(const __m256 k0,
@@ -13843,7 +13843,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4415_ymm8r4(const __m256 phi1,
                                          const __m256 phi2,
@@ -13911,7 +13911,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4415_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi1,
                                          const float * __restrict __ATTR_ALIGN__(32) pphi2,
@@ -13985,7 +13985,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4415_ymm8r4_u(const float * __restrict  pphi1,
                                          const float * __restrict  pphi2,
@@ -14063,7 +14063,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4416_ymm8r4(const __m256 phi1,
                                          const __m256 phi2,
@@ -14088,7 +14088,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4416_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi1,
                                          const float * __restrict __ATTR_ALIGN__(32) pphi2,
@@ -14114,7 +14114,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4416_ymm8r4_u(const float * __restrict  pphi1,
                                          const float * __restrict  pphi2,
@@ -14146,7 +14146,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4419_ymm8r4(const __m256 phi1,
                                             const __m256 phi2,
@@ -14175,7 +14175,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4419_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pphi1,
                                               const float * __restrict __ATTR_ALIGN__(32) pphi2,
@@ -14208,7 +14208,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4419_ymm8r4_u(const float * __restrict  pphi1,
                                               const float * __restrict  pphi2,
@@ -14249,7 +14249,7 @@ namespace gms {
                      
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4420_ymm8r4(const __m256 a,
                                             const __m256 b,
@@ -14275,7 +14275,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4420_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pb,
@@ -14304,7 +14304,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4420_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pb,
@@ -14340,7 +14340,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __mmask16 
                    T_f4423_helper_ymm8r4( const __m256 k0,
@@ -14372,7 +14372,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 T_f4423_ymm8r4(const __m256 a,
                                           const __m256 b,
@@ -14412,7 +14412,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 T_f4423_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                           const float * __restrict __ATTR_ALIGN__(32) pb,
@@ -14457,7 +14457,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 T_f4423_ymm8r4_u(const float * __restrict pa,
                                           const float * __restrict  pb,
@@ -14509,7 +14509,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4424_ymm8r4(const __m256 a,
                                           const __m256 b,
@@ -14551,7 +14551,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4424_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pa,
                                               const float * __restrict __ATTR_ALIGN__(32) pb,
@@ -14598,7 +14598,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4424_ymm8r4_u(const float * __restrict  pa,
                                               const float * __restrict  pb,
@@ -14651,7 +14651,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4425_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -14676,7 +14676,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4425_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32)  pk0,
                                               const float * __restrict __ATTR_ALIGN__(32)  pa,
@@ -14705,7 +14705,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4425_ymm8r4_u(const float * __restrict   pk0,
                                               const float * __restrict   pa,
@@ -14741,7 +14741,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4426_ymm8r4(const __m256 k0,
                                          const __m256 a,
@@ -14796,7 +14796,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4426_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                          const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -14860,7 +14860,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TM_f4426_ymm8r4_u(const float * __restrict  pk0,
                                          const float * __restrict  pa,
@@ -14932,7 +14932,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4427_ymm8r4(const __m256 k0,
                                          const __m256 a,
@@ -14987,7 +14987,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4427_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                          const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15051,7 +15051,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    void TE_f4427_ymm8r4_u(const float * __restrict  pk0,
                                          const float * __restrict  pa,
@@ -15125,7 +15125,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4428_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -15183,7 +15183,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4428_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15250,7 +15250,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4428_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -15328,7 +15328,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4429_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -15386,7 +15386,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4429_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15454,7 +15454,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4429_ymm8r4_u(const float * __restrict pk0,
                                               const float * __restrict  pa,
@@ -15531,7 +15531,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4430_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -15586,7 +15586,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4430_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15650,7 +15650,7 @@ namespace gms {
 
                   __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4430_ymm8r4_u(const float * __restrict pk0,
                                               const float * __restrict  pa,
@@ -15724,7 +15724,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4431_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -15779,7 +15779,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4431_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15842,7 +15842,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4431_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -15919,7 +15919,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4432_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -15936,7 +15936,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4432_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -15954,7 +15954,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4432_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
@@ -15983,7 +15983,7 @@ namespace gms {
 
                     __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4433_ymm8r4(const __m256 k0,
                                             const __m256 a,
@@ -16000,7 +16000,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4433_ymm8r4_a(const float * __restrict __ATTR_ALIGN__(32) pk0,
                                               const float * __restrict __ATTR_ALIGN__(32) pa,
@@ -16018,7 +16018,7 @@ namespace gms {
 
                    __ATTR_ALWAYS_INLINE__
 	           __ATTR_OPTIMIZE_O3__
-	           __ATTR_VECTORCALL__
+	           
 	           static inline
                    __m256 rcs_f4433_ymm8r4_u(const float * __restrict  pk0,
                                               const float * __restrict  pa,
