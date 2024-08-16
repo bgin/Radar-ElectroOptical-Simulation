@@ -30,7 +30,7 @@ namespace file_info {
  const unsigned int gGMS_RANGE_RATE_AVX_MICRO = 0U;
  const unsigned int gGMS_RANGE_RATE_AVX_FULLVER =
   1000U*gGMS_RANGE_RATE_AVX_MAJOR+100U*gGMS_RANGE_RATE_AVX_MINOR+10U*gGMS_RANGE_RATE_AVX_MICRO;
- const char * const pgGMS_RANGE_RATE_AVX_CREATION_DATE = "14-08-2024 07:53 +00200 (WED 14 AUG 2024 11:11 GMT+2)";
+ const char * const pgGMS_RANGE_RATE_AVX_CREATION_DATE = "14-08-2024 07:53 +00200 (WED 14 AUG 2024 07:53PM GMT+2)";
  const char * const pgGMS_RANGE_RATE_AVX_BUILD_DATE    = __DATE__ " " __TIME__ ;
  const char * const pgGMS_RANGE_RATE_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
  const char * const pgGMS_RANGE_RATE_AVX_SYNOPSIS      = "AVX based range-rate functions (vectorized)."
