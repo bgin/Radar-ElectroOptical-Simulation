@@ -1,7 +1,7 @@
 
 
 #ifndef __GMS_PHASE_PDF_AVX_HPP__
-#define __GMS_PHASE_PDF_AVX_HPP__ 111220221413
+#define __GMS_PHASE_PDF_AVX_HPP__ 121220221332
 
 
 /*MIT License
@@ -35,7 +35,7 @@ namespace file_version {
     const char * const GMS_PHASE_PDF_AVX_CREATION_DATE = "12-12-2022 13:32 AM +00200 (MON 12 DEC 2022 GMT+2)";
     const char * const GMS_PHASE_PDF_AVX_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_PHASE_PDF_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_PHASE_PDF_AVX5_DESCRIPTION   = "AVX optimized Phase PDF."
+    const char * const GMS_PHASE_PDF_AVX_DESCRIPTION   = "AVX optimized Phase PDF."
 
 }
 
@@ -74,7 +74,7 @@ namespace  gms {
                          errf = _mm256_erf_ps(acphi);
                          t2   = _mm256_cos_ps(hphi);
                          c2phi= _mm256_mul_ps(t2,t2);
-                         expt2= xexpf(_mm256_mul_ps(aa,c2phi));
+                         expt2= _mm256_exp_ps(_mm256_mul_ps(aa,c2phi));
                          t2   = _mm256_mul_ps(t1,_mm256_mul_ps(errf,expt2));
                          f1   = _mm256_mul_ps(inv2pi,_mm256_mul_ps(invex,t2));
                          return (f1);
@@ -85,7 +85,7 @@ namespace  gms {
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           static inline
-                   __m256d phase_pdf_zmm8r8(const __m256d a,        // signal-to-noise ratio
+                   __m256d phase_pdf_ymm4r8(const __m256d a,        // signal-to-noise ratio
                                             const __m256d phi) {    // vector of phi (rad) arguments
 
                          const __m256d inv2pi = _mm256_set1_pd(0.159154943091895335768883763373);
@@ -130,7 +130,7 @@ namespace  gms {
 
 
 
-#endif /*__GMS_PHASE_PDF_AVX512_HPP__*/
+#endif /*__GMS_PHASE_PDF_AVX_HPP__*/
 
 
 
