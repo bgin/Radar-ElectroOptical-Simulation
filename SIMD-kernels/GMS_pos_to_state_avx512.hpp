@@ -107,10 +107,8 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 **@@Modified Bernard Gingold May 2022 ,beniekg@gmail.com
 %%(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.
 */
-	              __ATTR_REGCALL__
+	             
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline void
                       const_velocity_zmm8r8(const __m512d xDot,
 					    const __m512d yDot,
@@ -125,11 +123,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		     }
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline void
+		       static inline void
                       const_velocity_zmm8r8_a(const __m512d xDot,
 					      const __m512d yDot,
 					      double * __restrict __ATTR_ALIGN__(64) s_a,
@@ -143,10 +139,8 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		     }
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline void
                       const_velocity_zmm8r8_u(const __m512d xDot,
 					      const __m512d yDot,
@@ -161,10 +155,8 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		     }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline void
                       const_velocity_zmm16r4(const __m512 xDot,
 					     const __m512 yDot,
@@ -179,10 +171,8 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		     }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline void
                       const_velocity_zmm16r4_a(const __m512 xDot,
 					       const __m512 yDot,
@@ -197,10 +187,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		     }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_velocity_zmm16r4_u(const __m512 xDot,
 					       const __m512 yDot,
@@ -216,10 +205,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       const_acceleration_zmm8r8(const __m512d xDot,
 					        const __m512d yDot,
@@ -257,10 +245,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm8r8_a(const __m512d xDot,
 					          const __m512d yDot,
@@ -298,10 +285,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       const_acceleration_zmm8r8_u(const __m512d xDot,
 					          const __m512d yDot,
@@ -339,10 +325,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm16r4(const __m512 xDot,
 					         const __m512 yDot,
@@ -380,10 +365,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       const_acceleration_zmm16r4_a(const __m512 xDot,
 					           const __m512 yDot,
@@ -421,10 +405,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm16r4_u(const __m512 xDot,
 					           const __m512 yDot,
@@ -464,10 +447,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		    
 		      static inline void
 		      const_turn_zmm8r8(const __m512d xDot,
 					const __m512d yDot,
@@ -492,10 +474,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      const_turn_zmm8r8_a(const __m512d xDot,
 					  const __m512d yDot,
@@ -520,10 +501,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      const_turn_zmm8r8_u(const __m512d xDot,
 					  const __m512d yDot,
@@ -548,10 +528,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      const_turn_zmm16r4(const __m512 xDot,
 					 const __m512 yDot,
@@ -576,10 +555,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      const_turn_zmm16r4_a(const __m512 xDot,
 					   const __m512 yDot,
@@ -604,10 +582,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      const_turn_zmm16r4_a(const __m512 xDot,
 					   const __m512 yDot,
@@ -634,10 +611,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 
 
 
-	              __ATTR_REGCALL__
+	            
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      turn_accelerate_zmm8r8(const __m512d xDot,
 					     const __m512d yDot,
@@ -669,10 +645,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      turn_accelerate_zmm8r8_a(const __m512d xDot,
 					       const __m512d yDot,
@@ -705,10 +680,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      turn_accelerate_zmm8r8_u(const __m512d xDot,
 					       const __m512d yDot,
@@ -741,10 +715,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      turn_accelerate_zmm16r4(const __m512 xDot,
 					      const __m512 yDot,
@@ -776,10 +749,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      turn_accelerate_zmm16r4_a(const __m512 xDot,
 					        const __m512 yDot,
@@ -812,10 +784,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      turn_accelerate_zmm16r4_u(const __m512 xDot,
 					        const __m512 yDot,
@@ -897,10 +868,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 */	           
 
 
-	              __ATTR_REGCALL__
+	             
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void			     
 		      const_velocity_zmm8r8(const __m512d theta,// heading
 		                            const __m512d v,    // speed
@@ -919,10 +889,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void			     
 		      const_velocity_zmm8r8_a(const __m512d theta,// heading
 		                              const __m512d v,    // speed
@@ -941,10 +910,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void			     
 		      const_velocity_zmm8r8_u(const __m512d theta,// heading
 		                              const __m512d v,    // speed
@@ -963,10 +931,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void			     
 		      const_velocity_zmm16r4(const __m512 theta,// heading
 		                             const __m512 v,    // speed
@@ -985,10 +952,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void			     
 		      const_velocity_zmm16r4_a(const __m512 theta,// heading
 		                               const __m512 v,    // speed
@@ -1007,10 +973,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void			     
 		      const_velocity_zmm16r4_u(const __m512 theta,// heading
 		                               const __m512 v,    // speed
@@ -1029,10 +994,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm8r8(const __m512d theta,
 		                                const __m512d v,
@@ -1056,10 +1020,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm8r8_a(const __m512d theta,
 		                                  const __m512d v,
@@ -1083,10 +1046,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		     __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		    
 		      static inline void
                       const_acceleration_zmm8r8_u(const __m512d theta,
 		                                  const __m512d v,
@@ -1110,10 +1072,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm16r4(const __m512 theta,
 		                                 const __m512 v,
@@ -1137,10 +1098,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       const_acceleration_zmm16r4_a(const __m512 theta,
 		                                   const __m512 v,
@@ -1165,10 +1125,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       const_acceleration_zmm16r4_u(const __m512 theta,
 		                                   const __m512 v,
@@ -1192,10 +1151,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      const_turn_zmm8r8(const __m512d theta,
 		                        const __m512d v,
@@ -1219,10 +1177,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		    
 		      static inline void
 		      const_turn_zmm8r8_a(const __m512d theta,
 		                          const __m512d v,
@@ -1246,10 +1203,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      const_turn_zmm8r8_u(const __m512d theta,
 		                          const __m512d v,
@@ -1273,10 +1229,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      const_turn_zmm16r4(const __m512 theta,
 		                         const __m512 v,
@@ -1301,10 +1256,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
 		      const_turn_zmm16r4_a(const __m512 theta,
 		                         const __m512 v,
@@ -1328,10 +1282,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
 		      const_turn_zmm16r4_u(const __m512 theta,
 		                         const __m512 v,
@@ -1355,10 +1308,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		   }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       turn_accelerate_zmm8r8(const __m512d theta,
 		                             const __m512d omega,
@@ -1386,10 +1338,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		     __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       turn_accelerate_zmm8r8_a(const __m512d theta,
 		                               const __m512d omega,
@@ -1417,10 +1368,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
  
-		     __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		      
 		      static inline void
                       turn_accelerate_zmm8r8_u(const __m512d theta,
 		                               const __m512d omega,
@@ -1448,10 +1398,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       turn_accelerate_zmm16r4(const __m512 theta,
 		                             const __m512 omega,
@@ -1479,10 +1428,9 @@ https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary/tree/273171
 		    }
 
 
-		       __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline void
                       turn_accelerate_zmm16r4_a(const __m512 theta,
 		                             const __m512 omega,
