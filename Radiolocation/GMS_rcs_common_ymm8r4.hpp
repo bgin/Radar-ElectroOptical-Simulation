@@ -38,6 +38,10 @@ namespace file_version {
 
 }
 
+#if !defined(__AVX512F__) || !defined(__AVX52VL__)
+#error "Support of AVX512F or AVX512VL ISA required!!"
+#endif
+
 #include <cstdint>
 #include <immintrin.h>
 #include "GMS_config.h"
@@ -665,7 +669,7 @@ Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 */
 
 
-__ATTR_ALIGN__(32) 
+___ATTR_ALIGN__(32) 
 static const __m256 sn[6] = { 
  -2.99181919401019853726E3f,
  7.08840045257738576863E5f,
@@ -674,7 +678,7 @@ static const __m256 sn[6] = {
  -4.42979518059697779103E10f,
  3.18016297876567817986E11f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 sd[6] = {
  2.81376268889994315696E2f,
  4.55847810806532581675E4f,
@@ -683,7 +687,7 @@ static const __m256 sd[6] = {
  2.24411795645340920940E10f,
  6.07366389490084639049E11f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 cn[6] = {
 -4.98843114573573548651E-8f,
  9.50428062829859605134E-6f,
@@ -692,7 +696,7 @@ static const __m256 cn[6] = {
 -2.05525900955013891793E-1f,
  9.99999999999999998822E-1f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 cd[7] = {
  3.99982968972495980367E-12f,
  9.15439215774657478799E-10f,
@@ -702,7 +706,7 @@ static const __m256 cd[7] = {
  4.12142090722199792936E-2f,
  1.00000000000000000118E0f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 fn[10] = {
   4.21543555043677546506E-1f,
   1.43407919780758885261E-1f,
@@ -715,7 +719,7 @@ static const __m256 fn[10] = {
   1.34283276233062758925E-16f,
   3.76329711269987889006E-20f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 fd[10] = {
   7.51586398353378947175E-1f,
   1.16888925859191382142E-1f,
@@ -728,7 +732,7 @@ static const __m256 fd[10] = {
   4.52001434074129701496E-17f,
   1.25443237090011264384E-20f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 gn[11] = {
   5.04442073643383265887E-1f,
   1.97102833525523411709E-1f,
@@ -742,7 +746,7 @@ static const __m256 gn[11] = {
   8.36354435630677421531E-19f,
   1.86958710162783235106E-22f};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256 gd[11] = {
   1.47495759925128324529E0f,
   3.37748989120019970451E-1f,
