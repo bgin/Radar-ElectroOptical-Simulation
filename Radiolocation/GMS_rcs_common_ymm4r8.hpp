@@ -38,6 +38,10 @@ namespace file_version {
 
 }
 
+#if !defined(__AVX512F__) || !defined(__AVX512VL__)
+#error "Support of AVX512F or AVX512VL ISA required!!"
+#endif
+
 #include <cstdint>
 #include <immintrin.h>
 #include "GMS_config.h"
@@ -665,7 +669,7 @@ Copyright 1984, 1987, 1989, 2000 by Stephen L. Moshier
 */
 
 
-__ATTR_ALIGN__(32) 
+___ATTR_ALIGN__(32) 
 static const __m256d sn[6] = { 
  -2.99181919401019853726E3,
  7.08840045257738576863E5,
@@ -674,7 +678,7 @@ static const __m256d sn[6] = {
  -4.42979518059697779103E10,
  3.18016297876567817986E11};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d sd[6] = {
  2.81376268889994315696E2,
  4.55847810806532581675E4,
@@ -683,7 +687,7 @@ static const __m256d sd[6] = {
  2.24411795645340920940E10,
  6.07366389490084639049E11};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d cn[6] = {
 -4.98843114573573548651E-8,
  9.50428062829859605134E-6,
@@ -692,7 +696,7 @@ static const __m256d cn[6] = {
 -2.05525900955013891793E-1,
  9.99999999999999998822E-1};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d cd[7] = {
  3.99982968972495980367E-12,
  9.15439215774657478799E-10,
@@ -702,7 +706,7 @@ static const __m256d cd[7] = {
  4.12142090722199792936E-2,
  1.00000000000000000118E0};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d fn[10] = {
   4.21543555043677546506E-1,
   1.43407919780758885261E-1,
@@ -715,7 +719,7 @@ static const __m256d fn[10] = {
   1.34283276233062758925E-16,
   3.76329711269987889006E-20};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d fd[10] = {
   7.51586398353378947175E-1,
   1.16888925859191382142E-1,
@@ -728,7 +732,7 @@ static const __m256d fd[10] = {
   4.52001434074129701496E-17,
   1.25443237090011264384E-20};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d gn[11] = {
   5.04442073643383265887E-1,
   1.97102833525523411709E-1,
@@ -742,7 +746,7 @@ static const __m256d gn[11] = {
   8.36354435630677421531E-19,
   1.86958710162783235106E-22};
 
-_ATTR_ALIGN__(32) 
+__ATTR_ALIGN__(32) 
 static const __m256d gd[11] = {
   1.47495759925128324529E0,
   3.37748989120019970451E-1,
@@ -1657,7 +1661,7 @@ done:
 	          
                   
 	           static inline
-                   __m256d fresnel_S_ymm4r8_a(const float * __restrict __ATTR_ALIGN__(32) pxxa) {
+                   __m256d fresnel_S_ymm4r8_a(const float * __restrict ___ATTR_ALIGN__(32) pxxa) {
                                         
                         using namespace gms::math;
                          __m256d xxa = _mm256_load_pd(&pxxa[0]);
