@@ -2,24 +2,6 @@
 #ifndef __GMS_ROTATION_KERNELS_AVX512_HPP__
 #define __GMS_ROTATION_KERNELS_AVX512_HPP__ 090820210225
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
 
 namespace file_info {
 
@@ -72,10 +54,8 @@ namespace gms {
 
 		      
 
-	              __ATTR_REGCALL__
+	             
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      DCM9x16
 		      q4x16_to_rmat9x16_zmm16r4(const __m512 q_x,
@@ -108,10 +88,8 @@ namespace gms {
 		      }
 
 
-	              __ATTR_REGCALL__
+	             
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
                       DCM9x8
 		      q4x8_to_rmat9x8_zmm8r8(const __m512d q_x,
@@ -152,11 +130,9 @@ namespace gms {
                        SIMD Matrix 9x16
                    */
 
-		    __ATTR_REGCALL__
+		    
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_HOT__
-		    __ATTR_ALIGN__(32)
-		    static inline
+		   static inline
 		    DCM9x16
 		    random_sphere_rm9x16_zmm16r4(const __m512 vr1,
 		                                 const __m512 vr2,
@@ -194,11 +170,9 @@ namespace gms {
                        SIMD Matrix 9x8
                    */
 
-		    __ATTR_REGCALL__
+		    
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_HOT__
-		    __ATTR_ALIGN__(32)
-		    static inline
+		   static inline
 		    DCM9x8
 		    random_sphere_rm9x8_zmm8r8(  const __m512d vr1,
 		                                 const __m512d vr2,
@@ -238,11 +212,9 @@ namespace gms {
                                 Manually vectorized.
                             */
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 	              void
 		      urand_q4x16_a_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
 		                            const __m512 vry,   // random gaussian vector uniformly distributed [0,1]
@@ -268,10 +240,8 @@ namespace gms {
 		   }
 
 
-		     __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
 		      urand_q4x16_u_zmm16r4(const __m512 vrx,   // random gaussian vector uniformly distributed [0,1]
@@ -299,10 +269,8 @@ namespace gms {
 
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
 		      urand_q4x8_a_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
@@ -329,11 +297,9 @@ namespace gms {
 		   }
 
 
-		     __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 	              void
 		      urand_q4x8_u_zmm8r8(  const __m512d vrx,   // random gaussian vector uniformly distributed [0,1]
 		                          const __m512d vry,   // random gaussian vector uniformly distributed [0,1]
@@ -364,11 +330,9 @@ namespace gms {
                             Convert unit quaternion to Euler angles
                       */
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 	              void
 		      q4x16_to_ea3x16_a_zmm16r4(const __m512 q_x,
 		                              const __m512 q_y,
@@ -434,10 +398,8 @@ namespace gms {
 
 
 		  
-                      __ATTR_REGCALL__
+                     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
 		      q4x16_to_ea3x16_u_zmm16r4(const __m512 q_x,
@@ -505,10 +467,8 @@ namespace gms {
 
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
 		      q4x8_to_ea3x8_a_zmm8r8(   const __m512d q_x,
@@ -574,10 +534,8 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 	              void
 		      q4x8_to_ea3x8_u_zmm8r8(   const __m512d q_x,
@@ -650,10 +608,8 @@ namespace gms {
                     */
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x16_to_ax4x16_a_zmm16r4(const __m512 q_x,
@@ -704,10 +660,8 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x16_to_ax4x16_u_zmm16r4(const __m512 q_x,
@@ -761,10 +715,8 @@ namespace gms {
 
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x8_to_ax4x8_a_zmm8r8(   const __m512d q_x,
@@ -813,11 +765,9 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void
 		      q4x8_to_ax4x8_u_zmm8r8( const __m512d q_x,
 		                              const __m512d q_y,
@@ -871,10 +821,8 @@ namespace gms {
                      */
 #include <limits>
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x16_to_rv4x16_a_zmm16r4(const __m512 q_x,
@@ -911,11 +859,9 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void
 		      q4x16_to_rv4x16_u_zmm16r4(const __m512 q_x,
 		                              const __m512 q_y,
@@ -952,10 +898,8 @@ namespace gms {
 
 
 		     
-	              __ATTR_REGCALL__
+	              
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x8_to_rv4x8_a_zmm8r8(   const __m512d q_x,
@@ -991,10 +935,8 @@ namespace gms {
 			  }
 		     }
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      q4x8_to_rv4x8_u_zmm8r8(   const __m512d q_x,
@@ -1036,10 +978,8 @@ namespace gms {
                        */
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      rmat9x16_to_ea3x16_a_zmm16r4(const DCM9x16 rm,
@@ -1100,10 +1040,8 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      rmat9x16_to_ea3x16_u_zmm16r4(const DCM9x16 rm,
@@ -1165,11 +1103,9 @@ namespace gms {
 
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void
 		      rmat9x8_to_ea3x8_a_zmm8r8(const DCM9x8 rm,
 		                              double * __restrict __ATTR_ALIGN__(64) alpha,
@@ -1229,10 +1165,8 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void
 		      rmat9x8_to_ea3x8_u_zmm8r8(const DCM9x8 rm,
