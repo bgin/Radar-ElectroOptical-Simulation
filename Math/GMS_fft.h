@@ -1,7 +1,7 @@
 
 
-#ifndef __GMS_FFT_H__
-#define __GMS_FFT_H__
+#ifndef __FFT_H__
+#define __FFT_H__
 
 /********************************************************************
  *                                                                  *
@@ -83,7 +83,7 @@ void __ogg_fdcosqb(int n, float *x, float *wsave, int *ifac)
 
 void __ogg_fdrffti(int n, float *wsave, int *ifac)
                                  __attribute__((aligned(32)))
-								         __attribute__((hot));
+								 __attribute__((hot));
 void __ogg_fdrfftf(int n, float *r, float *wsave, int *ifac)
                                  __attribute__((aligned(32)))
 								 __attribute__((hot));
@@ -111,4 +111,4 @@ void __ogg_fdcosqb(int n, float *x, float *wsave, int *ifac)
 
 
 
-#endif /*__GMS_FFT_H__*/
+#endif /*__FFT_H__*/
