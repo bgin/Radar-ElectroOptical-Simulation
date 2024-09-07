@@ -690,6 +690,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -701,10 +702,7 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	            static inline
                    __m512 D_f7127_zmm16r4_a(    const float * __restrict __ATTR_ALIGN__(64)  pgam0,
                                                 const float * __restrict __ATTR_ALIGN__(64)  ptht,
                                                 const float * __restrict __ATTR_ALIGN__(64)  peps2,
@@ -718,6 +716,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -729,9 +728,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    __m512 D_f7127_zmm16r4_u(    const float * __restrict   pgam0,
                                                 const float * __restrict   ptht,
@@ -746,6 +742,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -763,10 +760,7 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	          static inline
                    __m512 D_f7128_zmm16r4(    const __m512 gam0,
                                               const __m512 tht,
                                               const __m512 eps2,
@@ -776,6 +770,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,e1e2,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -788,9 +783,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    __m512 D_f7128_zmm16r4_a(    const float * __restrict __ATTR_ALIGN__(64)  pgam0,
                                                 const float * __restrict __ATTR_ALIGN__(64)  ptht,
@@ -805,6 +797,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,e1e2,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -817,10 +810,7 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	          static inline
                    __m512 D_f7128_zmm16r4_u(    const float * __restrict   pgam0,
                                                 const float * __restrict   ptht,
                                                 const float * __restrict   peps2,
@@ -834,6 +824,7 @@ namespace  gms {
                          register __m512 g0pi,ttht,sint,e2e1,e1e2,sqr,rat;
                          register __m512 D;
                          g0pi = _mm512_mul_ps(gam0,invpi);
+                         sint = xsinf(tht);
                          e2e1 = _mm512_div_ps(eps2,eps1);
                          ttht = xtanf(tht);
                          sint = _mm512_fmsub_ps(sint,sint,e2e1);
@@ -854,9 +845,6 @@ namespace  gms {
 
                     
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7129_zmm16r4(const __m512 tht,
                                         const __m512 mur1,
@@ -873,9 +861,9 @@ namespace  gms {
                        register __m512 z1r,z1i,z2r,z2i;
                        register __m512 cost,numr,numi,denr,deni;
                        register __m512 resr,resi;
-                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       zi_f716_zmm16r4(tht,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
                        cost = xcosf(tht);
-                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       zi_f716_zmm16r4(tht,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
                        numr = _mm512_fmsub_ps(z2r,cost,z1r);
                        denr = _mm512_fmadd_ps(z2r,cost,z2r);
                        numi = _mm512_fmsub_ps(z2i,cost,z1i);
@@ -887,9 +875,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7129_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
                                           const float * __restrict __ATTR_ALIGN__(64) pmur1,
@@ -929,10 +914,7 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	          static inline
                    void R_f7129_zmm16r4_u(const float * __restrict  ptht,
                                           const float * __restrict  pmur1,
                                           const float * __restrict  pmui1,
@@ -979,9 +961,6 @@ namespace  gms {
 
    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7130_zmm16r4(const __m512 tht,
                                         const __m512 mur1,
@@ -998,11 +977,11 @@ namespace  gms {
                        register __m512 z1r,z1i,z2r,z2i;
                        register __m512 cost,numr,numi,denr,deni;
                        register __m512 resr,resi,t0r,t0i;
-                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       zi_f716_zmm16r4(tht,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
                        cost = xcosf(tht);
                        t0r  = _mm512_mul_ps(z1r,cost);
                        t0i  = _mm512_mul_ps(z1i,cost);
-                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       zi_f716_zmm16r4(tht,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
                        numr = _mm512_sub_ps(z2r,t0r);
                        denr = _mm512_add_ps(z2r,t0r);
                        numi = _mm512_sub_ps(z2i,t0i);
@@ -1014,9 +993,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7130_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) ptht,
                                           const float * __restrict __ATTR_ALIGN__(64) pmur1,
@@ -1058,9 +1034,7 @@ namespace  gms {
 
 
                     __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	          
 	           static inline
                    void R_f7130_zmm16r4_u(const float * __restrict  ptht,
                                           const float * __restrict  pmur1,
@@ -1086,11 +1060,11 @@ namespace  gms {
                        register __m512 z1r,z1i,z2r,z2i;
                        register __m512 cost,numr,numi,denr,deni;
                        register __m512 resr,resi,t0r,t0i;
-                       zi_f716_zmm16r4(tht1,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
+                       zi_f716_zmm16r4(tht,mur1,mui1,epsr1,epsi1,&z1r,&z1i);
                        cost = xcosf(tht);
                        t0r  = _mm512_mul_ps(z1r,cost);
                        t0i  = _mm512_mul_ps(z1i,cost);
-                       zi_f716_zmm16r4(tht1,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
+                       zi_f716_zmm16r4(tht,mur2,mui2,epsr2,epsi2,&z2r,&z2i);
                        numr = _mm512_sub_ps(z2r,t0r);
                        denr = _mm512_add_ps(z2r,t0r);
                        numi = _mm512_sub_ps(z2i,t0i);
@@ -1108,9 +1082,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    __m512 R_f7215_f7216_zmm16r4(const __m512 d,
                                                 const __m512 k0,
@@ -1137,7 +1108,7 @@ namespace  gms {
                             return (R);
                         }
                         else {
-                            const __m512 _1 = _mm512_sqrt_ps(1.0f);
+                            const __m512 _1 = _mm512_set1_ps(1.0f);
                             k    = _mm512_sqrt_ps(_mm512_sub_ps(_1,alp));
                             cost = xcosf(tht);
                             k02k = _mm512_div_ps(_mm512_mul_ps(k0,k0),k);
@@ -1155,9 +1126,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    __m512 R_f7215_f7216_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pd,
                                                   const float * __restrict __ATTR_ALIGN__(64) pk0,
@@ -1188,7 +1156,7 @@ namespace  gms {
                             return (R);
                         }
                         else {
-                            const __m512 _1 = _mm512_sqrt_ps(1.0f);
+                            const __m512 _1 = _mm512_set1_ps(1.0f);
                             k    = _mm512_sqrt_ps(_mm512_sub_ps(_1,alp));
                             cost = xcosf(tht);
                             k02k = _mm512_div_ps(_mm512_mul_ps(k0,k0),k);
@@ -1206,9 +1174,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    __m512 R_f7215_f7216_zmm16r4_u(const float * __restrict  pd,
                                                   const float * __restrict  pk0,
@@ -1239,7 +1204,7 @@ namespace  gms {
                             return (R);
                         }
                         else {
-                            const __m512 _1 = _mm512_sqrt_ps(1.0f);
+                            const __m512 _1 = _mm512_set1_ps(1.0f);
                             k    = _mm512_sqrt_ps(_mm512_sub_ps(_1,alp));
                             cost = xcosf(tht);
                             k02k = _mm512_div_ps(_mm512_mul_ps(k0,k0),k);
@@ -1264,9 +1229,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline 
                    void Esz_f741_zmm16r4(const __m512 k0,
                                          const __m512 r,
