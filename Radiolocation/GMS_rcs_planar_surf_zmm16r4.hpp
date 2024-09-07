@@ -509,9 +509,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7123_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) ptht,
                                             const float * __restrict __ATTR_ALIGN__(64) peps1,
@@ -543,9 +540,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7123_zmm16r4_u(  const float * __restrict  ptht,
                                             const float * __restrict  peps1,
@@ -584,9 +578,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7124_zmm16r4(const __m512 tht,
                                         const __m512 eps2,
@@ -617,9 +608,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline
                    void R_f7124_zmm16r4_a(  const float * __restrict __ATTR_ALIGN__(64) ptht,
                                             const float * __restrict __ATTR_ALIGN__(64) peps1,
@@ -654,10 +642,7 @@ namespace  gms {
 
 
                      __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	          static inline
                    void R_f7124_zmm16r4_u(  const float * __restrict  ptht,
                                             const float * __restrict  peps1,
                                             const float * __restrict  peps2
@@ -695,10 +680,7 @@ namespace  gms {
                    */
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
-	           static inline
+	          static inline
                    __m512 D_f7127_zmm16r4(    const __m512 gam0,
                                               const __m512 tht,
                                               const __m512 eps2,
