@@ -2079,9 +2079,6 @@ namespace  gms {
 #include "GMS_rcs_common_zmm16r4.hpp"
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline 
                    void coefA12_f7413_zmm16r4(const __m512 k0a,
                                               const __m512 tht,
@@ -2110,9 +2107,6 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline 
                    void coefA12_f7413_zmm16r4_a(const float * __restrict __ATTR_ALIGN__(64) pk0a,
                                               const float * __restrict __ATTR_ALIGN__(64) ptht,
@@ -2147,9 +2141,6 @@ namespace  gms {
 
 
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
 	           static inline 
                    void coefA12_f7413_zmm16r4_u(const float * __restrict  pk0a,
                                                 const float * __restrict  ptht,
