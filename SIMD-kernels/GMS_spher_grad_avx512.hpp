@@ -25,26 +25,6 @@
   contact: beniekg@gmail.com
 */
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-
 namespace file_info {
 
  const unsigned int gGMS_SPHER_GRAD_AVX512_MAJOR = 1U;
@@ -84,11 +64,9 @@ namespace gms {
  *May  2022 Bernard Gingold, manually vectorized.
  */
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
-                      __ATTR_REGCALL__
+                    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void  spher_inv_jac_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) J0,
 		                                   double * __restrict __ATTR_ALIGN__(64) J1,
 						   double * __restrict __ATTR_ALIGN__(64) J2,
@@ -181,11 +159,9 @@ namespace gms {
 		   }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		       static inline
 		      void  spher_inv_jac_zmm8r8_u(double * __restrict J0,
 		                                   double * __restrict J1,
 						   double * __restrict J2,
@@ -283,11 +259,9 @@ namespace gms {
 	             
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		       static inline
 		      void  spher_inv_jac_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) J0,
 		                                    float * __restrict __ATTR_ALIGN__(64) J1,
 						    float * __restrict __ATTR_ALIGN__(64) J2,
@@ -380,11 +354,9 @@ namespace gms {
 		   }
 
 
-		     __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void  spher_inv_jac_zmm16r4_u(float * __restrict J0,
 		                                    float * __restrict J1,
 						    float * __restrict J2,
@@ -482,10 +454,8 @@ namespace gms {
                         instead of SoA.
                     */
 
-		       __ATTR_REGCALL__
+		      
                        __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void  spher_inv_jac_zmm8r8(__m512d * __restrict __ATTR_ALIGN__(64) J, //flatten 9x1 array
 		                                 const __m512d x,
@@ -571,11 +541,9 @@ namespace gms {
 		   }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void  spher_inv_jac_zmm16r4(__m512 * __restrict __ATTR_ALIGN__(64) J,
 		                                  const __m512 x,
 						  const __m512 y,
@@ -669,10 +637,8 @@ namespace gms {
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
 	              
 
-                      __ATTR_REGCALL__
+                      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void spher_ang_hess_zmm8r8(__m512d * __restrict __ATTR_ALIGN__(64) H,
 		                                 const __m512d G0,
@@ -863,10 +829,8 @@ namespace gms {
 		   }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void spher_ang_hess_zmm16r4(__m512 * __restrict __ATTR_ALIGN__(64) H,
 		                                  const __m512 G0,
@@ -1065,11 +1029,9 @@ namespace gms {
 **/
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/		   
 
-                      __ATTR_REGCALL__
+                     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void spher_ang_grad_zmm8r8_a(double * __restrict __ATTR_ALIGN__(64) Mat0,
 		                                   double * __restrict __ATTR_ALIGN__(64) Mat1,
 						   double * __restrict __ATTR_ALIGN__(64) Mat2,
@@ -1200,11 +1162,9 @@ namespace gms {
 		    }
 
 
-		       __ATTR_REGCALL__
+		       
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
 		      void spher_ang_grad_zmm8r8_u(double * __restrictMat0,
 		                                   double * __restrict  Mat1,
 						   double * __restrict  Mat2,
@@ -1337,10 +1297,8 @@ namespace gms {
 
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void spher_ang_grad_zmm16r4_a(float * __restrict __ATTR_ALIGN__(64) Mat0,
 		                                    float * __restrict __ATTR_ALIGN__(64) Mat1,
@@ -1472,11 +1430,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		       static inline
 		      void spher_ang_grad_zmm16r4_u(float * __restrict  Mat0,
 		                                    float * __restrict  Mat1,
 						    float * __restrict  Mat2,
