@@ -2,24 +2,7 @@
 #ifndef __GMS_PLANT_DIELECTRIC_AVX512_HPP__
 #define __GMS_PLANT_DIELECTRIC_AVX512_HPP__ 050120220920
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+
 
 namespace file_info {
 
@@ -27,9 +10,9 @@ namespace file_info {
      const unsigned int GMS_PLANT_DIELECTRIC_AVX512_MINOR = 1;
      const unsigned int GMS_PLANT_DIELECTRIC_AVX512_MICRO = 0;
      const unsigned int gGMS_PLANT_DIELECTRIC_AVX512_FULLVER =
-       1000U*GMS_PLANT_DIELECTRIC_AVX512_MAJOR+100U*GMS_PLANT_DIELECTRIC_AVX512_MINOR+
-       10U*GMS_PLANT_DIELECTRIC_AVX512_MICRO;
-     const char * const GMS_PLANT_DIELECTRIC_AVX512_CREATION_DATE = "05-01-2022 09:20 +00200 (WED 05 JAN 2022 GMT+2)";
+       1000U*GMS_PLANT_DIELECTRIC_AVX512_MAJOR+100U*gGMS_PLANT_DIELECTRIC_AVX512_MINOR+
+       10U*gGMS_PLANT_DIELECTRIC_AVX512_MICRO;
+     const char * const GMS_PLANT_DIELECTRIC_AVX512_CREATION_DATE = "05-01-2022 09:20 +00200 (WED 05 JUN 2022 GMT+2)";
      const char * const GMS_PLANT_DIELECTRIC_AVX512_BUILD_DATE    = __DATE__ " " __TIME__;
      const char * const GMS_PLANT_DIELECTRIC_AVX512_SYNOPSIS      = "Vegetation dielectric states AVX512 vectorized."
 }
@@ -54,10 +37,8 @@ namespace gms {
 	              /*
                                This kernel operates on 16 leaves.
                           */
-	              __ATTR_REGCALL__
+	            
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      ZMM16c4
 		      static inline
 		      zmm16c4_leaf_dielectric(const AVX512Vec16 leaf_mg,
@@ -86,11 +67,9 @@ namespace gms {
 		  }
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      ZMM8c8
+		     ZMM8c8
 		      static inline
 		      zmm8c8_leaf_dielectric( const AVX512Vec8 leaf_mg,
 		                              const AVX512Vec8 leaf_rho,
@@ -120,10 +99,8 @@ namespace gms {
 
 		  
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      ZMM16c4
 		      static inline
 		      zmm16c4_veg_dielectric_2(const AVX512Vec16 mg,
@@ -199,10 +176,8 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      ZMM8c8
 		      static inline
 		      zmm8c8_veg_dielectric_2( const AVX512Vec8 mg,
@@ -278,10 +253,8 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      ZMM16c4
 		      static inline
 		      zmm16c4_veg_dielectric_1(const AVX512Vec16 mg,
@@ -356,11 +329,9 @@ namespace gms {
 		   }
 
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      ZMM16c4
+		     ZMM16c4
 		      static inline
 		      zmm8c8_veg_dielectric_1( const AVX512Vec8 mg,
 		                               const AVX512Vec8 tempC,
