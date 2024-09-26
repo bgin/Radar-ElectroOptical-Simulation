@@ -1067,13 +1067,13 @@ namespace  gms {
                                              const double   k0,
                                              const double   l) {
                           
-                         __ATTR_ALIGN__(64) double intr[16] = {};
-                         __ATTR_ALIGN__(64) double inti[16] = {}; 
-                         __ATTR_ALIGN__(64) double Y1[16]   = {};
-                         __ATTR_ALIGN__(64) double Y2[16]   = {};
-                         __ATTR_ALIGN__(64) double Y3[16]   = {}; 
-                         __ATTR_ALIGN__(64) double E[16]    = {};
-                         __ATTR_ALIGN__(64) double WRK[16] = {};
+                         __ATTR_ALIGN__(64) double intr[8] = {};
+                         __ATTR_ALIGN__(64) double inti[8] = {}; 
+                         __ATTR_ALIGN__(64) double Y1[8]   = {};
+                         __ATTR_ALIGN__(64) double Y2[8]   = {};
+                         __ATTR_ALIGN__(64) double Y3[8]   = {}; 
+                         __ATTR_ALIGN__(64) double E[8]    = {};
+                         __ATTR_ALIGN__(64) double WRK[8] = {};
                          
                          constexpr int32_t NTAB = 8;               
                          constexpr double C314159265358979323846264338328 = 
@@ -1112,13 +1112,13 @@ namespace  gms {
                                              const double   k0,
                                              const double   l) {
                           
-                         __ATTR_ALIGN__(64) double intr[16] = {};
-                         __ATTR_ALIGN__(64) double inti[16] = {}; 
-                         __ATTR_ALIGN__(64) double Y1[16]   = {};
-                         __ATTR_ALIGN__(64) double Y2[16]   = {};
-                         __ATTR_ALIGN__(64) double Y3[16]   = {}; 
-                         __ATTR_ALIGN__(64) double E[16]    = {};
-                         __ATTR_ALIGN__(64) double WRK[16] = {};
+                         __ATTR_ALIGN__(64) double intr[8] = {};
+                         __ATTR_ALIGN__(64) double inti[8] = {}; 
+                         __ATTR_ALIGN__(64) double Y1[8]   = {};
+                         __ATTR_ALIGN__(64) double Y2[8]   = {};
+                         __ATTR_ALIGN__(64) double Y3[8]   = {}; 
+                         __ATTR_ALIGN__(64) double E[8]    = {};
+                         __ATTR_ALIGN__(64) double WRK[8] = {};
                          
                          constexpr int32_t NTAB = 8;               
                          constexpr double C314159265358979323846264338328 = 
@@ -1170,8 +1170,8 @@ namespace  gms {
                                                    int32_t & ierr,
                                                    int32_t & ieri) {
                           
-                         __ATTR_ALIGN__(64) double intr[16] = {};
-                         __ATTR_ALIGN__(64) double inti[16] = {}; 
+                         __ATTR_ALIGN__(64) double intr[8] = {};
+                         __ATTR_ALIGN__(64) double inti[8] = {}; 
                                          
                          constexpr int32_t NTAB = 8;               
                          constexpr double C314159265358979323846264338328 = 
@@ -1218,8 +1218,8 @@ namespace  gms {
                                                    int32_t & ierr,
                                                    int32_t & ieri) {
                           
-                         __ATTR_ALIGN__(64) double intr[16] = {};
-                         __ATTR_ALIGN__(64) double inti[16] = {}; 
+                         __ATTR_ALIGN__(64) double intr[8] = {};
+                         __ATTR_ALIGN__(64) double inti[8] = {}; 
                                          
                          constexpr int32_t NTAB = 8;               
                          constexpr double C314159265358979323846264338328 = 
