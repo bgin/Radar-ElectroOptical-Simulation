@@ -1,6 +1,6 @@
 
-#ifndef __GMS_SPEC_FUN_ZMM8R8_HPP__
-#define __GMS_SPEC_FUN_ZMM8R8_HPP__ 180520230838
+#ifndef __GMS_SPEC_FUNCS_ZMM8R8_H__
+#define __GMS_SPEC_FUNCS_ZMM8R8_H__ 180520230838
 
 
 /*MIT License
@@ -24,17 +24,17 @@ SOFTWARE.
 
 namespace file_version {
 
-    const unsigned int GMS_SPEC_FUN_ZMM8R8_MAJOR = 1U;
-    const unsigned int GMS_SPEC_FUN_ZMM8R8_MINOR = 0U;
-    const unsigned int GMS_SPEC_FUN_ZMM8R8_MICRO = 0U;
-    const unsigned int GMS_SPEC_FUN_ZMM8R8_FULLVER =
-      1000U*GMS_SPEC_FUN_ZMM8R8_MAJOR+
-      100U*GMS_SPEC_FUN_ZMM8R8_MINOR+
-      10U*GMS_SPEC_FUN_ZMM8R8_MICRO;
-    const char * const GMS_SPEC_FUNC_ZMM8R8_CREATION_DATE = "18-05-2023 08:38 AM +00200 (THR 18 05 2023 GMT+2)";
-    const char * const GMS_SPEC_FUNC_ZMM8R8_BUILD_DATE    = __DATE__ ":" __TIME__;
-    const char * const GMS_SPEC_FUNC_ZMM8R8_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_SPEC_FUNC_ZMM8R8_DESCRIPTION   = "Special Functions library manually vectorized (avx512 double)."
+    const unsigned int GMS_SPEC_FUNCS_ZMM8R8_MAJOR = 1U;
+    const unsigned int GMS_SPEC_FUNCS_ZMM8R8_MINOR = 0U;
+    const unsigned int GMS_SPEC_FUNCS_ZMM8R8_MICRO = 0U;
+    const unsigned int GMS_SPEC_FUNCS_ZMM8R8_FULLVER =
+      1000U*GMS_SPEC_FUNCS_ZMM8R8_MAJOR+
+      100U*GMS_SPEC_FUNCS_ZMM8R8_MINOR+
+      10U*GMS_SPEC_FUNCS_ZMM8R8_MICRO;
+    const char * const GMS_SPEC_FUNCS_ZMM8R8_CREATION_DATE = "18-05-2023 08:38 AM +00200 (THR 18 05 2023 GMT+2)";
+    const char * const GMS_SPEC_FUNCS_ZMM8R8_BUILD_DATE    = __DATE__ ":" __TIME__;
+    const char * const GMS_SPEC_FUNCS_ZMM8R8_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+    const char * const GMS_SPEC_FUNCS_ZMM8R8_DESCRIPTION   = "Special Functions library manually vectorized (AVX512 double)."
 
 }
 
@@ -1844,4 +1844,4 @@ namespace gms {
 
 
 
-#endif /*__GMS_SPEC_FUNC_ZMM8R8_HPP__*/
+#endif /*__GMS_SPEC_FUNCS_ZMM8R8_H__*/
