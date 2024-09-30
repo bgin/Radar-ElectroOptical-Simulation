@@ -548,6 +548,14 @@ namespace  gms {
                            const __m256d mask = _mm256_set1_pd(-0.0); 
                            return _mm256_andnot_pd(mask, x); 
                      }
+                     
+                     __ATTR_ALWAYS_INLINE__
+                     static inline __m128i 
+                     xmm4i4_maskload(int const * __restrict mem, __m128i mask) {
+                               return _mm_castps_si128(_mm_maskload_ps((float const *) mem, mask));
+                     }
+
+                 
 
 
 
