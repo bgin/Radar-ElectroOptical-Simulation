@@ -55,10 +55,8 @@ namespace gms {
                             Data pointer must point to an array (__m512) of 4 elements.
                        */
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                                        
+		     
 		      static inline
 		      void transpose_zmm16r4_4x16(__m512 * __restrict inout) {
 
@@ -87,10 +85,7 @@ namespace gms {
                             Pointers must point to an arrays (__m512) of 4 elements.
                        */
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                     
 		      static inline
 		      void transpose_zmm16r4_4x16(const __m512 * __restrict in,
                                                   __m512 * __restrict out) {
@@ -116,10 +111,6 @@ namespace gms {
                     }
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void transpose_zmm16r4_4x16_u(float * __restrict inout) {
 
@@ -148,10 +139,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                   
 		      static inline
 		      void transpose_zmm16r4_4x16_a(float * __restrict __ATTR_ALIGN__(64) inout) {
 
@@ -180,10 +168,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                     
 		      static inline
 		      void transpose_zmm16r4_4x16_u(float * __restrict in,
                                                     float * __restrict out) {
@@ -214,9 +199,7 @@ namespace gms {
 
 
                       
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                     
 		      static inline
 		      void transpose_zmm16r4_4x16_a(float * __restrict __ATTR_ALIGN__(64) in,
                                                     float * __restrict __ATTR_ALIGN__(64) out) {
@@ -246,10 +229,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_REGCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                    
 		      static inline
 		      void transpose_zmm16r4_4x16(const __m512 in0,
                                                   const __m512 in1,
@@ -284,9 +264,7 @@ namespace gms {
 #include <cstdint>
 #include "GMS_common.h"
 
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                     
 		      static inline
 		      void transpose_zmm16r4_4x16_u8x_u(float * __restrict in,
                                                         float * __restrict out,
@@ -895,9 +873,6 @@ namespace gms {
                     }
 
 
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      void transpose_zmm16r4_4x16_u4x_u(float * __restrict in,
                                                         float * __restrict out,
@@ -1137,9 +1112,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                    
 		      static inline
 		      void transpose_zmm16r4_4x16_u8x_a(float * __restrict __ATTR_ALIGN__(64) in,
                                                         float * __restrict __ATTR_ALIGN__(64) out,
@@ -1748,9 +1721,7 @@ namespace gms {
                     }
 
 
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+                    
 		      static inline
 		      void transpose_zmm16r4_4x16_u4x_a(float * __restrict __ATTR_ALIGN__(64) in,
                                                         float * __restrict __ATTR_ALIGN__(64) out,
