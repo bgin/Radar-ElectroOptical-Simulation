@@ -73,10 +73,8 @@ namespace gms {
          namespace common {
 
 	         __ATTR_ALWAYS_INLINE__
-                 __ATTR_HOT__
-		 __ATTR_ALIGN__(32)
-		 static inline
-                 void init_unroll2x_cmplxr4(std::complex<float> * __restrict __ATTR_ALIGN__(32) vc4,
+               	static inline
+                 void init_unroll2x_cmplxr4(std::complex<float> * __restrict  vc4,
 			                    const int32_t len,
 			                    const std::complex<float> val) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -93,10 +91,8 @@ namespace gms {
             }
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
 	    static inline
-	    void init_unroll4x_cmplxr4(std::complex<float> * __restrict __ATTR_ALIGN__(32) vc4,
+	    void init_unroll4x_cmplxr4(std::complex<float> * __restrict  vc4,
 			               const int32_t len,
 			               const std::complex<float> val) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -115,10 +111,10 @@ namespace gms {
          }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void init_unroll8x_cmplxr4(std::complex<float> * __restrict __ATTR_ALIGN__(32) vc4,
+	 void init_unroll8x_cmplxr4(std::complex<float> * __restrict  vc4,
 			            const int32_t len,
 			            const std::complex<float> val) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -141,10 +137,10 @@ namespace gms {
          }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_init_unroll2x(AVXVec8 * __restrict __ATTR_ALIGN__(32) vec8,
+	 void avxvec8_init_unroll2x(AVXVec8 * __restrict  vec8,
 		                    const int32_t len,
 		                    const AVXVec8 v) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -165,10 +161,10 @@ namespace gms {
            }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_init_unroll4x(AVXVec8 * __restrict __ATTR_ALIGN__(32) vec8,
+	 void avxvec8_init_unroll4x(AVXVec8 * __restrict  vec8,
                                     const int32_t len,
 		                    const AVXVec8 v) {
 #if defined __GNUC__
@@ -191,10 +187,10 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_init_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(32) vec8,
+	 void avxvec8_init_unroll8x(AVXVec8 * __restrict  vec8,
                                     const int32_t len,
 		                    const AVXVec8 v) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -221,11 +217,11 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_copy_unroll2x(AVXVec8 * __restrict __ATTR_ALIGN__(32) dst,
-		                    const AVXVec8 * __restrict __ATTR_ALIGN__(32) src,
+	 void avxvec8_copy_unroll2x(AVXVec8 * __restrict  dst,
+		                    const AVXVec8 * __restrict  src,
 		                    const int32_t len) {
    
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -248,11 +244,11 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_copy_unroll4x(AVXVec8 * __restrict __ATTR_ALIGN__(32) dst,
-		                    const AVXVec8 * __restrict __ATTR_ALIGN__(32) src,
+	 void avxvec8_copy_unroll4x(AVXVec8 * __restrict  dst,
+		                    const AVXVec8 * __restrict  src,
 		                    const int32_t len) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
                    dst = (AVXVec8*)__builtin_assume_aligned(dst,32);
@@ -276,11 +272,11 @@ namespace gms {
             }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_copy_unroll8x(AVXVec8 * __restrict __ATTR_ALIGN__(32) dst,
-		                    const AVXVec8 * __restrict __ATTR_ALIGN__(32) src,
+	 void avxvec8_copy_unroll8x(AVXVec8 * __restrict  dst,
+		                    const AVXVec8 * __restrict  src,
 		                    const int32_t len) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
                     dst = (AVXVec8*)__builtin_assume_aligned(dst,32);
@@ -312,8 +308,8 @@ namespace gms {
 
        	 __ATTR_ALWAYS_INLINE__
 	 __ATTR_VECTORCALL__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_init_unroll2x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) vec16,
 			                const int32_t len,
@@ -337,8 +333,8 @@ namespace gms {
 
 	 __ATTR_ALWAYS_INLINE__
 	 __ATTR_VECTORCALL__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_init_unroll4x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) vec16,
 			                const int32_t len,
@@ -364,8 +360,8 @@ namespace gms {
 
 	 __ATTR_ALWAYS_INLINE__
 	 __ATTR_VECTORCALL__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_init_unroll8x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) vec16,
 			                const int32_t len,
@@ -394,8 +390,8 @@ namespace gms {
          }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_copy_unroll2x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) dst,
                                         const AVX512Vec16 * __restrict __ATTR_ALIGN__(64) src,
@@ -421,8 +417,8 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_copy_unroll4x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) dst,
                                         const AVX512Vec16 * __restrict __ATTR_ALIGN__(64) src,
@@ -449,8 +445,8 @@ namespace gms {
              }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512vec16_copy_unroll8x(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) dst,
                                         const AVX512Vec16 * __restrict __ATTR_ALIGN__(64) src,
@@ -485,11 +481,11 @@ namespace gms {
 #endif
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxvec8_copy_from_r4(AVXVec8 * __restrict __ATTR_ALIGN__(32) dst,
-		                   const float * __restrict __ATTR_ALIGN__(32) src,
+	 void avxvec8_copy_from_r4(AVXVec8 * __restrict  dst,
+		                   const float * __restrict  src,
 		                   const int32_t len) {
      
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -513,8 +509,8 @@ namespace gms {
          }
           
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void r4_copy_from_avxvec8(float * __restrict _ATTR_ALIGN__(32) dst,
                                    const AVXVec8 * __restrict __ATTR_ALIGN__(64) src,
@@ -542,8 +538,8 @@ namespace gms {
 #if defined __AVX512F__
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void r4_copy_from_avx512vec16(float * __restrict __ATTR_ALIGN__(64) dst,
                                        const AVX512Vec16 * __restrict _ATTTR_ALIGN__(64) src,
@@ -568,8 +564,8 @@ namespace gms {
                }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void  avx512vec16_copy_from_r4(AVX512Vec16 * __restrict __ATTR_ALIGN__(64) dst,
                                         const float * __restrict __ATTR_ALIGN__(64) src,
@@ -596,11 +592,11 @@ namespace gms {
 #endif
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void avxc8f32_copy_from_r4(AVXc8f32 * __restrict __ATTR_ALIGN__(32) dst,
-                                    const float * __restrict __ATTR_ALIGN__(32) src_re,
+	 void avxc8f32_copy_from_r4(AVXc8f32 * __restrict  dst,
+                                    const float * __restrict  src_re,
 		                    const float * __restrict _ATTR_ALIGN__(32) src_im,
 		                    const int32_t len) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -627,11 +623,11 @@ namespace gms {
            }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
-	 void r4_copy_from_avxc8f32(float * __restrict __ATTR_ALIGN__(32) dst_re,
-                                    float * __restrict __ATTR_ALIGN__(32) dst_im,
+	 void r4_copy_from_avxc8f32(float * __restrict  dst_re,
+                                    float * __restrict  dst_im,
 		                    const AVXc8f32 * __restrict _ATTR_ALIGN__(32) src,
 		                    const int32_t len) {
 #if defined __GNUC__ && !defined __INTEL_COMPILER
@@ -657,8 +653,8 @@ namespace gms {
                }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll2x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -688,6 +684,10 @@ namespace gms {
 			_mm256_storeu_pd(&v[i + 0], vec);
 			_mm256_storeu_pd(&v[i + 4], vec);
 		}
+		
+		 for (; i != vlen; ++i) {
+		     v[i] = val;
+	         }
 	}
 	else {
 	     v = (double*)__builtin_assume_aligned(v,32);
@@ -703,14 +703,14 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll2x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
 	                               float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                       float * __restrict __ATTR_ALIGN__(32) v,
+                                       float * __restrict  v,
 #endif
 			               const int32_t vlen,
 			               const float val) {
@@ -733,6 +733,10 @@ namespace gms {
 	               _mm256_storeu_ps(&v[i+0], ymm0);
 	               _mm256_storeu_ps(&v[i+8], ymm0);
 	          }
+	          
+	          for(; i != vlen; ++i) {
+	              v[i] = val;
+	          }
 	      } else {
 	          v = (float*)__builtin_assume_aligned(v,32);
                   for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
@@ -747,14 +751,14 @@ namespace gms {
             }
 
 	  __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll4x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
 	                              double * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      double * __restrict __ATTR_ALIGN__(32) v,
+                                      double * __restrict  v,
 #endif
 		                      const int32_t vlen,
 		                      const double val) {
@@ -782,6 +786,10 @@ namespace gms {
 			          _mm256_storeu_pd(&v[i + 8], vec);
 			          _mm256_storeu_pd(&v[i + 12], vec);
 		            }
+		            
+		             for (; i != vlen; ++i) {
+		                   v[i] = val;
+	                       }
 	              }
  	               else {
 	                      v = (double*)__builtin_assume_aligned(v,32);
@@ -799,14 +807,14 @@ namespace gms {
                     }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll4x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
 	                              float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      float * __restrict __ATTR_ALIGN__(32) v,
+                                      float * __restrict  v,
 #endif
 			              const int32_t vlen,
 			              const float val) {
@@ -833,6 +841,10 @@ namespace gms {
 	                    _mm256_storeu_ps(&v[i+16], ymm0);
 	                    _mm256_storeu_ps(&v[i+24], ymm0);
 	               }
+	               
+	               for(; i != vlen; ++i) {
+	                  v[i] = val;
+                      }
                    } else {
                         v = (float*)__builtin_assume_aligned(v,32);
 	                for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 32) {
@@ -849,14 +861,14 @@ namespace gms {
               }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll8x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
 	                              double * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      double * __restrict __ATTR_ALIGN__(32) v,
+                                      double * __restrict  v,
 #endif
 			              const int32_t vlen,
 			              const double val) {
@@ -892,6 +904,10 @@ namespace gms {
 			               _mm256_storeu_pd(&v[i + 24], vec);
 			               _mm256_storeu_pd(&v[i + 28], vec);
 		                  }
+		                  
+		                   for (; i != vlen; ++i){
+		                       v[i] = val;
+	                           }
 	                  }
 	                   else {
 	                        v = (double*)__builtin_assume_aligned(v,32);
@@ -914,14 +930,14 @@ namespace gms {
 
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_unroll8x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
 	                             float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                     float * __restrict __ATTR_ALIGN__(32) v,
+                                     float * __restrict  v,
 #endif
 			             const int32_t vlen,
 			             const float val) {
@@ -956,6 +972,10 @@ namespace gms {
 	                    _mm256_storeu_ps(&v[i+48], ymm0);
 	                    _mm256_storeu_ps(&v[i+56], ymm0);
 	          }
+	          
+	                    for(; i != vlen; ++i) {
+	                       v[i] = val;
+                            }
                 }else {
                         v = (float*)__builtin_assume_aligned(v,32)l
 	                for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 64) {
@@ -978,8 +998,8 @@ namespace gms {
 #if defined __AVX512F__
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll2x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -989,7 +1009,20 @@ namespace gms {
 #endif
 			             const int32_t vlen,
 			             const double val) {
-                     __m512d zmm0 = _mm512_set1_pd(val);
+			 
+		     __m512d zmm0 = _mm512_set1_pd(val);            
+	             if(vlen<=0)
+	             {
+	                return;
+	             }
+	             else if(vlen==8)
+	             {
+	                 _mm512_storeu_pd(&v[0],zmm0);
+	                 return;
+	             }
+	             else 
+	             {
+                     
                      int32_t i;
 #if defined ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
@@ -1009,6 +1042,10 @@ namespace gms {
 	                _mm512_storeu_pd(&v[i+0], zmm0);
 	                _mm512_storeu_pd(&v[i+8], zmm0);
 	            }
+	            
+	             for(; i != vlen; ++i) {
+	                 v[i] = val;
+                      }
                 } else {
                        v = (double*)__builtin_assume_aligned(v,64);
 	              for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 16) {
@@ -1020,11 +1057,12 @@ namespace gms {
 	              v[i] = val;
                   }
 #endif
-             }
+             }   
+        }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll2x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1054,6 +1092,9 @@ namespace gms {
 	                 _mm512_storeu_ps(&v[i+0],  zmm0);
 	                 _mm512_storeu_ps(&v[i+16], zmm0);
 	           }
+	            for(; i != vlen; ++i) {
+	              v[i] = val;
+                   }
               } else {
                       v = (float*)__builtin_assume_aligned(v,64);
 	           for(i = 0; i != ROUND_TO_SIXTEEN(vlen,16); i += 32) {
@@ -1068,8 +1109,8 @@ namespace gms {
           }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll4x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1102,6 +1143,10 @@ namespace gms {
 	                _mm512_storeu_pd(&v[i+16], zmm0);
 	                _mm512_storeu_pd(&v[i+24], zmm0);
 	             }
+	             
+	             for(; i != vlen; ++i) {
+	                 v[i] = val;
+                     }
                   } else {
                         v = (double*)__builtin_assume_aligned(v,64);
                      for(i = 0; i != ROUND_TO_EIGHT(vlen,8); i += 32) {
@@ -1118,8 +1163,8 @@ namespace gms {
               }
 
        	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll4x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1151,6 +1196,11 @@ namespace gms {
 	                      _mm512_storeu_ps(&v[i+32LL], zmm0);
 	                      _mm512_storeu_ps(&v[i+48LL], zmm0);
 	                 }
+	                 
+	                 for(; i != vlen; ++i) {
+	                      v[i] = val;
+                          }
+	                 
                      } else {
                           v = (float*)__builtin_assume_aligned(v,64);
                           for(i = 0LL; i != ROUND_TO_SIXTEEN(vlen,16LL); i += 64LL) {
@@ -1167,8 +1217,8 @@ namespace gms {
                  }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll8x_pd(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1210,6 +1260,10 @@ namespace gms {
 			     _mm512_storeu_pd(&v[i + 48], vec);
 			     _mm512_storeu_pd(&v[i + 56], vec);
 		       }
+		       
+		       for (; i != vlen; ++i){
+		              v[i] = val;
+		         }
 	            }
  	             else {
 	                 for (i = 0; i != ROUND_TO_EIGHT(vlen, 8); i += 64) {
@@ -1230,8 +1284,8 @@ namespace gms {
                   }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_unroll8x_ps(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1271,6 +1325,10 @@ namespace gms {
 	                       _mm512_storeu_ps(&v[i+96], zmm0);
 	                       _mm512_storeu_ps(&v[i+112], zmm0);
 	                 }
+	                 
+	                 for(; i != vlen; ++i) {
+	                     v[i] = val;
+                            }
                      } else {
                          v = (float*)__builtin_assume_aligned(v,64);
                          for(i = 0LL; i != ROUND_TO_SIXTEEN(vlen,16LL); i += 128) {
@@ -1291,8 +1349,8 @@ namespace gms {
                }
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_init_ps(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -1514,14 +1572,14 @@ namespace gms {
 #endif // __AVX512F__
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_init_ps(
 #if defined __ICC || defined __INTEL_COMPILER
 	                              float * __restrict v,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                      float * __restrict __ATTR_ALIGN__(32) v,
+                                      float * __restrict  v,
 #endif
 			              const int32_t vlen,
 			              const float val) {
@@ -1724,8 +1782,8 @@ namespace gms {
 
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_copy_2r4_c4_u(const float * __restrict re,
                                    const float * __restrict im,
@@ -1743,16 +1801,16 @@ namespace gms {
 
 	 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void  avx256_memcpy_ps(
 #if defined __ICC || defined __INTEL_COMPILER
                                    float * __restrict dst,
 				   const float * __restrict src,
 #elif defined __GNUC__ && !defined __INTEL_COMPILER
-                                   float * __restrict __ATTR_ALIGN__(32) dst,
-				   const float * __restrict __ATTR_ALIGN__(32) src,
+                                   float * __restrict  dst,
+				   const float * __restrict  src,
 #endif
                                    const int32_t len) {
 #if defined __ICC || defined __INTEL_COMPILER
@@ -2115,8 +2173,8 @@ namespace gms {
 #if defined __AVX512F__
 
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	  
+	 
 	 static inline
 	 void  avx512_memcpy_ps(
 #if defined __ICC || defined __INTEL_COMPILER
@@ -2534,8 +2592,8 @@ namespace gms {
 
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_cached_memmove(void * __restrict _Dst,
 			            const void * __restrict _Src,
@@ -2697,8 +2755,8 @@ namespace gms {
               }
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx256_uncached_memmove(void * __restrict _Dst,
 			              const void * __restrict _Src,
@@ -2865,11 +2923,11 @@ namespace gms {
 	           }
               }
 
-#if defined __AVX512F__
+
 
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_cached_memmove(void * __restrict _Dst,
 			            const void * __restrict _Src,
@@ -3037,11 +3095,186 @@ namespace gms {
 	                 }
 
                    }
+                   
+                   
+         __ATTR_ALWAYS_INLINE__
+	 
+	 
+	 static inline
+	 void avx512_cached_memmove_a(void * __restrict _Dst,
+			            const void * __restrict _Src,
+			            const int32_t _nelems) {
+	          if (MEMMOVE_1ELEM <= _nelems) { return; }
+                  char * __restrict dst = (char *)_Dst;
+	          const char * __restrict src = (char *)_Src;
+	
+	          if (_nelems <= MEMMOVE_16ELEMS) {
+		      const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+		      _mm512_store_ps((float*)&dst[0],zmm0);
+		      return;
+	          }
+	          else if ( _nelems <= MEMMOVE_32ELEMS) {
+		         const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			 _mm512_store_ps((float*)&dst[0], zmm0);
+		         const __m512 zmm1(_mm512_load_ps((float*)&src[1*ZMM_LEN]));
+		         _mm512_store_ps((float*)&dst[1*ZMM_LEN], zmm1);
+		         return;
+	          }	
+	          else if ( _nelems <= MEMMOVE_64ELEMS) {
+		        const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			_mm512_store_ps((float*)&dst[0],zmm0);
+		        const __m512 zmm1(_mm512_load_ps((float*)&src[1*ZMM_LEN]));
+			_mm512_store_ps((float*)&dst[1*ZMM_LEN],zmm1);
+		        const __m512 zmm2(_mm512_load_ps((float*)&src[2*ZMM_LEN]));
+			_mm512_store_ps((float*)&dst[2*ZMM_LEN],zmm2);
+		        const __m512 zmm3(_mm512_load_ps((float*)&src[3*ZMM_LEN]));
+		        _mm512_store_ps((float*)&dst[3*ZMM_LEN],zmm3);
+		       return;
+	          }
+	          else if ( _nelems <= MEMMOVE_128ELEMS) {
+		        const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			 _mm512_store_ps((float*)&dst[0],   zmm0);
+		        const __m512 zmm1(_mm512_load_ps((float*)&src[1*ZMM_LEN]));
+			 _mm512_store_ps((float*)&dst[1*ZMM_LEN],  zmm1);
+		        const __m512 zmm2(_mm512_load_ps((float*)&src[2*ZMM_LEN]));
+			 _mm512_store_ps((float*)&dst[2*ZMM_LEN],  zmm2);
+		        const __m512 zmm3(_mm512_load_ps((float*)&src[3*ZMM_LEN]));
+			 _mm512_store_ps((float*)&dst[3*ZMM_LEN],  zmm3);
+		        const __m512 zmm4(_mm512_load_ps((float*)&src[4*ZMM_LEN]));
+			 _mm512_store_ps((float*)&dst[4*ZMM_LEN],  zmm4);
+		        const __m512 zmm5(_mm512_load_ps((float*)&src[5*ZMM_LEN]));
+			_mm512_store_ps((float*)&dst[5*ZMM_LEN],  zmm5);
+		        const __m512 zmm6(_mm512_load_ps((float*)&src[6*ZMM_LEN]));
+			 _mm512_store_ps((float*)&dst[6*ZMM_LEN],  zmm6);
+		        const __m512 zmm7(_mm512_load_ps((float*)&src[7*ZMM_LEN]));
+		         _mm512_store_ps((float*)&dst[7*ZMM_LEN],  zmm7);
+			return;
+	           }
+	           else if ( _nelems <= MEMMOVE_256ELEMS) {
+#if (GMS_MAN_PREFETCH)
+		         _mm_prefetch((const char *)&src[0],          _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[1*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[2*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[3*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[4*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[5*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[6*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[7*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[8*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[9*ZMM_LEN],  _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[10*ZMM_LEN], _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[11*ZMM_LEN], _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[12*ZMM_LEN], _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[13*ZMM_LEN], _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[14*ZMM_LEN], _MM_HINT_T0);
+		         _mm_prefetch((const char *)&src[15*ZMM_LEN], _MM_HINT_T0);
+#endif
+		         const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			 _mm512_store_ps((float*)&dst[0],	 zmm0);
+		         const __m512 zmm1(_mm512_load_ps((float*)&src[1*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[1*ZMM_LEN],  zmm1);
+		         const __m512 zmm2(_mm512_load_ps((float*)&src[2*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[2*ZMM_LEN],  zmm2);
+		         const __m512 zmm3(_mm512_load_ps((float*)&src[3*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[3*ZMM_LEN],  zmm3);
+		         const __m512 zmm4(_mm512_load_ps((float*)&src[4*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[4*ZMM_LEN],  zmm4);
+		         const __m512 zmm5(_mm512_load_ps((float*)&src[5*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[5*ZMM_LEN],  zmm5);
+		         const __m512 zmm6(_mm512_load_ps((float*)&src[6*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[6*ZMM_LEN],  zmm6);
+		         const __m512 zmm7(_mm512_load_ps((float*)&src[7*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[7*ZMM_LEN],  zmm7);
+		         const __m512 zmm8(_mm512_load_ps((float*)&src[8*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[8*ZMM_LEN],  zmm8);
+		         const __m512 zmm9(_mm512_load_ps((float*)&src[9*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[9*ZMM_LEN],  zmm9);
+		         const __m512 zmm10(_mm512_load_ps((float*)&src[10*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[10*ZMM_LEN], zmm10);
+		         const __m512 zmm11(_mm512_load_ps((float*)&src[11*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[11*ZMM_LEN], zmm11);
+		         const __m512 zmm12(_mm512_load_ps((float*)&src[12*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[12*ZMM_LEN], zmm12);
+		         const __m512 zmm13(_mm512_load_ps((float*)&src[13*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[13*ZMM_LEN], zmm13);
+		         const __m512 zmm14(_mm512_load_ps((float*)&src[14*ZMM_LEN]));
+			  _mm512_store_ps((float*)&dst[14*ZMM_LEN], zmm14);
+		         const __m512 zmm15(_mm512_load_ps((float*)&src[15*ZMM_LEN]));
+	                  _mm512_store_ps((float*)&dst[15*ZMM_LEN], zmm15);
+		 
+		          return;
+	           }
+	           else if ( _nelems <= PAGE4KiB) {
+		            int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count(1024)
+#endif
+		           for (i = 0; i != ROUND_TO_SIXTEEN(_nelems,16); i += 128) {
+			       _mm_prefetch((const char *)&src[i+0], _MM_HINT_T0);
+			       const __m512 zmm0(_mm512_load_ps((float*)&src[i+0]));
+			        _mm512_store_ps((float*)&dst[i+0],   zmm0);
+			       const __m512 zmm1(_mm512_load_ps((float*)&src[i+1*ZMM_LEN]));
+			       _mm512_store_ps((float*)&dst[i+1*ZMM_LEN],  zmm1);
+			       const __m512 zmm2(_mm512_load_ps((float*)&src[i+2*ZMM_LEN]));
+			       _mm512_store_ps((float*)&dst[i+2*ZMM_LEN],  zmm2);
+			       const __m512 zmm3(_mm512_load_ps((float*)&src[i+3*ZMM_LEN]));
+			       _mm512_store_ps((float*)&dst[i+3*ZMM_LEN],  zmm3);
+			       const __m512 zmm4(_mm512_load_ps((float*)&src[i+4*ZMM_LEN]));
+			       _mm512_store_ps((float*)&dst[i+4*ZMM_LEN],  zmm4);
+			       const __m512 zmm5(_mm512_load_ps((float*)&src[i+5*ZMM_LEN]));
+			        _mm512_store_ps((float*)&dst[i+5*ZMM_LEN],  zmm5);
+			       const __m512 zmm6(_mm512_load_ps((float*)&src[i+6*ZMM_LEN]));
+			        _mm512_store_ps((float*)&dst[i+6*ZMM_LEN],  zmm6);
+			       const __m512 zmm7(_mm512_load_ps((float*)&src[i+7*ZMM_LEN]));
+			        _mm512_store_ps((float*)&dst[i+7*ZMM_LEN],  zmm7);
+			   }
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(8),max(15)
+#endif
+		           for (; i != _nelems; ++i) {
+			       dst[i] = src[i];
+		           }
+		            return;
+	             }
+	             else if (_nelems > MAXFLOATSPERPAGE4KiB) {
+		              int32_t j;
+		              for (int32_t k = 0; k != _nelems; k += MAXFLOATSPERPAGE4KiB) {
+			            volatile float t = src[k + MAXFLOATSPERPAGE4KiB];
+			            for ( j = k + 128; j != k + MAXFLOATSPERPAGE4KiB; j += 128) {
+				         _mm_prefetch((const char*)&src[j], _MM_HINT_T0);
+			            }
+			            for (j = k; j != k + MAXFLOATSPERPAGE4KiB; j += 128) {
+				          const __m512 zmm0(_mm512_load_ps((float*)&src[j+0]));
+					   _mm512_store_ps((float*)&dst[j+0], zmm0);
+				          const __m512 zmm1(_mm512_load_ps((float*)&src[j+1*ZMM_LEN]));
+					   _mm512_store_ps((float*)&dst[j+1*ZMM_LEN], zmm1);
+				          const __m512 zmm2(_mm512_load_ps((float*)&src[j+2*ZMM_LEN]));
+					   _mm512_store_ps((float*)&dst[j+2*ZMM_LEN], zmm2);
+				          const __m512 zmm3(_mm512_load_ps((float*)&src[j+3*ZMM_LEN]));
+					   _mm512_store_ps((float*)&dst[j+3*ZMM_LEN], zmm3);
+				          const __m512 zmm4(_mm512_load_ps((float*)&src[j+4*ZMM_LEN]));
+					   _mm512_store_ps((float*)&dst[j+4*ZMM_LEN], zmm4);
+				          const __m512 zmm5(_mm512_load_ps((float*)&src[j+5*ZMM_LEN]));
+					   _mm512_store_ps((float*)&dst[j+5*ZMM_LEN], zmm5);
+				          const __m512 zmm6(_mm512_load_ps((float*)&src[j+6*ZMM_LEN]));
+					  _mm512_store_ps((float*)&dst[j+6*ZMM_LEN], zmm6);
+				          const __m512 zmm7(_mm512_load_ps((float*)&src[j+7*ZMM_LEN]));
+				          _mm512_store_ps((float*)&dst[j+7*ZMM_LEN], zmm7);
+				     }
+			
+		             }
+		              return;
+	                 }
+
+                   }
+                                
+                   
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_HOT__
-	 __ATTR_ALIGN__(32)
+	 
+	 
 	 static inline
 	 void avx512_uncached_memmove(void * __restrict _Dst,
 			             const void * __restrict _Src,
@@ -3059,47 +3292,47 @@ namespace gms {
 		          nbytes -= misalign;
 	              }
 	              if (_nelems <= MEMMOVE_16ELEMS) {
-		          const __m512 zmm0(_mm512_loadu_ps((float*)&src[0]));
+		          const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
 		          _mm512_stream_ps((float*)&dst[0], zmm0);
 		          _mm_sfence();
 		          return;
 	              }
 	              else if (_nelems <= MEMMOVE_32ELEMS) {
-		           const __m512 zmm0(_mm512_loadu_ps((float*)&src[0]));
+		           const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
 			    _mm512_stream_ps((float*)&dst[0], zmm0);
-		           const __m512 zmm1(_mm512_loadu_ps((float*)&src[1 * ZMM_LEN]));
+		           const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
 		           _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
 		           _mm_sfence();
 		           return;
 	              }
 	              else if (_nelems <= MEMMOVE_64ELEMS) {
-		               const __m512 zmm0(_mm512_loadu_ps((float*)&src[0]));
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
 			       	_mm512_stream_ps((float*)&dst[0], zmm0);
-		               const __m512 zmm1(_mm512_loadu_ps((float*)&src[1 * ZMM_LEN]));
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
-		               const __m512 zmm2(_mm512_loadu_ps((float*)&src[2 * ZMM_LEN]));
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
-		               const __m512 zmm3(_mm512_loadu_ps((float*)&src[3 * ZMM_LEN]));
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
 	                       _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
 			       _mm_sfence();
 		               return;
 	              }
 	              else if (_nelems <= MEMMOVE_128ELEMS) {
-		               const __m512 zmm0(_mm512_loadu_ps((float*)&src[0]));
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
 			        _mm512_stream_ps((float*)&dst[0], zmm0);
-		               const __m512 zmm1(_mm512_loadu_ps((float*)&src[1 * ZMM_LEN]));
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
-		               const __m512 zmm2(_mm512_loadu_ps((float*)&src[2 * ZMM_LEN]));
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
-		               const __m512 zmm3(_mm512_loadu_ps((float*)&src[3 * ZMM_LEN]));
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
 			       _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
-		               const __m512 zmm4(_mm512_loadu_ps((float*)&src[4 * ZMM_LEN]));
+		               const __m512 zmm4(_mm512_load_ps((float*)&src[4 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[4 * ZMM_LEN], zmm4);
-		               const __m512 zmm5(_mm512_loadu_ps((float*)&src[5 * ZMM_LEN]));
+		               const __m512 zmm5(_mm512_load_ps((float*)&src[5 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[5 * ZMM_LEN], zmm5);
-		               const __m512 zmm6(_mm512_loadu_ps((float*)&src[6 * ZMM_LEN]));
+		               const __m512 zmm6(_mm512_load_ps((float*)&src[6 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[6 * ZMM_LEN], zmm6);
-		               const __m512 zmm7(_mm512_loadu_ps((float*)&src[7 * ZMM_LEN]));
+		               const __m512 zmm7(_mm512_load_ps((float*)&src[7 * ZMM_LEN]));
 		               _mm512_stream_ps((float*)&dst[7 * ZMM_LEN], zmm7);
 		    
 			       _mm_sfence();
@@ -3124,37 +3357,37 @@ namespace gms {
 		               _mm_prefetch((const char *)&src[14 * ZMM_LEN], _MM_HINT_T0);
 		               _mm_prefetch((const char *)&src[15 * ZMM_LEN], _MM_HINT_T0);
 #endif
-		               const __m512 zmm0(_mm512_loadu_ps((float*)&src[0]));
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
 			       	_mm512_stream_ps((float*)&dst[0], zmm0);
-		               const __m512 zmm1(_mm512_loadu_ps((float*)&src[1 * ZMM_LEN]));
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
-		               const __m512 zmm2(_mm512_loadu_ps((float*)&src[2 * ZMM_LEN]));
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
-		               const __m512 zmm3(_mm512_loadu_ps((float*)&src[3 * ZMM_LEN]));
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
-		               const __m512 zmm4(_mm512_loadu_ps((float*)&src[4 * ZMM_LEN]));
+		               const __m512 zmm4(_mm512_load_ps((float*)&src[4 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[4 * ZMM_LEN], zmm4);
-		               const __m512 zmm5(_mm512_loadu_ps((float*)&src[5 * ZMM_LEN]));
+		               const __m512 zmm5(_mm512_load_ps((float*)&src[5 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[5 * ZMM_LEN], zmm5);
-		               const __m512 zmm6(_mm512_loadu_ps((float*)&src[6 * ZMM_LEN]));
+		               const __m512 zmm6(_mm512_load_ps((float*)&src[6 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[6 * ZMM_LEN], zmm6);
-		               const __m512 zmm7(_mm512_loadu_ps((float*)&src[7 * ZMM_LEN]));
+		               const __m512 zmm7(_mm512_load_ps((float*)&src[7 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[7 * ZMM_LEN], zmm7);
-		               const __m512 zmm8(_mm512_loadu_ps((float*)&src[8 * ZMM_LEN]));
+		               const __m512 zmm8(_mm512_load_ps((float*)&src[8 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[8 * ZMM_LEN], zmm8);
-		               const __m512 zmm9(_mm512_loadu_ps((float*)&src[9 * ZMM_LEN]));
+		               const __m512 zmm9(_mm512_load_ps((float*)&src[9 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[9 * ZMM_LEN], zmm9);
-		               const __m512 zmm10(_mm512_loadu_ps((float*)&src[10 * ZMM_LEN]));
+		               const __m512 zmm10(_mm512_load_ps((float*)&src[10 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[10 * ZMM_LEN], zmm10);
-		               const __m512 zmm11(_mm512_loadu_ps((float*)&src[11 * ZMM_LEN]));
+		               const __m512 zmm11(_mm512_load_ps((float*)&src[11 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[11 * ZMM_LEN], zmm11);
-		               const __m512 zmm12(_mm512_loadu_ps((float*)&src[12 * ZMM_LEN]));
+		               const __m512 zmm12(_mm512_load_ps((float*)&src[12 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[12 * ZMM_LEN], zmm12);
-		               const __m512 zmm13(_mm512_loadu_ps((float*)&src[13 * ZMM_LEN]));
+		               const __m512 zmm13(_mm512_load_ps((float*)&src[13 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[13 * ZMM_LEN], zmm13);
-		               const __m512 zmm14(_mm512_loadu_ps((float*)&src[14 * ZMM_LEN]));
+		               const __m512 zmm14(_mm512_load_ps((float*)&src[14 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[14 * ZMM_LEN], zmm14);
-		               const __m512 zmm15(_mm512_loadu_ps((float*)&src[15 * ZMM_LEN]));
+		               const __m512 zmm15(_mm512_load_ps((float*)&src[15 * ZMM_LEN]));
 	                        _mm512_stream_ps((float*)&dst[15 * ZMM_LEN], zmm15);
 			        _mm_sfence();
 		                return;
@@ -3166,21 +3399,21 @@ namespace gms {
 #endif
 		              for (i = 0; i != ROUND_TO_SIXTEEN(_nelems, 16); i += 128) {
 			           _mm_prefetch((const char *)&src[i + 0], _MM_HINT_T0);
-			           const __m512 zmm0(_mm512_loadu_ps((float*)&src[i + 0]));
+			           const __m512 zmm0(_mm512_load_ps((float*)&src[i + 0]));
 				    _mm512_stream_ps((float*)&dst[i + 0], zmm0);
-			           const __m512 zmm1(_mm512_loadu_ps((float*)&src[i + 1 * ZMM_LEN]));
+			           const __m512 zmm1(_mm512_load_ps((float*)&src[i + 1 * ZMM_LEN]));
 				    _mm512_stream_ps((float*)&dst[i + 1 * ZMM_LEN], zmm1);
-			           const __m512 zmm2(_mm512_loadu_ps((float*)&src[i + 2 * ZMM_LEN]));
+			           const __m512 zmm2(_mm512_load_ps((float*)&src[i + 2 * ZMM_LEN]));
 				    _mm512_stream_ps((float*)&dst[i + 2 * ZMM_LEN], zmm2);
-			           const __m512 zmm3(_mm512_loadu_ps((float*)&src[i + 3 * ZMM_LEN]));
+			           const __m512 zmm3(_mm512_load_ps((float*)&src[i + 3 * ZMM_LEN]));
 				    _mm512_stream_ps((float*)&dst[i + 3 * ZMM_LEN], zmm3);
-			           const __m512 zmm4(_mm512_loadu_ps((float*)&src[i + 4 * ZMM_LEN]));
+			           const __m512 zmm4(_mm512_load_ps((float*)&src[i + 4 * ZMM_LEN]));
 				   _mm512_stream_ps((float*)&dst[i + 4 * ZMM_LEN], zmm4);
-			           const __m512 zmm5(_mm512_loadu_ps((float*)&src[i + 5 * ZMM_LEN]));
+			           const __m512 zmm5(_mm512_load_ps((float*)&src[i + 5 * ZMM_LEN]));
 				    _mm512_stream_ps((float*)&dst[i + 5 * ZMM_LEN], zmm5);
-			           const __m512 zmm6(_mm512_loadu_ps((float*)&src[i + 6 * ZMM_LEN]));
+			           const __m512 zmm6(_mm512_load_ps((float*)&src[i + 6 * ZMM_LEN]));
 				    _mm512_stream_ps((float*)&dst[i + 6 * ZMM_LEN], zmm6);
-			           const __m512 zmm7(_mm512_loadu_ps((float*)&src[i + 7 * ZMM_LEN]));
+			           const __m512 zmm7(_mm512_load_ps((float*)&src[i + 7 * ZMM_LEN]));
 			           _mm512_stream_ps((float*)&dst[i + 7 * ZMM_LEN], zmm7);
 		
 		               }
@@ -3203,21 +3436,212 @@ namespace gms {
 			         }
 
 			for (j = k; j != k + MAXFLOATSPERPAGE4KiB; j += 128) {
-				const __m512 zmm0(_mm512_loadu_ps((float*)&src[j + 0]));
+				const __m512 zmm0(_mm512_load_ps((float*)&src[j + 0]));
 				_mm512_stream_ps((float*)&dst[j + 0], zmm0);
-				const __m512 zmm1(_mm512_loadu_ps((float*)&src[j + 1 * ZMM_LEN]));
+				const __m512 zmm1(_mm512_load_ps((float*)&src[j + 1 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 1 * ZMM_LEN], zmm1);
-				const __m512 zmm2(_mm512_loadu_ps((float*)&src[j + 2 * ZMM_LEN]));
+				const __m512 zmm2(_mm512_load_ps((float*)&src[j + 2 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 2 * ZMM_LEN], zmm2);
-				const __m512 zmm3(_mm512_loadu_ps((float*)&src[j + 3 * ZMM_LEN]));
+				const __m512 zmm3(_mm512_load_ps((float*)&src[j + 3 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 3 * ZMM_LEN], zmm3);
-				const __m512 zmm4(_mm512_loadu_ps((float*)&src[j + 4 * ZMM_LEN]));
+				const __m512 zmm4(_mm512_load_ps((float*)&src[j + 4 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 4 * ZMM_LEN], zmm4);
-				const __m512 zmm5(_mm512_loadu_ps((float*)&src[j + 5 * ZMM_LEN]));
+				const __m512 zmm5(_mm512_load_ps((float*)&src[j + 5 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 5 * ZMM_LEN], zmm5);
-				const __m512 zmm6(_mm512_loadu_ps((float*)&src[j + 6 * ZMM_LEN]));
+				const __m512 zmm6(_mm512_load_ps((float*)&src[j + 6 * ZMM_LEN]));
 				_mm512_stream_ps((float*)&dst[j + 6 * ZMM_LEN], zmm6);
-				const __m512 zmm7(_mm512_loadu_ps((float*)&src[j + 7 * ZMM_LEN]));
+				const __m512 zmm7(_mm512_load_ps((float*)&src[j + 7 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[j + 7 * ZMM_LEN], zmm7);
+			  }
+
+		       }
+		        _mm_sfence();
+		        return;
+	            }
+
+
+	
+              }
+              
+              ////////////////////////////////////////////////////////////////////////////////////////
+              
+         __ATTR_ALWAYS_INLINE__
+         static inline
+	 void avx512_uncached_memmove_a(void * __restrict _Dst,
+			             const void * __restrict _Src,
+			             const int32_t _nelems) {
+	              if (MEMMOVE_1ELEM <= _nelems) { return; }
+	              char * __restrict dst = (char*)_Dst;
+	              const char * __restrict src = (char*)_Src;
+	              uintptr_t dst_val = (uintptr_t)dst;
+	              int32_t misalign = 0;
+	              int32_t nbytes = 4*_nelems;
+	              //if (dst_val & 0x3F) {
+	              //    misalign = min_val(0x40 - (dst_val & 0x3F), nbytes);
+		      //    dst += misalign;
+		      //    dst_val += misalign;
+		     //     nbytes -= misalign;
+	             // }
+	              if (_nelems <= MEMMOVE_16ELEMS) {
+		          const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+		          _mm512_stream_ps((float*)&dst[0], zmm0);
+		          _mm_sfence();
+		          return;
+	              }
+	              else if (_nelems <= MEMMOVE_32ELEMS) {
+		           const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			    _mm512_stream_ps((float*)&dst[0], zmm0);
+		           const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
+		           _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
+		           _mm_sfence();
+		           return;
+	              }
+	              else if (_nelems <= MEMMOVE_64ELEMS) {
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			       	_mm512_stream_ps((float*)&dst[0], zmm0);
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
+	                       _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
+			       _mm_sfence();
+		               return;
+	              }
+	              else if (_nelems <= MEMMOVE_128ELEMS) {
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			        _mm512_stream_ps((float*)&dst[0], zmm0);
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
+			       _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
+		               const __m512 zmm4(_mm512_load_ps((float*)&src[4 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[4 * ZMM_LEN], zmm4);
+		               const __m512 zmm5(_mm512_load_ps((float*)&src[5 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[5 * ZMM_LEN], zmm5);
+		               const __m512 zmm6(_mm512_load_ps((float*)&src[6 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[6 * ZMM_LEN], zmm6);
+		               const __m512 zmm7(_mm512_load_ps((float*)&src[7 * ZMM_LEN]));
+		               _mm512_stream_ps((float*)&dst[7 * ZMM_LEN], zmm7);
+		    
+			       _mm_sfence();
+		               return;
+	              }
+	              else if (_nelems <= MEMMOVE_256ELEMS) {
+#if (GMS_MAN_PREFETCH) == 1
+		               _mm_prefetch((const char *)&src[0], _MM_HINT_T0);
+	 	               _mm_prefetch((const char *)&src[1 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[2 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[3 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[4 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[5 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[6 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[7 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[8 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[9 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[10 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[11 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[12 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[13 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[14 * ZMM_LEN], _MM_HINT_T0);
+		               _mm_prefetch((const char *)&src[15 * ZMM_LEN], _MM_HINT_T0);
+#endif
+		               const __m512 zmm0(_mm512_load_ps((float*)&src[0]));
+			       	_mm512_stream_ps((float*)&dst[0], zmm0);
+		               const __m512 zmm1(_mm512_load_ps((float*)&src[1 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[1 * ZMM_LEN], zmm1);
+		               const __m512 zmm2(_mm512_load_ps((float*)&src[2 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[2 * ZMM_LEN], zmm2);
+		               const __m512 zmm3(_mm512_load_ps((float*)&src[3 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[3 * ZMM_LEN], zmm3);
+		               const __m512 zmm4(_mm512_load_ps((float*)&src[4 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[4 * ZMM_LEN], zmm4);
+		               const __m512 zmm5(_mm512_load_ps((float*)&src[5 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[5 * ZMM_LEN], zmm5);
+		               const __m512 zmm6(_mm512_load_ps((float*)&src[6 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[6 * ZMM_LEN], zmm6);
+		               const __m512 zmm7(_mm512_load_ps((float*)&src[7 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[7 * ZMM_LEN], zmm7);
+		               const __m512 zmm8(_mm512_load_ps((float*)&src[8 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[8 * ZMM_LEN], zmm8);
+		               const __m512 zmm9(_mm512_load_ps((float*)&src[9 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[9 * ZMM_LEN], zmm9);
+		               const __m512 zmm10(_mm512_load_ps((float*)&src[10 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[10 * ZMM_LEN], zmm10);
+		               const __m512 zmm11(_mm512_load_ps((float*)&src[11 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[11 * ZMM_LEN], zmm11);
+		               const __m512 zmm12(_mm512_load_ps((float*)&src[12 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[12 * ZMM_LEN], zmm12);
+		               const __m512 zmm13(_mm512_load_ps((float*)&src[13 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[13 * ZMM_LEN], zmm13);
+		               const __m512 zmm14(_mm512_load_ps((float*)&src[14 * ZMM_LEN]));
+			        _mm512_stream_ps((float*)&dst[14 * ZMM_LEN], zmm14);
+		               const __m512 zmm15(_mm512_load_ps((float*)&src[15 * ZMM_LEN]));
+	                        _mm512_stream_ps((float*)&dst[15 * ZMM_LEN], zmm15);
+			        _mm_sfence();
+		                return;
+	             }
+	             else if (_nelems <= PAGE4KiB) {
+		              int32_t i;
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count(1024)
+#endif
+		              for (i = 0; i != ROUND_TO_SIXTEEN(_nelems, 16); i += 128) {
+			           _mm_prefetch((const char *)&src[i + 0], _MM_HINT_T0);
+			           const __m512 zmm0(_mm512_load_ps((float*)&src[i + 0]));
+				    _mm512_stream_ps((float*)&dst[i + 0], zmm0);
+			           const __m512 zmm1(_mm512_load_ps((float*)&src[i + 1 * ZMM_LEN]));
+				    _mm512_stream_ps((float*)&dst[i + 1 * ZMM_LEN], zmm1);
+			           const __m512 zmm2(_mm512_load_ps((float*)&src[i + 2 * ZMM_LEN]));
+				    _mm512_stream_ps((float*)&dst[i + 2 * ZMM_LEN], zmm2);
+			           const __m512 zmm3(_mm512_load_ps((float*)&src[i + 3 * ZMM_LEN]));
+				    _mm512_stream_ps((float*)&dst[i + 3 * ZMM_LEN], zmm3);
+			           const __m512 zmm4(_mm512_load_ps((float*)&src[i + 4 * ZMM_LEN]));
+				   _mm512_stream_ps((float*)&dst[i + 4 * ZMM_LEN], zmm4);
+			           const __m512 zmm5(_mm512_load_ps((float*)&src[i + 5 * ZMM_LEN]));
+				    _mm512_stream_ps((float*)&dst[i + 5 * ZMM_LEN], zmm5);
+			           const __m512 zmm6(_mm512_load_ps((float*)&src[i + 6 * ZMM_LEN]));
+				    _mm512_stream_ps((float*)&dst[i + 6 * ZMM_LEN], zmm6);
+			           const __m512 zmm7(_mm512_load_ps((float*)&src[i + 7 * ZMM_LEN]));
+			           _mm512_stream_ps((float*)&dst[i + 7 * ZMM_LEN], zmm7);
+		
+		               }
+		                _mm_sfence();
+#if defined __ICC || defined __INTEL_COMPILER
+#pragma loop_count min(1),avg(8),max(15)
+#endif
+		                for (; i != _nelems; ++i) {
+			             dst[i] = src[i];
+		                 }
+		                 return;
+	              }
+	               else if (_nelems > MAXFLOATSPERPAGE4KiB) {
+		          int32_t j;
+		          for (int32_t k = 0; k != _nelems; k += MAXFLOATSPERPAGE4KiB) {
+			        volatile float t = src[k + MAXFLOATSPERPAGE4KiB];
+
+			         for (j = k + 128; j != k + MAXFLOATSPERPAGE4KiB; j += 128) {
+				      _mm_prefetch((const char*)&src[j], _MM_HINT_T0);
+			         }
+
+			for (j = k; j != k + MAXFLOATSPERPAGE4KiB; j += 128) {
+				const __m512 zmm0(_mm512_load_ps((float*)&src[j + 0]));
+				_mm512_stream_ps((float*)&dst[j + 0], zmm0);
+				const __m512 zmm1(_mm512_load_ps((float*)&src[j + 1 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 1 * ZMM_LEN], zmm1);
+				const __m512 zmm2(_mm512_load_ps((float*)&src[j + 2 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 2 * ZMM_LEN], zmm2);
+				const __m512 zmm3(_mm512_load_ps((float*)&src[j + 3 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 3 * ZMM_LEN], zmm3);
+				const __m512 zmm4(_mm512_load_ps((float*)&src[j + 4 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 4 * ZMM_LEN], zmm4);
+				const __m512 zmm5(_mm512_load_ps((float*)&src[j + 5 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 5 * ZMM_LEN], zmm5);
+				const __m512 zmm6(_mm512_load_ps((float*)&src[j + 6 * ZMM_LEN]));
+				_mm512_stream_ps((float*)&dst[j + 6 * ZMM_LEN], zmm6);
+				const __m512 zmm7(_mm512_load_ps((float*)&src[j + 7 * ZMM_LEN]));
 			        _mm512_stream_ps((float*)&dst[j + 7 * ZMM_LEN], zmm7);
 			  }
 
@@ -3231,7 +3655,8 @@ namespace gms {
               }
 
 
-#endif
+
+            
 			 
     } // common
 
