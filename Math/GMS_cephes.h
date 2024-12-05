@@ -37,10 +37,8 @@ Direct inquiries to 30 Frost Street, Cambridge, MA 02140
 
 static int sgngamf;
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 float ceph_ceilf( const float x ){
      float y = 0.0f;
@@ -73,8 +71,6 @@ static unsigned short bmask[] = {
     };
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 float ceph_floorf( float x ) {
 unsigned short *p;
@@ -114,8 +110,6 @@ if( (x < 0) && (u.y != x) )
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 float ceph_frexpf( float x, int *pw2 ) {
 union
@@ -160,8 +154,6 @@ return( u.y );
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 float ceph_ldexpf( float x, int pw2 ) {
 union
@@ -223,10 +215,8 @@ return(u.y);
 
 /* Return 1 if the sign bit of x is 1, else 0.  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 int ceph_signbitf(const float x) {
 union
@@ -249,10 +239,8 @@ else{
 
 /* Return 1 if x is a number that is Not a Number, else return 0.  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 int ceph_isnanf(const float x) {
 union
@@ -285,10 +273,8 @@ else
 }
 
 /* Return 1 if x is not infinite and is not a NaN.  */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 int ceph_isfinitef(const float x) {
 union{
@@ -324,10 +310,8 @@ else
  * Copyright (C) 1989 by Stephen L. Moshier.  All rights reserved.
  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline 
 float ceph_acoshf(const float xx) {
 float x, z;
@@ -361,10 +345,8 @@ return( z );
  * peak relative error: 6.7e-8
  * rms relative error: 2.5e-8
  */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline 
 float ceph_asinf(const float xx) {
 float a, x, z;
@@ -419,10 +401,8 @@ return( z );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline 
 float ceph_acosf(const float x ) {
 if( x < -1.0 )
@@ -448,10 +428,8 @@ return(1.5707963267948966192 - ceph_asinf(x) );
  * rms relative error: 2.9e-8
  */
  
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline 
 float ceph_atanf(const float xx ) {
 float x, y, z;
@@ -492,10 +470,8 @@ if( sign < 0 )
 return( y );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline 
 float ceph_atan2f(const float y,
              const float x ) {
@@ -534,10 +510,10 @@ z = ceph_atanf( y/x );
 return( w + z );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline 
 float ceph_atanhf(const float xx) {
 float x, z;
@@ -576,10 +552,10 @@ return( z );
 
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline 
 float ceph_cbrtf(const float xx) {
 int e, rem, sign;
@@ -641,10 +617,10 @@ if( sign < 0 )
 return(x);
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline 
 float ceph_coshf(const float xx) {
 float x, y;
@@ -659,10 +635,10 @@ return( 0.5*y );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_expf(const float xx) {
 float x, z;
@@ -701,10 +677,10 @@ x = ceph_ldexpf( z, n );
 return( x );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_expx2f(const float x) {
   float u, u1, m;
@@ -727,10 +703,10 @@ float ceph_expx2f(const float x) {
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float logf( const float xx ) {
 register float y;
@@ -791,10 +767,10 @@ return( z );
 
 #define ceph_fabsf(x) ( (x) < 0 ? -(x) : (x) )
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float betaf(const  float aa, const float bb ) {
 float a, b, y;
@@ -843,10 +819,10 @@ return(y);
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_chbevlf( float x, float * __restrict array, int n ) {
 float b0, b1, b2, *p;
@@ -879,10 +855,10 @@ return( 0.5*(b0-b2) );
 
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_chdtrcf(const float dff, const float xx){
 float df, x;
@@ -895,10 +871,10 @@ return( ceph_igamcf( 0.5*df, 0.5*x ) );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float chdtrf(const float dff, const float xx) {
 float df, x;
@@ -911,10 +887,10 @@ return( ceph_igamf( 0.5*df, 0.5*x ) );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float chdtrif( const float dff, const float yy ) {
 float y, df, x;
@@ -957,10 +933,10 @@ DESCRIPTION:
 
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float dawsnf( const float xxx ) {
 /* Dawson's integral, interval 0 to 3.25 */
@@ -1083,10 +1059,10 @@ return( sign * 0.5 * y );
  * geometric mean algorithm.
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ellief( const float phia, const float ma ) {
 float phi, m, a, b, c, e, temp;
@@ -1164,10 +1140,10 @@ return( temp );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ellikf(const  float phia, const float ma ){
 float phi, m, a, b, c, temp;
@@ -1245,10 +1221,10 @@ return( temp );
 */
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ellpef( const float xx){
 const static float P[] = {
@@ -1302,18 +1278,18 @@ return( polevlf(x,P,10) - ceph_logf(x) * (x * polevlf(x,Q,9)) );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 int ellpjf( float uu, float mm,
             float * __restrict sn,
 	    float * __restrict cn,
 	    float * __restrict dn,
 	    float * __restrict ph ) {
- __ATTR_ALIGN__(32) float a[10];
- __ATTR_ALIGN__(32) float c[10];
+  float a[10];
+  float c[10];
 float u, m, ai, b, phi, t, twon;
 int i;
 u = uu;
@@ -1414,13 +1390,13 @@ return(0);
  *     P(x)  -  log x Q(x).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ellpkf(const float xx){
- __ATTR_ALIGN__(32) const float P[] =
+  const float P[] =
 {
  1.37982864606273237150E-4,
  2.28025724005875567385E-3,
@@ -1435,7 +1411,7 @@ float ellpkf(const float xx){
  1.38629436111989062502E0
 };
 
- __ATTR_ALIGN__(32) const float Q[] =
+  const float Q[] =
 {
  2.94078955048598507511E-5,
  9.14184723865917226571E-4,
@@ -1491,13 +1467,13 @@ else
  * A polynomial approximates 2**x in the basic range [-0.5, 0.5].
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_exp2f( const float xx ){
-__ATTR_ALIGN__(32) const float P[] = {
+ const float P[] = {
  1.535336188319500E-004,
  1.339887440266574E-003,
  9.618437357674640E-003,
@@ -1554,13 +1530,13 @@ return(px);
  * A polynomial approximates 10**f.
  *
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_exp10f(const float xx) {
- __ATTR_ALIGN__(32) const float P[] = {
+  const float P[] = {
  2.063216740311022E-001,
  5.420251702225484E-001,
  1.171292686296281E+000,
@@ -1633,10 +1609,10 @@ return(x);
  * relative values of n and x.
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float expnf( const int n, const float xx ) {
 float x, ans, r, t, yk, xk;
@@ -1784,10 +1760,10 @@ return( ans );
  * 
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float expx2f (const float x) {
   float u, u1, m;
@@ -1838,16 +1814,16 @@ float expx2f (const float x) {
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 void fresnlf(const  float xxa,
              float * __restrict ssa,
 	     float *__restrict cca ){
 /* S(x) for small x */
-__ATTR_ALIGN__(32) const float sn[7] = {
+ const float sn[7] = {
  1.647629463788700E-009,
 -1.522754752581096E-007,
  8.424748808502400E-006,
@@ -1858,7 +1834,7 @@ __ATTR_ALIGN__(32) const float sn[7] = {
 };
 
 /* C(x) for small x */
-__ATTR_ALIGN__(32) const float cn[7] = {
+ const float cn[7] = {
  1.416802502367354E-008,
 -1.157231412229871E-006,
  5.387223446683264E-005,
@@ -1870,7 +1846,7 @@ __ATTR_ALIGN__(32) const float cn[7] = {
 
 
 /* Auxiliary function f(x) */
-__ATTR_ALIGN__(32) const float fn[8] = {
+ const float fn[8] = {
 -1.903009855649792E+012,
  1.355942388050252E+011,
 -4.158143148511033E+009,
@@ -1882,7 +1858,7 @@ __ATTR_ALIGN__(32) const float fn[8] = {
 };
 
 /* Auxiliary function g(x) */
-__ATTR_ALIGN__(32) const float gn[8] = {
+ const float gn[8] = {
 -1.860843997624650E+011,
  1.278350673393208E+010,
 -3.779387713202229E+008,
@@ -1970,10 +1946,10 @@ return 0;
  * sqrt(2 pi) x^(x-.5) exp(-x) (1 + 1/x P(1/x))
  * The polynomial STIR is valid for 33 <= x <= 172.
  */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float stirf(const float xx) {
 const float STIR[] = {
@@ -2000,14 +1976,14 @@ return( y );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_gammaf(const float xx ) {
 /* gamma(x+2), 0 < x < 1 */
-__ATTR_ALIGN__(32) const float P[] = {
+ const float P[] = {
  1.536830450601906E-003,
  5.397581592950993E-003,
  4.130370201859976E-003,
@@ -2102,14 +2078,14 @@ else{
     }
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float lgamf(const float xx ){
 /* log gamma(x+2), -.5 < x < .5 */
-__ATTR_ALIGN__(32) const float B[] = {
+ const float B[] = {
  6.055172732649237E-004,
 -1.311620815545743E-003,
  2.863437556468661E-003,
@@ -2121,7 +2097,7 @@ __ATTR_ALIGN__(32) const float B[] = {
 };
 
 /* log gamma(x+1), -.25 < x < .25 */
-__ATTR_ALIGN__(32) const float C[] = {
+ const float C[] = {
  1.369488127325832E-001,
 -1.590086327657347E-001,
  1.692415923504637E-001,
@@ -2274,8 +2250,8 @@ return( q );
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hyp2f1f(const float aa,
               const float bb,
@@ -2437,8 +2413,8 @@ return(3.4028234663852885981170418348451692544e38);
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hyt2f1f( const float aa,
                const float bb,
@@ -2592,8 +2568,8 @@ return(y);
 #if 1
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hys2f1f( const float aa,
                const float bb,
@@ -2650,8 +2626,8 @@ return(s);
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hys2f1f( const float aa,
                       const float bb,
@@ -2738,10 +2714,10 @@ return(s);
  * The result with smaller estimated error is returned.
 */
 
- __ATTR_PURE__
+ 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hypergf( float aa, float bb, float xx ){
 float a, b, x, asum, psum, acanc, pcanc, temp;
@@ -2783,8 +2759,8 @@ return( psum );
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hy1f1pf( const float aa,
                const float bb,
@@ -2876,8 +2852,8 @@ return( sum );
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hy1f1af( const
                       const float aa,
@@ -2952,8 +2928,8 @@ return( asum );
 }
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float hyp2f0f(const float aa,
               const float bb,
@@ -3084,10 +3060,10 @@ return( sum );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float i0f( float x ) {
 __ATTR_ALIGN__(64) const float A[] =
@@ -3119,7 +3095,7 @@ __ATTR_ALIGN__(64) const float A[] =
  * lim(x->inf){ exp(-x) sqrt(x) I0(x) } = 1/sqrt(2pi).
  */
 
-__ATTR_ALIGN__(32) const float B[] =
+ const float B[] =
 {
  3.39623202570838634515E-9f,
  2.26666899049817806459E-8f,
@@ -3142,10 +3118,10 @@ if( x <= 8.0f )
 return(  ceph_expf(x) * chbevlf( 32.0f/x - 2.0f, B, 7 ) / ceph_sqrtf(x) );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float i0ef( float x ) {
 __ATTR_ALIGN__(64) const float A[] =
@@ -3177,7 +3153,7 @@ __ATTR_ALIGN__(64) const float A[] =
  * lim(x->inf){ exp(-x) sqrt(x) I0(x) } = 1/sqrt(2pi).
  */
 
-__ATTR_ALIGN__(32) const float B[] =
+ const float B[] =
 {
  3.39623202570838634515E-9f,
  2.26666899049817806459E-8f,
@@ -3225,10 +3201,10 @@ return(  chbevlf( 32.0f/x - 2.0f, B, 7 ) / ceph_sqrtf(x) );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float i1f(const float xx) {
 /* Chebyshev coefficients for exp(-x) I1(x) / x
@@ -3265,7 +3241,7 @@ __ATTR_ALIGN__(64) const float A[] =
  * lim(x->inf){ exp(-x) sqrt(x) I1(x) } = 1/sqrt(2pi).
  */
 
- __ATTR_ALIGN__(32) const float B[] =
+  const float B[] =
 {
 -3.83538038596423702205E-9f,
 -2.63146884688951950684E-8f,
@@ -3293,10 +3269,10 @@ if( x < 0.0f )
 return( z );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float i1ef( const float xx ) {
 float x, y, z;
@@ -3328,7 +3304,7 @@ __ATTR_ALIGN__(64) const float A[] =
  * lim(x->inf){ exp(-x) sqrt(x) I1(x) } = 1/sqrt(2pi).
  */
 
- __ATTR_ALIGN__(32) const float B[] =
+  const float B[] =
 {
 -3.83538038596423702205E-9f,
 -2.63146884688951950684E-8f,
@@ -3387,10 +3363,10 @@ return( z );
  * values of a and x.
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float igamcf( const float aa, const float xx ) {
 float a, x, ans, c, yc, ax, y, z;
@@ -3466,10 +3442,10 @@ return( ans * ax );
  *
  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float igamf( const float aa, const float xx ){
 float a, x, ans, ax, c, r;
@@ -3506,10 +3482,10 @@ while( c/ans > 5.9604644775390625E-8 );
 return( ans * ax/a );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float igamif( const float aa, const float yy0 ){
 float a, y0, d, y, x0, lgm;
@@ -3580,10 +3556,10 @@ return( x0 );
  *
  * If v is a negative integer, then v is replaced by -v.
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ivf( const float v, float x ){
 int sign;
@@ -3659,13 +3635,13 @@ return( t * hypergf( ax,  2.0 * ax,  2.0 * x ) );
  *       1         2         3   
  *
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float j0f( const float xx ){
-__ATTR_ALIGN__(32) const float MO[8] = {
+ const float MO[8] = {
 -6.838999669318810E-002f,
  1.864949361379502E-001f,
 -2.145007480346739E-001f,
@@ -3675,7 +3651,7 @@ __ATTR_ALIGN__(32) const float MO[8] = {
 -3.355424622293709E-006f,
  7.978845717621440E-001f
 };
-__ATTR_ALIGN__(32) const float PH[8] = {
+ const float PH[8] = {
  3.242077816988247E+001f,
 -3.630592630518434E+001f,
  1.756221482109099E+001f,
@@ -3685,7 +3661,7 @@ __ATTR_ALIGN__(32) const float PH[8] = {
  6.490598792654666E-002f,
 -1.249992184872738E-001f
 };
-__ATTR_ALIGN__(32) const float YP[8] = {
+ const float YP[8] = {
  9.454583683980369E-008f,
 -9.413212653797057E-006f,
  5.344486707214273E-004f,
@@ -3742,13 +3718,13 @@ return(p);
  * whose value at x = 0 is  2 * ( log(0.5) + EUL ) / pi
  * = 0.073804295108687225 , EUL is Euler's constant.
  */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float y0f( const float xx ) {
-__ATTR_ALIGN__(32) const float MO[8] = {
+ const float MO[8] = {
 -6.838999669318810E-002f,
  1.864949361379502E-001f,
 -2.145007480346739E-001f,
@@ -3758,7 +3734,7 @@ __ATTR_ALIGN__(32) const float MO[8] = {
 -3.355424622293709E-006f,
  7.978845717621440E-001f
 };
-__ATTR_ALIGN__(32) const float PH[8] = {
+ const float PH[8] = {
  3.242077816988247E+001f,
 -3.630592630518434E+001f,
  1.756221482109099E+001f,
@@ -3768,7 +3744,7 @@ __ATTR_ALIGN__(32) const float PH[8] = {
  6.490598792654666E-002f,
 -1.249992184872738E-001f
 };
-__ATTR_ALIGN__(32) const float YP[8] = {
+ const float YP[8] = {
  9.454583683980369E-008f,
 -9.413212653797057E-006f,
  5.344486707214273E-004f,
@@ -3836,13 +3812,13 @@ return( p );
  *   j0(x) = Modulus(x) cos( Phase(x) ).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float j1f( const float xx ) {
-__ATTR_ALIGN__(32) const float JP[8] = {
+ const float JP[8] = {
 -4.878788132172128E-009f,
  6.009061827883699E-007f,
 -4.541343896997497E-005f,
@@ -3862,7 +3838,7 @@ _ATTR_ALIGN__(32) const float MO1[8] = {
  4.976029650847191E-006f,
  7.978845453073848E-001f
 };
-__ATTR_ALIGN__(32) const float PH1[8] = {
+ const float PH1[8] = {
 -4.497014141919556E+001f,
  5.073465654089319E+001f,
 -2.485774108720340E+001f,
@@ -3896,13 +3872,13 @@ p = p * ceph_cosf(xn + x);
 return(p);
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float y1f( const float xx ){
-__ATTR_ALIGN__(32) const float YP[8] = {
+ const float YP[8] = {
  8.061978323326852E-009f,
 -9.496460629917016E-007f,
  6.719543806674249E-005f,
@@ -3912,7 +3888,7 @@ __ATTR_ALIGN__(32) const float YP[8] = {
  0.0f,
  0.0f
 };
-__ATTR_ALIGN__(32) const float MO1[8] = {
+ const float MO1[8] = {
  6.913942741265801E-002f,
 -2.284801500053359E-001f,
  3.138238455499697E-001f,
@@ -3922,7 +3898,7 @@ __ATTR_ALIGN__(32) const float MO1[8] = {
  4.976029650847191E-006f,
  7.978845453073848E-001f
 };
-__ATTR_ALIGN__(32) const float PH1[8] = {
+ const float PH1[8] = {
 -4.497014141919556E+001f,
  5.073465654089319E+001f,
 -2.485774108720340E+001f,
@@ -3991,10 +3967,10 @@ return(p);
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float jnf( const int n, const float xx ) {
 float x, pkm2, pkm1, pk, xk, r, ans, xinv, sign;
@@ -4090,10 +4066,10 @@ return( ans );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float k0f( const float xx )
 /* Chebyshev coefficients for K0(x) + log(x/2) I0(x)
@@ -4103,7 +4079,7 @@ float k0f( const float xx )
  * lim(x->0){ K0(x) + log(x/2) I0(x) } = -EUL.
  */
 
-__ATTR_ALIGN__(32) const float A[] =
+ const float A[] =
 {
  1.90451637722020886025E-9f,
  2.53479107902614945675E-7f,
@@ -4158,10 +4134,10 @@ y = ceph_expf(-x) * chbevlf( z, B, 10 ) / ceph_sqrtf(x);
 return(y);
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float k0ef( const float xx ){
 /* Chebyshev coefficients for K0(x) + log(x/2) I0(x)
@@ -4171,7 +4147,7 @@ float k0ef( const float xx ){
  * lim(x->0){ K0(x) + log(x/2) I0(x) } = -EUL.
  */
 
-__ATTR_ALIGN__(32) const float A[] =
+ const float A[] =
 {
  1.90451637722020886025E-9f,
  2.53479107902614945675E-7f,
@@ -4252,13 +4228,13 @@ return(y);
 
 #define MINNUMF 6.0e-39
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float k1f(const float xx) {
-__ATTR_ALIGN__(32) const float A[] =
+ const float A[] =
 {
 -2.21338763073472585583E-8f,
 -2.43340614156596823496E-6f,
@@ -4276,7 +4252,7 @@ __ATTR_ALIGN__(32) const float A[] =
  * lim(x->inf){ exp(x) sqrt(x) K1(x) } = sqrt(pi/2).
  */
 
-__ATTR_ALIGN__(32) const float B[] =
+ const float B[] =
 {
  2.01504975519703286596E-9f,
 -1.03457624656780970260E-8f,
@@ -4314,13 +4290,13 @@ return(  ceph_expf(-x) * chbevlf( 8.0f/x - 2.0f, B, 10 ) / ceph_sqrtf(x) );
 
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float k1ef( const float xx ) {
-__ATTR_ALIGN__(32) const float A[] =
+ const float A[] =
 {
 -2.21338763073472585583E-8f,
 -2.43340614156596823496E-6f,
@@ -4338,7 +4314,7 @@ __ATTR_ALIGN__(32) const float A[] =
  * lim(x->inf){ exp(x) sqrt(x) K1(x) } = sqrt(pi/2).
  */
 
-__ATTR_ALIGN__(32) const float B[] =
+ const float B[] =
 {
  2.01504975519703286596E-9f,
 -1.03457624656780970260E-8f,
@@ -4401,10 +4377,10 @@ return(  chbevlf( 8.0f/x - 2.0f, B, 10 ) / ceph_sqrtf(x) );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float knf( const int nnn, const float xx ) {
 float x, k, kf, nk1f, nkf, zn, t, s, z0, z;
@@ -4597,10 +4573,10 @@ return(ans);
  *     log(x) = z + z**3 P(z)/Q(z).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_log2f(const xx) {
 const float P[] = {
@@ -4690,10 +4666,10 @@ return( z );
  *     log(1+x) = x - 0.5 x**2 + x**3 P(x).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_log10f(const float xx) {
 const float P[] = {
@@ -4782,10 +4758,10 @@ return( z );
  *     log(1+x) = x - 0.5 x**2 + x**3 P(x)
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_logf( const float xx ) {
 register float y;
@@ -4880,10 +4856,10 @@ return( z );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float nbdtrcf( const int k, const int n, const float pp ) {
 float dk, dn, p;
@@ -4903,10 +4879,10 @@ return( incbetf( dk, dn, 1.0 - p ) );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float nbdtrf( const int k, const int n, const float pp ) {
 float dk, dn, p;
@@ -4948,10 +4924,10 @@ return( incbetf( dn, dk, p ) );
  * obtain an extra three bits of accuracy in both the logarithm
  * and the exponential.
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float powf( const float x, const float y ) {
 /* 2^(-i/16)
@@ -5229,10 +5205,10 @@ return( z );
  * powers of x.  Thus to compute the 32767 power of x requires
  * 28 multiplications instead of 32767 multiplications.
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float powif( const float x, const int nn ) {
 int n, e, sign, asign, lx;
@@ -5381,8 +5357,8 @@ return(y);
 */
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 int shichif( const float xx, float *si, float *ci ) {
 /* x exp(-x) shi(x), inverted interval 8 to 18 */
@@ -5562,8 +5538,8 @@ return(0);
 */
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 int sicif( const float xx, float *si, float *ci ) {
 const float SN[] = {
@@ -5797,10 +5773,10 @@ return(0);
  *      1  -  x**2 Q(x**2).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_sindgf( const float xx ) {
 float x, y, z;
@@ -5879,10 +5855,10 @@ return( y);
  * rms relative error: 2.2e-8
  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_cosdgf( const float xx ) {
 register float x, y, z;
@@ -5972,10 +5948,10 @@ return( y );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_sinf( const float xx ) {
 constexpr float FOPI = 1.27323954473516;
@@ -6094,10 +6070,10 @@ return( y);
  * rms relative error: 2.2e-8
  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_cosf( const float xx ) {
 /* Note, these constants are for a 32-bit significand: */
@@ -6202,10 +6178,10 @@ return( y );
  * Otherwise the calculation is sinh(x) = ( exp(x) - exp(-x) )/2.
  *
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_sinhf( const float xx ) {
 register float z;
@@ -6270,10 +6246,10 @@ return( z );
  *
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_sqrtf( const float xx ) {
 float f, x, y;
@@ -6363,10 +6339,10 @@ return( y);
  * Range reduction is into intervals of 45 degrees.
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_tancotf( float xx, int cotflg ) {
 float x, y, z, zz;
@@ -6467,20 +6443,20 @@ return( y );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_tandgf( const float x ) {
 
 return( ceph_tancotf(x,0) );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float cotdgf( const float x ) {
 if( x == 0.0 )
@@ -6511,10 +6487,10 @@ return( ceph_tancotf(x,1) );
  * Range reduction is modulo pi/4.  A polynomial approximation
  * is employed in the basic interval [0, pi/4].
 */
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_tancotf( const float xx, const int cotflg ) {
 const float DP1 = 0.78515625;
@@ -6601,20 +6577,20 @@ return( y );
 }
 
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_tanf( const float x ) {
 
 return( ceph_tancotf(x,0) );
 }
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float ceph_cotf( const float x ) {
 if( x == 0.0 )
@@ -6649,10 +6625,10 @@ return( ceph_tancotf(x,1) );
  *    tanh(x) = sinh(x)/cosh(x) = 1  -  2/(exp(2x) + 1).
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float tanhf( const float xx ) {
 float x, z;
@@ -6720,10 +6696,10 @@ return( z );
  * otherwise the same as polevl().
 */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float polevlf( float xx, float * __restrict coef, int N ) {
 float ans, x;
@@ -6751,10 +6727,10 @@ return( ans );
  * Otherwise same as polevl.
  */
 
-__ATTR_PURE__
+
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
+
+
 static inline
 float p1evlf( float xx,
               float * __restrict coef,
