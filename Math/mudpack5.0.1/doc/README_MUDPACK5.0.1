@@ -1,0 +1,49 @@
+MUDPACK Version 5.0.1
+----------------------
+Multigrid Software for Solving Elliptic Partial Differential Equations
+
+12/06/2011
+
+Author:  John  Adams, National Center for Atmospheric Research
+
+Version
+-------
+This MUDPACK distribution is identical with the one dated 12/06/2011, 
+except for this present file; thus we have not  changed the version 
+mumber. It remains at 5.0.1.
+
+Caveats
+-------
+MUDPACK 5.0.1 is written in Fortran 77 and 90 but it may not fully comply 
+with either Fortran standard. We have not run the code through a rigorous
+standards checker, other than the various compilers we have used in building
+the code. Users whose applications require strict adherence to the standard 
+must provide this assurance themselves.
+
+This distribution is intended for use on Linux and Unix systems.  
+The included Makefile is not compatible with Windows makefiles.
+
+Support
+-------
+NCAR offers no support for this package.
+
+Documentation
+-------------
+Documentation is provided in file MUDPACK5.0.1.html and companion image file 
+Stackedgrid.gif.  Use your browser to open the file and navigate its links to 
+view the usage documentation of the user-level routines.
+
+Building the Library
+--------------------
+Our Makefile requires the following: a Unix or Linux or Mac operating system, gmake, 
+and a Fortran 90 compiler.  If successful, this Makefile builds a static library 
+libmudpack.a and several binary executables.
+
+Examine file make.inc to see if your OS and compiler are represented.  If they 
+are not, you should modify file make.inc and the Makefile in each directory 
+(main, src and test) according to your compiler's needs.
+
+The source code is written for single precision real numbers. If you desire double 
+precision floating-point arithmetic, you should modify Makefile and make.inc with 
+compiler options for promoting single to double precision.  Your compiler's user 
+guide will have information on the required compiler options.
