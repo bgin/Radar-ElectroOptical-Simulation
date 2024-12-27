@@ -1,0 +1,5 @@
+11/30/2011
+
+Add file fish.F.orig to handle the Makefile case for Mac OS X (Darwin). File fish.F.orig
+is required since file names fish.f and fish.F equate under Mac OS X, "make clean" removes
+both. On systems other than Mac, file fish.f (but not fish.F) is removed.
