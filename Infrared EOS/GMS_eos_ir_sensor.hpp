@@ -119,8 +119,8 @@ namespace gms {
 
 
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(16)
 	      float param_gamma(const float phi) {
@@ -132,8 +132,8 @@ namespace gms {
 
 
               __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(8)
 	      double param_gamma(const double phi) {
@@ -148,8 +148,8 @@ namespace gms {
            //!Тогда длина перпендикуляра SN, опущенного из 
            //!светящейся точки на плоскость зеркала
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(16)
 	      float compute_SN(const float R,
@@ -169,8 +169,8 @@ namespace gms {
 	    
 
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(8)
 	      double compute_SN(const double R,
@@ -192,8 +192,8 @@ namespace gms {
 	    //! Formula 2, p. 54
             //! расстояние SM от светящейся точки до ее изображения
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(16)
               float compute_SM(const float R,
@@ -208,8 +208,8 @@ namespace gms {
 
 
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(8)
               double compute_SM(const double R,
@@ -230,8 +230,8 @@ namespace gms {
            //!повернуть изображение светящейся точки S на угол ф/2
            //! Formula 1, p. 56
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(16)
               float ratio_FH(const float psi,
@@ -247,8 +247,8 @@ namespace gms {
 
 
 	      __ATTR_ALWAYS_INLINE__
-	      __ATTR_HOT__
-	      __ATTR_ALIGN__(32)
+	     
+	     
 	      static inline
 #pragma omp declare simd simdlen(8)
               double ratio_FH(const double psi,
@@ -266,8 +266,8 @@ namespace gms {
 	    //! следовательно, угол установки сканирующего зеркала
             //! Formula 4, p. 56
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
 	     float scan_mirror_ang(const float gam0,
@@ -291,8 +291,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(8)
 	     double scan_mirror_ang(const double gam0,
@@ -320,8 +320,8 @@ namespace gms {
             //! Anax = [h tg (6/2) + do6/2] [2 cos y' + sin yf {tg (у' + 6/2) +
             //!+ tg(Y'-6/2)}].
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
              float compute_Dmax(const float h,
@@ -354,8 +354,8 @@ namespace gms {
 
 	   
              __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(8)
              double compute_Dmax(const double h,
@@ -390,8 +390,8 @@ namespace gms {
            //! чертежа, приблизительно равен
            //! Formula 2, p. 58
              __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
              float compute_Dmin(const float h,
@@ -405,8 +405,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(8)
              double compute_Dmin(const double h,
@@ -424,8 +424,8 @@ namespace gms {
           //!изображений его размеры
           //! Formula 7, p. 58
              __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
              float Dmax_imag_scan(const float H,
@@ -462,8 +462,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(8)
              double Dmax_imag_scan(const double H,
@@ -500,8 +500,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
              float Dmin_imag_scan(const float H,
@@ -519,8 +519,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	     __ATTR_HOT__
-	     __ATTR_ALIGN__(32)
+	    
+	    
 	     static inline
 #pragma omp declare simd simdlen(16)
              double Dmin_imag_scan(const double H,
@@ -540,8 +540,8 @@ namespace gms {
 	   //!величина расфокусировки
            //!Formula 1, p. 59
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float defocus_cof(const float l2,
@@ -562,8 +562,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double defocus_cof(const double l2,
@@ -586,8 +586,8 @@ namespace gms {
 	  //! Диаметр кружка рассеяния р
           //! Formula 3, p.59
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float circle_dispersion(const float d,
@@ -607,8 +607,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double circle_dispersion(const double d,
@@ -629,8 +629,8 @@ namespace gms {
 
 	   //!Formula 2, p. 59
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float circ_dispers_diam(const float l1,
@@ -649,8 +649,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double circ_dispers_diam(const double l1,
@@ -669,8 +669,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float defocus_small_ang(const float O,
@@ -696,8 +696,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double defocus_small_ang(const double O,
@@ -723,8 +723,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float traj_scan_dxdt(const float dx[2],
@@ -737,8 +737,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double traj_scan_dxdt(const double dx[2],
@@ -751,8 +751,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float traj_scan_dydt(const float dy[2],
@@ -765,8 +765,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double traj_scan_dydt(const double dy[2],
@@ -782,8 +782,8 @@ namespace gms {
           //! ВОКРУГ ОСИ, НЕПЕРПЕНДИКУЛЯРНОЙ К НЕМУ
           //! Formula 1, p. 100
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
 	    float fov_x_axis(const float H,
@@ -800,8 +800,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
 	    double fov_x_axis(const double H,
@@ -818,8 +818,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
 	    float fov_y_axis(const float H,
@@ -836,8 +836,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
 	    double fov_y_axis(const double H,
@@ -857,8 +857,8 @@ namespace gms {
          //!ширина захвата
          //!Formula 3, p. 100
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float scan_width(const float H,
@@ -877,8 +877,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double scan_width(const double H,
@@ -902,8 +902,8 @@ namespace gms {
            //!между оптической осью и нормалью N к поверхности пластинки
            //! Formula 7,8 p. 106
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float refract_shift(const float i1,
@@ -947,8 +947,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double refract_shift(const double i1,
@@ -993,8 +993,8 @@ namespace gms {
 
 	  //!Formula 1, p. 108
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void project_xy_axis( const float l,
@@ -1010,8 +1010,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void project_xy_axis( const double l,
@@ -1030,8 +1030,8 @@ namespace gms {
          //!поверхности пластинки
          //! Formula 2, p. 108
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float s_shift(const float l,
@@ -1048,8 +1048,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double s_shift(const double l,
@@ -1068,8 +1068,8 @@ namespace gms {
 	 //! Проекции s на оси координат равны
          //! Formula 4, p. 108
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void  project_s_xy(const float s,
@@ -1083,8 +1083,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void  project_s_xy(const double s,
@@ -1102,8 +1102,8 @@ namespace gms {
       //! перпендикуляром к пластинке
       //! Formula 1, p. 110
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float ray_intercept_pa(const float delta,
@@ -1125,8 +1125,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double ray_intercept_pa(const double delta,
@@ -1148,8 +1148,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float ray_intercept_na( const float delta,
@@ -1171,8 +1171,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double ray_intercept_na( const double delta,
@@ -1195,8 +1195,8 @@ namespace gms {
 
 	  //! Formula 3, p. 110
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float ray_diff(const float delta,
@@ -1228,8 +1228,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double ray_diff(const double delta,
@@ -1266,8 +1266,8 @@ namespace gms {
           //!координат на основании
           //! Formula 6,7, p. 111
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void compute_dxdy(const float alpha,
@@ -1291,8 +1291,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void compute_dxdy(const double alpha,
@@ -1317,8 +1317,8 @@ namespace gms {
 
 	   //! Formula 7,8  p. 111
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void compute_xy(  const float alpha,
@@ -1343,8 +1343,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void compute_xy(  const double alpha,
@@ -1369,8 +1369,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
 	    void compute_xdyd(const float gamma,
@@ -1402,8 +1402,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
 	    void compute_xdyd(const double gamma,
@@ -1435,8 +1435,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void paraxial_xdyd(const float gamma,
@@ -1462,8 +1462,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void paraxial_xdyd(const double gamma,
@@ -1491,8 +1491,8 @@ namespace gms {
 	  //!СКАНИРОВАНИЕ ВРАЩАЮЩИМИСЯ ОБЪЕКТИВАМИ
           //!Formula 1, p. 121
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void fov_axay(const float H,
@@ -1512,8 +1512,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void fov_axay(const double H,
@@ -1533,8 +1533,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void fov_dxdy(const float x,
@@ -1554,8 +1554,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void fov_dxdy(const double x,
@@ -1575,8 +1575,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             void volt_impulse_uxuy(const float u,
@@ -1597,8 +1597,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             void volt_impulse_uxuy(const double u,
@@ -1625,8 +1625,8 @@ namespace gms {
         //!барабан тонкой пленки, прозрачность которой изменяется по 
         //!синусоидальному закону
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(16)
             float raster_transparency(const float rho_avg,
@@ -1648,8 +1648,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 #pragma omp declare simd simdlen(8)
             double raster_transparency(const double rho_avg,
@@ -1678,8 +1678,8 @@ namespace gms {
              //!Formula 1, p. 178
              //! Ф(*) = Int rp(z,t)E(z,t) dsig
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_flux_integral_omp(const float * __restrict rhoE,
 	                                  const float * __restrict absc,
@@ -1703,8 +1703,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_flux_integral_omp(const double * __restrict rhoE, // points to memory of size: (0:n-1,t)
 	                                  const double * __restrict absc,
@@ -1728,8 +1728,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_flux_integral(    const float * __restrict rhoE,
 	                                  const float * __restrict absc,
@@ -1751,8 +1751,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_flux_integral(    const double * __restrict rhoE, // points to memory of size: (0:n-1,t)
 	                                  const double * __restrict absc,
@@ -1775,8 +1775,8 @@ namespace gms {
 
 	   //!! Formula 3, p. 180
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_opacity_integral_omp(const float invs,
 	                                     const float * __restrict rhophi,
@@ -1802,8 +1802,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_opacity_integral(    const float invs,
 	                                     const float * __restrict rhophi,
@@ -1826,8 +1826,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_opacity_integral_omp(const double invs,
 	                                     const double * __restrict rhophi,
@@ -1853,8 +1853,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void raster_opacity_integral(    const double invs,
 	                                     const double * __restrict rhophi,
@@ -1877,8 +1877,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_16x(const float om0,
 	                               const int32_t n,
@@ -1962,8 +1962,8 @@ namespace gms {
 
 
 	     __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_16x(const double om0,
 	                               const int32_t n,
@@ -2047,8 +2047,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_8x(const float om0,
 	                               const int32_t n,
@@ -2106,8 +2106,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_8x(const double om0,
 	                               const int32_t n,
@@ -2165,8 +2165,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_4x( const float om0,
 	                               const int32_t n,
@@ -2212,8 +2212,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_4x(const double om0,
 	                               const int32_t n,
@@ -2259,8 +2259,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_2x( const float om0,
 	                               const int32_t n,
@@ -2300,8 +2300,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void cos_series_unroll_2x(const double om0,
 	                               const int32_t n,
@@ -2341,8 +2341,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_16x(const float om0,
 	                               const int32_t n,
@@ -2427,8 +2427,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_16x(const double om0,
 	                               const int32_t n,
@@ -2512,8 +2512,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_8x(const float om0,
 	                               const int32_t n,
@@ -2571,8 +2571,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_8x( const double om0,
 	                               const int32_t n,
@@ -2630,8 +2630,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_4x(const float om0,
 	                               const int32_t n,
@@ -2677,8 +2677,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_4x( const double om0,
 	                               const int32_t n,
@@ -2724,8 +2724,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_2x(const float om0,
 	                               const int32_t n,
@@ -2765,8 +2765,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void sin_series_unroll_2x( const double om0,
 	                               const int32_t n,
@@ -2809,8 +2809,8 @@ namespace gms {
            //! например, косинус-квадратной зависимостью
            //! Formula 3, p. 184
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const float Phi0,
@@ -2915,8 +2915,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const double Phi0,
@@ -3021,8 +3021,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const float Phi0,
@@ -3092,8 +3092,8 @@ namespace gms {
 
 
 	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_8x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const double Phi0,
@@ -3162,8 +3162,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_4x( float * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const float Phi0,
@@ -3218,8 +3218,8 @@ namespace gms {
 
          
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_4x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const double Phi0,
@@ -3271,8 +3271,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_2x( float * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const float Phi0,
@@ -3318,8 +3318,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void squared_cos_flux_unroll_2x(double * __restrict __ATTR_ALIGN__(64) Phi0t,
 	                                     const double Phi0,
@@ -3364,8 +3364,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const float Phi0,
@@ -3491,8 +3491,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const double Phi0,
@@ -3619,8 +3619,8 @@ namespace gms {
 
            
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const float Phi0,
@@ -3704,8 +3704,8 @@ namespace gms {
 
            
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_8x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const double Phi0,
@@ -3789,8 +3789,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_4x( float * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const float Phi0,
@@ -3854,8 +3854,8 @@ namespace gms {
 
             
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_4x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const double Phi0,
@@ -3917,8 +3917,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_2x( float * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const float Phi0,
@@ -3971,8 +3971,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void const_flux_spectr_unroll_2x( double * __restrict __ATTR_ALIGN__(64) Phi0f,
                                               const double Phi0,
@@ -4026,8 +4026,8 @@ namespace gms {
         //  !Идеальный гармонический модулятор
         //!Formula 1,2 p. 187
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_16x(float * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             float * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4172,8 +4172,8 @@ namespace gms {
 
    
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_16x(double * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             double * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4318,8 +4318,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_8x(float * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             float * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4415,8 +4415,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_8x( double * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             double * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4510,8 +4510,8 @@ namespace gms {
 
         
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_4x( float * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             float * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4581,8 +4581,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_4x( double * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             double * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4652,8 +4652,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_2x( float * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             float * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4711,8 +4711,8 @@ namespace gms {
   
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void ideal_modulator_unroll_2x( double * __restrict __ATTR_ALIGN__(64) rhot_s,
                                             double * __restrict __ATTR_ALIGN__(64) rhot_c,
@@ -4773,8 +4773,8 @@ namespace gms {
         //!модулятора излучения
         //!Formula 2, p. 189
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Phik,
                                             const float * __restrict __ATTR_ALIGN__(64) fk,
@@ -4882,8 +4882,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Phik,
                                             const double * __restrict __ATTR_ALIGN__(64) fk,
@@ -4990,8 +4990,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Phik,
                                             const float * __restrict __ATTR_ALIGN__(64) fk,
@@ -5065,8 +5065,8 @@ namespace gms {
 
  
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_8x(double * __restrict __ATTR_ALIGN__(64) Phik,
                                             const double * __restrict __ATTR_ALIGN__(64) fk,
@@ -5141,8 +5141,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_4x(float * __restrict __ATTR_ALIGN__(64) Phik,
                                             const float * __restrict __ATTR_ALIGN__(64) fk,
@@ -5200,8 +5200,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_4x(double * __restrict __ATTR_ALIGN__(64) Phik,
                                             const double * __restrict __ATTR_ALIGN__(64) fk,
@@ -5259,8 +5259,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_2x(float * __restrict __ATTR_ALIGN__(64) Phik,
                                             const float * __restrict __ATTR_ALIGN__(64) fk,
@@ -5310,8 +5310,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_flux_unroll_2x(double * __restrict __ATTR_ALIGN__(64) Phik,
                                             const double * __restrict __ATTR_ALIGN__(64) fk,
@@ -5361,8 +5361,8 @@ namespace gms {
 
          
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_16x(float * __restrict __ATTR_ALIGN__(64) Ak,
                                            const float * __restrict __ATTR_ALIGN__(64) Phik,
@@ -5510,8 +5510,8 @@ namespace gms {
 
           
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_16x(double * __restrict __ATTR_ALIGN__(64) Ak,
                                            const double * __restrict __ATTR_ALIGN__(64) Phik,
@@ -5659,8 +5659,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_8x(float * __restrict __ATTR_ALIGN__(64) Ak,
                                            const float * __restrict __ATTR_ALIGN__(64) Phik,
@@ -5767,8 +5767,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_8x(double * __restrict __ATTR_ALIGN__(64) Ak,
                                            const double * __restrict __ATTR_ALIGN__(64) Phik,
@@ -5875,8 +5875,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_4x(float * __restrict __ATTR_ALIGN__(64) Ak,
                                            const float * __restrict __ATTR_ALIGN__(64) Phik,
@@ -5963,8 +5963,8 @@ namespace gms {
 
            
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_4x(double * __restrict __ATTR_ALIGN__(64) Ak,
                                            const double * __restrict __ATTR_ALIGN__(64) Phik,
@@ -6051,8 +6051,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_2x(float * __restrict __ATTR_ALIGN__(64) Ak,
                                            const float * __restrict __ATTR_ALIGN__(64) Phik,
@@ -6130,8 +6130,8 @@ namespace gms {
 
 
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_HOT__
-	    __ATTR_ALIGN__(32)
+	   
+	   
 	    static inline
 	    void rect_pulse_amp_unroll_2x(double * __restrict __ATTR_ALIGN__(64) Ak,
                                            const double * __restrict __ATTR_ALIGN__(64) Phik,
