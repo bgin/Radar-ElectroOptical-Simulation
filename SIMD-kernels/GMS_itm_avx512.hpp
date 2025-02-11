@@ -22,25 +22,6 @@ Please provide appropriate acknowledgments of NTIA’s creation of the software 
    
    Manually vectorized by Bernard Gingold on 11-12-2021 18:59
 */
-
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
 namespace file_info {
 
      const unsigned int GMS_ITM_AVX512_MAJOR = 1;
@@ -60,6 +41,30 @@ namespace file_info {
 #include <cstdint>
 #include "GMS_config.h"
 
+
+// List of valid polarizations
+#define POLARIZATION__HORIZONTAL                0
+#define POLARIZATION__VERTICAL                  1
+
+// List of valid siting criteria
+#define SITING_CRITERIA__RANDOM                 0
+#define SITING_CRITERIA__CAREFUL                1
+#define SITING_CRITERIA__VERY_CAREFUL           2
+
+// List of valid radio climates
+#define CLIMATE__EQUATORIAL                     1
+#define CLIMATE__CONTINENTAL_SUBTROPICAL        2
+#define CLIMATE__MARITIME_SUBTROPICAL           3
+#define CLIMATE__DESERT                         4
+#define CLIMATE__CONTINENTAL_TEMPERATE          5
+#define CLIMATE__MARITIME_TEMPERATE_OVER_LAND   6
+#define CLIMATE__MARITIME_TEMPERATE_OVER_SEA    7
+
+// List of valid modes of propagation
+#define MODE__NOT_SET                           0
+#define MODE__LINE_OF_SIGHT                     1
+#define MODE__DIFFRACTION                       2
+#define MODE__TROPOSCATTER                      3
 
 namespace gms {
 
@@ -117,11 +122,9 @@ namespace gms {
 			   static const __m512d dl3[2] = {_mm512_set1_pd(0.0795775F),
 			                                  _mm512_set1_pd(47.7F)};
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		      	static inline
 		      __m512 cabs_zmm16r4(const __m512 re,
 		                              const __m512 im) {
 
@@ -131,8 +134,7 @@ namespace gms {
 		     }
 
 		      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		    
 		      static inline
 		      __m512d cabs_zmm8r8(const __m512d re,
 		                          const __m512d im) {
@@ -144,11 +146,9 @@ namespace gms {
 		}
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		     static inline
                       void
 		      data_preload_v16() {
 
@@ -177,10 +177,8 @@ namespace gms {
  *===========================================================================*/
 
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      __m512
 		      itm_terrain_roughness_zmm16r4(const __m512 d_meter, // this variable shall be a negative
@@ -204,10 +202,8 @@ namespace gms {
  |
  *===========================================================================*/
 
-                     __ATTR_REGCALL__
+                    
                      __ATTR_ALWAYS_INLINE__
-		     __ATTR_HOT__
-		     __ATTR_ALIGN__(32)
 		     static inline
 		     __m512
 		     itm_fresnel_integral_zmm16r4(const __m512 v2) {
@@ -241,10 +237,8 @@ namespace gms {
  |
  *===========================================================================*/		      
 
-		      __ATTR_REGCALL__
+		      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      __m512
 		      itm_knife_edge_diffraction_zmm16r4(const __m512 d_meter,
@@ -264,7 +258,7 @@ namespace gms {
 			    const register __m512 t3           = _mm512_div_ps(d_nlos_meter,_mm512_add_ps(d_nlos_meter,d_hzn_meter2));
 			    const register __m512 v_1          = _mm512_mul_ps(t0,_mm512_mul_ps(_mm512_mul_ps(t1,d_hzn_meter1),t2));
 			    const register __m512 v_2          = _mm512_mul_ps(t0,_mm512_mul_ps(_mm512_mul_ps(t1,d_hzn_meter2),t3));
-			    const register __m512 A_k_db       = itm_fresnel_integral_zmm16r4(v_1)+
+			    const register __m512 A_k_db       = itm_fresnel_integral_zmm16r4(v_1);
 			                                         itm_fresnel_integral_zmm16r4(v_2);
 			    return (A_k_db);
 		      }
@@ -289,10 +283,8 @@ namespace gms {
  *===========================================================================*/
 		      
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
 		      static inline
 		      __m512
 		      itm_smooth_earth_diffraction_zmm16r4(const __m512 d_meter,
@@ -385,11 +377,9 @@ namespace gms {
  |
  *===========================================================================*/		      
 
-                      __ATTR_REGCALL__
+                      
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		      static inline
+		       static inline
 		      __m512
 		      itm_height_function_zmm16r4(const __m512 x_km,
 		                                  const __m512 K) {
@@ -419,17 +409,77 @@ namespace gms {
 			    return (res);
 		     }
 
+/*=============================================================================
+ |
+ |  Description:  Initialize parameters for point-to-point mode
+ |
+ |        Input:  f__mhz            - Frequency, in MHz
+ |                h_sys__meter      - Average height of the path above
+ |                                    mean sea level, in meters
+ |                N_0               - Refractivity, in N-Units
+ |                pol               - Polarization
+ |                                      + 0 : POLARIZATION__HORIZONTAL
+ |                                      + 1 : POLARIZATION__VERTICAL
+ |                epsilon           - Relative permittivity
+ |                sigma             - Conductivity
+ |
+ |      Outputs:  Z_g               - Complex ground impedance
+ |                gamma_e           - Curvature of the effective earth
+ |                N_s               - Surface refractivity, in N-Units
+ |
+ |      Returns:  [None]
+ |
+ *===========================================================================*/		     
 
+#include "GMS_complex_zmm16r4.hpp"
+
+                    
+                      __ATTR_ALWAYS_INLINE__
+		      static inline
+                      void
+                      itm_init_p2p_zmm16r4(const __m512 f_mhz,
+		                           const __m512 h_sys_meter,
+					   const __m512 N_0,
+					   const int32_t pol,
+					   const __m512 epsilon,
+					   const __m512 sigma,
+					   ZMM16c4 &Z_g,
+					   __m512 &gamm_e,
+					   __m512 &N_s) {
+
+                            const __m512 gamma_a      = _mm512_set1_ps(0.0001569858712715855573F);
+			    const __m512 _1           = _mm512_set1_ps(1.0F);
+			    const __m512 _0           = _mm512_set1_ps(0.0F);
+			    const __m512 _9460        = _mm512_set1_ps(9460.0);
+			    const __m512 _179_3       = _mm512_set1_ps(179.3F);
+			    const __m512 _0_4665      = _mm512_set1_ps(0.04665F);
+			    const __m512 _18000       = _mm512_set1_ps(18000.0F);
+			    const __m512 nh_sys_meter = _mm512_sub_ps(_0,h_sys_meter);
+			    __mmask16 k = 0x0;
+			    k = _mm512_cmp_mask_ps(h_sys_meter,_0,_CMP_EQ_OQ);
+			    const register __m512 t0 = _mm512_mul_ps(N_0,
+			                                     _mm512_exp_ps(_mm512_div_ps(nh_sys_meter,_9460)));
+			    N_s = _mm512_mask_blend_ps(k,t0,N_0);
+			    const register __m512 t1 = _mm512_sub_ps(_1,
+			                                   _mm512_mul_ps(_0_4665,
+							                 _mm512_exp_ps(_mm512_div_ps(N_s,_179_3))));
+			    gamma_e = _mm512_mul_ps(gamma_a,t1);
+			    const register ZMM16c4 ep_r = ZMM16c4{epsilon,
+			                                       _mm512_mul_ps(_18000,
+							                    _mm512_div_ps(sigma,f_mhz))};
+			    Z_g = _mm512_sqrt_ps(_mm512_sub_ps(ep_r,_1));
+			    if(pol == POLARIZATION_VERICAL)
+			       Z_g /= ep_r;
+		      }
 
 		     //
 		     //  AVX512 double-precision implementation
 		     //
 		     //
 
-		      __ATTR_REGCALL__
+		     
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		    
 		      static inline
                       void
 		      data_preload_v8() {
@@ -447,10 +497,9 @@ namespace gms {
 		      }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      __m512d
 		      itm_terrain_roughness_zmm8r8(const __m512d d_meter, // this variable shall be a negative
@@ -463,10 +512,9 @@ namespace gms {
 		      }
 
 
-		     __ATTR_REGCALL__
+		   
                      __ATTR_ALWAYS_INLINE__
-		     __ATTR_HOT__
-		     __ATTR_ALIGN__(32)
+		   
 		     static inline
 		     __m512d
 		     itm_fresnel_integral_zmm8r8(const __m512d v2) {
@@ -485,10 +533,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      __m512d
 		      itm_knife_edge_diffraction_zmm8r8( const __m512d d_meter,
@@ -514,10 +561,9 @@ namespace gms {
 		      }
 
 
-		      __ATTR_REGCALL__
+		   
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      __m512d
 		      itm_smooth_earth_diffraction_zmm8r8( const __m512d d_meter,
@@ -598,10 +644,9 @@ namespace gms {
 		      }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      __m512d
 		      itm_height_function_zmm8r8(const __m512d x_km,
