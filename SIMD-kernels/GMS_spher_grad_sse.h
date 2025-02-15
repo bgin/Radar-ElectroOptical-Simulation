@@ -547,24 +547,71 @@ namespace gms {
 						 const __m128d * __restrict __ATTR_ALIGN__(16) M);
 						
 						 
-
-		      
                       __ATTR_VECTORCALL__
                       __ATTR_HOT__
-		      void spher_ang_grad_xmm2r8_u(double * __restrict  Mat0,
+		      void spher_ang_grad_stype_0_xmm2r8_u(double * __restrict  Mat0,
 		                                   double * __restrict  Mat1,
 						   double * __restrict  Mat2,
 						   double * __restrict  Mat3,
 						   double * __restrict  Mat4,
 						   double * __restrict  Mat5,
-						   const __m128d G0,
-						   const __m128d G1,
-						   const __m128d G2,
-						   const __m128d Rx_x,
-						   const __m128d Rx_y,
-						   const __m128d Rx_z,
-						   const __m128d * __restrict __ATTR_ALIGN__(16) M,
-						   const int32_t sysType); 
+						 const __m128d G0,
+						 const __m128d G1,
+						 const __m128d G2,
+						 const __m128d Rx_x,
+						 const __m128d Rx_y,
+						 const __m128d Rx_z,
+						 const __m128d * __restrict  M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_1_xmm2r8_u(double * __restrict  Mat0,
+		                                   double * __restrict  Mat1,
+						   double * __restrict  Mat2,
+						   double * __restrict  Mat3,
+						   double * __restrict  Mat4,
+						   double * __restrict  Mat5,
+						 const __m128d G0,
+						 const __m128d G1,
+						 const __m128d G2,
+						 const __m128d Rx_x,
+						 const __m128d Rx_y,
+						 const __m128d Rx_z,
+						 const __m128d * __restrict  M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_2_xmm2r8_u(double * __restrict  Mat0,
+		                                   double * __restrict  Mat1,
+						   double * __restrict  Mat2,
+						   double * __restrict  Mat3,
+						   double * __restrict  Mat4,
+						   double * __restrict  Mat5,
+						 const __m128d G0,
+						 const __m128d G1,
+						 const __m128d G2,
+						 const __m128d Rx_x,
+						 const __m128d Rx_y,
+						 const __m128d Rx_z,
+						 const __m128d * __restrict  M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_3_xmm2r8_u(double * __restrict  Mat0,
+		                                   double * __restrict  Mat1,
+						   double * __restrict  Mat2,
+						   double * __restrict  Mat3,
+						   double * __restrict  Mat4,
+						   double * __restrict  Mat5,
+						 const __m128d G0,
+						 const __m128d G1,
+						 const __m128d G2,
+						 const __m128d Rx_x,
+						 const __m128d Rx_y,
+						 const __m128d Rx_z,
+						 const __m128d * __restrict  M);
+		      
+                  
 
 
 		    
