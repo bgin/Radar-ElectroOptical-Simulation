@@ -2379,13 +2379,9 @@
 			  
 		}
 
-		      
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////		      
                     
-		   
-
-
-
-		    
+	    
                      
 		      void gms::math::spher_ang_grad_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
 		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
@@ -2516,6 +2512,323 @@
 			  
 		    }
 
+	  
+         void gms::math::spher_ang_grad_stype_0_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M) {
+						   
+						 
+			  const __m128 _0 = _mm_setzero_ps();
+                          __m128 J0,J1,J2,J3,J4,J;
+			  const __m128 M0    = M[0];
+			  const __m128 M1    = M[1];
+			  const __m128 temp0 = _mm_sub_ps(G0,Rx_x);
+			  const __m128 M3    = M[3];
+			  const __m128 M4    = M[4];
+			  const __m128 temp1 = _mm_sub_ps(G1,Rx_y);
+			  const __m128 M6    = M[6];
+			  const __m128 M7    = M[7];
+			  const __m128 temp2 = _mm_sub_ps(G2,Rx_z);
+			  const __m128 x     = _mm_fmadd_ps(M0,temp0,
+			                              _mm_fmadd_ps(M3,temp1,
+						            _mm_mul_ps(M6,temp2)));
+			  const __m128 M2    = M[2];
+			  const __m128 y     = _mm_fmadd_ps(M1,temp0,
+			                              _mm_fmadd_ps(M4,temp1,
+						            _mm_mul_ps(M7,temp2)));
+			  const __m128 M5    = M[5];
+			  const __m128 M8    = M[8];
+			  const __m128 z     =  _mm_fmadd_ps(M2,temp0,
+			                              _mm_fmadd_ps(M5,temp1,
+						            _mm_mul_ps(M8,temp2)));
+			
+                const __m128 r2   = _mm_fmadd_ps(x,x,
+			                               _mm_fmadd_ps(y,y,
+						                 _mm_mul_ps(z,z)));
+			     const __m128 sqrv = _mm_fmadd_ps(x,x,
+			                                     _mm_mul_ps(y,y));
+			     const __m128 sqrtv= _mm_sqrt_ps(sqrv);
+			     const __m128 denom= _mm_mul_ps(r2,sqrtv);
+			      //Derivatives with respect to x.
+			     J0 = xmm4r4_negate(_mm_div_ps(y,sqrv));
+			     J1 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(x,z),denom));
+			      //Derivatives with respect to y.
+			     J2 = _mm_div_ps(x,sqrv);
+			     J3 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(y,z),denom));
+			     //Derivatives with respect to z.
+			     J4 = _0;
+			     J5 = _mm_div_ps(sqrtv,r2);
+			
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  _mm_store_ps(&Mat0[0],_mm_fmadd_ps(J0,M0,
+			                   _mm_fmadd_ps(J2,M1,
+					              _mm_mul_ps(J4,M2))));
+			  _mm_store_ps(&Mat1[0],_mm_fmadd_ps(J1,M0,
+			                   _mm_fmadd_ps(J3,M1,
+					              _mm_mul_ps(J5,M2))));
+			  _mm_store_ps(&Mat2[0],_mm_fmadd_ps(J0,M3,
+			                   _mm_fmadd_ps(J2,M4,
+					              _mm_mul_ps(J4,M5))));
+			  _mm_store_ps(&Mat3[0],_mm_fmadd_ps(J1,M3,
+			                   _mm_fmadd_ps(J3,M4,
+					              _mm_mul_ps(J5,M5))));
+			  _mm_store_ps(&Mat4[0],_mm_fmadd_ps(J0,M6,
+			                   _mm_fmadd_ps(J2,M7,
+					              _mm_mul_ps(J4,M8))));
+			  _mm_store_ps(&Mat5[0],_mm_fmadd_ps(J1,M6,
+			                   _mm_fmadd_ps(J3,M7,
+					              _mm_mul_ps(J5,M8))));
+			  
+		}
+
+		void gms::math::spher_ang_grad_stype_1_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M) {
+						 
+						 
+			  const __m128 _0 = _mm_setzero_ps();
+                          __m128 J0,J1,J2,J3,J4,J;
+			  const __m128 M0    = M[0];
+			  const __m128 M1    = M[1];
+			  const __m128 temp0 = _mm_sub_ps(G0,Rx_x);
+			  const __m128 M3    = M[3];
+			  const __m128 M4    = M[4];
+			  const __m128 temp1 = _mm_sub_ps(G1,Rx_y);
+			  const __m128 M6    = M[6];
+			  const __m128 M7    = M[7];
+			  const __m128 temp2 = _mm_sub_ps(G2,Rx_z);
+			  const __m128 x     = _mm_fmadd_ps(M0,temp0,
+			                              _mm_fmadd_ps(M3,temp1,
+						            _mm_mul_ps(M6,temp2)));
+			  const __m128 M2    = M[2];
+			  const __m128 y     = _mm_fmadd_ps(M1,temp0,
+			                              _mm_fmadd_ps(M4,temp1,
+						            _mm_mul_ps(M7,temp2)));
+			  const __m128 M5    = M[5];
+			  const __m128 M8    = M[8];
+			  const __m128 z     =  _mm_fmadd_ps(M2,temp0,
+			                              _mm_fmadd_ps(M5,temp1,
+						            _mm_mul_ps(M8,temp2)));
+			
+                const __m128 r2   = _mm_fmadd_ps(x,x,
+			                               _mm_fmadd_ps(y,y,
+						                 _mm_mul_ps(z,z)));
+			     const __m128 sqrv = _mm_fmadd_ps(x,x,
+			                                     _mm_mul_ps(y,y));
+			     const __m128 sqrtv= _mm_sqrt_ps(sqrv);
+			     J0 = _mm_div_ps(z,sqrv);
+			     J1 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(x,y),denom));
+			     J2 = _0;
+			     J3 = _mm_div_ps(sqrtv,r2);
+			     J4 = xmm4r4_negate(_mm_div_ps(x,sqrv));
+			     J5 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(z,y),denom));
+			  
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  _mm_store_ps(&Mat0[0],_mm_fmadd_ps(J0,M0,
+			                   _mm_fmadd_ps(J2,M1,
+					              _mm_mul_ps(J4,M2))));
+			  _mm_store_ps(&Mat1[0],_mm_fmadd_ps(J1,M0,
+			                   _mm_fmadd_ps(J3,M1,
+					              _mm_mul_ps(J5,M2))));
+			  _mm_store_ps(&Mat2[0],_mm_fmadd_ps(J0,M3,
+			                   _mm_fmadd_ps(J2,M4,
+					              _mm_mul_ps(J4,M5))));
+			  _mm_store_ps(&Mat3[0],_mm_fmadd_ps(J1,M3,
+			                   _mm_fmadd_ps(J3,M4,
+					              _mm_mul_ps(J5,M5))));
+			  _mm_store_ps(&Mat4[0],_mm_fmadd_ps(J0,M6,
+			                   _mm_fmadd_ps(J2,M7,
+					              _mm_mul_ps(J4,M8))));
+			  _mm_store_ps(&Mat5[0],_mm_fmadd_ps(J1,M6,
+			                   _mm_fmadd_ps(J3,M7,
+					              _mm_mul_ps(J5,M8))));
+			  
+		}
+
+		void gms::math::spher_ang_grad_stype_2_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M) {
+						
+						 
+			  const __m128 _0 = _mm_setzero_ps();
+                          __m128 J0,J1,J2,J3,J4,J;
+			  const __m128 M0    = M[0];
+			  const __m128 M1    = M[1];
+			  const __m128 temp0 = _mm_sub_ps(G0,Rx_x);
+			  const __m128 M3    = M[3];
+			  const __m128 M4    = M[4];
+			  const __m128 temp1 = _mm_sub_ps(G1,Rx_y);
+			  const __m128 M6    = M[6];
+			  const __m128 M7    = M[7];
+			  const __m128 temp2 = _mm_sub_ps(G2,Rx_z);
+			  const __m128 x     = _mm_fmadd_ps(M0,temp0,
+			                              _mm_fmadd_ps(M3,temp1,
+						            _mm_mul_ps(M6,temp2)));
+			  const __m128 M2    = M[2];
+			  const __m128 y     = _mm_fmadd_ps(M1,temp0,
+			                              _mm_fmadd_ps(M4,temp1,
+						            _mm_mul_ps(M7,temp2)));
+			  const __m128 M5    = M[5];
+			  const __m128 M8    = M[8];
+			  const __m128 z     =  _mm_fmadd_ps(M2,temp0,
+			                              _mm_fmadd_ps(M5,temp1,
+						            _mm_mul_ps(M8,temp2)));
+			
+                const __m128 r2   = _mm_fmadd_ps(x,x,
+			                               _mm_fmadd_ps(y,y,
+						                 _mm_mul_ps(z,z)));
+			     const __m128 sqrv = _mm_fmadd_ps(x,x,
+			                                     _mm_mul_ps(y,y));
+			     const __m128 sqrtv= _mm_sqrt_ps(sqrv);
+			     const __m128 denom= _mm_mul_ps(r2,sqrtv);
+			     J0 = xmm4r4_negate(_mm_div_ps(y,sqrv));
+			     J1 = _mm_div_ps(_mm_mul_ps(x,z),denom);
+			     J2 = _mm_div_ps(x,sqrv);
+			     J3 = _mm_div_ps(_mm_mul_ps(y,z),denom);
+			     J4 = _0;
+			     J5 = xmm4r4_negate(_mm_div_ps(sqrtv,r2));
+			 
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  _mm_store_ps(&Mat0[0],_mm_fmadd_ps(J0,M0,
+			                   _mm_fmadd_ps(J2,M1,
+					              _mm_mul_ps(J4,M2))));
+			  _mm_store_ps(&Mat1[0],_mm_fmadd_ps(J1,M0,
+			                   _mm_fmadd_ps(J3,M1,
+					              _mm_mul_ps(J5,M2))));
+			  _mm_store_ps(&Mat2[0],_mm_fmadd_ps(J0,M3,
+			                   _mm_fmadd_ps(J2,M4,
+					              _mm_mul_ps(J4,M5))));
+			  _mm_store_ps(&Mat3[0],_mm_fmadd_ps(J1,M3,
+			                   _mm_fmadd_ps(J3,M4,
+					              _mm_mul_ps(J5,M5))));
+			  _mm_store_ps(&Mat4[0],_mm_fmadd_ps(J0,M6,
+			                   _mm_fmadd_ps(J2,M7,
+					              _mm_mul_ps(J4,M8))));
+			  _mm_store_ps(&Mat5[0],_mm_fmadd_ps(J1,M6,
+			                   _mm_fmadd_ps(J3,M7,
+					              _mm_mul_ps(J5,M8))));
+			  
+		}
+
+		void gms::math::spher_ang_grad_stype_3_mm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M) {
+						   
+						 
+			  const __m128 _0 = _mm_setzero_ps();
+                          __m128 J0,J1,J2,J3,J4,J;
+			  const __m128 M0    = M[0];
+			  const __m128 M1    = M[1];
+			  const __m128 temp0 = _mm_sub_ps(G0,Rx_x);
+			  const __m128 M3    = M[3];
+			  const __m128 M4    = M[4];
+			  const __m128 temp1 = _mm_sub_ps(G1,Rx_y);
+			  const __m128 M6    = M[6];
+			  const __m128 M7    = M[7];
+			  const __m128 temp2 = _mm_sub_ps(G2,Rx_z);
+			  const __m128 x     = _mm_fmadd_ps(M0,temp0,
+			                              _mm_fmadd_ps(M3,temp1,
+						            _mm_mul_ps(M6,temp2)));
+			  const __m128 M2    = M[2];
+			  const __m128 y     = _mm_fmadd_ps(M1,temp0,
+			                              _mm_fmadd_ps(M4,temp1,
+						            _mm_mul_ps(M7,temp2)));
+			  const __m128 M5    = M[5];
+			  const __m128 M8    = M[8];
+			  const __m128 z     =  _mm_fmadd_ps(M2,temp0,
+			                              _mm_fmadd_ps(M5,temp1,
+						            _mm_mul_ps(M8,temp2)));
+			
+			
+                             const __m128 r2   = _mm_fmadd_ps(x,x,
+			                               _mm_fmadd_ps(y,y,
+						                 _mm_mul_ps(z,z)));
+			     const __m128 sqrv = _mm_fmadd_ps(x,x,
+			                                     _mm_mul_ps(y,y));
+			     const __m128 sqrtv= _mm_sqrt_ps(sqrv);
+			     J0 = _mm_div_ps(y,sqrv);
+			     J1 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(x,z),denom));
+			     J2 = xmm4r4_negate(_mm_div_ps(x,sqrv));
+			     J3 = xmm4r4_negate(_mm_div_ps(
+			                                  _mm_mul_ps(y,z),denom));
+			     J4 = _0;
+			     J5 = _mm_div_ps(sqrtv,r2);
+			 
+
+			  //Rotate from local back to global coordinates.
+                          //J=J*M;
+			  _mm_store_ps(&Mat0[0],_mm_fmadd_ps(J0,M0,
+			                   _mm_fmadd_ps(J2,M1,
+					              _mm_mul_ps(J4,M2))));
+			  _mm_store_ps(&Mat1[0],_mm_fmadd_ps(J1,M0,
+			                   _mm_fmadd_ps(J3,M1,
+					              _mm_mul_ps(J5,M2))));
+			  _mm_store_ps(&Mat2[0],_mm_fmadd_ps(J0,M3,
+			                   _mm_fmadd_ps(J2,M4,
+					              _mm_mul_ps(J4,M5))));
+			  _mm_store_ps(&Mat3[0],_mm_fmadd_ps(J1,M3,
+			                   _mm_fmadd_ps(J3,M4,
+					              _mm_mul_ps(J5,M5))));
+			  _mm_store_ps(&Mat4[0],_mm_fmadd_ps(J0,M6,
+			                   _mm_fmadd_ps(J2,M7,
+					              _mm_mul_ps(J4,M8))));
+			  _mm_store_ps(&Mat5[0],_mm_fmadd_ps(J1,M6,
+			                   _mm_fmadd_ps(J3,M7,
+					              _mm_mul_ps(J5,M8))));
+			  
+		}
+   
 
 		   
                     
