@@ -617,7 +617,7 @@ namespace gms {
 		    
                       __ATTR_VECTORCALL__
                       __ATTR_HOT__
-		      void spher_ang_grad_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		      void spher_ang_grad_stype_0_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
 		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
 						    float * __restrict __ATTR_ALIGN__(16) Mat2,
 						    float * __restrict __ATTR_ALIGN__(16) Mat3,
@@ -629,13 +629,61 @@ namespace gms {
 						    const __m128 Rx_x,
 						    const __m128 Rx_y,
 						    const __m128 Rx_z,
-						    const __m128 * __restrict __ATTR_ALIGN__(16) M,
-						    const int32_t sysType);
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_1_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_2_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			          __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_3_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) Mat0,
+		                                    float * __restrict __ATTR_ALIGN__(16) Mat1,
+						    float * __restrict __ATTR_ALIGN__(16) Mat2,
+						    float * __restrict __ATTR_ALIGN__(16) Mat3,
+						    float * __restrict __ATTR_ALIGN__(16) Mat4,
+						    float * __restrict __ATTR_ALIGN__(16) Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+						  
 
 		   
                       __ATTR_VECTORCALL__
                       __ATTR_HOT__
-		      void spher_ang_grad_xmm4r4_u(float * __restrict  Mat0,
+		      void spher_ang_grad_stype_0_xmm4r4_u(float * __restrict  Mat0,
 		                                    float * __restrict  Mat1,
 						    float * __restrict  Mat2,
 						    float * __restrict  Mat3,
@@ -647,8 +695,56 @@ namespace gms {
 						    const __m128 Rx_x,
 						    const __m128 Rx_y,
 						    const __m128 Rx_z,
-						    const __m128 * __restrict __ATTR_ALIGN__(16) M,
-						    const int32_t sysType);
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			     __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_1_xmm4r4_u(float * __restrict  Mat0,
+		                                    float * __restrict  Mat1,
+						    float * __restrict  Mat2,
+						    float * __restrict  Mat3,
+						    float * __restrict  Mat4,
+						    float * __restrict  Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			    __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_2_xmm4r4_u(float * __restrict  Mat0,
+		                                    float * __restrict  Mat1,
+						    float * __restrict  Mat2,
+						    float * __restrict  Mat3,
+						    float * __restrict  Mat4,
+						    float * __restrict  Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+
+			    __ATTR_VECTORCALL__
+                      __ATTR_HOT__
+		      void spher_ang_grad_stype_3_xmm4r4_u(float * __restrict  Mat0,
+		                                    float * __restrict  Mat1,
+						    float * __restrict  Mat2,
+						    float * __restrict  Mat3,
+						    float * __restrict  Mat4,
+						    float * __restrict  Mat5,
+						    const __m128 G0,
+						    const __m128 G1,
+						    const __m128 G2,
+						    const __m128 Rx_x,
+						    const __m128 Rx_y,
+						    const __m128 Rx_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M);
+						  
 
 	
     } // math
