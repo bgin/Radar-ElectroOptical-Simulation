@@ -1,13 +1,13 @@
 
 #ifndef __GMS_MKL_WIEBULLRNG_H__
-#define __GMS_MKL_WEIBULLRNG_H__ 260420181417
+#define __GMS_MKL_WEIBULLRNG_H__
 
 namespace file_info {
 
   
 const unsigned int gGMS_MKL_WEIBULLRNG_MAJOR = 1;
 
-const unsigned int gGMS_MKL_WEIBULLRNG_MINOR = 1;
+const unsigned int gGMS_MKL_WEIBULLRNG_MINOR = 0;
 
 const unsigned int gGMS_MKL_WEIBULLRNG_MICRO = 0;
 
@@ -16,7 +16,7 @@ const unsigned int gGMS_MKL_WEIBULLRNG_FULLER =
 
 const char * const pgGMS_MKL_WEIBULLRNG_CREATE_DATE = "26-04-2018 14:17 +00200 (THR 26 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_WEIBULLRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_WEIBULLRNG_BUILD_DATE = "00-00-0000 00:00";
 
 const char * const pgGMS_MKL_WEIBULLRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -25,9 +25,9 @@ const char * const pgGMS_MKL_WEIBULLRNG_DESCRIPT = "C++ wrapper for Intel MKL vd
 }
 
 #include <iostream>
+#include "GMS_config.h"
 
- #include "GMS_config.h"
-
+ 
 #if (USE_MKL) == 1
     #include <mkl_vsl.h>
 #else
@@ -36,14 +36,13 @@ const char * const pgGMS_MKL_WEIBULLRNG_DESCRIPT = "C++ wrapper for Intel MKL vd
 
 namespace gms {
 	namespace math {
-		namespace stat {
+		
 
 			//
 			//	C++ wrapper for Intel MKL vdRngWeibull procedure
 			//
 
                         __attribute__(align((64))) struct MKLWRNGData {
-
 
                                    double * __restrict m_rvec;
 
@@ -74,6 +73,7 @@ namespace gms {
 
 				  
 					
+
 
                         __attribute__((align(64))) struct MKLWeibullRNG {
 
