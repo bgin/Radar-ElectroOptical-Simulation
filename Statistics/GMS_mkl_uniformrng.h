@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MKL_UNIFORMRNG_H__
-#define __GMS_MKL_UNIFORMRNG_H__ 201824040842
+#define __GMS_MKL_UNIFORMRNG_H__
 
 namespace file_info {
 
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_UNIFORMRNG_FULLVER =
 
 const char * const pgGMS_MKL_UNIFORMRNG_CREATE_DATE = "24-04-2018 08:42 +00200 (TUE 24 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_UNIFORMRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_UNIFORMRNG_BUILD_DATE = __DATE__ ":"__TIME__;
 
 const char * const pgGMS_MKL_UNIFORMRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -26,9 +26,7 @@ const char * const pgGMS_MKL_UNIFORMRNG_DESCRIPT = "C++ wrapper over MKL vdRngUn
 }
 
 #include <iostream>
-
 #include "GMS_config.h"
-
 #if (USE_MKL) == 1
     #include <mkl_vsl.h>
 #else
@@ -37,7 +35,7 @@ const char * const pgGMS_MKL_UNIFORMRNG_DESCRIPT = "C++ wrapper over MKL vdRngUn
 
 namespace gms {
 	namespace math {
-		namespace stat {
+	
 
 			//
 			//	C++ wrapper around Intel MKL vdRngUniform procedure.
@@ -105,6 +103,6 @@ namespace gms {
 			operator<<(std::ostream &,const MKLUniformRNG &);
 		}
 	}
-}
+
 
 #endif /*__GMS_MKL_UNIFORMRNG_H__*/
