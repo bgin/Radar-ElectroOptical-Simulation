@@ -1,23 +1,23 @@
 
 #include "GMS_mkl_lognormalrng.h"
-#include "GMS_common.h"
 #include "GMS_malloc.h"
-#include "GMS_error_macros.h"
-#include "GMS_constants.h"
+#include "GMS_simd_memops.h"  
+
+      
 
 //
 //	Implementation
 //
 
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 MKLLognormalRNG() {
-	using namespace gms::math::constants;
+	
 	data.m_rvec  = NULL;
-	data.m_a     = dinf;
-	data.m_sigma = dinf;
-	data.m_b     = dinf;
-	data.m_beta  = dinf;
+	data.m_a     = 0.0;
+	data.m_sigma = 0.0;
+	data.m_b     = 0.0;
+	data.m_beta  = 0.0;
 	data.m_nvalues = 0;
 	data.m_brng    = 0;
 	data.m_seed    = 0;
@@ -25,7 +25,7 @@ MKLLognormalRNG() {
 }
 
 
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 MKLLognormalRNG(const MKL_INT nvalues,
 	        const MKL_UINT brng,
@@ -35,10 +35,10 @@ MKLLognormalRNG(const MKL_INT nvalues,
 	        const double b,
 	        const double beta) {
 	using namespace gms::common;
+        constexpr size_t align64B = 64ULL;
+	data.m_rvec    = gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
+  
 
-   
-       data.m_rvec     = (double*)gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
- 
 	data.m_a       = a;
 	data.m_sigma   = sigma;
 	data.m_b       = b;
@@ -47,23 +47,23 @@ MKLLognormalRNG(const MKL_INT nvalues,
 	data.m_brng    = brng;
 	data.m_seed    = seed;
 	data.m_error   = 1;
-#if (GMS_INIT_ARRAYS) == 1
 #if defined __AVX512F__
         avx512_init_unroll8x_pd(&data.m_rvec[0], data.m_nvalues,0.0);
 #elif defined __AVX__ 
 	avx256_init_unroll8x_pd(&data.m_rvec[0], data.m_nvalues,0.0);
-#endif
+#else
+#error Unsupported ISA SIMD
 #endif
 
 }
 
 
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 MKLLognormalRNG(const MKLLognormalRNG &x) {
 	using namespace gms::common;
-
-        data.m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
+        constexpr size_t align64B = 64ULL;
+        data.m_rvec    = gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
   
 	data.m_a       = x.data.m_a;
 	data.m_sigma   = x.data.m_sigma;
@@ -75,21 +75,21 @@ MKLLognormalRNG(const MKLLognormalRNG &x) {
 	data.m_error   = x.data.m_error;
 #if defined __AVX512F__
        #if (USE_NT_STORES) == 1
-	     avx512_memcpy8x_nt_pd(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
+	     avx512_uncached_memove(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
        #else
-	     avx512_memcpy8x_pd(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
+	     avx512_cached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
        #endif
 #else
        #if (USE_NT_STORES) == 1
-	     avx256_memcpy8x_nt_pd(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
+	     avx256_uncached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
        #else
-	     avx256_memcpy8x_pd(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
+	     avx256_cached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], data.m_nvalues);
        #endif
 #endif
 }
 
 
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 MKLLognormalRNG(MKLLognormalRNG &&x) {
 	data.m_rvec = &x.data.m_rvec[0];
@@ -106,10 +106,10 @@ MKLLognormalRNG(MKLLognormalRNG &&x) {
 }
 
 
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 ~MKLLognormalRNG() {
-
+        using namespace gms::common;
         if (NULL != data.m_rvec) gms_mm_free(data.m_rvec); 	data.m_rvec = NULL;
 
 }		
@@ -117,21 +117,24 @@ MKLLognormalRNG::
 	
 
 
-gms::math::stat::MKLLognormalRNG &
-gms::math::stat::MKLLognormalRNG::
+gms::math::MKLLognormalRNG &
+gms::math::MKLLognormalRNG::
 operator=(const MKLLognormalRNG &x) {
 	using namespace gms::common;
 	if (this == &x) return (*this);
 	if (data.m_nvalues != x.data.m_nvalues) { // Handle size mismatch
+                constexpr size_t align64B = 64ULL;  
                 gms_mm_free(data.m_rvec);
 
-               // Preserve an invariant
+           
+    // Preserve an invariant
 		data.m_a = 0.0; data.m_sigma = 0.0;
 		data.m_b = 0.0; data.m_beta = 0.0;
 		data.m_nvalues = 0; data.m_brng = 0;
 		data.m_seed = 0; data.m_error = 1;
-                data.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
-  	}
+                data.m_rvec = gms_mm_malloc(static_cast<size_t>(x.data.m_nvalues), align64B);
+   
+	}
 	else {
 		// Copy state
 		data.m_a = x.data.m_a; data.m_sigma = x.data.m_sigma;
@@ -140,15 +143,15 @@ operator=(const MKLLognormalRNG &x) {
 		data.m_seed    = x.data.m_seed;    data.m_error = x.data.m_error;
 #if defined __AVX512F__
         #if (USE_NT_STORES) == 1
-		avx512_memcpy8x_nt_pd(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues);
+		avx512_uncached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues);
         #else
-		avx512_memcpy8x_pd(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues); 
+		avx512_cached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues); 
         #endif
 #else
         #if (USE_NT_STORES) == 1
-		avx256_memcpy8x_nt_pd(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues);
+		avx256_uncached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues);
         #else
-		avx256_memcpy8x_pd(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues); 
+		avx256_cached_memmove(&data.m_rvec[0], &x.data.m_rvec[0], x.data.m_nvalues); 
         #endif
 #endif
 	}
@@ -163,11 +166,11 @@ operator=(const MKLLognormalRNG &x) {
 	
 
 
-gms::math::stat::MKLLognormalRNG &
-gms::math::stat::MKLLognormalRNG::
+gms::math::MKLLognormalRNG &
+gms::math::MKLLognormalRNG::
 operator=(MKLLognormalRNG &&x) {
 	if (this == &x) return (*this);
-
+         using namespace gms::common;
         gms_mm_free(data.m_rvec);
 
 	data.m_rvec = &x.data.m_rvec[0];
@@ -188,7 +191,7 @@ operator=(MKLLognormalRNG &&x) {
 
 
 void
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 compute_rand_distribution(const MKL_INT method) {
 	VSLStreamStatePtr stream;
@@ -213,7 +216,7 @@ compute_rand_distribution(const MKL_INT method) {
 }
 
 void
-gms::math::stat::
+gms::math::
 MKLLognormalRNG::
 compute_rand_distribution(VSLStreamStatePtr stream, 
 		          const MKL_INT method) {
@@ -233,7 +236,7 @@ compute_rand_distribution(VSLStreamStatePtr stream,
 }
 
 std::ostream &
-gms::math::stat::operator<<(std::ostream &os,
+gms::math::operator<<(std::ostream &os,
 			    const MKLLognormalRNG &x) {
 	for (MKL_INT i = 0; i != x.data.m_nvalues; ++i) {
 		os << std::setprecision(15) << std::showpoint <<

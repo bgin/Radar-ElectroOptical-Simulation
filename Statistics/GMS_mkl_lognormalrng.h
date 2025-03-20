@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MKL_LOGNORMALRNG_H__
-#define __GMS_MKL_LOGNORMALRNG_H__ 20420181155
+#define __GMS_MKL_LOGNORMALRNG_H__
 
 namespace file_info {
 
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_LOGNORMALRNG_FULLVER =
 
 const char * const pgGMS_MKL_LOGNORMALRNG_CREATE_DATE = "25-04-2018 11:55 +00200 (WED 25 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_LOGNORMALRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_LOGNORMALRNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_LOGNORMALRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -29,8 +29,8 @@ const char * const pgGMS_MKL_LOGNORMALRNG_DESCRIPT = "C++ wrapper around Intel M
 
 
 #include <iostream>
-
 #include "GMS_config.h"
+
 
 #if (USE_MKL) == 1
     #include <mkl_vsl.h>
@@ -40,7 +40,7 @@ const char * const pgGMS_MKL_LOGNORMALRNG_DESCRIPT = "C++ wrapper around Intel M
 
 namespace gms {
 	namespace math {
-		namespace stat {
+	
 				
 				//
 				//	C++ wrapper around Intel MKL vdRngLognormal procedure.
@@ -114,7 +114,7 @@ namespace gms {
 			           const MKLLognormalRNG &);
 		}
 	}
-}
+
 
 
 
