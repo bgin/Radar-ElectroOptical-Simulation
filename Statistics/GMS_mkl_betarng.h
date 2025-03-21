@@ -1,9 +1,9 @@
 
 #ifndef __GMS_MKL_BETARNG_H__
-#define __GMS_MKL_BETARNG_H__ 250420201537
+#define __GMS_MKL_BETARNG_H__
 
 namespace file_info {
- 
+
 const unsigned int gGMS_MKL_BETARNG_MAJOR = 1;
 
 const unsigned int gGMS_MKL_BETARNG_MINOR = 1;
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_BETARNG_FULLVER =
 
 const char * const pgGMS_MKL_BETARNG_CREATE_DATE = "25-04-2018 15:37 +00200 (WED 25 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_BETARNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_BETARNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_BETARNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -27,19 +27,14 @@ const char * const pgGMS_MKL_BETARNG_DESCRIPT = "C++ wrapper around Intel MKL vd
 
 #include <iostream>
 #include "GMS_config.h"
+#endif
 #if (USE_MKL) == 1
 #include <mkl_vsl.h>
 #endif
 
 namespace gms {
 	namespace math {
-		namespace stat {
-				
-				//
-				//	C++ wrapper for Intel MKL vdRngBeta procedure.
-				//
-
-
+		
 			__attribute__((align(64))) struct MKLBRNGData {
 
 			         // POD and trivial type.
@@ -59,6 +54,8 @@ namespace gms {
 				MKL_INT m_seed;
 				MKL_INT m_error;
 			};
+			
+			
 
 			  __attribute__((align(64))) struct MKLBetaRNG {
 
@@ -103,7 +100,8 @@ namespace gms {
 				   const MKLBetaRNG &);
 		}
 	}
-}
+	
+	
 
 
 #endif /*__GMS_MKL_BETARNG_H_*/
