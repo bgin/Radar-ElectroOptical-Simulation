@@ -1,9 +1,7 @@
 
 #include "GMS_mkl_betarng.h"
-#include "GMS_common.h"
 #include "GMS_malloc.h"
-#include "GMS_error_macros.h"
-#include "GMS_constants"
+#include "GMS_simd_memops.h"
 
 //
 //	Implementation
@@ -14,7 +12,7 @@
 
 
 
-gms::math::stat::
+gms::math::
 MKLBetaRNG::
 MKLBetaRNG() {
     using namespace gms::math::constants;
@@ -29,7 +27,7 @@ MKLBetaRNG() {
 	datum.m_error   = 1;
 }
 
-gms::math::stat::
+gms::math::
 MKLBetaRNG::
 MKLBetaRNG( const MKL_INT nvalues,
 	    const MKL_UINT brng,
@@ -39,8 +37,8 @@ MKLBetaRNG( const MKL_INT nvalues,
 	    const double a,
 	    const double beta) {
 	using namespace gms::common;
- 	datum.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(nvalues),align64B);
- 
+	constexpr size_t align64B = 64ULL;
+	datum.m_rvec = gms_mm_malloc(static_cast<size_t>(nvalues),align64B);
 	datum.m_p    = p;
 	datum.m_q    = q;
 	datum.m_a    = a;
@@ -49,18 +47,22 @@ MKLBetaRNG( const MKL_INT nvalues,
 	datum.m_brng    = brng;
 	datum.m_seed    = seed;
 	datum.m_error   = 1;
-#if (GMS_INIT_ARRAYS) == 1	
-	avx256_init_unroll8x_pd(&datum.m_rvec[0], datum.m_nvalues, 0.0);
-#endif
+#if defined __AVX512F__
+        avx512_init_unroll8x_pd(&datum.m_rvec[0], static_cast<size_t>(datum.nvalues),0.0);
+#elif defined __AVX__
+	avx256_init_unroll8x_pd(&datum.m_rvec[0], static_cast<size_t>(datum.nvalues),0.0);
+#else
+#error Unsupported SIMD ISA
+#endif	
 }
 
-gms::math::stat::
+gms::math::
 MKLBetaRNG
 ::MKLBetaRNG(const MKLBetaRNG &x) {
 	using namespace gms::common;
-
-        datum.m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues), align64B);
-
+        constexpr size_t align64B = 64ULL;
+	datum.m_rvec    = gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues), align64B);
+        
 	datum.m_p       = x.datum.m_p;
 	datum.m_q       = x.datum.m_q;
 	datum.m_a       = x.datum.m_a;
@@ -69,15 +71,23 @@ MKLBetaRNG
 	datum.m_brng    = x.datum.m_brng;
 	datum.m_seed    = x.datum.m_seed;
 	datum.m_error   = x.datum.m_error;
-#if (USE_NT_STORES) == 1
-	avx256_memcpy8x_nt_pd(&datum.m_rvec[0], &datum.x.m_rvec[0], datum.m_nvalues);
-#else
-	avx256_memcpy8x_pd(&datum.m_rvec[0], &x.datum.m_rvec[0], datum.m_nvalues);
+#if defined __AVX512F__
+     #if (USE_NT_STORES) == 1
+	    avx512_uncached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0], static_cast<size_t>(datum.nvalues));
+     #else
+	    avx512_cached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0], static_cast<size_t>(datum.nvalues));
+     #endif
+#elif defined __AVX__
+     #if (USE_NT_STORES) == 1
+	    avx256_uncached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0], static_cast<size_t>(datum.nvalues));
+     #else
+	    avx256_cached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0], static_cast<size_t>(datum.nvalues));
+     #endif
 #endif
 }
 
 
-gms::math::stat::
+gms::math::
 MKLBetaRNG
 ::MKLBetaRNG(MKLBetaRNG &&x) {
 	datum.m_rvec      = &x.datum.m_rvec[0];
@@ -94,82 +104,78 @@ MKLBetaRNG
 }
 
 
-gms::math::stat::
+gms::math::
 MKLBetaRNG
 ::~MKLBetaRNG() {
-
-   if (NULL != datum.m_rvec) gms_mm_free(datum.m_rvec); datum.m_rvec = NULL;
+using namespace gms::common;
+if (NULL != datum.m_rvec) gms_mm_free(datum.m_rvec); datum.m_rvec = NULL;
 
 }		
 		
 	
 
 
-gms::math::stat::MKLBetaRNG &
-gms::math::stat::MKLBetaRNG::
+gms::math::MKLBetaRNG &
+gms::math::MKLBetaRNG::
 operator=(const MKLBetaRNG &x) {
 	using namespace gms::common;
 	if (this == &x) return (*this);
-	if (datum.m_nvalues != x.datum.m_nvalues){
-
 	   gms_mm_free(datum.m_rvec);
-
-	datum.m_p = 0.0;
-	datum.m_q = 0.0;
-	datum.m_a = 0.0;
-	datum.m_beta = 0.0;
-	datum.m_nvalues = 0;
-	datum.m_brng = 0;
-	datum.m_seed = 0;
-	datum.m_error = 1;
-  	 datum.m_rvec = (double*)gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues),align64B);
-   
-   }
-	else {
-	datum.m_p = x.datum.m_a;
-	datum.m_q = x.datum.m_q;
-	datum.m_a = x.datum.m_a;
-	datum.m_beta = x.datum.m_beta;
-	datum.m_nvalues = x.datum.m_nvalues;
-	datum.m_brng = x.datum.m_brng;
-	datum.m_seed = x.datum.m_seed;
-	datum.m_error = x.datum.m_error;
-#if (USE_NT_STORES) == 1
-	avx256_uncached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0], x.datum.m_nvalues);
-#else
-	avx256_cached_memmove(&datum.m_rvec[0], &x.datum.m_rvec[0],x.datum.m_nvalues);
+	   datum.m_p = 0.0;
+	   datum.m_q = 0.0;
+	   datum.m_a = 0.0;
+	   datum.m_beta = 0.0;
+	   datum.m_nvalues = 0;
+	   datum.m_brng = 0;
+	   datum.m_seed = 0;
+	   datum.m_error = 1;
+           constexpr size_t align64B = 64ULL;
+	   double * __restrict__ rvec = gms_mm_malloc(static_cast<size_t>(x.datum.m_nvalues),align64B);
+#if defined __AVX512F__
+     #if (USE_NT_STORES) == 1
+	    avx512_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #else
+	    avx512_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #endif
+#elif defined __AVX__
+     #if (USE_NT_STORES) == 1
+	    avx256_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #else
+	    avx256_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #endif
 #endif
-	}
+       datum.m_rvec = &rvec[0];
 	
 	return (*this);
 }	
 	
 
 
-gms::math::stat::MKLBetaRNG &
-gms::math::stat::MKLBetaRNG::
+gms::math::MKLBetaRNG &
+gms::math::MKLBetaRNG::
 operator=(MKLBetaRNG &&x) {
 	if (this == &x) return (*this);
 
-        gms_mm_free(datum.m_rvec);
-	datum.m_rvec      = &x.datum.m_rvec[0];
-	datum.m_p         =  x.datum.m_p;
-	datum.m_q         =  x.datum.m_q;
-	datum.m_a         =  x.datum.m_a;
-	datum.m_beta      =  x.datum.m_beta;
-	datum.m_nvalues   = x.datum.m_nvalues;
-	datum.m_brng      = x.datum.m_brng;
-	datum.m_seed      = x.datum.m_seed;
-	datum.m_error     = x.datum.m_error;
-	x.datum.m_nvalues = 0;
-	x.datum.m_rvec    = NULL;
-	return (*this);
+           gms_mm_free(datum.m_rvec);
+
+	   datum.m_rvec      = &x.datum.m_rvec[0];
+	   datum.m_p         =  x.datum.m_p;
+	   datum.m_q         =  x.datum.m_q;
+	   datum.m_a         =  x.datum.m_a;
+	   datum.m_beta      =  x.datum.m_beta;
+	   datum.m_nvalues   = x.datum.m_nvalues;
+	   datum.m_brng      = x.datum.m_brng;
+	   datum.m_seed      = x.datum.m_seed;
+	   datum.m_error     = x.datum.m_error;
+	   x.datum.m_nvalues = 0;
+	   x.datum.m_rvec    = NULL;
+	   return (*this);
 }	
 	
 
 
 void
-gms::math::stat::MKLBetaRNG::
+gms::math::MKLBetaRNG::
 compute_rand_distribution(const MKL_INT method) {
 	VSLStreamStatePtr stream;
 	datum.m_error = vslNewStream(&stream,datum.m_brng,datum.m_seed);
@@ -193,7 +199,7 @@ compute_rand_distribution(const MKL_INT method) {
 }
 
 void
-gms::math::stat::MKLBetaRNG::
+gms::math::MKLBetaRNG::
 compute_rand_distribution(VSLStreamStatePtr stream, 
 			  const MKL_INT method) {
 	// Stream must be deallocated (deinitialized) by the caller of this procedure.
@@ -212,7 +218,7 @@ compute_rand_distribution(VSLStreamStatePtr stream,
 }
 
 std::ostream &
-gms::math::stat::
+gms::math::
 operator<<(std::ostream &os,
 	   const MKLBetaRNG &x) {
 	for (MKL_INT i = 0; i != x.datum.m_nvalues; ++i) {
