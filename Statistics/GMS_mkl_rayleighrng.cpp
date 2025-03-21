@@ -118,7 +118,20 @@ operator=(_In_ const MKLRayleighRNG &x) {
 	datum.m_seed    = x.datum.m_seed;
 	datum.m_error   = x.datum.m_error;
 	double * __restrict rvec = NULL;
-	rvec =  gms_mm_edmalloc(static_cast<size_t>(datum.m_nvalues), align64B) };
+	rvec =  gms_mm_malloc(static_cast<size_t>(datum.m_nvalues), align64B) };
+#if defined __AVX512F__
+     #if (USE_NT_STORES) == 1
+	    avx512_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #else
+	    avx512_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #endif
+#elif defined __AVX__
+     #if (USE_NT_STORES) == 1
+	    avx256_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #else
+	    avx256_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+     #endif
+#endif
 	datum.m_rvec = &rvec[0];
 	return (*this);
 }	
