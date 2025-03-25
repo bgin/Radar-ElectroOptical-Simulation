@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MKL_GUMBELRNG_H__
-#define __GMS_MKL_GUMBELRNG_H__ 260420181047
+#define __GMS_MKL_GUMBELRNG_H__
 
 namespace file_info {
 
@@ -8,7 +8,7 @@ namespace file_info {
 
 const unsigned int gGMS_MKL_GUMBELRNG_MAJOR =   1;
 
-const unsigned int gGMS_MKL_GUMBELRNG_MINOR =  1;
+const unsigned int gGMS_MKL_GUMBELRNG_MINOR =   1;
   
 const unsigned int gGMS_MKL_GUMBELRNG_MICRO =   0;
 
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_GUMBELRNG_FULLVER =
 
 const char * const pgGMS_MKL_GUMBELRNG_CREATE_DATE = "26-04-2018 10:47 +00200 (THR 26 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_GUMBELRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_GUMBELRNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_GUMBELRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -30,22 +30,21 @@ const char * const pgGMS_MKL_GUMBELRNG_DESCRIPT = "C++ wrapper around Intel MKL 
 
 
 #include <iostream>
-
 #include "GMS_config.h"
-
 #if (USE_MKL) == 1
 #include <mkl_vsl.h>
 #endif
 
 namespace gms {
 	namespace math {
-		namespace stat {
+		
 
 			//
 			//	C++ wrapper for Intel MKL vdRngGumbel procedure.
 			//
 
 			__attribute__((align(64))) struct MKLGumbelRNG {
+
 
 
                                         double * __restrict m_rvec;
@@ -109,7 +108,7 @@ namespace gms {
 			          const MKLGumbelRNG &);
 		}
 	}
-}
+
 
 
 
