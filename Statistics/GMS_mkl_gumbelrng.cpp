@@ -1,23 +1,19 @@
 
 #include "GMS_mkl_gumbelrng.h"
-
-#include "GMS_common.h"
 #include "GMS_malloc.h"
-#include "GMS_error_macros.h"
-#include "GMS_constants.h"
-
+#include "GMS_simd_memops.h"  
 
 //
 //	Implementation
 //
 
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 MKLGumbelRNG() {
-	using namespace gms::math::constants;
+	
 	m_rvec    = NULL;
-	m_a       = dinf;
-	m_beta    = dinf;
+	m_a       = 0.0;
+	m_beta    = 0.0;
 	m_nvalues = 0;
 	m_brng    = 0;
 	m_seed    = 0;
@@ -25,7 +21,7 @@ MKLGumbelRNG() {
 }
 
 
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 MKLGumbelRNG(const MKL_INT nvalues,
 	     const MKL_UINT brng,
@@ -33,10 +29,8 @@ MKLGumbelRNG(const MKL_INT nvalues,
 	     const double a,
 	     const double beta) {
 	using namespace gms::common;
-
-	m_rvec    = (double*)gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
-	
-	
+        constexpr size_t align64B = 64ULL;
+	m_rvec    = gms_mm_malloc(static_cast<size_t>(nvalues), align64B);
 	m_a       = a;
 	m_beta    = beta;
 	m_nvalues = nvalues;
@@ -51,12 +45,12 @@ MKLGumbelRNG(const MKL_INT nvalues,
 }
 
 
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 MKLGumbelRNG(const MKLGumbelRNG &x) {
 	using namespace gms::common;
-
-	m_rvec    = (double*)gms_mm_maloc(static_cast<size_t>(x.m_nvalues), align64B);
+        constexpr size_t align64B = 64ULL;
+	m_rvec    = gms_edmalloca(static_cast<size_t>(x.m_nvalues), align64B);
 
 	m_a       = x.m_a;
 	m_beta    = x.m_beta;
@@ -66,20 +60,20 @@ MKLGumbelRNG(const MKLGumbelRNG &x) {
 	m_error   = x.m_error;
 #if defined __AVX512F__
      #if (USE_NT_STORES) == 1
-           avx512_memcpy8x_nt_pd(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+           avx512_uncached_memmove(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
      #else
-	   avx512_memcpy8x_pd(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));  
+	   avx512_cached_memmove(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));  
 #else
      #if (USE_NT_STORES) == 1
-	    avx256_memcpy8x_nt_pd(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+	    avx256_uncached_memmove(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
      #else
-	    avx256_memcpy8x_pd(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+	    avx256_cached_memmove(&m_rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
      #endif
 #endif
 }
 
 
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 MKLGumbelRNG(MKLGumbelRNG &&x) {
 	m_rvec      = &x.m_rvec[0];
@@ -94,40 +88,43 @@ MKLGumbelRNG(MKLGumbelRNG &&x) {
 }
 
 
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 ~MKLGumbelRNG() {
+         using namespace gms::common;
 	if (NULL != m_rvec) gms_mm_free(m_rvec); m_rvec = NULL;
 }		
 		
 	
 
 
-gms::math::stat::MKLGumbelRNG &
-gms::math::stat::MKLGumbelRNG::
+gms::math::MKLGumbelRNG &
+gms::math::MKLGumbelRNG::
 operator=(const MKLGumbelRNG &x) {
 	using namespace gms::common;
 	if (this == &x) return (*this);
-	_mm_free(m_rvec);
+	gms_mm_free(m_rvec);
 	m_a = x.m_a;
 	m_beta = x.m_beta;
 	m_nvalues = x.m_nvalues;
 	m_brng = x.m_brng;
 	m_seed = x.m_seed;
 	m_error = x.m_error;
-        double * __restrict rvec = (double*)gms_mm_malloc(static_cast<size_t>(m_nvalues), align64B); 
-		
+        constexpr size_t align64B = 64ULL;
+               double * __restrict
+		rvec{ gms::common::lam_edmalloca(static_cast<size_t>(m_nvalues), align64B) };
+
 #if defined __AVX512F__
         #if (USE_NT_STORES) == 1
-	      avx512_memcpy8x_nt_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+	      avx512_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
         #else
- 	      avx512_memcpy8x_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+ 	      avx512_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
         #endif
 #else
         #if (USE_NT_STORES) == 1
-	      avx256_memcpy8x_nt_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+	      avx256_uncached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
         #else
- 	      avx256_memcpy8x_pd(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
+ 	      avx256_cached_memmove(&rvec[0], &x.m_rvec[0], static_cast<size_t>(m_nvalues));
         #endif
 #endif
 	m_rvec = &rvec[0];
@@ -136,11 +133,12 @@ operator=(const MKLGumbelRNG &x) {
 	
 
 
-gms::math::stat::MKLGumbelRNG &
-gms::math::stat::MKLGumbelRNG::
+gms::math::MKLGumbelRNG &
+gms::math::MKLGumbelRNG::
 operator=(MKLGumbelRNG &&x) {
+        using namespace gms::common;
 	if (this == &x) return (*this);
-	_mm_free(m_rvec);
+	gms_mm_free(m_rvec);
 	m_rvec = &x.m_rvec[0];
 	m_a = x.m_a;
 	m_beta = x.m_beta;
@@ -156,7 +154,7 @@ operator=(MKLGumbelRNG &&x) {
 
 
 void
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 compute_rand_distribution(const MKL_INT method) {
 	VSLStreamStatePtr stream;
@@ -181,7 +179,7 @@ compute_rand_distribution(const MKL_INT method) {
 }
 
 void
-gms::math::stat::
+gms::math::
 MKLGumbelRNG::
 compute_rand_distribution(VSLStreamStatePtr stream, 
 			  const MKL_INT method) {
@@ -201,7 +199,7 @@ compute_rand_distribution(VSLStreamStatePtr stream,
 }
 
 std::ostream &
-gms::math::stat::
+gms::math::
 operator<<(std::ostream &os,
            const MKLGumbelRNG &x) {
 	for (MKL_INT i = 0; i != x.m_nvalues; ++i) {
