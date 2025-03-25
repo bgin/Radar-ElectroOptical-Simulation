@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MKL_LAPLACERNG_H__
-#define __GMS_MKL_LAPLACERNG_H__ 250420180925
+#define __GMS_MKL_LAPLACERNG_H__
 
 namespace file_info {
 
@@ -8,7 +8,7 @@ namespace file_info {
 
 const unsigned int gGMS_MKL_LAPLACERNG_MAJOR =  1;
 
-const unsigned int gGMS_MKL_LAPLACERNG_MINOR = 1;
+const unsigned int gGMS_MKL_LAPLACERNG_MINOR =  1;
 
 const unsigned int gGMS_MKL_LAPLACERNG_MICRO =  0;
 
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_LAPLACERNG_FULLVER =
 
 const char * const pgGMS_MKL_LAPLACERNG_CREATE_DATE = "25-04-2018 09:25 +00200 (WED 25 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_LAPLACERNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_LAPLACERNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_LAPLACERNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -29,10 +29,7 @@ const char * const pgGMS_MKL_LAPLACERNG_DESCRIPT = "C++ wrapper for Intel MKL vd
 
 
 #include <iostream>
-
 #include "GMS_config.h"
-
-#endif
 #if (USE_MKL) == 1
 #include <mkl_vsl.h>
 #else
@@ -41,7 +38,7 @@ const char * const pgGMS_MKL_LAPLACERNG_DESCRIPT = "C++ wrapper for Intel MKL vd
 
 namespace gms {
 	namespace math {
-		namespace stat {
+		
 				
 				//
 				//	C++ wrapper around Intel MKL vdRngLaplace procedure.
@@ -111,7 +108,7 @@ namespace gms {
 			operator<<(std::ostream &,const MKLLaplaceRNG &);
 		}
 	}
-}
+
 
 
 
