@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_GAUSSIANRNG_FULLVER =
 
 const char * const pgGMS_MKL_GAUSSIANRNG_CREATE_DATE = "22-04-2018 12:16 +00200 (SUN 22 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_GAUSSIANRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_GAUSSIANRNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_GAUSSIANRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -27,7 +27,6 @@ const char * const pgGMS_MKL_GAUSSIANRNG_DESCRIPT = "C++ wrappers around Intel M
 
 
 #include <iostream>
-
 #include "GMS_config.h"
 
 #if (USE_MKL) == 1
@@ -38,11 +37,12 @@ const char * const pgGMS_MKL_GAUSSIANRNG_DESCRIPT = "C++ wrappers around Intel M
 
 namespace gms {
 	namespace math {
-		namespace stat {
+		
 			
 				// Wrapper around MKL vsrnggaussian( method, stream, n, r, a, sigma )
 
 			__attribute__((align(64))) struct MKLGaussianRNG{
+
 
 			                double * __restrict m_rvec;
 
@@ -110,7 +110,7 @@ namespace gms {
 
 		}
 	}
-}
+
 
 
 #endif /*__GMS_MKL_RANDOM_H__*/

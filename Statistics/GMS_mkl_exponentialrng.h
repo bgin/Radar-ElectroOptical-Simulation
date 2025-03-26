@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MKL_EXPONENTIALRNG_H__
-#define __GMS_MKL_EXPONENTIALRNG_H__ 240420181525
+#define __GMS_MKL_EXPONENTIALRNG_H__
 
 namespace file_info {
 
@@ -17,7 +17,7 @@ const unsigned int gGMS_MKL_EXPONENTIALRNG_FULLVER =
 
 const char * const pgGMS_MKL_EXPONENTIALRNG_CREATE_DATE = "24-04-2018 15:25 +00200 (TUE 24 APR 2018 GMT+2)";
 
-const char * const pgGMS_MKL_EXPONENTIALRNG_BUILD_DATE = __DATE__ ":" __TIME__;
+const char * const pgGMS_MKL_EXPONENTIALRNG_BUILD_DATE = __DATE__":"__TIME__;
 
 const char * const pgGMS_MKL_EXPONENTIALRNG_AUTHOR = "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
 
@@ -28,8 +28,6 @@ const char * const pgGMS_MKL_EXPONENTIALRNG_DESCRIPT = "C++ wrapper around Intel
 
 
 #include <iostream>
-
-
 #include "GMS_config.h"
 
 #if (USE_MKL) == 1
@@ -38,12 +36,11 @@ const char * const pgGMS_MKL_EXPONENTIALRNG_DESCRIPT = "C++ wrapper around Intel
 
 namespace gms {
 	namespace math {
-		namespace stat {
+		
 
 			// C++ wrapper around Intel MKL vdRngExponential procedure.
 
 			__attribute__((align(64))) struct MKLExponentialRNG {
-
 
 			                double * __restrict m_rvec;
 
@@ -106,7 +103,7 @@ namespace gms {
 				   const MKLExponentialRNG &);
 		}
 	}
-}
+
 
 
 #endif /*__GMS_MKL_EXPONENTIALRNG_H__*/
