@@ -8,10 +8,10 @@
 
 gms::math::
 MKLGaussianRNG::MKLGaussianRNG() {
-	using namespace gms::math::constants;
+	
 	m_rvec  = NULL;
-	m_a     = dinf;
-	m_sigma = dinf;
+	m_a     = 0.0;
+	m_sigma = 0.0;
 	m_nvalues = 0;
 	m_brng    = 0;
 	m_seed    = 0;
