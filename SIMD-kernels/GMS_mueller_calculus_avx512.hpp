@@ -2,24 +2,7 @@
 
 #ifndef __GMS_MUELLER_CALCULUS_AVX512_HPP__
 #define __GMS_MUELLER_CALCULUS_AVX512_HPP__
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+
 
 
 namespace file_info {
@@ -55,9 +38,9 @@ namespace gms {
                                 Jones-Vector components -- packed single-precision
                                 16-tuple vectors of complex numbers [deinterleaved]
                            */
-                      __ATTR_REGCALL__
+                    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x16c16
                       JVec2x16c16_set_1() {
@@ -69,9 +52,9 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x16c16
                       JVec2x16c16_set_2(const std::complex<float> c1,
@@ -84,9 +67,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x16c16
                       JVec2x16c16_set_3(const float * __restrict __ATTR_ALIGN__(64) re1,
@@ -101,9 +84,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x16c16
                       JVec2x16c16_set_4(const float re1,
@@ -118,9 +101,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_set_5(const __m512 re1,
@@ -135,9 +118,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_set_6(const JVec2x16c16 x) {
@@ -149,9 +132,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_set_7(const ZMM16c4 s,
@@ -164,9 +147,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_mul_ZMM16c4(const JVec2x16c16 x
@@ -179,9 +162,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    void
 		    JVec2x16c16_mul_ZMM16c4(JVec2x16c16 & x,
@@ -192,9 +175,9 @@ namespace gms {
 		  }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_div_ZMM16c4(const JVec2x16c16 x,
@@ -207,9 +190,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
                    void
 		   JVec2x16c16_div_ZMM16c4(JVec2x16c16 & x,
@@ -220,9 +203,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   ZMM16c4
 		   JVec2x16c16_mul_JVec2x16c16(const JVec2x16c16 x,
@@ -234,9 +217,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   JVec2x16c16
 		   JVec2x16c16_conj(const JVec2x16c16 x) {
@@ -248,9 +231,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   JVec2x16c16
 		   JVec2x16c16_add_JVec2x16c16(const JVec2x16c16 x,
@@ -263,9 +246,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  void
 		  JVec2x16c16_add_JVec2x16c16(JVec2x16c16 & x,
@@ -276,9 +259,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JVec2x16c16
 		  JVec2x16c16_sub_JVec2x16c16(const JVec2x16c16 x,
@@ -291,9 +274,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  void
 		  JVec2x16c16_sub_JVec2x16c16(JVec2x16c16 & x,
@@ -305,9 +288,9 @@ namespace gms {
 
 
 		 // An intensity (vector norm)
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x16c16_norm(const JVec2x16c16 x) {
@@ -318,9 +301,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JVec2x16c16
 		  JVec2x16c16_negative(const JVec2x16c16 x) {
@@ -332,9 +315,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x16c16_psi(const JVec2x16c16 x) {
@@ -344,9 +327,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x16c16_delta(const JVec2x16c16 x) {
@@ -362,9 +345,9 @@ namespace gms {
                 */
 
 
-                      __ATTR_REGCALL__
+                    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x8c8
                       JVec2x8c8_set_1() {
@@ -376,9 +359,9 @@ namespace gms {
 		     }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x8c8
                       JVec2x8c8_set_2(const std::complex<double> c1,
@@ -391,9 +374,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x8c9
                       JVec2x8c8_set_3(  const double * __restrict __ATTR_ALIGN__(64) re1,
@@ -408,9 +391,9 @@ namespace gms {
 		    }
 
 
-		      __ATTR_REGCALL__
+		    
                       __ATTR_ALWAYS_INLINE__
-		      __ATTR_ALIGN__(32)
+		     
 		      static inline
 		      JVec2x8c8
                       JVec2x8c8_set_4(  const double re1,
@@ -425,9 +408,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x8c8
                     JVec2x8c8_set_5(  const __m512d re1,
@@ -442,9 +425,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x8c8
                     JVec2x8c8_set_6(const JVec2x8c8 x) {
@@ -456,9 +439,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x16c16
                     JVec2x16c16_set_7(const ZMM16c4 s,
@@ -471,9 +454,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x8c8
                     JVec2x8c8_mul_ZMM8c8(const JVec2x8c8 x
@@ -486,9 +469,9 @@ namespace gms {
 		   }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    void
 		    JVec2x8c8_mul_ZMM8c8(JVec2x8c8 & x,
@@ -499,9 +482,9 @@ namespace gms {
 		  }
 
 
-		    __ATTR_REGCALL__
+		  
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_ALIGN__(32)
+		   
 		    static inline
 		    JVec2x8c8
                     JVec2x8c8_div_ZMM8c8(const JVec2x8c8 x,
@@ -514,9 +497,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
                    void
 		   JVec2x8c8_div_ZMM8c8(JVec2x8c8 & x,
@@ -527,9 +510,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   ZMM8c8
 		   JVec2x8c8_mul_JVec2x8c8(const JVec2x8c8 x,
@@ -541,9 +524,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   JVec2x8c8
 		   JVec2x8c8_conj(const JVec2x8c8 x) {
@@ -555,9 +538,9 @@ namespace gms {
 		  }
 
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   JVec2x8c8
 		   JVec2x8c8_add_JVec2x8c8(const JVec2x8c8 x,
@@ -570,9 +553,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  void
 		  JVec2x8c8_add_JVec2x8c8(JVec2x8c8 & x,
@@ -583,9 +566,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JVec2x8c8
 		  JVec2x8c8_sub_JVec2x8c8(const JVec2x8c8 x,
@@ -598,9 +581,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  void
 		  JVec2x8c8_sub_JVec2x8c8(JVec2x8c8 & x,
@@ -612,9 +595,9 @@ namespace gms {
 
 
 		 // An intensity (vector norm)
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x8c8_norm(const JVec2x8c8 x) {
@@ -625,9 +608,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JVec2x8c8
 		  JVec2x8c8_negative(const JVec2x8c8 x) {
@@ -639,9 +622,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x8c8_psi(const JVec2x8c8 x) {
@@ -651,9 +634,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
 		  __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  __m512
 		  JVec2x8c8_delta(const JVec2x8c8 x) {
@@ -686,9 +669,9 @@ namespace gms {
 		                }JMat4x8c8;
                   */
 
-		   __ATTR_REGCALL__
+		 
                    __ATTR_ALWAYS_INLINE__
-		   __ATTR_ALIGN__(32)
+		  
 		   static inline
 		   JMat4x16c16
 		   JMat4x16c16_set_1() {
@@ -702,9 +685,9 @@ namespace gms {
 		 }
 
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JMat4x16c16
 		  JMat4x16c16_set_2(const std::complex<float> pp,
@@ -721,9 +704,9 @@ namespace gms {
 		}
 		
 
-		  __ATTR_REGCALL__
+		
                   __ATTR_ALWAYS_INLINE__
-		  __ATTR_ALIGN__(32)
+		 
 		  static inline
 		  JMat4x16c16
 		  JMat4x16c16_set_3(const float * __restrict __ATTR_ALIGN__(64) re1,
@@ -746,7 +729,7 @@ namespace gms {
 
 		 __ATTR_REGCALL__
                  __ATTR_ALWAYS_INLINE__
-		 __ATTR_ALIGN__(32)
+		
 		 static inline
 		 JMat4x16c16
 		 JMat4x16c16_set_4(const float re1,
@@ -769,7 +752,7 @@ namespace gms {
 
 		 __ATTR_REGCALL__
                  __ATTR_ALWAYS_INLINE__
-		 __ATTR_ALIGN__(32)
+		
 		 static inline
 		 JMat4x16c16
 		 JMat4x16c16_set_5(const __m512 re1,
@@ -792,7 +775,7 @@ namespace gms {
 
 	       	 __ATTR_REGCALL__
                  __ATTR_ALWAYS_INLINE__
-		 __ATTR_ALIGN__(32)
+		
 		 static inline
 		 JMat4x16c16
 		 JMat4x16c16_set_6(const JMat4x16c16 x) {
@@ -806,9 +789,9 @@ namespace gms {
 	       }
 
 
-	        __ATTR_REGCALL__
+	      
                 __ATTR_ALWAYS_INLINE__
-	        __ATTR_ALIGN__(32)
+	       
 		static inline
 		JMat4x16c16
 		JMat4x16c16_set_7(const ZMM16c4 pp,
@@ -826,9 +809,9 @@ namespace gms {
 
 
 	      // Jones Matrix multiplication
-	      __ATTR_REGCALL__
+	    
               __ATTR_ALWAYS_INLINE__
-	      __ATTR_ALIGN__(32)
+	     
 	      static inline
 	      JMat4x16c16
 	      JMat4x16c16_mul_JMat4x16c16(const JMat4x16c16 m1,
@@ -843,9 +826,9 @@ namespace gms {
 	    }
 
 
-	      __ATTR_REGCALL__
+	    
               __ATTR_ALWAYS_INLINE__
-	      __ATTR_ALIGN__(32)
+	     
 	      static inline
 	      void
 	      JMat4x16c16_mul_JMat4x16c16(JMat4x16c16 &m1,
@@ -859,9 +842,9 @@ namespace gms {
 
 
 	   // Jones Matrix multiplied by constant
-	     __ATTR_REGCALL__
+	   
              __ATTR_ALWAYS_INLINE__
-	     __ATTR_ALIGN__(32)
+	    
 	     static inline
 	     JMat4x16c16
 	     JMat4x16c16_mul_ZMM16c4(const JMat4x16c16 m
@@ -876,9 +859,9 @@ namespace gms {
 	   }
 
 
-	    __ATTR_REGCALL__
+	  
             __ATTR_ALWAYS_INLINE__
-	    __ATTR_ALIGN__(32)
+	   
 	    static inline
             void
 	    JMat4x16c16_mul_JMat4x16c16(JMat4x6c16 &m,
@@ -891,9 +874,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JVec2x16c16
 	  JVec2x16c16_mul_JMat4x16c16(const JVec2x16c16 x,
@@ -906,9 +889,9 @@ namespace gms {
 	  }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_div_ZMM16c4( const JMat4x16c16 m
@@ -923,9 +906,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  void
 	  JMat4x16c16_div_ZMM16c4(JMat4x16c16 &m,
@@ -938,9 +921,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_add_JMat4x16c16(const JMat4x16c16 x,
@@ -955,9 +938,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  void
 	  JMat4x16c16_add_JMat4x16c16(JMat4x16c16 &x,
@@ -970,9 +953,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_sub_JMat4x16c16(const JMat4x16c16 x,
@@ -987,9 +970,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  void
 	  JMat4x16c16_sub_JMat4x16c16(JMat4x16c16 &x,
@@ -1002,9 +985,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_negate(const JMat4x16c16 x) {
@@ -1018,9 +1001,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_negate(JMat4x16c16 &x) {
@@ -1032,9 +1015,9 @@ namespace gms {
 	  }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_rotator(const __m512 theta) {
@@ -1055,9 +1038,9 @@ namespace gms {
 	 }
 
 
-	  __ATTR_REGCALL__
+	
           __ATTR_ALWAYS_INLINE__
-	  __ATTR_ALIGN__(32)
+	 
 	  static inline
 	  JMat4x16c16
 	  JMat4x16c16_linear_retarder(const __m512 phi,
@@ -1082,7 +1065,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_circular_retarder(const __m512 phi) {
@@ -1101,7 +1084,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_circular_polarizer(const __m512 attenuation) {
@@ -1126,7 +1109,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_eigenvalues(const JVec2x16c16 a,
@@ -1150,7 +1133,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_transpose(const JMat4x16c16 x) {
@@ -1164,9 +1147,9 @@ namespace gms {
 	}
 
 
-         __ATTR_REGCALL__
+       
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_hermitian(const JMat4x16c16 x) {
@@ -1182,7 +1165,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 JMat4x16c16
 	 JMat4x16c16_conjugate(const JMat4x16c16 x) {
@@ -1195,692 +1178,6 @@ namespace gms {
 	      return (v);
 	}
 
-         __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 SVec4x16v16
-	 SVec4x16v16_set_1() {
-
-             SVec4x16v16 sv;
-	     sv.s0 = AVX512Vec16();
-	     sv.s1 = AVX512Vec16();
-	     sv.s2 = AVX512Vec16();
-	     sv.s3 = AVX512Vec16();
-	     return (sv);
-	}
-
-
-	
-
-
-	 __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 SVec4x16v16
-	 SVec4x16v16_set_2(const float s0,
-	                   const float s1,
-			   const float s2,
-			   const float s3) {
-
-             SVec4x16v16 sv;
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	     return (sv);
-	}
-	
-
-	 __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 void
-	 SVec4x16v16_set_2(SVec4x16v16 &sv
-	                   const float s0,
-	                   const float s1,
-			   const float s2,
-			   const float s3) {
-
-             
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	   
-	}
-
-
-	 __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 SVec4x16v16
-	 SVec4x16v16_set_3(
-	                   const float * __restrict __ATTR_ALIGN__(64) s0,
-	                   const float * __restrict __ATTR_ALIGN__(64) s1,
-			   const float * __restrict __ATTR_ALIGN__(64) s2,
-			   const float * __restrict __ATTR_ALIGN__(64) s3) {
-
-             SVec4x16v16 sv;
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	     return (sv);
-       }
-
-
-         __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-         void
-	 SVec4x16v16_set_3(SVec4x16v16 &sv
-	                   const float * __restrict __ATTR_ALIGN__(64) s0,
-	                   const float * __restrict __ATTR_ALIGN__(64) s1,
-			   const float * __restrict __ATTR_ALIGN__(64) s2,
-			   const float * __restrict __ATTR_ALIGN__(64) s3) {
-
-             
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	   
-       }
-
-
-       	 __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 SVec4x16v16
-	 SVec4x16v16_set_4(const __m512 s0,
-	                   const __m512 s1,
-			   const __m512 s2,
-			   const __m512 s3) {
-
-             SVec4x16v16 sv;
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	     return (sv);
-      }
-
-
-      	 __ATTR_REGCALL__
-         __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
-	 static inline
-	 void
-	 SVec4x16v16_set_4(SVec4x16v16 &sv,
-	                   const __m512 s0,
-	                   const __m512 s1,
-			   const __m512 s2,
-			   const __m512 s3) {
-
-             
-	     sv.s0 = AVX512Vec16(s0);
-	     sv.s1 = AVX512Vec16(s1);
-	     sv.s2 = AVX512Vec16(s2);
-	     sv.s3 = AVX512Vec16(s3);
-	     
-      }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_set_5(const SVec4x16v16 sv1) {
-
-            SVec4x16v16 sv;
-	    sv.s0 = sv1.s0;
-	    sv.s1 = sv1.s1;
-	    sv.s2 = sv1.s2;
-	    sv.s3 = sv1.s3;
-	    return (sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_set_5( SVec4x16v16 &sv
-	                   const SVec4x16v16 sv1) {
-
-            
-	    sv.s0 = sv1.s0;
-	    sv.s1 = sv1.s1;
-	    sv.s2 = sv1.s2;
-	    sv.s3 = sv1.s3;
-	    
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_from_JVec2x16c16(const JVec2x16c16 jv) {
-
-           SVec4x16c16 sv;
-	   const ZMM16c4 t0 = cnorm(jv.p);
-	   const ZMM16c4 t1 = cnorm(jv.s)
-	   const ZMM16c4 t2 = conjugate(jv.p)*jv.s;
-	   const __m512 _2  = _mm512_set1_ps(2.0F);
-	   sv.s0 = t0+t1;
-	   sv.s1 = t0-t1;
-	   sv.s2 = _mm512_mul_ps(_2,t2.m_re);
-	   sv.s3 = _mm512_mul_ps(_2,t2.m_im);
-	   return (sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_from_JVec2x16c16(SVec4x16v16 &sv
-	                             const JVec2x16c16 jv) {
-
-           
-	   const ZMM16c4 t0 = cnorm(jv.p);
-	   const ZMM16c4 t1 = cnorm(jv.s)
-	   const ZMM16c4 t2 = conjugate(jv.p)*jv.s;
-	   const __m512 _2  = _mm512_set1_ps(2.0F);
-	   sv.s0 = t0+t1;
-	   sv.s1 = t0-t1;
-	   sv.s2 = _mm512_mul_ps(_2,t2.m_re);
-	   sv.s3 = _mm512_mul_ps(_2,t2.m_im);
-	   
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_normalized_Q(const SVec4x16v16 jv) {
-
-	      return (jv.s1/jv.s0);
-        }
-
-
-	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_normalized_U(const SVec4x16v16 jv) {
-
-	      return (jv.s2/jv.s0);
-        }
-
-
-	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_normalized_V(const SVec4x16v16 jv) {
-
-	      return (jv.s3/jv.s0);
-        }
-
-
-	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_add_SVec4x16v16(const SVec4x16v16 sv1,
-	                            const SVec4x16v16 sv2) {
-
-            SVec4x16v16 sv;
-	    sv.s0 = sv1.s0+sv2.s0;
-	    sv.s1 = sv1.s1+sv2.s1;
-	    sv.s2 = sv1.s2+sv2.s2;
-	    sv.s3 = sv1.s3+sv2.s3;
-	    return (sv);
-       }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_add_SVec4x16v16(SVec4x16v16 &sv,
-	                            const SVec4x16v16 sv1,
-	                            const SVec4x16v16 sv2) {
-
-           
-	    sv.s0 = sv1.s0+sv2.s0;
-	    sv.s1 = sv1.s1+sv2.s1;
-	    sv.s2 = sv1.s2+sv2.s2;
-	    sv.s3 = sv1.s3+sv2.s3;
-	   
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_add_SVec4x16v16(SVec4x16v16 &sv,
-	                            const SVec4x16v16 sv1){
-	                            
-
-           
-	    sv.s0 += sv1.s0;
-	    sv.s1 += sv1.s1;
-	    sv.s2 += sv1.s2;
-	    sv.s3 += sv1.s3;
-	   
-       }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_sub_SVec4x16v16(const SVec4x16v16 sv1,
-	                            const SVec4x16v16 sv2) {
-
-            SVec4x16v16 sv;
-	    sv.s0 = sv1.s0-sv2.s0;
-	    sv.s1 = sv1.s1-sv2.s1;
-	    sv.s2 = sv1.s2-sv2.s2;
-	    sv.s3 = sv1.s3-sv2.s3;
-	    return (sv);
-       }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_sub_SVec4x16v16(SVec4x16v16 &sv,
-	                            const SVec4x16v16 sv1,
-	                            const SVec4x16v16 sv2) {
-
-           
-	    sv.s0 = sv1.s0-sv2.s0;
-	    sv.s1 = sv1.s1-sv2.s1;
-	    sv.s2 = sv1.s2-sv2.s2;
-	    sv.s3 = sv1.s3-sv2.s3;
-	   
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_sub_SVec4x16v16(SVec4x16v16 &sv,
-	                            const SVec4x16v16 sv1){
-	                            
-
-           
-	    sv.s0 -= sv1.s0;
-	    sv.s1 -= sv1.s1;
-	    sv.s2 -= sv1.s2;
-	    sv.s3 -= sv1.s3;
-	   
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_negate(const SVec4x16v16 sv1){
-	                           
-            SVec4x16v16 sv;
-	    const AVX512Vec16 _0 = AVX512Vec16(0.0F);
-	    sv.s0 = _0-sv1.s0;
-	    sv.s1 = _0-sv1.s1;
-	    sv.s2 = _0-sv1.s2;
-	    sv.s3 = _0-sv1.s3;
-	    return (sv);
-       }
-
-
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-	AVX512Vec16
-        SVec4x16v16_inner_prod(const SVec4x16v16 sv1,
-	                       const SVec4x16v16 sv2) {
-
-	   AVX512Vec16 t0,t1
-           t0 = sv1.s0*sv2.s0+sv1.s1*sv2.s1;
-	   t1 = sv1.s2*sv2.s2+sv1.s3*sv2.s3;
-	   return (t0+t1);
-      }
-
-
-      	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_mul_AVX512Vec16( const SVec4x16v16 sv1
-	                             const AVX512Vec16 v) {
-
-          SVec4x16v16 sv;
-	  sv.s0 = sv1.s0*v;
-	  sv.s1 = sv1.s1*v;
-	  sv.s2 = sv1.s2*v;
-	  sv.s3 = sv1.s3*v;
-	  return (sv);
-      }
-
-
-      	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_mul_AVX512Vec16( SVec4x16v16 &sv,
-	                             const SVec4x16v16 sv1
-	                             const AVX512Vec16 v) {
-
-         
-	  sv.s0 = sv1.s0*v;
-	  sv.s1 = sv1.s1*v;
-	  sv.s2 = sv1.s2*v;
-	  sv.s3 = sv1.s3*v;
-	 
-      }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_div_AVX512Vec16( const SVec4x16v16 sv1
-	                             const AVX512Vec16 v) {
-
-          SVec4x16v16 sv;
-	  sv.s0 = sv1.s0/v;
-	  sv.s1 = sv1.s1/v;
-	  sv.s2 = sv1.s2/v;
-	  sv.s3 = sv1.s3/v;
-	  return (sv);
-      }
-
-
-      	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_div_AVX512Vec16( SVec4x16v16 &sv,
-	                             const SVec4x16v16 sv1
-	                             const AVX512Vec16 v) {
-
-         
-	  sv.s0 = sv1.s0/v;
-	  sv.s1 = sv1.s1/v;
-	  sv.s2 = sv1.s2/v;
-	  sv.s3 = sv1.s3/v;
-	 
-      }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_eta_angle(const SVec4x16v16 sv1) {
-
-           AVX512Vec16 v;
-	   const AVX512Vec16 half = AVX512Vec16(0.5F);
-	   v = atan2(sv1.s2,sv1.s1)*halfl
-	   return (v);
-      }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_deg_linear_pol(const SVec4x16v16 sv1) {
-
-             AVX512Vec16 v;
-	     const AVX512Vec16 t = sv1.s2*sv1.s2+sv1.s1*sv1.s1;
-	     v = sqrt(t)/sv1.s0;
-	     return (v);
-      }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_deg_polarization(const SVec4x16v16 sv1) {
-
-             const AVX512Vec16 t0 = sv1.s2*sv1.s2;
-	     const AVX512Vec16 t1 = sv1.s1*sv1.s1;
-	     const AVX512Vec16 t2 = sv1.s3*sv1.s3;
-	     return ((t0+t1+t2)/sv1.s0);
-      }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_deg_circular_pol(const SVec4x16v16 sv1) {
-
-            return (sv1.s3/sv1.s0);
-      }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_ellipticity(const SVec4x16v16 sv1) {
-
-            const AVX512Vec16 t0 = sv1.s1*sv1.s1+sv1.s2*sv1.s2;
-	    return (sv1.s3/(sqrt(t0)));
-      }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        AVX512Vec16
-	SVec4x16v16_eccentricity(const SVec4x16v16 sv1) {
-
-            const AVX512Vec16 e = SVec4x16v16_ellipticity(sv1);
-	    const AVX512Vec16 one = AVX512Vec16(1.0F);
-	    return (sqrt(one-e*e));
-      }
-
-
-      	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_zero() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16();
-	   sv.s1 = AVX512Vec16();
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16();
-	   return(sv);
-       }
-
-
-       	__ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_unit_unpolarized() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16(1.0F);
-	   sv.s1 = AVX512Vec16();
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16();
-	   return(sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_unit_s_polarized() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16(1.0F);
-	   sv.s1 = AVX512Vec16(1.0F);
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16();
-	   return(sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_unit_p_polarized() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16(1.0F);
-	   sv.s1 = AVX512Vec16(-1.0F);
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16();
-	   return(sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_lin_polarized_eta(const AVX512Vec16 eta) {
-
-            SVec4x16v16 sv;
-	    const AVX512Vec16 _2eta = eta+eta;
-	    sv.s0 = AVX512Vec16(1.0F);
-	    sv.s1 = cos(_2eta);
-	    sv.s2 = sin(_2eta);
-	    sv.s3 = AVX512Vec16(0.0F);
-	    return (sv);
-       }
-
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_right_cir_polarized() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16(1.0F);
-	   sv.s1 = AVX512Vec16();
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16(-1.0F);
-	   return(sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_left_cir_polarized() {
-
-           SVec4x16v16 sv;
-	   sv.s0 = AVX512Vec16(1.0F);
-	   sv.s1 = AVX512Vec16();
-	   sv.s2 = AVX512Vec16();
-	   sv.s3 = AVX512Vec16(1.0F);
-	   return(sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        SVec4x16v16
-	SVec4x16v16_unit_generalized(const AVX512Vec16 eta) {
-
-            SVec4x16v16 sv;
-	    const AVX512Vec16 _2eta = eta+eta;
-	    sv.s0 = AVX512Vec16(1.0F);
-	    sv.s1 = cos(_2eta);
-	    sv.s2 = sin(_2eta);
-	    sv.s3 = AVX512Vec16(0.0F);
-	    return (sv);
-       }
-
-
-        __ATTR_REGCALL__
-        __ATTR_ALWAYS_INLINE__
-	__ATTR_ALIGN__(32)
-	static inline
-        void
-	SVec4x16v16_unit_generalized( SVec4x16v16 &sv,
-	                              const AVX512Vec16 eta) {
-
-           
-	    const AVX512Vec16 _2eta = eta+eta;
-	    sv.s0 = AVX512Vec16(1.0F);
-	    sv.s1 = cos(_2eta);
-	    sv.s2 = sin(_2eta);
-	    sv.s3 = AVX512Vec16(0.0F);
-	   
-       }
-
-
-
-
-      
-
-       
 
 	  /*
                            Mueller Matrix based on 16 16-tuple SIMD real types.
@@ -1911,7 +1208,7 @@ namespace gms {
 	 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_1() {
@@ -1939,7 +1236,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_set_1(MMat16x16v16 &m) {
@@ -1965,7 +1262,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_2(const AVX512Vec16 * __restrict m) {
@@ -1993,7 +1290,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_2(const AVX512Vec16 * __restrict m,
@@ -2022,7 +1319,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_3(const float * __restrict __ATTR_ALIGN__(64) m) {
@@ -2050,7 +1347,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_3( MMat16x16v16 &mat
@@ -2079,7 +1376,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_4(const MMat16x16v16 m) {
@@ -2107,7 +1404,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
          MMat16x16v16
 	 MMat16x16v16_set_4( MMat16x16v16 &mat
@@ -2136,7 +1433,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_max_transmision(const MMat16x16v16 mat) {
@@ -2152,7 +1449,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_min_transmision(const MMat16x16v16 mat) {
@@ -2168,7 +1465,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_diattenuation(const MMat16x16v16 mat) {
@@ -2184,7 +1481,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_linear_diattenuation(const MMat16x16v16 mat) {
@@ -2199,7 +1496,7 @@ namespace gms {
 
        	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_polarization_loss(const MMat16x16v16 mat) {
@@ -2217,7 +1514,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_polarizance(const MMat16x16v16 mat) {
@@ -2233,7 +1530,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 AVX512Vec16
 	 MMat16x16v16_extinct_ratio(const MMat16x16v16 mat) {
@@ -2245,7 +1542,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_unit(const AVX512Vec16 transmittance) {
@@ -2261,7 +1558,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_depolarization(const AVX512Vec16 transmittance,
@@ -2279,7 +1576,7 @@ namespace gms {
 
        	 __ATTR_REGCALL__
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_diagonal(const AVX512Vec16 diag1,
@@ -2298,7 +1595,7 @@ namespace gms {
 
       	 __ATTR_REGCALL__
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_linear_polarizer(const AVX512Vec16 maxt,
@@ -2329,12 +1626,9 @@ namespace gms {
       }
 
 
-       
-
-
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_mul_AVX512Vec16(const MMat16x16v16 mat,
@@ -2363,7 +1657,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_mul_AVX512Vec16(const MMat16x16v16 mat,
@@ -2393,7 +1687,7 @@ namespace gms {
 	
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_div_AVX512Vec16(const MMat16x16v16 mat,
@@ -2422,7 +1716,7 @@ namespace gms {
 
        	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_div_AVX512Vec16(const MMat16x16v16 mat
@@ -2449,9 +1743,9 @@ namespace gms {
 
 
        
-         __ATTR_REGCALL__
+       
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_add_MMat16x16v16(const MMat16x16v16 mat1,
@@ -2480,7 +1774,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_add_AVX512Vec16(const MMat16x16v16 m,
@@ -2509,7 +1803,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_add_MMat16x16v16(MMat16x16v16 &mat,
@@ -2537,9 +1831,9 @@ namespace gms {
 	
 
 
-         __ATTR_REGCALL__
+       
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_sub_MMat16x16v16(const MMat16x16v16 mat1,
@@ -2568,7 +1862,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_sub_MMat16x16v16(MMat16x16v16 &mat,
@@ -2595,7 +1889,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
 	 __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_negate(const MMat16x16v16 m) {
@@ -2626,7 +1920,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 MMat16x16v16
 	 MMat16x16v16_mul_MMat16x16v16(const MMat16x16v16 mat1,
@@ -2928,7 +2222,7 @@ namespace gms {
 
 	 __ATTR_REGCALL__
          __ATTR_ALWAYS_INLINE__
-	 __ATTR_ALIGN__(32)
+	
 	 static inline
 	 void
 	 MMat16x16v16_mul_MMat16x16v16(const MMat16x16v16 mat1,
