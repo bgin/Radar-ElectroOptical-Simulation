@@ -58,9 +58,9 @@ namespace  gms {
                    
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -80,9 +80,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -102,9 +102,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -121,9 +121,9 @@ namespace  gms {
                 }
                 
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cadd_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -141,9 +141,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cadd_xmm2c8(const xmm2c8_t x,
                                           const xmm2c8_t y) {
@@ -159,9 +159,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -175,9 +175,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           xmm2c8_t cadd_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -191,9 +191,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           xmm2c8_t cadd_xmm2c8(const xmm2c8_t x,
                                           const __m128d s) {
@@ -206,9 +206,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8_uip(const double * __restrict xre,
                                          const double * __restrict xim,
@@ -225,9 +225,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cadd_xmm2c8_aip(const double * __restrict __ATTR_ALIGN__(16) xre,
                                          const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -246,9 +246,9 @@ namespace  gms {
                 ////////////////////////////////////////////////////////////////////
 
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -268,9 +268,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8_a( const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -290,9 +290,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -313,9 +313,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csub_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -333,9 +333,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csub_xmm2c8(const xmm2c8_t x,
                                           const xmm2c8_t y) {
@@ -353,9 +353,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -369,9 +369,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csub_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -385,9 +385,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csub_xmm2c8(const xmm2c8_t x,
                                           const __m128d s) {
@@ -401,9 +401,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8_uip( const double * __restrict xre,
                                          const double * __restrict xim,
@@ -420,9 +420,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csub_xmm2c8_aip(const double * __restrict __ATTR_ALIGN__(16) xre,
                                          const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -441,9 +441,9 @@ namespace  gms {
                ////////////////////////////////////////////////////////////////////////
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -467,9 +467,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -493,9 +493,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -515,9 +515,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cmul_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -537,9 +537,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cmul_xmm2c8(const xmm2c8_t x,
                                           const xmm2c8_t y) {
@@ -557,9 +557,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -573,9 +573,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cmul_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -588,9 +588,9 @@ namespace  gms {
                }
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cmul_xmm2c8(const xmm2c8_t x,
                                           const __m128d s) {
@@ -604,9 +604,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8_uip(const double * __restrict xre,
                                          const double * __restrict xim,
@@ -628,9 +628,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmul_xmm2c8_aip(const double * __restrict __ATTR_ALIGN__(16) xre,
                                          const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -653,9 +653,9 @@ namespace  gms {
                  ////////////////////////////////////////////////////////////////////////////
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -682,9 +682,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8_a(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -711,9 +711,9 @@ namespace  gms {
               
                                          
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -735,9 +735,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -759,9 +759,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8(const xmm2c8_t x,
                                           const xmm2c8_t y) {
@@ -781,9 +781,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -797,9 +797,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8(const __m128d xre,
                                           const __m128d xim,
@@ -815,9 +815,9 @@ namespace  gms {
                  
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8(const xmm2c8_t x,
                                           const __m128d s) {
@@ -832,9 +832,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8_s(const __m128d s,
                                        const __m128d xre,
@@ -852,9 +852,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8_s(const __m128d s,
                                             const __m128d xre,
@@ -870,9 +870,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_xmm2c8_s(const __m128d s,
                                             const xmm2c8_t x) {
@@ -887,9 +887,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_smith_xmm2c8_s(const __m128d s,
                                              const __m128d xre,
@@ -907,9 +907,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_smith_xmm2c8_s(const __m128d s,
                                                   const __m128d xre,
@@ -927,9 +927,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_smith_xmm2c8_s(const __m128d s,
                                                   const xmm2c8_t x) {
@@ -945,9 +945,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8_uip(const double * __restrict xre,
                                          const double * __restrict xim,
@@ -972,9 +972,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_xmm2c8_aip(const double * __restrict __ATTR_ALIGN__(16) xre,
                                          const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -999,9 +999,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_smith_xmm2c8_u(const double * __restrict xre,
                                              const double * __restrict xim,
@@ -1034,9 +1034,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_smith_xmm2c8_a(const double * __restrict xre,
                                              const double * __restrict xim,
@@ -1069,9 +1069,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cdiv_smith_xmm2c8(const __m128d xre,
                                            const __m128d xim,
@@ -1099,9 +1099,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_smith_xmm2c8(const __m128d xre,
                                                 const __m128d xim,
@@ -1129,9 +1129,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cdiv_smith_xmm2c8(const xmm2c8_t x,
                                                 const xmm2c8_t y) {
@@ -1160,9 +1160,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cabs_xmm2c8_u(const double * __restrict re,
                                        const double * __restrict im,
@@ -1179,9 +1179,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cabs_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) re,
                                        const double * __restrict __ATTR_ALIGN__(16) im,
@@ -1198,9 +1198,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    __m128d cabs_xmm2c8(const __m128d re,
                                        const __m128d im) {
@@ -1214,9 +1214,9 @@ namespace  gms {
                  
                  
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    __m128d cabs_xmm2c8(const xmm2c8_t x) {
 
@@ -1229,9 +1229,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void carg_xmm2c8_u(const double * __restrict re,
                                        const double * __restrict im,
@@ -1245,9 +1245,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void carg_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) re,
                                        const double * __restrict __ATTR_ALIGN__(16) im,
@@ -1261,9 +1261,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    __m128d carg_xmm2c8(const __m128d re,
                                        const __m128d im) {
@@ -1275,9 +1275,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    __m128d carg_xmm2c8(xmm2c8_t x) {
 
@@ -1288,9 +1288,9 @@ namespace  gms {
                 
                 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void clog_xmm2c8(const __m128d re,
 	                             const __m128d im,
@@ -1307,9 +1307,9 @@ namespace  gms {
 	        
 	        
 	           __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void clog_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) pre,
 	                               const double * __restrict __ATTR_ALIGN__(16) pim,
@@ -1328,9 +1328,9 @@ namespace  gms {
 	        
 	        
 	          __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void clog_xmm2c8_u(const double * __restrict  pre,
 	                               const double * __restrict  pim,
@@ -1349,9 +1349,9 @@ namespace  gms {
 	        
 	        
 	           __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           xmm2c8_t clog_xmm2c8(const xmm2c8_t x){
 	                                  
@@ -1366,9 +1366,9 @@ namespace  gms {
 	        }
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cconj_xmm2c8_u(double * __restrict re,
                                         double * __restrict im) {
@@ -1380,9 +1380,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cconj_xmm2c8_a(double * __restrict __ATTR_ALIGN__(16) re,
                                         double * __restrict __ATTR_ALIGN__(16) im) {
@@ -1394,9 +1394,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cconj_xmm2c8(__m128d * __restrict re,
                                       __m128d * __restrict im) {
@@ -1408,9 +1408,9 @@ namespace  gms {
                    
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cconj_xmm2c8_v2(const __m128d xre,
                                          const __m128d xim,
@@ -1426,9 +1426,9 @@ namespace  gms {
                    
                    
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cconj_xmm2c8_v2(const __m128d xre,
                                               const __m128d xim) {                                              
@@ -1443,9 +1443,9 @@ namespace  gms {
                    } 
                    
                    
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+                
+	          
+                  
 	           static inline
                    xmm2c8_t cconj_xmm2c8_v2(const xmm2c8_t x) {                                              
                          
@@ -1462,9 +1462,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccos_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -1482,9 +1482,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccos_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -1502,9 +1502,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccos_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -1520,9 +1520,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t ccos_xmm2c8(const __m128d xre,
                                           const __m128d xim) {
@@ -1538,9 +1538,9 @@ namespace  gms {
                
                
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t ccos_xmm2c8(const xmm2c8_t x) {
                                     
@@ -1555,9 +1555,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccosh_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -1575,9 +1575,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccosh_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -1595,9 +1595,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void ccosh_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -1613,9 +1613,9 @@ namespace  gms {
                
                
                   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t ccosh_xmm2c8(const __m128d xre,
                                            const __m128d xim) {
@@ -1631,9 +1631,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t ccosh_xmm2c8(const xmm2c8_t x) {
                                           
@@ -1648,9 +1648,9 @@ namespace  gms {
                
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void cpow_xmm2c8(const __m128d xre,
 	                             const __m128d xim,
@@ -1675,9 +1675,9 @@ namespace  gms {
 	       
 	       
 	           __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void cpow_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) pxre,
 	                               const double * __restrict __ATTR_ALIGN__(16) pxim,
@@ -1704,9 +1704,9 @@ namespace  gms {
 	       
 	       
 	           __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           void cpow_xmm2c8_u(const double * __restrict  pxre,
 	                               const double * __restrict  pxim,
@@ -1733,9 +1733,9 @@ namespace  gms {
 	       
 	       
 	           __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           ZMM16c4_t cpow_xmm2c8(const ZMM16c4_t x,
 	                                  const double n) {
@@ -1760,9 +1760,9 @@ namespace  gms {
 #include <utility>
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    ceq_xmm2c8_u(const double * __restrict xre,
@@ -1784,9 +1784,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    ceq_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
@@ -1808,9 +1808,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    ceq_xmm2c8(      const __m128d xre,
@@ -1827,9 +1827,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    ceq_xmm2c8(      const xmm2c8_t x,
@@ -1845,9 +1845,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cgt_xmm2c8_u(      const double * __restrict xre,
@@ -1869,9 +1869,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cgt_xmm2c8_a(      const double * __restrict __ATTR_ALIGN__(16) xre,
@@ -1893,9 +1893,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cgt_xmm2c8(      const __m128d xre,
@@ -1912,9 +1912,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cgt_xmm2c8(      const xmm2c8_t x,
@@ -1929,9 +1929,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    clt_xmm2c8_u(const double * __restrict xre,
@@ -1953,9 +1953,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    clt_xmm2c8_a(      const double * __restrict __ATTR_ALIGN__(16) xre,
@@ -1977,9 +1977,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    clt_xmm2c8(      const __m128d xre,
@@ -1996,9 +1996,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    clt_xmm2c8(     const xmm2c8_t x,
@@ -2014,9 +2014,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cneq_xmm2c8_u(     const double * __restrict xre,
@@ -2038,9 +2038,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cneq_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
@@ -2062,9 +2062,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cneq_xmm2c8(     const __m128d xre,
@@ -2081,9 +2081,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
 	           std::pair<__mmask8,__mmask8> 
                    cneq_xmm2c8(      const xmm2c8_t x,
@@ -2098,9 +2098,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cexp_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -2120,9 +2120,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cexp_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2142,9 +2142,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cexp_xmm2c8(const __m128d xre,
                                      const __m128d xim,
@@ -2160,9 +2160,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cexp_xmm2c8(const __m128d xre,
                                           const __m128d xim) {
@@ -2178,9 +2178,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cexp_xmm2c8(const xmm2c8_t x) {
                                      
@@ -2195,9 +2195,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cpolar_xmm2c8_u(const double * __restrict rho,
                                          const double * __restrict tht,
@@ -2215,9 +2215,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cpolar_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) rho,
                                          const double * __restrict __ATTR_ALIGN__(16) tht,
@@ -2235,9 +2235,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cpolar_xmm2c8(const __m128d rho,
                                        const __m128d tht,
@@ -2253,9 +2253,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cpolar_xmm2c8(const __m128d rho,
                                             const __m128d tht) {
@@ -2272,9 +2272,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csqrt_xmm2c8_u(const double * __restrict xre,
                                        const double * __restrict xim,
@@ -2295,9 +2295,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csqrt_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                        const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2318,9 +2318,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void csqrt_xmm2c8(const __m128d xre,
                                       const __m128d xim,
@@ -2339,9 +2339,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csqrt_xmm2c8(const __m128d xre,
                                            const __m128d xim,
@@ -2360,9 +2360,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t csqrt_xmm2c8(const xmm2c8_t x,
                                           __m128d * __restrict wrkc) {
@@ -2380,9 +2380,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_prod_xmm2c8_u(const double * __restrict xre,
                                              const double * __restrict xim,
@@ -2410,9 +2410,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_prod_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                              const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2440,9 +2440,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_prod_xmm2c8(  const __m128d  xre,
                                              const __m128d  xim,
@@ -2465,9 +2465,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnorm_prod_xmm2c8(  const __m128d  xre,
                                                   const __m128d  xim,
@@ -2490,9 +2490,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnorm_prod_xmm2c8(  const xmm2c8_t x,
                                                   const xmm2c8_t y) {
@@ -2515,9 +2515,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_prod_xmm2c8_u(const double * __restrict xre,
                                              const double * __restrict xim,
@@ -2551,9 +2551,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_prod_xmm2c8_a( const double * __restrict __ATTR_ALIGN__(16) xre,
                                              const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2587,9 +2587,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_prod_xmm2c8( const __m128d xre,
                                            const __m128d xim,
@@ -2618,9 +2618,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_prod_xmm2c8(const xmm2c8_t x,
                                            const xmm2c8_t y,
@@ -2648,9 +2648,9 @@ namespace  gms {
 
                
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_quot_xmm2c8_u(const double * __restrict xre,
                                              const double * __restrict xim,
@@ -2688,9 +2688,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_quot_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                              const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2728,9 +2728,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_quot_xmm2c8(  const __m128d xre,
                                              const __m128d xim,
@@ -2763,9 +2763,9 @@ namespace  gms {
               
               
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_quot_xmm2c8(  const xmm2c8_t x,
                                              const xmm2c8_t y,
@@ -2796,9 +2796,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_cprod_xmm2c8_u(const double * __restrict xre,
                                               const double * __restrict xim,
@@ -2826,9 +2826,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_cprod_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                               const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -2856,9 +2856,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_cprod_xmm2c8(const __m128d xre,
                                             const __m128d xim,
@@ -2881,9 +2881,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnorm_cprod_xmm2c8(const xmm2c8_t x,
                                             const xmm2c8_t y,
@@ -2904,9 +2904,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnorm_cprod_xmm2c8(const __m128d xre,
                                                  const __m128d xim,
@@ -2929,9 +2929,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnorm_cprod_xmm2c8(const xmm2c8_t x,
                                                  const xmm2c8_t y) {
@@ -2955,9 +2955,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_cprod_xmm2c8_u(const double * __restrict xre,
                                               const double * __restrict xim,
@@ -2989,9 +2989,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_cprod_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                               const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -3023,9 +3023,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_cprod_xmm2c8( const __m128d xre,
                                             const __m128d xim,
@@ -3052,9 +3052,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmean_cprod_xmm2c8(const xmm2c8_t x,
                                             const xmm2c8_t y,
@@ -3079,9 +3079,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void arith_cmean_xmm2c8_u(const double * __restrict xre,
                                               const double * __restrict xim,
@@ -3104,9 +3104,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void arith_cmean_xmm2c8_a(const double * __restrict __ATTR_ALIGN__(16) xre,
                                               const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -3129,9 +3129,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void arith_cmean_xmm2c8(  const __m128d xre,
                                               const __m128d xim,
@@ -3151,9 +3151,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void arith_cmean_xmm2c8(  const xmm2c8_t x,
                                               double * __restrict mre,
@@ -3172,9 +3172,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnormalize_xmm2c8_u( const double * __restrict xre,
                                               const double * __restrict xim,
@@ -3197,9 +3197,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnormalize_xmm2c8_a( const double * __restrict __ATTR_ALIGN__(16) xre,
                                               const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -3222,9 +3222,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnormalize_xmm2c8( const __m128d xre,
                                             const __m128d xim,
@@ -3242,9 +3242,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cnormalize_xmm2c8( const xmm2c8_t x,
                                             const xmm2c8_t y,
@@ -3260,9 +3260,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnormalize_xmm2c8( const __m128d xre,
                                                  const __m128d xim,
@@ -3280,9 +3280,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    xmm2c8_t cnormalize_xmm2c8( const xmm2c8_t x,
                                                  const xmm2c8_t y,) {
@@ -3298,9 +3298,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmagnitude_xmm2c8_u( const double * __restrict xre,
                                               const double * __restrict xim,
@@ -3321,9 +3321,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmagnitude_xmm2c8_a( const double * __restrict __ATTR_ALIGN__(16) xre,
                                               const double * __restrict __ATTR_ALIGN__(16) xim,
@@ -3344,9 +3344,9 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmagnitude_xmm2c8(   const __m128d xre,
                                               const __m128d xim,
@@ -3362,9 +3362,9 @@ namespace  gms {
              
              
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-                   __ATTR_VECTORCALL__
+	        
+	          
+                  
 	           static inline
                    void cmagnitude_xmm2c8(   const xmm2c8_t x,
                                               const xmm2c8_t y,
@@ -3381,8 +3381,8 @@ namespace  gms {
 
 
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32) 
+	        
+	           
                    static inline
                    void copy_2xr4_c4_unroll16x(double * __restrict __ATTR_ALIGN__(64) xre,
                                                double * __restrict __ATTR_ALIGN__(64) xim,
@@ -3475,12 +3475,12 @@ namespace  gms {
 
 
                 /*   __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32) 
+	        
+	           
                    static inline
-                   void copy_2xr8_c8_unroll16x(double * __restrict __ATTR_ALIGN__(32) xre,
-                                               double * __restrict __ATTR_ALIGN__(32) xim,
-                                               std::complex<double> * __restrict __ATTR_ALIGN__(32) vc,
+                   void copy_2xr8_c8_unroll16x(double * __restrict xre,
+                                               double * __restrict xim,
+                                               std::complex<double> * __restrict vc,
                                                const int32_t n) {
 
                         if(__builtin_expect(0<=n,0)) { return;}
@@ -3569,8 +3569,8 @@ namespace  gms {
 
 */
                    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32) 
+	        
+	           
                    static inline
                    void copy_c4_2xr4_unroll16x( double * __restrict __ATTR_ALIGN__(64) xre,
                                                double * __restrict __ATTR_ALIGN__(64) xim,
@@ -3679,12 +3679,12 @@ namespace  gms {
 
 
                /*    __ATTR_ALWAYS_INLINE__
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32) 
+	        
+	           
                    static inline
-                   void copy_c8_2xr8_unroll16x( double * __restrict __ATTR_ALIGN__(32) xre,
-                                                double * __restrict __ATTR_ALIGN__(32) xim,
-                                               std::complex<double> * __restrict __ATTR_ALIGN__(32) vc,
+                   void copy_c8_2xr8_unroll16x( double * __restrict xre,
+                                                double * __restrict xim,
+                                               std::complex<double> * __restrict vc,
                                                const int32_t n) {
 
                         if(__builtin_expect(0<=n,0)) { return;}
