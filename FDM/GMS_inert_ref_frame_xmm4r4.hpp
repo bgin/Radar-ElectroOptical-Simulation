@@ -38,6 +38,7 @@ namespace file_info {
 
 #include <cstdint>
 #include <immintrin.h>
+#include <cstdlib>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 #include "GMS_simd_memops.h"
@@ -264,15 +265,21 @@ namespace gms {
                             using namespace gms::common;
                             if(this->mismmap)
                             {
-                                 gms_unmap<__m128>(this->mddFI_z,this->mnz);
-                                 gms_unmap<__m128>(this->mddFI_y,this->mny);
-                                 gms_unmap<__m128>(this->mddFI_x,this->mnx);
-                                 gms_unmap<__m128>(this->mdFI_z,this->mnz);
-                                 gms_unmap<__m128>(this->mdFI_y,this->mny);
-                                 gms_unmap<__m128>(this->mdFI_x,this->mnx);
-                                 gms_unmap<__m128>(this->mFI_z,this->mnz);
-                                 gms_unmap<__m128>(this->mFI_y,this->mny);
-                                 gms_unmap<__m128>(this->mFI_x,this->mnx);
+                                volatile int32_t e1,e2,e3,e4,e5,
+                                                 e6,e7,e8,e9;
+                                 e1 = gms_unmap<__m128>(this->mddFI_z,this->mnz);
+                                 e2 = gms_unmap<__m128>(this->mddFI_y,this->mny);
+                                 e3 = gms_unmap<__m128>(this->mddFI_x,this->mnx);
+                                 e4 = gms_unmap<__m128>(this->mdFI_z,this->mnz);
+                                 e5 = gms_unmap<__m128>(this->mdFI_y,this->mny);
+                                 e6 = gms_unmap<__m128>(this->mdFI_x,this->mnx);
+                                 e7 = gms_unmap<__m128>(this->mFI_z,this->mnz);
+                                 e8 = gms_unmap<__m128>(this->mFI_y,this->mny);
+                                 e9 = gms_unmap<__m128>(this->mFI_x,this->mnx);
+                                 if(e1 || e2 || e3 || e4 || e5 || e6 || e7 || e8 || e9)
+                                 {
+                                      std::exit(EXIT_FAILURE);
+                                 }
                             }
                             else
                             {
@@ -354,9 +361,9 @@ namespace gms {
                         {
                               using namespace gms::common;
 
-                              std::size_t nxbytes = static_cast<std::size_t>(sizeof(__m128)*this->mnx);
-                              std::size_t nybytes = static_cast<std::size_t>(sizeof(__m128)*this->mnx);
-                              std::size_t nzbytes = static_cast<std::size_t>(sizeof(__m128)*this->mnz);
+                              std::size_t nxbytes{size_nxbytes()};
+                              std::size_t nybytes{size_nybytes()};
+                              std::size_t nzbytes{size_nzbytes()};
                               this->mFI_x         = (__m128 __restrict*)
                                               gms_mm_malloc( nxbytes,64ULL);
                               this->mFI_y         = (__m128 __restrict*)
@@ -375,6 +382,21 @@ namespace gms {
                                               gms_mm_malloc( nybytes,64ULL);
                               this->mddFI_z       = (__m128 __restrict*)
                                               gms_mm_malloc( nzbytes,64ULL);
+                      }
+
+                      inline std::size_t size_nxbytes() const noexcept(true) 
+                      {
+                             return static_cast<std::size_t>(sizeof(__m128)*this->mnx);
+                      }
+
+                      inline std::size_t size_nybytes() const noexcept(true)
+                      {
+                             return static_cast<std::size_t>(sizeof(__m128)*this->mny);
+                      }
+
+                      inline std::size_t size_nzbytes() const noexcept(true)
+                      {
+                             return static_cast<std::size_t>(sizeof(__m128)*this->mnz);
                       }
 
 
