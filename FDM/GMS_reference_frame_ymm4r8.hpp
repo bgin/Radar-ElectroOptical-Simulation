@@ -20,7 +20,7 @@ SOFTWARE.
 */
 
 #ifndef __GMS_REFERENCE_FRAME_YMM4R8_HPP__
-#define __GMS_REFERENCE_FRAME_YMM4R8_HPP__
+#define __GMS_REFERENCE_FRAME_YMM4R8_HPP__ 160420250641
 
 
 namespace file_info {
@@ -56,7 +56,7 @@ namespace gms {
 
                 
 
-                /* **Inertial Reference Frame YMM4R8-double** */
+                /* **Reference Frame AVX-double** */
                 struct __ATTR_ALIGN__(64) ReferenceFrame_ymm4r8_t 
                 {       
                        __m256d * __restrict mFI_x;    //displacement component: x
