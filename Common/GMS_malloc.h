@@ -56,6 +56,8 @@ namespace  file_info {
 #endif
 
 
+
+
 namespace gms {
 	namespace common {
 
@@ -231,7 +233,16 @@ namespace gms {
                      return (munmap(ptr,sizeof(T)*len));
 		}
 
-	
+	    
+		__ATTR_HOT__ 
+		template<typename T> 
+		void swap(T &a, T&b) 
+		{
+			 T tmp = std::move(a);
+			 a     = std::move(b);
+			 b     = std::move(tmp);
+		}
+
 
 	}
 }
