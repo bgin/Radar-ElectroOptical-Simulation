@@ -68,16 +68,19 @@ namespace gms {
                        std::size_t             mnx;
                        std::size_t             mny;
                        std::size_t             mnz;
+                       float                   morig_x;
+                       float                   morig_y;
+                       float                   morig_z;
                        float                   mdt; //time increment
                        bool                    mismmap; 
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,23)
+                      PAD_TO(0,15)
 #endif                          
                        // Unit vectors
                        constexpr static __m256 mx_hat[3] = {1.0f,0.0f,0.0f};
                        constexpr static __m256 my_hat[3] = {0.0f,1.0f,0.0f};
                        constexpr static __m256 mz_hat[3] = {0.0f,0.0f,1.0f};
-                       constexpr static float  morig[3]  = {0.0f,0.0f,0.0f};
+                      
                         
               
                        inline ReferenceFrame_ymm8r4_t ()
@@ -94,37 +97,53 @@ namespace gms {
                             this->mddFI_x  = NULL;
                             this->mddFI_y  = NULL;
                             this->mddFI_z  = NULL;
-                            this->mdt      = 0.0;
+                            this->morig_x  = 0.0f;
+                            this->morig_y  = 0.0f;
+                            this->morig_z  = 0.0f;
+                            this->mdt      = 0.0f;
                             this->mismmap  = false;
                        }     
 
                        inline ReferenceFrame_ymm8r4_t (const std::size_t nx,
-                                                     const std::size_t ny,
-                                                     const std::size_t nz,
-                                                     const float dt) noexcept(false)
+                                                       const std::size_t ny,
+                                                       const float       orig_x,
+                                                       const float       orig_y,
+                                                       const float       orig_z,
+                                                       const std::size_t nz,
+                                                       const float dt) noexcept(false)
                        {
                              this->mnx     = nx;
                              this->mny     = ny;
                              this->mnz     = nz;
                              allocate();
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
                              this->mdt     = dt;
                              this->mismmap = false;
                        }                   
                      
                        inline ReferenceFrame_ymm8r4_t (const std::size_t nx,
-                                                     const std::size_t ny,
-                                                     const std::size_t nz,
-                                                     const float      dt,
-                                                     const int32_t prot,
-                                                     const int32_t flags,
-                                                     const int32_t fd,
-                                                     const int32_t offset,
-                                                     const int32_t fsize) noexcept(false)
+                                                       const std::size_t ny,
+                                                       const std::size_t nz,
+                                                       const float       orig_x,
+                                                       const float       orig_y,
+                                                       const float       orig_z,
+                                                       const float       dt,
+                                                       const int32_t     prot,
+                                                       const int32_t     flags,
+                                                       const int32_t     fd,
+                                                       const int32_t     offset,
+                                                       const int32_t     fsize) noexcept(false)
                         {
                              using namespace gms::common;
                              this->mnx = nx;
                              this->mny = ny;
                              this->mnz = nz;
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
+                             this->mdt = dt;
                              switch (fsize) 
                              {
                                 case 0: 
@@ -197,24 +216,30 @@ namespace gms {
                         }
 
                         inline ReferenceFrame_ymm8r4_t (const std::size_t nx,
-                                                      const std::size_t ny,
-                                                      const std::size_t nz,
-                                                      const __m256 * __restrict FI_x,
-                                                      const __m256 * __restrict FI_y,
-                                                      const __m256 * __restrict FI_z,
-                                                      const __m256 * __restrict dFI_x,
-                                                      const __m256 * __restrict dFI_y,
-                                                      const __m256 * __restrict dFI_z,
-                                                      const __m256 * __restrict ddFI_x,
-                                                      const __m256 * __restrict ddFI_y,
-                                                      const __m256 * __restrict ddFI_z,
-                                                      const float      dt)             noexcept(false)
+                                                        const std::size_t ny,
+                                                        const std::size_t nz,
+                                                        const __m256 * __restrict FI_x,
+                                                        const __m256 * __restrict FI_y,
+                                                        const __m256 * __restrict FI_z,
+                                                        const __m256 * __restrict dFI_x,
+                                                        const __m256 * __restrict dFI_y,
+                                                        const __m256 * __restrict dFI_z,
+                                                        const __m256 * __restrict ddFI_x,
+                                                        const __m256 * __restrict ddFI_y,
+                                                        const __m256 * __restrict ddFI_z,
+                                                        const float       orig_x,
+                                                        const float       orig_y,
+                                                        const float       orig_z,
+                                                        const float       dt)             noexcept(false)
                         {
                              using namespace gms::common;
                              this->mnx     = nx;
                              this->mny     = ny;
                              this->mnz     = nz;
                              allocate();
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
                              this->mdt     = dt;
                              this->mismmap = false;
 #if (USE_GMS_REFERENCE_FRAME_YMM8R4_NT_STORES) == 1
@@ -254,6 +279,9 @@ namespace gms {
                             this->mddFI_x  = &rhs.mddFI_x[0];
                             this->mddFI_y  = &rhs.mddFI_y[0];
                             this->mddFI_z  = &rhs.mddFI_z[0];
+                            this->morig_x  = rhs.morig_x;
+                            this->morig_y  = rhs.morig_y;
+                            this->morig_z  = rhs.morig_z;
                             this->mdt      = rhs.mdt;
                             this->mismmap  = rhs.mismmap;
                         }
@@ -314,8 +342,12 @@ namespace gms {
                              gms_swap(this->mddFI_x,rhs.mddFI_x);
                              gms_swap(this->mddFI_y,rhs.mddFI_y);
                              gms_swap(this->mddFI_z,rhs.mddFI_z);
+                             gms_swap(this->morig_x,rhs.morig_x);
+                             gms_swap(this->morig_y,rhs.morig_y);
+                             gms_swap(this->morig_z,rhs.morig_z);
                              gms_swap(this->mdt,rhs.mdt);
                              gms_swap(this->mismmap,rhs.mismmap);
+
                              return (*this);
                         }
 
