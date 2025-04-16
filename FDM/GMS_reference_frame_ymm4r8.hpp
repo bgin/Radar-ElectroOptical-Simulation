@@ -300,64 +300,27 @@ namespace gms {
 
                         ReferenceFrame_ymm4r8_t & operator=(const ReferenceFrame_ymm4r8_t &) = delete;
 
-                        inline ReferenceFrame_ymm4r8_t & operator=(ReferenceFrame_ymm4r8_t && rhs) 
+                        inline ReferenceFrame_ymm4r8_t & operator=(ReferenceFrame_ymm4r8_t && rhs) noexcept(true)
                         {
                              using namespace gms::common;
                              if(this==&rhs) return (*this);
-                             if(this->mismmap) 
-                             {
-                                 gms_unmap<__m256d>(this->mddFI_z,this->mnz);
-                                 gms_unmap<__m256d>(this->mddFI_y,this->mny);
-                                 gms_unmap<__m256d>(this->mddFI_x,this->mnx);
-                                 gms_unmap<__m256d>(this->mdFI_z,this->mnz);
-                                 gms_unmap<__m256d>(this->mdFI_y,this->mny);
-                                 gms_unmap<__m256d>(this->mdFI_x,this->mnx);
-                                 gms_unmap<__m256d>(this->mFI_z,this->mnz);
-                                 gms_unmap<__m256d>(this->mFI_y,this->mny);
-                                 gms_unmap<__m256d>(this->mFI_x,this->mnx);
-                             }
-                             else 
-                             {
-                                 gms_mm_free(this->mddFI_z);
-                                 gms_mm_free(this->mddFI_y);
-                                 gms_mm_free(this->mddFI_x);
-                                 gms_mm_free(this->mdFI_z);
-                                 gms_mm_free(this->mdFI_y);
-                                 gms_mm_free(this->mdFI_x);
-                                 gms_mm_free(this->mFI_z);
-                                 gms_mm_free(this->mFI_y);
-                                 gms_mm_free(this->mFI_x);
-                             }
-                             
-                              this->mnx      = rhs.mnx;
-                              this->mny      = rhs.mny;
-                              this->mnz      = rhs.mnz;
-                              this->mFI_x    = &rhs.mFI_x[0];
-                              this->mFI_y    = &rhs.mFI_y[0];
-                              this->mFI_z    = &rhs.mFI_z[0];
-                              this->mdFI_x   = &rhs.mdFI_x[0];
-                              this->mdFI_y   = &rhs.mdFI_y[0];
-                              this->mdFI_z   = &rhs.mdFI_z[0];
-                              this->mddFI_x  = &rhs.mddFI_x[0];
-                              this->mddFI_y  = &rhs.mddFI_y[0];
-                              this->mddFI_z  = &rhs.mddFI_z[0];
-                              this->mdt      = rhs.mdt;
-                              this->mismmap  = rhs.mismmap;
 
-                              rhs.mnx        = 0ULL;
-                              rhs.mny        = 0ULL;
-                              rhs.mnz        = 0ULL;
-                              rhs.mFI_x      = NULL;
-                              rhs.mFI_y      = NULL;
-                              rhs.mFI_z      = NULL;
-                              rhs.mdFI_x     = NULL; 
-                              rhs.mdFI_y     = NULL; 
-                              rhs.mdFI_z     = NULL; 
-                              rhs.mddFI_x    = NULL;
-                              rhs.mddFI_y    = NULL; 
-                              rhs.mddFI_z    = NULL;
-                              rhs.mdt        = 0.0;
-                              return (*this);
+                             gms_swap(this->mnx,rhs.mnx);
+                             gms_swap(this->mny,rhs.mny);
+                             gms_swap(this->mnz,rhs.mnz);
+                             gms_swap(this->mFI_x,rhs.mFI_x);
+                             gms_swap(this->mFI_y,rhs.mFI_y);
+                             gms_swap(this->mFI_z,rhs.mFI_z);
+                             gms_swap(this->mdFI_x,rhs.mdFI_x);
+                             gms_swap(this->mdFI_y,rhs.mdFI_y);
+                             gms_swap(this->mdFI_z,rhs.mdFI_z);
+                             gms_swap(this->mddFI_x,rhs.mddFI_x);
+                             gms_swap(this->mddFI_y,rhs.mddFI_y);
+                             gms_swap(this->mddFI_z,rhs.mddFI_z);
+                             gms_swap(this->mdt,rhs.mdt);
+                             gms_swap(this->mismmap,rhs.mismmap);
+                             
+                             return (*this);
                         }
 
                         inline void allocate() noexcept(false)
