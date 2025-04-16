@@ -2,37 +2,40 @@
 #ifndef __GMS_RDTSCP_TIMER_H__
 #define __GMS_RDTSCP_TIMER_H__
 
+namespace file_info{
 // File major version
-const unsigned int gGMS_RDTSCP_TIMER_MAJOR = 1U;
+      const unsigned int gGMS_RDTSCP_TIMER_MAJOR = 1U;
 
 // File minor version
-const unsigned int gGMS_RDTSCP_TIMER_MINOR = 0U;
+      const unsigned int gGMS_RDTSCP_TIMER_MINOR = 0U;
 
 // File micro version
-const unsigned int gGMS_RDTSCP_TIMER_MICRO = 0U;
+      const unsigned int gGMS_RDTSCP_TIMER_MICRO = 0U;
 
 // File full version
-const unsigned int gGMS_RDTSCP_TIMER_FULLVER = 
+      const unsigned int gGMS_RDTSCP_TIMER_FULLVER = 
 		1000U*gGMS_RDTSCP_TIMER_MAJOR + 100U*gGMS_RDTSCP_TIMER_MINOR + 10U*gGMS_RDTSCP_TIMER_MICRO;
 
 // File creation date
-const  char * const gpGMS_RDTSCP_TIMER_CREATE_DATE = "4-10-2019 17:47 +00200 (FRI 04 OCT  2019 GMT+2)";
+      const  char * const gpGMS_RDTSCP_TIMER_CREATE_DATE = "4-10-2019 17:47 +00200 (FRI 04 OCT  2019 GMT+2)";
 
 // File build date (should be set after successful build of this translation unit.
-const char * const gpGMS_RDTSCP_TIMER_BUILD_DATE = __DATE__":"__TIME__;
+      const char * const gpGMS_RDTSCP_TIMER_BUILD_DATE = __DATE__ ":" __TIME__;
 
 // File author
-const char * const gpGMS_RDTSCP_TIMER_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+      const char * const gpGMS_RDTSCP_TIMER_AUTHOR = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
 
 // File short description
-const char * const gpGMS_RDTSCP_TIMER_SYNOPSIS = "RDTSCP based performance measurement class.";
-
+      const char * const gpGMS_RDTSCP_TIMER_SYNOPSIS = "RDTSCP based performance measurement class.";
+}
 #include <vector>
 #include <string>
 #include <cstdint>
-
-#include "GMS_config.h"
-
+#if defined _WIN64
+    #include "../GMS_config.h"
+#elif defined __linux
+    #include "GMS_config.h"
+#endif
 #if (USE_ACCURATE_IEEE754_2008_FP) == 1
 #include <bfp754.h>   // IEEE754_2008 accurate floating-point aruthmetics.
 #endif

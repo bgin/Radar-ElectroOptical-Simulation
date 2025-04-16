@@ -2,8 +2,6 @@
 #include <iostream>
 #include <iomanip>
 #include "GMS_rdtscp_timer.h"
-
-#include "GMS_constants.h"
 #include "GMS_indices.h"
 
 gms::system
