@@ -33,7 +33,7 @@ namespace file_info {
        10U*GMS_REFERENCE_FRAME_XMM2R8_MICRO;
      const char * const GMS_REFERENCE_FRAME_XMM2R8_CREATION_DATE = "12-04-2025 08:25 AM +00200 (SAT 12 APR 2025 GMT+2)";
      const char * const GMS_REFERENCE_FRAME_XMM2R8_BUILD_DATE    = __DATE__ " " __TIME__;
-     const char * const GMS_REFERENCE_FRAME_XMM2R8_SYNOPSIS      = "Dynamically allocated, 64-byte aligned Inertial Reference Frame.";
+     const char * const GMS_REFERENCE_FRAME_XMM2R8_SYNOPSIS      = "Dynamically allocated, 64-byte aligned Reference Frame (SSE-double).";
 
 }
 
@@ -71,6 +71,9 @@ namespace gms {
                        std::size_t              mnx;
                        std::size_t              mny;
                        std::size_t              mnz;
+                       double                   morig_x;
+                       double                   morig_y;
+                       double                   morig_z;
                        double                   mdt; //time increment
                        bool                     mismmap; 
 #if (USE_STRUCT_PADDING) == 1
@@ -80,7 +83,7 @@ namespace gms {
                        constexpr static __m128d mx_hat[3] = {1.0,0.0,0.0};
                        constexpr static __m128d my_hat[3] = {0.0,1.0,0.0};
                        constexpr static __m128d mz_hat[3] = {0.0,0.0,1.0};
-                       constexpr static double  morig[3]  = {0.0,0.0,0.0};
+                      
                       
                  
                        inline ReferenceFrame_xmm2r8_t()
@@ -97,6 +100,9 @@ namespace gms {
                             this->mddFI_x  = NULL;
                             this->mddFI_y  = NULL;
                             this->mddFI_z  = NULL;
+                            this->morig_x  = 0.0;
+                            this->morig_y  = 0.0;
+                            this->morig_z  = 0.0;
                             this->mdt      = 0.0;
                             this->mismmap  = false;
                        }     
@@ -104,12 +110,18 @@ namespace gms {
                        inline ReferenceFrame_xmm2r8_t(const std::size_t nx,
                                                      const std::size_t ny,
                                                      const std::size_t nz,
+                                                     const double orig_x,
+                                                     const double orig_y,
+                                                     const double orig_z,
                                                      const double dt) noexcept(false)
                        {
                              this->mnx     = nx;
                              this->mny     = ny;
                              this->mnz     = nz;
                              allocate();
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
                              this->mdt     = dt;
                              this->mismmap = false;
                        }                   
@@ -117,6 +129,9 @@ namespace gms {
                        inline ReferenceFrame_xmm2r8_t(const std::size_t nx,
                                                      const std::size_t ny,
                                                      const std::size_t nz,
+                                                     const double orig_x,
+                                                     const double orig_y,
+                                                     const double orig_z,
                                                      const double      dt,
                                                      const int32_t prot,
                                                      const int32_t flags,
@@ -128,6 +143,10 @@ namespace gms {
                              this->mnx = nx;
                              this->mny = ny;
                              this->mnz = nz;
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
+                             this->mdt     = dt;
                              switch (fsize) 
                              {
                                 case 0: 
@@ -211,6 +230,9 @@ namespace gms {
                                                       const __m128d * __restrict ddFI_x,
                                                       const __m128d * __restrict ddFI_y,
                                                       const __m128d * __restrict ddFI_z,
+                                                      const double orig_x,
+                                                      const double orig_y,
+                                                      const double orig_z,
                                                       const double      dt) noexcept(false)
                         {
                              using namespace gms::common;
@@ -218,6 +240,9 @@ namespace gms {
                              this->mny     = ny;
                              this->mnz     = nz;
                              allocate();
+                             this->morig_x = orig_x;
+                             this->morig_y = orig_y;
+                             this->morig_z = orig_z;
                              this->mdt     = dt;
                              this->mismmap = false;
 #if (USE_GMS_REFERENCE_FRAME_XMM2R8_NT_STORES) == 1
@@ -257,6 +282,9 @@ namespace gms {
                             this->mddFI_x  = &rhs.mddFI_x[0];
                             this->mddFI_y  = &rhs.mddFI_y[0];
                             this->mddFI_z  = &rhs.mddFI_z[0];
+                            this->morig_x  = rhs.morig_x;
+                            this->morig_y  = rhs.morig_y;
+                            this->morig_z  = rhs.morig_z;
                             this->mdt      = rhs.mdt;
                             this->mismmap  = rhs.mismmap;
                         }
@@ -300,63 +328,29 @@ namespace gms {
 
                         ReferenceFrame_xmm2r8_t & operator=(const ReferenceFrame_xmm2r8_t &) = delete;
 
-                        inline ReferenceFrame_xmm2r8_t & operator=(ReferenceFrame_xmm2r8_t && rhs) 
+                        inline ReferenceFrame_xmm2r8_t & operator=(ReferenceFrame_xmm2r8_t && rhs) noexcept(true)
                         {
                              using namespace gms::common;
                              if(this==&rhs) return (*this);
-                             if(this->mismmap) 
-                             {
-                                 gms_unmap<__m128d>(this->mddFI_z,this->mnz);
-                                 gms_unmap<__m128d>(this->mddFI_y,this->mny);
-                                 gms_unmap<__m128d>(this->mddFI_x,this->mnx);
-                                 gms_unmap<__m128d>(this->mdFI_z,this->mnz);
-                                 gms_unmap<__m128d>(this->mdFI_y,this->mny);
-                                 gms_unmap<__m128d>(this->mdFI_x,this->mnx);
-                                 gms_unmap<__m128d>(this->mFI_z,this->mnz);
-                                 gms_unmap<__m128d>(this->mFI_y,this->mny);
-                                 gms_unmap<__m128d>(this->mFI_x,this->mnx);
-                             }
-                             else 
-                             {
-                                 gms_mm_free(this->mddFI_z);
-                                 gms_mm_free(this->mddFI_y);
-                                 gms_mm_free(this->mddFI_x);
-                                 gms_mm_free(this->mdFI_z);
-                                 gms_mm_free(this->mdFI_y);
-                                 gms_mm_free(this->mdFI_x);
-                                 gms_mm_free(this->mFI_z);
-                                 gms_mm_free(this->mFI_y);
-                                 gms_mm_free(this->mFI_x);
-                             }
-                             
-                              this->mnx      = rhs.mnx;
-                              this->mny      = rhs.mny;
-                              this->mnz      = rhs.mnz;
-                              this->mFI_x    = &rhs.mFI_x[0];
-                              this->mFI_y    = &rhs.mFI_y[0];
-                              this->mFI_z    = &rhs.mFI_z[0];
-                              this->mdFI_x   = &rhs.mdFI_x[0];
-                              this->mdFI_y   = &rhs.mdFI_y[0];
-                              this->mdFI_z   = &rhs.mdFI_z[0];
-                              this->mddFI_x  = &rhs.mddFI_x[0];
-                              this->mddFI_y  = &rhs.mddFI_y[0];
-                              this->mddFI_z  = &rhs.mddFI_z[0];
-                              this->mdt      = rhs.mdt;
-                              this->mismmap  = rhs.mismmap;
 
-                              rhs.mnx        = 0ULL;
-                              rhs.mny        = 0ULL;
-                              rhs.mnz        = 0ULL;
-                              rhs.mFI_x      = NULL;
-                              rhs.mFI_y      = NULL;
-                              rhs.mFI_z      = NULL;
-                              rhs.mdFI_x     = NULL; 
-                              rhs.mdFI_y     = NULL; 
-                              rhs.mdFI_z     = NULL; 
-                              rhs.mddFI_x    = NULL;
-                              rhs.mddFI_y    = NULL; 
-                              rhs.mddFI_z    = NULL;
-                              rhs.mdt        = 0.0;
+                             gms_swap(this->mnx,rhs.mnx);
+                             gms_swap(this->mny,rhs.mny);
+                             gms_swap(this->mnz,rhs.mnz);
+                             gms_swap(this->mFI_x,rhs.mFI_x);
+                             gms_swap(this->mFI_y,rhs.mFI_y);
+                             gms_swap(this->mFI_z,rhs.mFI_z);
+                             gms_swap(this->mdFI_x,rhs.mdFI_x);
+                             gms_swap(this->mdFI_y,rhs.mdFI_y);
+                             gms_swap(this->mdFI_z,rhs.mdFI_z);
+                             gms_swap(this->mddFI_x,rhs.mddFI_x);
+                             gms_swap(this->mddFI_y,rhs.mddFI_y);
+                             gms_swap(this->mddFI_z,rhs.mddFI_z);
+                             gms_swap(this->morig_x,rhs.morig_x);
+                             gms_swap(this->morig_y,rhs.morig_y);
+                             gms_swap(this->morig_z,rhs.morig_z);
+                             gms_swap(this->mdt,rhs.mdt);
+                             gms_swap(this->mismmap,rhs.mismmap);
+                             
                               return (*this);
                         }
 
