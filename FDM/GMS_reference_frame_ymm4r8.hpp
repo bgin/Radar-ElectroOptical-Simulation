@@ -218,55 +218,7 @@ namespace gms {
                              }
                         }
 
-                        inline ReferenceFrame_ymm4r8_t(const std::size_t nx,
-                                                      const std::size_t ny,
-                                                      const std::size_t nz,
-                                                      const __m256d * __restrict FI_x,
-                                                      const __m256d * __restrict FI_y,
-                                                      const __m256d * __restrict FI_z,
-                                                      const __m256d * __restrict dFI_x,
-                                                      const __m256d * __restrict dFI_y,
-                                                      const __m256d * __restrict dFI_z,
-                                                      const __m256d * __restrict ddFI_x,
-                                                      const __m256d * __restrict ddFI_y,
-                                                      const __m256d * __restrict ddFI_z,
-                                                      const double orig_x,
-                                                      const double orig_y,
-                                                      const double orig_z,
-                                                      const double      dt) noexcept(false)
-                        {
-                             using namespace gms::common;
-                             this->mnx     = nx;
-                             this->mny     = ny;
-                             this->mnz     = nz;
-                             allocate();
-                             this->morig_x = orig_x;
-                             this->morig_y = orig_y;
-                             this->morig_z = orig_z;
-                             this->mdt     = dt;
-                             this->mismmap = false;
-#if (USE_GMS_REFERENCE_FRAME_YMM4R8_NT_STORES) == 1
-                             avx512_uncached_memmove(&this->mFI_x[0], &FI_x[0], this->mnx);
-                             avx512_uncached_memmove(&this->mFI_y[0], &FI_y[0], this->mny);
-                             avx512_uncached_memmove(&this->mFI_z[0], &FI_z[0], this->mnz);
-                             avx512_uncached_memmove(&this->mdFI_x[0], &dFI_x[0], this->mnx);
-                             avx512_uncached_memmove(&this->mdFI_y[0], &dFI_y[0], this->mny);
-                             avx512_uncached_memmove(&this->mdFI_z[0], &dFI_z[0], this->mnz);
-                             avx512_uncached_memmove(&this->mddFI_x[0], &ddFI_x[0], this->mnx);
-                             avx512_uncached_memmove(&this->mddFI_y[0], &ddFI_y[0], this->mny);
-                             avx512_uncached_memmove(&this->mddFI_z[0], &ddFI_z[0], this->mnz);
-#else
-                             avx512_cached_memmove(&this->mFI_x[0], &FI_x[0], this->mnx);
-                             avx512_cached_memmove(&this->mFI_y[0], &FI_y[0], this->mny);
-                             avx512_cached_memmove(&this->mFI_z[0], &FI_z[0], this->mnz);
-                             avx512_cached_memmove(&this->mdFI_x[0], &dFI_x[0], this->mnx);
-                             avx512_cached_memmove(&this->mdFI_y[0], &dFI_y[0], this->mny);
-                             avx512_cached_memmove(&this->mdFI_z[0], &dFI_z[0], this->mnz);
-                             avx512_cached_memmove(&this->mddFI_x[0], &ddFI_x[0], this->mnx);
-                             avx512_cached_memmove(&this->mddFI_y[0], &ddFI_y[0], this->mny);
-                             avx512_cached_memmove(&this->mddFI_z[0], &ddFI_z[0], this->mnz);
-#endif
-                        }
+                       
 
                         inline ReferenceFrame_ymm4r8_t(ReferenceFrame_ymm4r8_t && rhs) noexcept(true)
                         {
