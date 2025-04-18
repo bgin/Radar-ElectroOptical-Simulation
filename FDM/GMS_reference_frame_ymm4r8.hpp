@@ -42,7 +42,7 @@ namespace file_info {
 #include <cstdlib> //std::exit
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-#include "GMS_simd_memops.h"
+
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
