@@ -51,11 +51,11 @@ namespace gms {
 	           namespace {
 
                     const __m256   v8f32_0 = _mm256_setzero_ps();
-		    const __m256d  v4f64_0 = _mm256_setzero_pd();
+		            const __m256d  v4f64_0 = _mm256_setzero_pd();
 	      }
 
 
-	         struct DCMatYMM8r4 __ATTR_ALIGN__(32) {
+	         struct __ATTR_ALIGN__(32) DCMatYMM8r4  {
 
                           //  Each row represent the expanded element of the Direction Cosine Matrix i.e. A[ij]
                           //  into 1x8 column vector, thus each vector holds the state of consecutive 8 radian
@@ -72,29 +72,26 @@ namespace gms {
 
 			// Default Ctor -- zero initialization.
 		       __ATTR_ALWAYS_INLINE__
-		       __ATTR_HOT__
-		       __ATTR_ALIGN__(32)
-		       DCMatYMM8r4() {
-                           m_vRow1 = v8f32_0;
+		    DCMatYMM8r4()
+			{
+               m_vRow1 = v8f32_0;
 			   m_vRow2 = v8f32_0;
-                           m_vRow3 = v8f32_0;
+               m_vRow3 = v8f32_0;
 			   m_vRow4 = v8f32_0;
 			   m_vRow5 = v8f32_0;
 			   m_vRow6 = v8f32_0;
 			   m_vRow7 = v8f32_0;
 			   m_vRow8 = v8f32_0;
 			   m_vRow8 = v8f32_0;
-		       }
+		    }
 
 		        /*
                          Build from the other rows i.e. of type: __m256
                       */
-                      __ATTR_VECTORCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-                      DCMatYMM8r4(    const __m256 vRow1,
-		                      const __m256 vRow2,
+                     
+            __ATTR_ALWAYS_INLINE__
+		    DCMatYMM8r4(  const __m256 vRow1,
+		                  const __m256 vRow2,
 				      const __m256 vRow3,
 				      const __m256 vRow4,
 				      const __m256 vRow5,
@@ -102,15 +99,15 @@ namespace gms {
 				      const __m256 vRow7,
 				      const __m256 vRow8,
 				      const __m256 vRow9) {
-                           m_vRow1 = vRow1;
-			   m_vRow2 = vRow2;
-			   m_vRow3 = vRow3;
-			   m_vRow4 = vRow4;
-			   m_vRow5 = vRow5;
-			   m_vRow6 = vRow6;
-			   m_vRow7 = vRow7;
-			   m_vRow8 = vRow8;
-			   m_vRow9 = vRow9;
+                m_vRow1 = vRow1;
+			    m_vRow2 = vRow2;
+			    m_vRow3 = vRow3;
+			    m_vRow4 = vRow4;
+			    m_vRow5 = vRow5;
+			    m_vRow6 = vRow6;
+			    m_vRow7 = vRow7;
+			    m_vRow8 = vRow8;
+			    m_vRow9 = vRow9;
 
 		      }
 
@@ -118,28 +115,37 @@ namespace gms {
                        Build from the 8-elements single precision arrays.
                        Must be aligned on the 32-byte boundaries.
                     */
-		    __ATTR_VECTORCALL__
+		    
                     __ATTR_ALWAYS_INLINE__
-		    __ATTR_HOT__
-		    __ATTR_ALIGN__(32)
-                    DCMatYMM8r4(    const float * __restrict __ATTR_ALIGN__(32) vRow1,
-		                    const float * __restrict __ATTR_ALIGN__(32) vRow2,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow3,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow4,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow5,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow6,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow7,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow8,
-				    const float * __restrict __ATTR_ALIGN__(32) vRow9) {
-                         m_vRow1 = _mm256_load_ps(&vRow1[0]);
-			 m_vRow2 = _mm256_load_ps(&vRow2[0]);
-                         m_vRow3 = _mm256_load_ps(&vRow3[0]);
-			 m_vRow4 = _mm256_load_ps(&vRow4[0]);
-			 m_vRow5 = _mm256_load_ps(&vRow5[0]);
-			 m_vRow6 = _mm256_load_ps(&vRow6[0]);
-			 m_vRow7 = _mm256_load_ps(&vRow7[0]);
-			 m_vRow8 = _mm256_load_ps(&vRow8[0]);
-			 m_vRow9 = _mm256_load_ps(&vRow9[0]);
+		            DCMatYMM8r4(    const float * __restrict __ATTR_ALIGN__(32) vRow1,
+		                            const float * __restrict __ATTR_ALIGN__(32) vRow2,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow3,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow4,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow5,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow6,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow7,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow8,
+				                    const float * __restrict __ATTR_ALIGN__(32) vRow9) {
+
+			   const float * __restrict pR1 = vRow1;
+			   const float * __restrict pR2 = vRow2;
+			   const float * __restrict pR3 = vRow3;
+			   const float * __restrict pR4 = vRow4;
+			   const float * __restrict pR5 = vRow5;
+			   const float * __restrict pR6 = vRow6;
+			   const float * __restrict pR7 = vRow7;
+			   const float * __restrict pR8 = vRow8;
+			   const float * __restrict pR9 = vRow9;
+
+               m_vRow1 = _mm256_load_ps(&pR1[0]);
+			   m_vRow2 = _mm256_load_ps(&pR2[0]);
+               m_vRow3 = _mm256_load_ps(&pR3[0]);
+			   m_vRow4 = _mm256_load_ps(&pR4[0]);
+			   m_vRow5 = _mm256_load_ps(&pR5[0]);
+			   m_vRow6 = _mm256_load_ps(&pR6[0]);
+			   m_vRow7 = _mm256_load_ps(&pR7[0]);
+			   m_vRow8 = _mm256_load_ps(&pR8[0]);
+			   m_vRow9 = _mm256_load_ps(&pR9[0]);
 		 }
 
                   /*
@@ -147,10 +153,8 @@ namespace gms {
                   */
 		    
 		   __ATTR_ALWAYS_INLINE__
-		   __ATTR_HOT__
-		   __ATTR_ALIGN__(32)
-		   DCMatYMM8r4(const DCMatYMM8r4 &x) {
-                        m_vRow1 = x.m_vRow1;
+		    DCMatYMM8r4(const DCMatYMM8r4 &x) {
+            m_vRow1 = x.m_vRow1;
 			m_vRow2 = x.m_vRow2;
 			m_vRow3 = x.m_vRow3;
 			m_vRow4 = x.m_vRow4;
@@ -162,17 +166,16 @@ namespace gms {
 
 		 }
 
-                 __ATTR_VECTORCALL__
-                 __ATTR_ALWAYS_INLINE__
-		 __ATTR_HOT__
-		 __ATTR_ALIGN__(32)
+                 
+         __ATTR_ALWAYS_INLINE__
 		 DCMatYMM8r4 &
 		 DCMat_compute_ymm8r4(const __m256 vPhi,
 		                      const __m256 vTheta,
-				      const __m256 vPsi) {
-                      const __m256 sinRoll  = _mm256_sin_ps(vPhi);
+				              const __m256 vPsi) 
+		{
+              const __m256 sinRoll  = _mm256_sin_ps(vPhi);
 		      const __m256 cosRoll  = _mm256_sin_ps(vPhi);
-                      const __m256 sinPitch = _mm256_sin_ps(vTheta);
+              const __m256 sinPitch = _mm256_sin_ps(vTheta);
 		      const __m256 cosPitch = _mm256_cos_ps(vTheta);
 		      const __m256 sinYaw   = _mm256_sin_ps(vPsi);
 		      const __m256 cosYaw   = _mm256_cos_ps(vPsi);
@@ -191,7 +194,8 @@ namespace gms {
 		      m_vRow7 = _mm256_fmadd_ps(ct2,cosYaw,t3);
 		      m_vRow8 = _mm256_fmsub_ps(ct2,sinYaw,t4);
 		      m_vRow9 = _mm256_mul_ps(cosRoll,cosPitch);
-                      return (*this);
+
+              return (*this);
 		}
 
 
@@ -202,7 +206,7 @@ namespace gms {
 	     }; // struct
 
 
-	       struct DCMatYMM4r8 __ATTR_ALIGN__(32) {
+	       struct __ATTR_ALIGN__(32) DCMatYMM4r8  {
 
                           //  Each row represent the expanded element of the Direction Cosine Matrix i.e. A[ij]
                           //  into 1x4 column vector, thus each vector holds the state of consecutive 4 radian
@@ -219,45 +223,43 @@ namespace gms {
 
 			// Default Ctor -- zero initialization.
 		       __ATTR_ALWAYS_INLINE__
-		       __ATTR_HOT__
-		       __ATTR_ALIGN__(32)
-		       DCMatYMM4r8() {
-                           m_vRow1 = v4f64_0;
-			   m_vRow2 = v4f64_0;
-                           m_vRow3 = v4f64_0;
-			   m_vRow4 = v4f64_0;
-			   m_vRow5 = v4f64_0;
-			   m_vRow6 = v4f64_0;
-			   m_vRow7 = v4f64_0;
-			   m_vRow8 = v4f64_0;
-			   m_vRow8 = v4f64_0;
+		       DCMatYMM4r8() 
+			   {
+                  m_vRow1 = v4f64_0;
+			      m_vRow2 = v4f64_0;
+                  m_vRow3 = v4f64_0;
+			      m_vRow4 = v4f64_0;
+			      m_vRow5 = v4f64_0;
+			      m_vRow6 = v4f64_0;
+			      m_vRow7 = v4f64_0;
+			      m_vRow8 = v4f64_0;
+			      m_vRow8 = v4f64_0;
 		       }
 
 		        /*
                          Build from the other rows i.e. of type: __m256d
                       */
-                      __ATTR_VECTORCALL__
-                      __ATTR_ALWAYS_INLINE__
-		      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-                      DCMatYMM4r8(    const __m256d vRow1,
-		                      const __m256d vRow2,
-				      const __m256d vRow3,
-				      const __m256d vRow4,
-				      const __m256d vRow5,
-				      const __m256d vRow6,
-				      const __m256d vRow7,
-				      const __m256d vRow8,
-				      const __m256d vRow9) {
-                           m_vRow1 = vRow1;
-			   m_vRow2 = vRow2;
-			   m_vRow3 = vRow3;
-			   m_vRow4 = vRow4;
-			   m_vRow5 = vRow5;
-			   m_vRow6 = vRow6;
-			   m_vRow7 = vRow7;
-			   m_vRow8 = vRow8;
-			   m_vRow9 = vRow9;
+                     
+                __ATTR_ALWAYS_INLINE__
+		        DCMatYMM4r8(const __m256d vRow1,
+		                    const __m256d vRow2,
+				            const __m256d vRow3,
+				            const __m256d vRow4,
+				            const __m256d vRow5,
+				            const __m256d vRow6,
+				            const __m256d vRow7,
+				            const __m256d vRow8,
+				            const __m256d vRow9) 
+			 {
+                 m_vRow1 = vRow1;
+			     m_vRow2 = vRow2;
+			     m_vRow3 = vRow3;
+			     m_vRow4 = vRow4;
+			     m_vRow5 = vRow5;
+			     m_vRow6 = vRow6;
+			     m_vRow7 = vRow7;
+			     m_vRow8 = vRow8;
+			     m_vRow9 = vRow9;
 
 		      }
 
@@ -265,61 +267,68 @@ namespace gms {
                        Build from the 4-elements double precision arrays.
                        Must be aligned on the 32-byte boundaries.
                     */
-		    __ATTR_VECTORCALL__
-                    __ATTR_ALWAYS_INLINE__
-		    __ATTR_HOT__
-		    __ATTR_ALIGN__(32)
-                    DCMatYMM4r8(    const double * __restrict __ATTR_ALIGN__(32) vRow1,
+		    
+                __ATTR_ALWAYS_INLINE__
+		        DCMatYMM4r8(const double * __restrict __ATTR_ALIGN__(32) vRow1,
 		                    const double * __restrict __ATTR_ALIGN__(32) vRow2,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow3,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow4,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow5,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow6,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow7,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow8,
-				    const double * __restrict __ATTR_ALIGN__(32) vRow9) {
-                         m_vRow1 = _mm256_load_pd(&vRow1[0]);
-			 m_vRow2 = _mm256_load_pd(&vRow2[0]);
-                         m_vRow3 = _mm256_load_pd(&vRow3[0]);
-			 m_vRow4 = _mm256_load_pd(&vRow4[0]);
-			 m_vRow5 = _mm256_load_pd(&vRow5[0]);
-			 m_vRow6 = _mm256_load_pd(&vRow6[0]);
-			 m_vRow7 = _mm256_load_pd(&vRow7[0]);
-			 m_vRow8 = _mm256_load_pd(&vRow8[0]);
-			 m_vRow9 = _mm256_load_pd(&vRow9[0]);
-		 }
+				            const double * __restrict __ATTR_ALIGN__(32) vRow3,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow4,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow5,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow6,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow7,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow8,
+				            const double * __restrict __ATTR_ALIGN__(32) vRow9) 
+			{
+				const double * __restrict pR1 = vRow1;
+			    const double * __restrict pR2 = vRow2;
+			    const double * __restrict pR3 = vRow3;
+			    const double * __restrict pR4 = vRow4;
+			    const double * __restrict pR5 = vRow5;
+			    const double * __restrict pR6 = vRow6;
+			    const double * __restrict pR7 = vRow7;
+			    const double * __restrict pR8 = vRow8;
+			    const double * __restrict pR9 = vRow9;
+
+                 m_vRow1 = _mm256_load_pd(&pR1[0]);
+			     m_vRow2 = _mm256_load_pd(&pR2[0]);
+                 m_vRow3 = _mm256_load_pd(&pR3[0]);
+			     m_vRow4 = _mm256_load_pd(&pR4[0]);
+			     m_vRow5 = _mm256_load_pd(&pR5[0]);
+			     m_vRow6 = _mm256_load_pd(&pR6[0]);
+			     m_vRow7 = _mm256_load_pd(&pR7[0]);
+			     m_vRow8 = _mm256_load_pd(&pR8[0]);
+			     m_vRow9 = _mm256_load_pd(&pR9[0]);
+		    }
 
                   /*
                         Copy-Ctor
                   */
 		    
 		   __ATTR_ALWAYS_INLINE__
-		   __ATTR_HOT__
-		   __ATTR_ALIGN__(32)
-		   DCMatYMM4r8(const DCMatYMM4r8 &x) {
-                        m_vRow1 = x.m_vRow1;
-			m_vRow2 = x.m_vRow2;
-			m_vRow3 = x.m_vRow3;
-			m_vRow4 = x.m_vRow4;
-			m_vRow5 = x.m_vRow5;
-			m_vRow6 = x.m_vRow6;
-			m_vRow7 = x.m_vRow7;
-			m_vRow8 = x.m_vRow8;
-			m_vRow9 = x.m_vRow9;
+	      DCMatYMM4r8(const DCMatYMM4r8 &x) 
+		{
+             m_vRow1 = x.m_vRow1;
+			 m_vRow2 = x.m_vRow2;
+			 m_vRow3 = x.m_vRow3;
+			 m_vRow4 = x.m_vRow4;
+			 m_vRow5 = x.m_vRow5;
+			 m_vRow6 = x.m_vRow6;
+			 m_vRow7 = x.m_vRow7;
+			 m_vRow8 = x.m_vRow8;
+			 m_vRow9 = x.m_vRow9;
 
 		 }
 
-                 __ATTR_VECTORCALL__
-                 __ATTR_ALWAYS_INLINE__
-		 __ATTR_HOT__
-		 __ATTR_ALIGN__(32)
-		 DCMatYMM4r8 &
-		 DCM_compute_ymm4r8(  const __m256d vPhi,
+               
+           __ATTR_ALWAYS_INLINE__
+		   DCMatYMM4r8 &
+		   DCM_compute_ymm4r8(const __m256d vPhi,
 		                      const __m256d vTheta,
-				      const __m256d vPsi) {
-                      const __m256d sinRoll  = _mm256_sin_pd(vPhi);
+				              const __m256d vPsi)
+		  {
+              const __m256d sinRoll  = _mm256_sin_pd(vPhi);
 		      const __m256d cosRoll  = _mm256_sin_pd(vPhi);
-                      const __m256d sinPitch = _mm256_sin_pd(vTheta);
+              const __m256d sinPitch = _mm256_sin_pd(vTheta);
 		      const __m256d cosPitch = _mm256_cos_pd(vTheta);
 		      const __m256d sinYaw   = _mm256_sin_pd(vPsi);
 		      const __m256d cosYaw   = _mm256_cos_pd(vPsi);
@@ -339,7 +348,8 @@ namespace gms {
 		      m_vRow7 = _mm256_fmadd_pd(ct2,cosYaw,t3);
 		      m_vRow8 = _mm256_fmsub_pd(ct2,sinYaw,t4);
 		      m_vRow9 = _mm256_mul_pd(cosRoll,cosPitch);
-                      return (*this);
+
+              return (*this);
 		}
 
 
