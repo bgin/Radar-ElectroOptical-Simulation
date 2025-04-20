@@ -6,15 +6,15 @@
 
 namespace  file_info {
 
-    const unsigned int gGMS_MALLOC_MAJOR = 2U;
-    const unsigned int gGMS_MALLOC_MINOR = 1U;
-    const unsigned int gGMS_MALLOC_MICRO = 0U;
-    const unsigned int gGMS_MALLOC_FULLVER =
-      1000U*gGMS_MALLOC_MAJOR+100U*gGMS_MALLOC_MINOR+10U*gGMS_MALLOC_MICRO;
-    const char * const pgGMS_MALLOC_CREATE_DATE = "01-10-2019 19:14 +00200 (TUE 01 OCT 2019 GMT+2)";
-    const char * const pgGMS_MALLOC_BUILD_DATE  = __DATE__ ":" __TIME__;
-    const char * const pgGMS_MALLOC_AUTHOR      =  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
-    const char * const pgGMS_MALLOC_DESCRIPT    =  "Malloc wrappers.";
+    const unsigned int GMS_MALLOC_MAJOR = 2U;
+    const unsigned int GMS_MALLOC_MINOR = 1U;
+    const unsigned int GMS_MALLOC_MICRO = 0U;
+    const unsigned int GMS_MALLOC_FULLVER =
+      1000U*GMS_MALLOC_MAJOR+100U*GMS_MALLOC_MINOR+10U*GMS_MALLOC_MICRO;
+    const char * const GMS_MALLOC_CREATE_DATE = "01-10-2019 19:14 +00200 (TUE 01 OCT 2019 GMT+2)";
+    const char * const GMS_MALLOC_BUILD_DATE  = __DATE__ ":" __TIME__;
+    const char * const GMS_MALLOC_AUTHOR      =  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
+    const char * const GMS_MALLOC_DESCRIPT    =  "Malloc wrappers.";
 }
 
 #include <cstdint>
@@ -24,6 +24,9 @@ namespace  file_info {
 #include <assert>
 #include <omp.h> // OMP allocators
 #include <alloca.h>
+#if __cplusplus >= 201703L
+#include <memory_resource>
+#endif
 #include "GMS_error_macros.h"
 
 
@@ -169,7 +172,7 @@ namespace gms {
 		 }
 				          
 
-                __ATTR_COLD__
+        __ATTR_COLD__
 		__attribute__ ((malloc))
 		__attribute__ ((alloc_size(1)))
 		__attribute__ ((returns_nonnull))
@@ -233,10 +236,15 @@ namespace gms {
                      return (munmap(ptr,sizeof(T)*len));
 		}
 
+
+#if __cplusplus >= 201703L
+        
+      
+#endif
 	    
 		__ATTR_HOT__ 
 		template<typename T> 
-		void swap(T &a, T&b) 
+		void gms_swap(T &a, T&b) 
 		{
 			 T tmp = std::move(a);
 			 a     = std::move(b);
