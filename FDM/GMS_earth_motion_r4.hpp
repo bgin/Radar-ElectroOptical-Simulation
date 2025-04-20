@@ -46,7 +46,7 @@ namespace file_info {
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
 #if !defined (USE_GMS_EARTH_MOTION_R4_NT_STORES)
-#define USE_GMS_RIGID_BODY_EOM_R4_NT_STORES 0
+#define USE_GMS_EARTH_MOTION_R4_NT_STORES 0
 #endif
 
 namespace gms {
