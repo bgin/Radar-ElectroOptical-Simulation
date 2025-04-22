@@ -215,21 +215,21 @@ namespace  gms {
                                 std::size_t nybytes{size_nybytes()};
                                 std::size_t nzbytes{size_nzbytes()};
 
-                                this->mVx{reinterpret_cast<double __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mVy{reinterpret_cast<double __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mVz{reinterpret_cast<double __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mVx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mVy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mVz{reinterpret_cast<double * __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mAx{reinterpret_cast<double __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mAy{reinterpret_cast<double __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mAz{reinterpret_cast<double __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mAx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mAy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mAz{reinterpret_cast<double * __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mRx{reinterpret_cast<double __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mRy{reinterpret_cast<double __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mRz{reinterpret_cast<double __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mRx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mRy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mRz{reinterpret_cast<double * __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mOx{reinterpret_cast<double __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mOy{reinterpret_cast<double __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mOz{reinterpret_cast<double __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mOx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mOy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mOz{reinterpret_cast<double * __restrict>(gms_mm_malloc(nzbytes,64ULL))};
                           }
 
                           inline std::size_t size_nxbytes() const noexcept(true) 
