@@ -46,8 +46,8 @@ namespace file_info {
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
-#if !defined (USE_GMS_RIGID_BODY_EOM_R4_R4_NT_STORES)
-#define USE_GMS_RIGID_BODY_EOM_R4_R4_NT_STORES 0
+#if !defined (USE_GMS_RIGID_BODY_EOM_R4_NT_STORES)
+#define USE_GMS_RIGID_BODY_EOM_R4_NT_STORES 0
 #endif
 
 
@@ -215,21 +215,21 @@ namespace  gms {
                                 std::size_t nybytes{size_nybytes()};
                                 std::size_t nzbytes{size_nzbytes()};
 
-                                this->mVx{reinterpret_cast<float __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mVy{reinterpret_cast<float __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mVz{reinterpret_cast<float __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mVx{reinterpret_cast<float* __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mVy{reinterpret_cast<float* __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mVz{reinterpret_cast<float* __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mAx{reinterpret_cast<float __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mAy{reinterpret_cast<float __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mAz{reinterpret_cast<float __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mAx{reinterpret_cast<float* __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mAy{reinterpret_cast<float* __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mAz{reinterpret_cast<float* __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mRx{reinterpret_cast<float __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mRy{reinterpret_cast<float __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mRz{reinterpret_cast<float __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mRx{reinterpret_cast<float* __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mRy{reinterpret_cast<float* __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mRz{reinterpret_cast<float* __restrict>(gms_mm_malloc(nzbytes,64ULL))};
 
-                                this->mOx{reinterpret_cast<float __restrict*>(gms_mm_malloc(nxbytes,64ULL))};
-                                this->mOy{reinterpret_cast<float __restrict*>(gms_mm_malloc(nybytes,64ULL))};
-                                this->mOz{reinterpret_cast<float __restrict*>(gms_mm_malloc(nzbytes,64ULL))};
+                                this->mOx{reinterpret_cast<float* __restrict>(gms_mm_malloc(nxbytes,64ULL))};
+                                this->mOy{reinterpret_cast<float* __restrict>(gms_mm_malloc(nybytes,64ULL))};
+                                this->mOz{reinterpret_cast<float* __restrict>(gms_mm_malloc(nzbytes,64ULL))};
                           }
 
                           inline std::size_t size_nxbytes() const noexcept(true) 
@@ -290,4 +290,4 @@ namespace  gms {
 
 
 
-#endif /*__GMS_AIRCRAFT_POS3D_R4_HPP__*/
+#endif /*__GMS_RIGID_BODY_EOM_R4_HPP__*/
