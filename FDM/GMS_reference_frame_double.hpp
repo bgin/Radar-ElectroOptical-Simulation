@@ -147,65 +147,65 @@ namespace gms {
                              switch (fsize) 
                              {
                                 case 0: 
-                                    this->mFI_x   = (double __restrict*)
+                                    this->mFI_x   = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mFI_y   = (double __restrict*)
+                                    this->mFI_y   = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mFI_z   = (double __restrict*)
+                                    this->mFI_z   = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mdFI_x  = (double __restrict*)
+                                    this->mdFI_x  = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mdFI_y  = (double __restrict*)
+                                    this->mdFI_y  = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mdFI_z  = (double __restrict*)
+                                    this->mdFI_z  = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mddFI_x = (double __restrict*)
+                                    this->mddFI_x = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mddFI_y = (double __restrict*)
+                                    this->mddFI_y = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mddFI_z = (double __restrict*)
+                                    this->mddFI_z = (double* __restrict)
                                                    gms_mmap_4KiB<double>(this->mnz,prot,flags,fd,offset);
                                     this->mismmap = true;
                                     break;
                                 case 1:
-                                    this->mFI_x   = (double __restrict*)
+                                    this->mFI_x   = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mFI_y   = (double __restrict*)
+                                    this->mFI_y   = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mFI_z   = (double __restrict*)
+                                    this->mFI_z   = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mdFI_x  = (double __restrict*)
+                                    this->mdFI_x  = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mdFI_y  = (double __restrict*)
+                                    this->mdFI_y  = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mdFI_z  = (double __restrict*)
+                                    this->mdFI_z  = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mddFI_x = (double __restrict*)
+                                    this->mddFI_x = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mddFI_y = (double __restrict*)
+                                    this->mddFI_y = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mddFI_z = (double __restrict*)
+                                    this->mddFI_z = (double* __restrict)
                                                    gms_mmap_2MiB<double>(this->mnz,prot,flags,fd,offset);
                                     this->mismmap = true; 
                                     break;
                                 case 2:
-                                    this->mFI_x   = (double __restrict*)
+                                    this->mFI_x   = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mFI_y   = (double __restrict*)
+                                    this->mFI_y   = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mFI_z   = (double __restrict*)
+                                    this->mFI_z   = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mdFI_x  = (double __restrict*)
+                                    this->mdFI_x  = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mdFI_y  = (double __restrict*)
+                                    this->mdFI_y  = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mdFI_z  = (double __restrict*)
+                                    this->mdFI_z  = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnz,prot,flags,fd,offset);
-                                    this->mddFI_x = (double __restrict*)
+                                    this->mddFI_x = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnx,prot,flags,fd,offset);
-                                    this->mddFI_y = (double __restrict*)
+                                    this->mddFI_y = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mny,prot,flags,fd,offset);
-                                    this->mddFI_z = (double __restrict*)
+                                    this->mddFI_z = (double* __restrict)
                                                    gms_mmap_1GiB<double>(this->mnz,prot,flags,fd,offset);
                                     this->mismmap = true;  
                                     break;
@@ -310,23 +310,23 @@ namespace gms {
                               std::size_t nxbytes{size_nxbytes()};
                               std::size_t nybytes{size_nybytes()};
                               std::size_t nzbytes{size_nzbytes()};
-                              this->mFI_x         = (double __restrict*)
+                              this->mFI_x         = (double* __restrict)
                                               gms_mm_malloc( nxbytes,64ULL);
-                              this->mFI_y         = (double __restrict*)
+                              this->mFI_y         = (double* __restrict)
                                               gms_mm_malloc( nybytes,64ULL);
-                              this->mFI_z         = (double __restrict*)
+                              this->mFI_z         = (double* __restrict)
                                               gms_mm_malloc( nzbytes,64ULL);
-                              this->mdFI_x        = (double __restrict*)
+                              this->mdFI_x        = (double* __restrict)
                                               gms_mm_malloc( nxbytes,64ULL);
-                              this->mdFI_y        = (double __restrict*)
+                              this->mdFI_y        = (double* __restrict)
                                               gms_mm_malloc( nybytes,64ULL);
-                              this->mdFI_z        = (double __restrict*)
+                              this->mdFI_z        = (double* __restrict)
                                               gms_mm_malloc( nzbytes,64ULL);
-                              this->mddFI_x       = (double __restrict*)
+                              this->mddFI_x       = (double* __restrict)
                                               gms_mm_malloc( nxbytes,64ULL);     
-                              this->mddFI_y       = (double __restrict*)
+                              this->mddFI_y       = (double* __restrict)
                                               gms_mm_malloc( nybytes,64ULL);
-                              this->mddFI_z       = (double __restrict*)
+                              this->mddFI_z       = (double* __restrict)
                                               gms_mm_malloc( nzbytes,64ULL);
                       }
 
