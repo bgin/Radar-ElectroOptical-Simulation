@@ -92,6 +92,23 @@ namespace gms {
                                  gms_mm_free(this->mdRw); this->mdRw = NULL;
                           }
 
+                          DerivAerodynAngles_r8_t & 
+                          operator=(const DerivAerodynAngles_r8_t &) = delete;
+                          
+                          
+                          inline DerivAerodynAngles_r8_t &
+                          operator=(DerivAerodynAngles_r8_t && rhs) noexcept(true)
+                          {
+                                using namespace gms::common;
+                                if(this==&rhs) return (*this);
+                                gms_swap(this->mn,   rhs.mn);
+                                gms_swap(this->mdPw, rhs.mdPw);
+                                gms_swap(this->mdQw, rhs.mdQw);
+                                gms_swap(this->mdRw, rhs.mdRw);
+
+                                return (*this);
+                          }
+
 
                           inline std::size_t size_mnbytes() const noexcept(true)
                           {
@@ -124,21 +141,21 @@ namespace gms {
                               fprintf(fp,"Writing content of array mdPw[%d] to file: %s, status: started\n\n",this->mn,fname);
                               for(std::size_t i = 0ULL; i != this->mn; ++i)
                               {
-                                  fprintf(fp, "mdPhi[%llu,%d] = %2.9f\n",i,this->mn,this->mdPw[i]);
+                                  fprintf(fp, "mdPw[%llu,%d] = %2.9f\n",i,this->mn,this->mdPw[i]);
                               }
                               fprintf(fp,"\n\n");
                               
                               fprintf(fp,"Writing content of array mdQw[%d] to file: %s, status: started\n\n",this->mn,fname);
                               for(std::size_t i = 0ULL; i != this->mn; ++i)
                               {
-                                  fprintf(fp, "mdTht[%llu,%d] = %2.9f\n",i,this->mn,this->mdQw[i]);
+                                  fprintf(fp, "mdQw[%llu,%d] = %2.9f\n",i,this->mn,this->mdQw[i]);
                               }
                               fprintf(fp,"\n\n");
 
                               fprintf(fp,"Writing content of array mdRw[%d] to file: %s, status: started\n\n",this->mn,fname);
                               for(std::size_t i = 0ULL; i != this->mn; ++i)
                               {
-                                  fprintf(fp, "mdPsi[%llu,%d] = %2.9f\n",i,this->mn,this->mdRw[i]);
+                                  fprintf(fp, "mdRw[%llu,%d] = %2.9f\n",i,this->mn,this->mdRw[i]);
                               }
                               fprintf(fp,"\n\n");
 
