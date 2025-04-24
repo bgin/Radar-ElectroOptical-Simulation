@@ -19,7 +19,7 @@ SOFTWARE.
 */
 
 #ifndef __GMS_EULER_MATRIX_R4_HPP__
-#define __GMS_EULER_MATRIX_R4_HPP__
+#define __GMS_EULER_MATRIX_R4_HPP__ 220420251232
 
 namespace file_info {
 
@@ -58,7 +58,7 @@ namespace gms {
                               During this class instantiation the proper type will be named and
                               the standalone vectorized procedures will compute the results.
                         */
-                       struct __ATTR_ALIGN__(64) EulerMatrix_r4_t 
+                       struct __ATTR_ALIGN__(64) EulerMatrix_r4_t
                        {
                               float * __restrict mr1;
                               float * __restrict mr2;
