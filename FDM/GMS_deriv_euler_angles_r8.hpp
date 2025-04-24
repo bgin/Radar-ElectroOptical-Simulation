@@ -91,6 +91,20 @@ namespace gms {
                                  gms_mm_free(this->mdPhi); this->mdPhi = NULL;
                           }
 
+                          DerivEulerAngles_r8_t & operator=(const DerivEulerAngles_r4_t &) = delete;
+
+                          inline DerivEulerAngles_r8_t & operator=(DerivEulerAngles_r4_t && rhs) noexcept(true)
+                          {
+                                 using namespace gms::common;
+                                 if(this==&rhs) return (*this);
+                                 gms_swap(this->mn,    rhs.mn);
+                                 gms_swap(this->mdPhi, rhs.mdPhi);
+                                 gms_swap(this->mdTht, rhs.mdTht);
+                                 gms_swap(this->mdPsi, rhs.mdPsi);
+
+                                 return (*this);
+                          }
+
 
                           inline std::size_t size_mnbytes() const noexcept(true)
                           {

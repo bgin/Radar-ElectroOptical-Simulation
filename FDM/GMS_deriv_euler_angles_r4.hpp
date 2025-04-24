@@ -19,7 +19,7 @@ SOFTWARE.
 */
 
 #ifndef __GMS_DERIV_EULER_ANGLES_R4_HPP__
-#define __GMS_DERIV_EULER_ANGLES_R4_HPP__ 200420251318
+#define __GMS_DERIV_EULER_ANGLES_R4_HPP__ 240420250749
 
 namespace file_info {
 
@@ -88,6 +88,20 @@ namespace gms {
                                  gms_mm_free(this->mdPsi); this->mdPsi = NULL;
                                  gms_mm_free(this->mdTht); this->mdTht = NULL;
                                  gms_mm_free(this->mdPhi); this->mdPhi = NULL;
+                          }
+
+                          DerivEulerAngles_r4_t & operator=(const DerivEulerAngles_r4_t &) = delete;
+
+                          inline DerivEulerAngles_r4_t & operator=(DerivEulerAngles_r4_t && rhs) noexcept(true)
+                          {
+                                 using namespace gms::common;
+                                 if(this==&rhs) return (*this);
+                                 gms_swap(this->mn,    rhs.mn);
+                                 gms_swap(this->mdPhi, rhs.mdPhi);
+                                 gms_swap(this->mdTht, rhs.mdTht);
+                                 gms_swap(this->mdPsi, rhs.mdPsi);
+
+                                 return (*this);
                           }
 
 
