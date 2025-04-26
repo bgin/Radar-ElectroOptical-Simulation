@@ -1,0 +1,138 @@
+
+/*MIT License
+Copyright (c) 2020 Bernard Gingold
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+#ifndef __GMS_VEHICLE_EIA_R4_HPP__
+#define __GMS_VEHICLE_EIA_R4_HPP__
+
+
+namespace file_info {
+
+     const unsigned int GMS_VEHICLE_EIA_R4_MAJOR = 1;
+     const unsigned int GMS_VEHICLE_EIA_R4_MINOR = 1;
+     const unsigned int GMS_VEHICLE_EIA_R4_MICRO = 0;
+     const unsigned int GMS_VEHICLE_EIA_R4_FULLVER =
+       1000U*GMS_VEHICLE_EIA_R4_MAJOR+100U*GMS_VEHICLE_EIA_R4_MINOR+
+       10U*GMS_VEHICLE_EIA_R4_MICRO;
+     const char * const GMS_VEHICLE_EIA_R4_CREATION_DATE = "26-04-2025 10:51  +00200 (SAT 24 APR 2025 GMT+2)";
+     const char * const GMS_VEHICLE_EIA_R4_BUILD_DATE    = __DATE__ " " __TIME__;
+     const char * const GMS_VEHICLE_EIA_R4_SYNOPSIS      = "Dynamically allocated, 64-byte aligned Vehicle's Inertial Acceleration Equations (single-precision) type.";
+
+}
+
+#include <cstdint>
+#include <immintrin.h>
+#include <cstdlib>
+#include "GMS_config.h"
+#include "GMS_malloc.h"
+
+
+// Enable non-temporal stores for this class only( used with free-standing operators)
+// defaulted to 0.
+#if !defined (USE_GMS_VEHICLE_EIA_R4_NT_STORES)
+#define USE_GMS_VEHICLE_EIA_R4_NT_STORES 0
+#endif
+
+
+namespace gms 
+{
+
+       namespace fdm
+       {
+              
+                struct __ATTR_ALIGN__(64) VehicleEIA_r4_t final 
+                {
+                       float * __restrict mAxv;  //acceleration component: xv.
+                       float * __restrict mAyv;  //acceleration component: yv.
+                       float * __restrict mAzv;  //acceleration component: zv 
+                       std::size_t        mn;
+#if (USE_STRUCT_PADDING) == 1
+                        PAD_TO(0,32)
+#endif                      
+
+                        VehicleEIA_r4_t() = delete;
+
+                        inline VehicleEIA_r4_t(const std::size_t n) noexcept(false)
+                        {
+                              assert(n>0);
+                              this->mn = n;
+                              this->allocate();
+                        }   
+
+                        VehicleEIA_r4_t(const VehicleEIA_r4_t &) = delete;
+
+                        inline VehicleEIA_r4_t(VehicleEIA_r4_t && rhs) noexcept(true)
+                        {
+                               this->mn   = rhs.mn;
+                               this->mAxv = &rhs.mAxv[0];
+                               this->mAyv = &rhs.mAyv[0];
+                               this->mAzv = &rhs.mAzv[0];
+                        }
+
+                        inline ~VehicleEIA_r4_t() noexcept(true)
+                        {
+                               using namespace gms::common;
+                               gms_mm_free(this->mAzv); this->mAzv = NULL;
+                               gms_mm_free(this->mAyv); this->mAyv = NULL;
+                               gms_mm_free(this->mAzv); this->mAzv = NULL;
+                               this->mn = 0ULL;
+                        }
+
+                        VehicleEIA_r4_t & operator=(const VehicleEIA_r4_t &) = delete;
+
+                        inline VehicleEIA_r4_t & operator=(VehicleEIA_r4_t && rhs) noexcept(true)
+                        {
+                               using namespace gms::common;
+                               if(this==&rhs) return (*this);
+
+                               gms_swap(this->mn,  rhs.mn);
+                               gms_swap(this->mAxv,rhs.mAxv);
+                               gms_swap(this->mAyv,rhs.mAyv);
+                               gms_swap(this->mAzv,rhs.mAzv);
+                               
+                               return (*this);
+                        }
+
+                        inline std::size_t size_mnbytes() const noexcept(true)
+                        {
+                              return static_cast<std::size_t>(this->mn*sizeof(float));
+                        }
+
+                        inline void allocate() noexcept(false)
+                        {
+                               using namespace gms::common;
+                               const std::size_t mnbytes{size_mnbytes()};
+                               this->mAxv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               this->mAyv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               this->mAzv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                        }
+                };
+       } //fdm
+       
+} // gms
+
+
+
+
+
+
+
+
+
+#endif /*__GMS_VEHICLE_EIA_R4_HPP__*/
