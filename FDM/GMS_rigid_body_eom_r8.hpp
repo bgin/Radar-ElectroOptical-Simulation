@@ -103,6 +103,9 @@ namespace  gms {
                                                   const double       Ay0,
                                                   const double       Az0) noexcept(false)
                           {
+                               assert(nx>0ULL);
+                               assert(ny>0ULL);
+                               assert(nz>0ULL);
                                this->mnx  = nx;
                                this->mny  = ny;
                                this->mnz  = nz;
