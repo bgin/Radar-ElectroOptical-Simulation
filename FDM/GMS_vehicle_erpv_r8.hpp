@@ -41,8 +41,6 @@ namespace file_info {
 #include <cstdint>
 #include <immintrin.h>
 #include <cstdlib>
-#include <cstdio>
-#include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 
@@ -57,15 +55,18 @@ namespace gms {
 
         namespace fdm {
 
-                      /* Bernard Etkin, "Dynamics of Atmospheric Flight, formulae: 5.3.1, page: 129"*/
+                      /* Bernard Etkin, "Dynamics of Atmospheric Flight, formulae: 5.3.1, 5.3.4 page: 129"*/
                      struct __ATTR_ALIGN__(64) VehicleERPV_r8_t 
                      {
                             double * __restrict mdR;    //  1st derivative of geocentric radius
                             double * __restrict mdLon;   // 1st derivative of longtitude, i.e. mu
                             double * __restrict mdLat;   // 1st derivative of latitude,   i.e. lambda
+                            double * __restrict mVxv;   // velocity component at xv.
+                            double * __restrict mVyv;   // velocity component at yv.
+                            double * __restrict mVzv;   // velocity component at zv.
                             std::size_t        mn;
 #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,32)
+                        PAD_TO(0,38)
 #endif                        
                             VehicleERPV_r8_t() = delete;
 
@@ -84,14 +85,21 @@ namespace gms {
                                    this->mdR    = &rhs.mdR[0];
                                    this->mdLon  = &rhs.mdLon[0];
                                    this->mdLat  = &rhs.mdLat[0];
+                                   this->mVxv   = &rhs.mVxv[0];
+                                   this->mVyv   = &rhs.mVyv[0];
+                                   this->mVzv   = &rhs.mVzv[0];
                             } 
 
                             inline ~VehicleERPV_r8_t() noexcept(true)
                             {
                                 using namespace gms::common;
+                                gms_mm_free(this->mVzv);  this->mVzv  = NULL;
+                                gms_mm_free(this->mVyv);  this->mVyv  = NULL;
+                                gms_mm_free(this->mVxv);  this->mVxv  = NULL;
                                 gms_mm_free(this->mdLat); this->mdLat = NULL;
                                 gms_mm_free(this->mdLon); this->mdLon = NULL;
                                 gms_mm_free(this->mdR);   this->mdR   = NULL;
+                                this->mn = 0ULL;
                             }
 
                             VehicleERPV_r8_t & operator=(const VehicleERPV_r8_t &) = delete;
@@ -100,11 +108,14 @@ namespace gms {
                             {
                                   using namespace gms::common;
                                   if(this==&rhs) return (*this);
+
                                   gms_swap(this->mn,    rhs.mn);
                                   gms_swap(this->mdR,   rhs.mdR);
                                   gms_swap(this->mdLon, rhs.mdLon);
                                   gms_swap(this->mdLat, rhs.mdLat);
-
+                                  gms_swap(this->mVxv,  rhs.mVxv);
+                                  gms_swap(this->mVyv,  rhs.mVyv);
+                                  gms_swap(this->mVzv,  rhs.mVzv);
                                   return (*this);
                             }
 
@@ -120,48 +131,12 @@ namespace gms {
                                this->mdR{  reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLon{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLat{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               this->mVxv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               this->mVyv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               this->mVzv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                             } 
 
-                           bool dump_state_to_file(const char * fname) const noexcept(false)
-                           {
-                              assert(fname != nullptr);
-                              File * fp = nullptr;
-                              bool b_result;
-
-                              fp = std::fopen(fname,"w");
-                              if(!fp)
-                              {
-                                  std::printf("[%s]: failed to open a file: %s\n",__PRETTY_FUNCTION__,fname);
-                                  b_result = false;
-                                  return b_result;
-                              }
-
-                              fprintf(fp,"Writing content of array mdPw[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdR[%llu,%d] = %2.9f\n",i,this->mn,this->mdR[i]);
-                              }
-                              fprintf(fp,"\n\n");
-                              
-                              fprintf(fp,"Writing content of array mdLon[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdLon[%llu,%d] = %2.9f\n",i,this->mn,this->mdLon[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp,"Writing content of array mdLat[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdLat[%llu,%d] = %2.9f\n",i,this->mn,this->mdLat[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp, "Finished writing a content to file: %s\n", fname);
-                              fclose(fp);
-                              b_result = true;
-                              return b_result;
-                         }             
+                         
                 };
         }
 }
