@@ -42,7 +42,9 @@ namespace file_info {
 #include <cstdlib>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -55,7 +57,7 @@ namespace gms {
         namespace fdm {
 
                       /* Bernard Etkin, "Dynamics of Atmospheric Flight, formulae: 5.3.1, 5.3.4 page: 129"*/
-                     struct __ATTR_ALIGN__(64) VehicleERPV_r4_t 
+                     struct __ATTR_ALIGN__(64) VehicleERPV_r4_t final 
                      {
                             float * __restrict mdR;    //  1st derivative of geocentric radius
                             float * __restrict mdLon;   // 1st derivative of longtitude, i.e. mu
@@ -74,7 +76,13 @@ namespace gms {
                             {
                                    assert(n>0);
                                    this->mn = n;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                
                                    this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif 
                             }   
 
                             VehicleERPV_r4_t(const VehicleERPV_r4_t &) = delete;
