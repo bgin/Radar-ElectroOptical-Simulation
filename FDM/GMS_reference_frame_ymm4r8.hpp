@@ -115,6 +115,7 @@ namespace gms {
                                                      const double orig_z,
                                                      const double dt) noexcept(false)
                        {
+                             assert(nx>0ULL && ny>0ULL && nz>0ULL);
                              this->mnx     = nx;
                              this->mny     = ny;
                              this->mnz     = nz;
@@ -140,6 +141,7 @@ namespace gms {
                                                      const int32_t fsize) noexcept(false)
                         {
                              using namespace gms::common;
+                             assert(nx>0ULL && ny>0ULL && nz>0ULL);
                              this->mnx = nx;
                              this->mny = ny;
                              this->mnz = nz;

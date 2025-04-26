@@ -105,13 +105,15 @@ namespace gms {
                        }     
 
                        inline ReferenceFrame_zmm16r4_t (const std::size_t nx,
-                                                       const std::size_t ny,
+                                                        const std::size_t ny,
+                                                        const std::size_t nz,
                                                        const float       orig_x,
                                                        const float       orig_y,
                                                        const float       orig_z,
                                                        const std::size_t nz,
                                                        const float dt) noexcept(false)
                        {
+                             assert(nx>0ULL && ny>0ULL && nz>0ULL);
                              this->mnx     = nx;
                              this->mny     = ny;
                              this->mnz     = nz;
@@ -137,6 +139,7 @@ namespace gms {
                                                        const int32_t     fsize) noexcept(false)
                         {
                              using namespace gms::common;
+                             assert(nx>0ULL && ny>0ULL && nz>0ULL);
                              this->mnx = nx;
                              this->mny = ny;
                              this->mnz = nz;
