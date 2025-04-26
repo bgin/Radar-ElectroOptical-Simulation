@@ -20,7 +20,7 @@ SOFTWARE.
 */
 
 #ifndef __GMS_VEHICLE_ERPV_R4_HPP__
-#define __GMS_VEHICLE_ERPV_R4_HPP__
+#define __GMS_VEHICLE_ERPV_R4_HPP__ 240420250951
 
 
 namespace file_info {
@@ -70,7 +70,7 @@ namespace gms {
 
                             inline explicit (const std::size_t n) noexcept(true)
                             {
-                                   assert(n>0, "n<=0")
+                                   assert(n>0);
                                    this->mn = n;
                                    this->allocate();
                             }   
@@ -123,7 +123,7 @@ namespace gms {
 
                            bool dump_state_to_file(const char * fname) const noexcept(false)
                            {
-                              assert(fname != nullptr, "Null-pointer!!");
+                              assert(fname != nullptr);
                               File * fp = nullptr;
                               bool b_result;
 
