@@ -21,12 +21,12 @@ namespace  file_info {
 #include <malloc.h>
 #include <sys/mman.h>
 #include <linux/mman.h>
-#include <assert>
+#include <cassert>
 #include <omp.h> // OMP allocators
 #include <alloca.h>
-#if __cplusplus >= 201703L
-#include <memory_resource>
-#endif
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+#include "tbb/scalable_allocator.h"
+#endif 
 #include "GMS_error_macros.h"
 
 
@@ -74,7 +74,7 @@ namespace gms {
                Modified: 30-08-2021 09:44AM +00200
             */
 
-            __ATTR_ALWAYS_INLINE__
+        __ATTR_ALWAYS_INLINE__
 	    __ATTR_ALIGN__(32)
 	    std::size_t
 	    add_cacheline_pad_float(const std::size_t len) {
@@ -102,12 +102,12 @@ namespace gms {
 	      __attribute__ ((malloc))
 	      __attribute__ ((returns_nonnull))
 	      __attribute__ ((assume_aligned(64)))
-	      __attribute__ ((alloc_size(1)));
-              void * gms_mm_malloc(const std::size_t len,
+	      __attribute__ ((alloc_size(1)))
+          void * gms_mm_malloc(const std::size_t len,
 	                           const std::size_t alignment) {
 
 		     void * __restrict ptr = NULL;
-	             ptr = _mm_malloc(len, alignment));
+	         ptr = _mm_malloc(len, alignment));
                      if (NULL == ptr && len != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                 std::cerr << " Not implemented yet!!";
@@ -123,6 +123,36 @@ namespace gms {
                    _mm_free(ptr);
 	      }
 
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+		  /*TBB-based allocators*/
+          __ATTR_COLD__
+	      __attribute__ ((malloc))
+	      __attribute__ ((returns_nonnull))
+	      __attribute__ ((assume_aligned(64)))
+	      __attribute__ ((alloc_size(1)))
+		  void * __restrict gms_tbb_malloc(const std::size_t nbytes,
+		                        const std::size_t alignment)
+		  {
+			     assert(nbytes>0);
+				 void * __restrict ptr = NULL;
+                 ptr                   = scalable_aligned_malloc(nbytes,alignment);
+				 if (NULL == ptr && nbytes != 0ULL) {
+#if (PRINT_CALLSTACK_ON_ERROR) == 1
+	                 std::cerr << " Not implemented yet!!";
+#endif
+	                 ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+	            }
+				return ptr;
+		  }
+
+		   __ATTR_COLD__
+		   void gms_tbb_free(void * __restrict ptr)
+		   {
+			    if(ptr == NULL) return;
+				scalable_aligned_free(ptr);
+		   }
+
+#endif 
 
 #define ALIGNED_ALLOCA(p, s, a) { \
   char *c_ptr = alloca((s) + (a)); \
@@ -237,10 +267,7 @@ namespace gms {
 		}
 
 
-#if __cplusplus >= 201703L
-        
-      
-#endif
+
 	    
 		__ATTR_HOT__ 
 		template<typename T> 
