@@ -215,8 +215,12 @@ Compiler optimization settings.
    Current build machine CPU type.
 */
 #if !defined (MACHINE_CPU_NAME)
-#define MACHINE_CPU_NAME "Intel Core i7 4770 HQ"
+#define MACHINE_CPU_NAME "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz"
 #endif
+
+#if !defined(USE_TBB_MEM_ALLOCATORS)
+#define USE_TBB_MEM_ALLOCATORS 0
+#endif 
 
 /*
 Using OpenMP.
