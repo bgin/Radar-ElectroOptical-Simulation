@@ -43,7 +43,9 @@ namespace file_info {
 #include <cstdlib>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -56,7 +58,7 @@ namespace gms {
         namespace fdm {
 
                       /* Bernard Etkin, "Dynamics of Atmospheric Flight, formulae: 5.3.1, 5.3.4 page: 129"*/
-                     struct __ATTR_ALIGN__(64) VehicleERPV_r8_t 
+                     struct __ATTR_ALIGN__(64) VehicleERPV_r8_t final 
                      {
                             double * __restrict mdR;    //  1st derivative of geocentric radius
                             double * __restrict mdLon;   // 1st derivative of longtitude, i.e. mu
@@ -66,7 +68,7 @@ namespace gms {
                             double * __restrict mVzv;   // velocity component at zv.
                             std::size_t        mn;
 #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,38)
+                        PAD_TO(0,8)
 #endif                        
                             VehicleERPV_r8_t() = delete;
 
@@ -74,7 +76,13 @@ namespace gms {
                             {
                                    assert(n>0);
                                    this->mn = n;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                     
                                    this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                                    
                             }   
 
                             VehicleERPV_r8_t(const VehicleERPV_r8_t &) = delete;
@@ -128,12 +136,21 @@ namespace gms {
                             {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1 
+                               this->mdR{  reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mdLon{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mdLat{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVxv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVyv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVzv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+#else
                                this->mdR{  reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLon{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLat{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVxv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVyv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVzv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+#endif
                             } 
 
                          
