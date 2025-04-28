@@ -112,6 +112,17 @@ namespace gms {
                               inline ~EulerMatrix_r4_t() noexcept(true)
                               {
                                   using namespace gms::common;
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                                  gms_tbb_free(this->mr9); this->mr9 = NULL;
+                                  gms_tbb_free(this->mr8); this->mr8 = NULL;
+                                  gms_tbb_free(this->mr7); this->mr7 = NULL;
+                                  gms_tbb_free(this->mr6); this->mr6 = NULL;
+                                  gms_tbb_free(this->mr5); this->mr5 = NULL;
+                                  gms_tbb_free(this->mr4); this->mr4 = NULL;
+                                  gms_tbb_free(this->mr3); this->mr3 = NULL;
+                                  gms_tbb_free(this->mr2); this->mr2 = NULL;
+                                  gms_tbb_free(this->mr1); this->mr1 = NULL;
+#else
                                   gms_mm_free(this->mr9); this->mr9 = NULL;
                                   gms_mm_free(this->mr8); this->mr8 = NULL;
                                   gms_mm_free(this->mr7); this->mr7 = NULL;
@@ -121,6 +132,7 @@ namespace gms {
                                   gms_mm_free(this->mr3); this->mr3 = NULL;
                                   gms_mm_free(this->mr2); this->mr2 = NULL;
                                   gms_mm_free(this->mr1); this->mr1 = NULL;
+#endif
                               }
 
                               EulerMatrix_r4_t & operator=(const EulerMatrix_r4_t &) = delete;
@@ -153,6 +165,17 @@ namespace gms {
                               {
                                    using namespace gms::common;
                                    const std::size_t mnbytes{size_mnbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                                   this->mr1{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr2{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr3{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr4{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr5{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr6{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr7{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr8{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+                                   this->mr9{reinterpret_cast<float * __restrict>(gmns_tbb_malloc(mnbytes,64ULL))};
+#else
                                    this->mr1{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
                                    this->mr2{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
                                    this->mr3{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
@@ -162,6 +185,7 @@ namespace gms {
                                    this->mr7{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
                                    this->mr8{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
                                    this->mr9{reinterpret_cast<float * __restrict>(gmns_mm_malloc(mnbytes,64ULL))};
+#endif
                                    
                               }  
                                  
