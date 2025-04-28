@@ -41,7 +41,9 @@ namespace file_info {
 #include <array>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -80,7 +82,13 @@ namespace gms {
                                                       const std::array<char,6> seq) noexcept(false)
                               {
                                     this->mn   = n;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                       
                                     this->allocate();
+   #if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                                  
                                     this->mseq = seq;
                               }   
 
