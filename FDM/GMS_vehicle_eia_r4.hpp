@@ -41,7 +41,9 @@ namespace file_info {
 #include <cstdlib>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -72,7 +74,13 @@ namespace gms
                         {
                               assert(n>0);
                               this->mn = n;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                
                               this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                              
                         }   
 
                         VehicleEIA_r4_t(const VehicleEIA_r4_t &) = delete;
@@ -88,9 +96,15 @@ namespace gms
                         inline ~VehicleEIA_r4_t() noexcept(true)
                         {
                                using namespace gms::common;
+#if (USE_TBB_MEM_ALLOCATORS) == 1 
+                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
+                               gms_tbb_free(this->mAyv); this->mAyv = NULL;
+                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
+#else
                                gms_mm_free(this->mAzv); this->mAzv = NULL;
                                gms_mm_free(this->mAyv); this->mAyv = NULL;
                                gms_mm_free(this->mAzv); this->mAzv = NULL;
+#endif
                                this->mn = 0ULL;
                         }
 
@@ -118,9 +132,15 @@ namespace gms
                         {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                               this->mAxv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mAyv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mAzv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+#else
                                this->mAxv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mAyv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mAzv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+#endif
                         }
                 };
        } //fdm
