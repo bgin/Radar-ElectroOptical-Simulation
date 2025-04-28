@@ -24,9 +24,7 @@ namespace  file_info {
 #include <cassert>
 #include <omp.h> // OMP allocators
 #include <alloca.h>
-#if (USE_TBB_MEM_ALLOCATORS) == 1
 #include "tbb/scalable_allocator.h"
-#endif 
 #include "GMS_error_macros.h"
 
 
@@ -123,7 +121,7 @@ namespace gms {
                    _mm_free(ptr);
 	      }
 
-#if (USE_TBB_MEM_ALLOCATORS) == 1
+
 		  /*TBB-based allocators*/
           __ATTR_COLD__
 	      __attribute__ ((malloc))
@@ -152,7 +150,7 @@ namespace gms {
 				scalable_aligned_free(ptr);
 		   }
 
-#endif 
+
 
 #define ALIGNED_ALLOCA(p, s, a) { \
   char *c_ptr = alloca((s) + (a)); \
@@ -278,9 +276,67 @@ namespace gms {
 			 b     = std::move(tmp);
 		}
 
+		/* TBB Memory Pool class.*/
 
-	}
+#ifndef TBB_PREVIEW_MEMORY_POOL
+#define TBB_PREVIEW_MEMORY_POOL
+#endif 
+#include <type_traits>
+#include <concepts>
+#include <memory>
+#include "oneapi/tbb/scalable_allocator.h"
+#include "oneapi/tbb/memory_pool.h"
+             
+              
+#if __cplusplus >= 201703L			     
+			     /*Slightly modified from the tit/core/par/memory_pool.h*/
+			     template<typename T>
+				 requires std::is_object_v<T> && std::is_trivially_destructible_v<T>
+				 struct TbbMemoryPool final 
+				 {
+                       
+                       public:
+
+                       template<typename... Args>
+					   requires std::constructible_from<T, Args&&...>
+                       auto create_mem_pool(Args&&... args)->T* __restrict noexcept(false)
+					   {
+						   assert(m_pool != nullptr);
+						   auto * __restrict const ptr = 
+						             static_cast<T* __restrict>(m_pool->malloc(sizeof(T)));
+						   if (nullptr == ptr) {
+#if (PRINT_CALLSTACK_ON_ERROR) == 1
+	                           std::cerr << " Not implemented yet!!";
+#endif
+	                           ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+	                       }
+
+						   return std::construct_at(ptr,std::forward<Args>(args)...);
+					   }
+					   private:
+
+					   std::unique_ptr<tbb::memory_pool<tbb::scalable_allocator<T>>> m_pool = 
+					   std::make_unique<typename decltype(m_pool)::element_type();
+				 };
+#endif
+				 /*example of usage*/
+				 /*
+				       TEST_CASE("par::MemoryPool") {
+                       struct Struct {
+                         int data_1;
+                         int data_2;
+                       };
+                      par::MemoryPool<Struct> pool{};
+                      auto* const root = pool.create(10, 20);
+                     CHECK(root->data_1 == 10);
+                     CHECK(root->data_2 == 20);
 }
+
+				 */
+
+
+	} // common
+} // gms
 
 
 #endif /*__GMS_MALLOC_H__*/
