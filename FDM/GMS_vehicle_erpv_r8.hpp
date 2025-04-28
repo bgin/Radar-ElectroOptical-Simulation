@@ -101,12 +101,21 @@ namespace gms {
                             inline ~VehicleERPV_r8_t() noexcept(true)
                             {
                                 using namespace gms::common;
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                                gms_tbb_free(this->mVzv);  this->mVzv  = NULL;
+                                gms_tbb_free(this->mVyv);  this->mVyv  = NULL;
+                                gms_tbb_free(this->mVxv);  this->mVxv  = NULL;
+                                gms_tbb_free(this->mdLat); this->mdLat = NULL;
+                                gms_tbb_free(this->mdLon); this->mdLon = NULL;
+                                gms_tbb_free(this->mdR);   this->mdR   = NULL;
+#else 
                                 gms_mm_free(this->mVzv);  this->mVzv  = NULL;
                                 gms_mm_free(this->mVyv);  this->mVyv  = NULL;
                                 gms_mm_free(this->mVxv);  this->mVxv  = NULL;
                                 gms_mm_free(this->mdLat); this->mdLat = NULL;
                                 gms_mm_free(this->mdLon); this->mdLon = NULL;
                                 gms_mm_free(this->mdR);   this->mdR   = NULL;
+#endif 
                                 this->mn = 0ULL;
                             }
 
