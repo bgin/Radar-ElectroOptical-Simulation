@@ -97,9 +97,15 @@ namespace gms
                         inline ~VehicleEIA_r8_t() noexcept(true)
                         {
                                using namespace gms::common;
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
+                               gms_tbb_free(this->mAyv); this->mAyv = NULL;
+                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
+#else
                                gms_mm_free(this->mAzv); this->mAzv = NULL;
                                gms_mm_free(this->mAyv); this->mAyv = NULL;
                                gms_mm_free(this->mAzv); this->mAzv = NULL;
+#endif
                                this->mn = 0ULL;
                         }
 
@@ -127,9 +133,15 @@ namespace gms
                         {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                               this->mAxv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mAyv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mAzv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+#else
                                this->mAxv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mAyv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mAzv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+#endif
                         }
                 };
        } //fdm
