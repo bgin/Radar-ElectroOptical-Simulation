@@ -37,11 +37,12 @@ namespace file_info {
 #include <cstdint>
 #include <immintrin.h>
 #include <cstdlib>
-#include <cstdio>
 #include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -61,16 +62,29 @@ namespace gms {
                          double * __restrict mP;
                          double * __restrict mQ;
                          double * __restrict mR;
-                         std::size_t        mn;
+                         std::size_t         mn;
+                         bool                mmalloc_type;
+                         bool                mfree_type;
 #if (USE_STRUCT_PADDING) == 1
-                      PAD_TO(0,32)
+                      PAD_TO(0,30)
 #endif       
                          FrameRAV_r8_t() = delete;
 
-                         inline explicit FrameRAV_r8_t(const std::size_t n) noexcept(false)
+                         inline FrameRAV_r8_t(const std::size_t n,
+                                              const bool malloc_type,
+                                              const bool free_type) noexcept(false)
                          {
+                             assert(n>0);
                              this->mn = n;
-                             allocate();
+                             this->mmalloc_type = malloc_type;
+                             this->mfree_type   = free_type;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                
+                             this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                              
                          }  
 
                          FrameRAV_r8_t(const FrameRAV_r8_t &) = delete;
@@ -86,9 +100,18 @@ namespace gms {
                          inline ~FrameRAV_r8_t() noexcept(true)
                          {
                              using namespace gms::common;
-                             gms_mm_free(this->mP); this->mP = NULL;
-                             gms_mm_free(this->mQ); this->mQ = NULL;
-                             gms_mm_free(this->mR); this->mR = NULL;
+                             if(this->mfree_type==true)
+                             {
+                                 gms_mm_free(this->mP); this->mP = NULL;
+                                 gms_mm_free(this->mQ); this->mQ = NULL;
+                                 gms_mm_free(this->mR); this->mR = NULL;
+                             }
+                             else 
+                             {
+                                 gms_tbb_free(this->mP); this->mP = NULL;
+                                 gms_tbb_free(this->mQ); this->mQ = NULL;
+                                 gms_tbb_free(this->mR); this->mR = NULL;
+                             }
                          }
 
                          FrameRAV_r8_t & operator=(const FrameRAV_r8_t &) = delete;
@@ -114,51 +137,21 @@ namespace gms {
                          {
                              using namespace gms::common;
                              const std::size_t mnbytes{size_mnbytes()};
-                             this->mP{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                             this->mQ{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                             this->mR{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                             if(this->mmalloc_type==true)
+                             {
+                                  this->mP{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                  this->mQ{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                  this->mR{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                             }
+                             else 
+                             {
+                                  this->mP{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                  this->mQ{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                  this->mR{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                             }
                          }   
 
-                         bool dump_state_to_file(const char * fname) const noexcept(false)
-                         {
-                              assert(fname != nullptr, "Null-pointer!!");
-                              File * fp = nullptr;
-                              bool b_result;
-
-                              fp = std::fopen(fname,"w");
-                              if(!fp)
-                              {
-                                  std::printf("[%s]: failed to open a file: %s\n",__PRETTY_FUNCTION__,fname);
-                                  b_result = false;
-                                  return b_result;
-                              }
-
-                              fprintf(fp,"Writing content of array mP[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mP[%llu,%d] = %2.17f\n",i,this->mn,this->mP[i]);
-                              }
-                              fprintf(fp,"\n\n");
-                              
-                              fprintf(fp,"Writing content of array mQ[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mQ[%llu,%d] = %2.17f\n",i,this->mn,this->mQ[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp,"Writing content of array mR[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mR[%llu,%d] = %2.17f\n",i,this->mn,this->mR[i]);
-                              }
-                              fprintf(fp,"\n\n");
-                              
-                              fprintf(fp, "Finished writing a content to file: %s\n", fname);
-                              fclose(fp);
-                              b_result = true;
-                              return b_result;
-                         }             
+                        
                    };
         }
 }
