@@ -46,6 +46,9 @@ namespace file_info {
 #include "GMS_hw_perf_macros.h"
 #endif
 
+
+
+
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
 #if !defined (USE_GMS_VEHICLE_ERPV_R4_NT_STORES)
@@ -137,12 +140,22 @@ namespace gms {
                             {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                               this->mdR{  reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mdLon{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mdLat{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVxv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVyv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               this->mVzv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+#else
+
                                this->mdR{  reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLon{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mdLat{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVxv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVyv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
                                this->mVzv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+#endif 
                             } 
 
                           
