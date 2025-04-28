@@ -42,7 +42,9 @@ namespace file_info {
 #include <cstdlib>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -103,13 +105,17 @@ namespace  gms {
                                                   const double       Ay0,
                                                   const double       Az0) noexcept(false)
                           {
-                               assert(nx>0ULL);
-                               assert(ny>0ULL);
-                               assert(nz>0ULL);
+                               assert(nx>0ULL && ny>0ULL && nz>0ULL);
                                this->mnx  = nx;
                                this->mny  = ny;
                                this->mnz  = nz;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                
                                allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                                
                                this->mVx0 = Vx0;
                                this->mVy0 = Vy0;
                                this->mVz0 = Vz0;
@@ -154,6 +160,23 @@ namespace  gms {
                         inline ~RigidBodyEOM_r8_t () noexcept(true)
                         {
                                using namespace gms::common;
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                               gms_tbb_free(this->mOz); this->mOz = NULL;
+                               gms_tbb_free(this->mOy); this->mOy = NULL;
+                               gms_tbb_free(this->mOz); this->mOz = NULL;
+
+                               gms_tbb_free(this->mRz); this->mRz = NULL;
+                               gms_tbb_free(this->mRy); this->mRy = NULL;
+                               gms_tbb_free(this->mRx); this->mRx = NULL;
+
+                               gms_tbb_free(this->mAz); this->mAz = NULL;
+                               gms_tbb_free(this->mAy); this->mAy = NULL;
+                               gms_tbb_free(this->mAx); this->mAx = NULL;
+
+                               gms_tbb_free(this->mVz); this->mVz = NULL;
+                               gms_tbb_free(this->mVy); this->mVy = NULL;
+                               gms_tbb_free(this->mVx); this->mVx = NULL;
+#else
                                gms_mm_free(this->mOz); this->mOz = NULL;
                                gms_mm_free(this->mOy); this->mOy = NULL;
                                gms_mm_free(this->mOz); this->mOz = NULL;
@@ -169,6 +192,7 @@ namespace  gms {
                                gms_mm_free(this->mVz); this->mVz = NULL;
                                gms_mm_free(this->mVy); this->mVy = NULL;
                                gms_mm_free(this->mVx); this->mVx = NULL;
+#endif 
                         }
 
                                RigidBodyEOM_r8_t & operator=(const RigidBodyEOM_r8_t &) = delete;
@@ -209,7 +233,20 @@ namespace  gms {
                                return (*this);
                         }
 
+                         inline std::size_t size_nxbytes() const noexcept(true) 
+                          {
+                             return static_cast<std::size_t>(sizeof(double)*this->mnx);
+                          }
 
+                          inline std::size_t size_nybytes() const noexcept(true)
+                          {
+                             return static_cast<std::size_t>(sizeof(double)*this->mny);
+                          }
+
+                          inline std::size_t size_nzbytes() const noexcept(true)
+                          {
+                             return static_cast<std::size_t>(sizeof(double)*this->mnz);
+                          }
 
                         inline void allocate() noexcept(false)
                           {
@@ -217,6 +254,23 @@ namespace  gms {
                                 std::size_t nxbytes{size_nxbytes()};
                                 std::size_t nybytes{size_nybytes()};
                                 std::size_t nzbytes{size_nzbytes()};
+#if (USE_TBB_MEM_ALLOCATORS) == 1
+                                this->mVx{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nxbytes,64ULL))};
+                                this->mVy{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nybytes,64ULL))};
+                                this->mVz{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nzbytes,64ULL))};
+
+                                this->mAx{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nxbytes,64ULL))};
+                                this->mAy{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nybytes,64ULL))};
+                                this->mAz{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nzbytes,64ULL))};
+
+                                this->mRx{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nxbytes,64ULL))};
+                                this->mRy{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nybytes,64ULL))};
+                                this->mRz{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nzbytes,64ULL))};
+
+                                this->mOx{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nxbytes,64ULL))};
+                                this->mOy{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nybytes,64ULL))};
+                                this->mOz{reinterpret_cast<double * __restrict>(gms_tbb_malloc(nzbytes,64ULL))};
+#else
 
                                 this->mVx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
                                 this->mVy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
@@ -233,24 +287,15 @@ namespace  gms {
                                 this->mOx{reinterpret_cast<double * __restrict>(gms_mm_malloc(nxbytes,64ULL))};
                                 this->mOy{reinterpret_cast<double * __restrict>(gms_mm_malloc(nybytes,64ULL))};
                                 this->mOz{reinterpret_cast<double * __restrict>(gms_mm_malloc(nzbytes,64ULL))};
+#endif
                           }
 
-                          inline std::size_t size_nxbytes() const noexcept(true) 
+                         
+
+                           inline std::size_t mem_allocated_total() const noexcept(true)
                           {
-                             return static_cast<std::size_t>(sizeof(double)*this->mnx);
-                          }
-
-                          inline std::size_t size_nybytes() const noexcept(true)
-                          {
-                             return static_cast<std::size_t>(sizeof(double)*this->mny);
-                          }
-
-                          inline std::size_t size_nzbytes() const noexcept(true)
-                          {
-                             return static_cast<std::size_t>(sizeof(double)*this->mnz);
-                          }
-
-                                 
+                                 return (size_nxbytes() + size_nybytes() + size_nzbytes());
+                          }       
 
                         
 
