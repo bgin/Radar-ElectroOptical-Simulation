@@ -37,9 +37,8 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
 #include <array>
+#include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 #if (USE_PMC_INSTRUMENTATION) == 1
@@ -86,6 +85,7 @@ namespace gms {
                                                       const bool free_type,
                                                       const std::array<char,6> seq) noexcept(false)
                               {
+                                    assert(n>0ULL);
                                     this->mn   = n;
                                     this->mmalloc_type = malloc_type;
                                     this->mfree_type   = free_type;
@@ -104,6 +104,8 @@ namespace gms {
                               inline EulerMatrix_r8_t(EulerMatrix_r8_t && rhs) noexcept(true)
                               {
                                      this->mn  = rhs.mn;
+                                     this->mmalloc_type = rhs.mmalloc_type;
+                                     this->mfree_type   = rhs.mfree_type;
                                      this->mr1 = &rhs.mr1[0];
                                      this->mr2 = &rhs.mr2[0];
                                      this->mr3 = &rhs.mr3[0];
@@ -155,6 +157,8 @@ namespace gms {
                                     using namespace gms::common;
                                     if(this==&rhs) return (*this);
                                     gms_swap(this->mn,  rhs.mn);
+                                    gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                                    gms_swap(this->mfree_type,   rhs.mfree_type);
                                     gms_swap(this->mr1, rhs.mr1);
                                     gms_swap(this->mr2, rhs.mr2);
                                     gms_swap(this->mr3, rhs.mr3);
