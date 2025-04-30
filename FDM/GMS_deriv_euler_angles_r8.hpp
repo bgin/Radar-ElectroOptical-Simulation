@@ -37,13 +37,12 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
-#include <cstdio>
 #include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -55,22 +54,35 @@ namespace gms {
 
         namespace fdm {
                
-                   struct __ATTR_ALIGN__(64) DerivEulerAngles_r8_t 
+                   struct __ATTR_ALIGN__(64) DerivEulerAngles_r8_t final 
                    {
                           double * __restrict mdPhi;
                           double * __restrict mdTht;
                           double * __restrict mdPsi;
                           std::size_t        mn;
+                          bool               mmalloc_type; // true stands for gms_mm_malloc, false stands for gms_tbb_malloc
+                          bool               mfree_type;   // true stands for gms_mm_free,   false stands for gms_tbb_free
  #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,32)
+                        PAD_TO(0,30)
 #endif                 
 
                           DerivEulerAngles_r8_t() = delete;
 
-                          inline explicit DerivEulerAngles_r8_t(const std::size_t n) noexcept(false)
+                          inline  DerivEulerAngles_r8_t(const std::size_t n,
+                                                        const bool malloc_type,
+                                                        const bool free_type) noexcept(false)
                           {
+                                 assert(n>0ULL);
                                  this->mn = n;
+                                 this->mmalloc_type = malloc_type;
+                                 this->mfree_type   = free_type;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif                                                              
                                  this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                             
                           }
 
                           inline DerivEulerAngles_r8_t(const DerivEulerAngles_r8_t &) = delete;
@@ -78,6 +90,8 @@ namespace gms {
                           inline DerivEulerAngles_r8_t(DerivEulerAngles_r8_t && rhs) noexcept(true)
                           {
                                  this->mn    = rhs.mn;
+                                 this->mmalloc_type = rhs.mmalloc_type;
+                                 this->mfree_type   = rhs.mfree_type;
                                  this->mdPhi = &rhs.mdPhi[0];
                                  this->mdTht = &rhs.mdTht[0];
                                  this->mdPsi = &rhs.mdPsi[0];
@@ -86,9 +100,18 @@ namespace gms {
                           inline ~DerivEulerAngles_r8_t() noexcept(true)
                           {
                                  using namespace gms::common;
-                                 gms_mm_free(this->mdPsi); this->mdPsi = NULL;
-                                 gms_mm_free(this->mdTht); this->mdTht = NULL;
-                                 gms_mm_free(this->mdPhi); this->mdPhi = NULL;
+                                 if(this->mfree_type==true)
+                                 {
+                                      gms_mm_free(this->mdPsi); this->mdPsi = NULL;
+                                      gms_mm_free(this->mdTht); this->mdTht = NULL;
+                                      gms_mm_free(this->mdPhi); this->mdPhi = NULL;
+                                 }
+                                 else 
+                                 {
+                                      gms_tbb_free(this->mdPsi); this->mdPsi = NULL;
+                                      gms_tbb_free(this->mdTht); this->mdTht = NULL;
+                                      gms_tbb_free(this->mdPhi); this->mdPhi = NULL;
+                                 }
                           }
 
                           DerivEulerAngles_r8_t & operator=(const DerivEulerAngles_r4_t &) = delete;
@@ -98,6 +121,8 @@ namespace gms {
                                  using namespace gms::common;
                                  if(this==&rhs) return (*this);
                                  gms_swap(this->mn,    rhs.mn);
+                                 gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                                 gms_swap(this->mfree_type,   rhs.mfree_type);
                                  gms_swap(this->mdPhi, rhs.mdPhi);
                                  gms_swap(this->mdTht, rhs.mdTht);
                                  gms_swap(this->mdPsi, rhs.mdPsi);
@@ -115,51 +140,21 @@ namespace gms {
                           {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
-                               this->mdPhi{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdTht{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdPsi{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               if(this->mmalloc_type==true)
+                               {
+                                   this->mdPhi{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdTht{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdPsi{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               }
+                               else 
+                               {
+                                   this->mdPhi{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdTht{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdPsi{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               }
                           }
 
-                         bool dump_state_to_file(const char * fname) const noexcept(false)
-                         {
-                              assert(fname != nullptr, "Null-pointer!!");
-                              File * fp = nullptr;
-                              bool b_result;
-
-                              fp = std::fopen(fname,"w");
-                              if(!fp)
-                              {
-                                  std::printf("[%s]: failed to open a file: %s\n",__PRETTY_FUNCTION__,fname);
-                                  b_result = false;
-                                  return b_result;
-                              }
-
-                              fprintf(fp,"Writing content of array mdPhi[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdPhi[%llu,%d] = %2.9f\n",i,this->mn,this->mdPhi[i]);
-                              }
-                              fprintf(fp,"\n\n");
-                              
-                              fprintf(fp,"Writing content of array mdTht[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdTht[%llu,%d] = %2.9f\n",i,this->mn,this->mdTht[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp,"Writing content of array mdPsi[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdPsi[%llu,%d] = %2.9f\n",i,this->mn,this->mdPsi[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp, "Finished writing a content to file: %s\n", fname);
-                              fclose(fp);
-                              b_result = true;
-                              return b_result;
-                         }             
+                        
                    };
         }
 }
