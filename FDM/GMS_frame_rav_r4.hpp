@@ -35,8 +35,6 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
 #include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
@@ -74,7 +72,7 @@ namespace gms {
                                               const bool        malloc_type,
                                               const bool        free_type) noexcept(false)
                          {
-                             assert(n>0);
+                             assert(n>0ULL);
                              this->mn = n;
                              this->mmalloc_type = malloc_type;
                              this->mfree_type   = free_type;
@@ -92,6 +90,8 @@ namespace gms {
                          inline FrameRAV_r4_t(FrameRAV_r4_t && rhs) noexcept(true)
                          {
                              this->mn = rhs.mn;
+                             this->mmalloc_type = rhs.mmalloc_type;
+                             this->mfree_type   = rhs.mfree_type;
                              this->mP = &rhs.mP[0];
                              this->mQ = &rhs.mQ[0];
                              this->mR = &rhs.mR[0];
@@ -121,6 +121,8 @@ namespace gms {
                               using namespace gms::common;
                               if(this==&rhs) return (*this)
                               gms_swap(this->mn, rhs.mn);
+                              gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                              gms_swap(this->mfree_type,   rhs.mfree_type);
                               gms_swap(this->mP, rhs.mP);
                               gms_swap(this->mQ, rhs.mQ);
                               gms_swap(this->mR, rhs.mR);
