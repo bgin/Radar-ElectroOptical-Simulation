@@ -38,13 +38,13 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
 #include <cstdio>
 #include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
-
+#if (USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
@@ -62,16 +62,27 @@ namespace gms {
                           double * __restrict mdQw;
                           double * __restrict mdRw;
                           std::size_t        mn;
+                          bool               mmalloc_type; // true stands for gms_mm_malloc, false stands for gms_tbb_malloc
+                          bool               mfree_type;   // true stands for gms_mm_free,   false stands for gms_tbb_free
  #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,32)
+                        PAD_TO(0,30)
 #endif                 
 
                           DerivAerodynAngles_r8_t() = delete;
 
                           inline explicit DerivAerodynAngles_r8_t(const std::size_t n) noexcept(false)
                           {
+                                 assert(n>0ULL);
                                  this->mn = n;
+                                 this->mmalloc_type = malloc_type;
+                                 this->mfree_type   = free_type;
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_PROLOGE_BODY   
+#endif 
                                  this->allocate();
+#if (USE_PMC_INSTRUMENTATION) == 1
+                                   HW_PMC_COLLECTION_EPILOGE_BODY
+#endif                                  
                           }
 
                           inline DerivAerodynAngles_r8_t(const DerivAerodynAngles_r8_t &) = delete;
@@ -79,6 +90,8 @@ namespace gms {
                           inline DerivAerodynAngles_r8_t(DerivAerodynAngles_r8_t && rhs) noexcept(true)
                           {
                                  this->mn    = rhs.mn;
+                                 this->mmalloc_type = rhs.mmalloc_type;
+                                 this->mfree_type   = rhs.mfree_type;
                                  this->mdPw = &rhs.mdPw[0];
                                  this->mdQw = &rhs.mdQw[0];
                                  this->mdRw = &rhs.mdRw[0];
@@ -87,9 +100,18 @@ namespace gms {
                           inline ~DerivAerodynAngles_r8_t() noexcept(true)
                           {
                                  using namespace gms::common;
-                                 gms_mm_free(this->mdPw); this->mdPw = NULL;
-                                 gms_mm_free(this->mdQw); this->mdQw = NULL;
-                                 gms_mm_free(this->mdRw); this->mdRw = NULL;
+                                 if(this->mfree_type==true)
+                                 {
+                                     gms_mm_free(this->mdPw); this->mdPw = NULL;
+                                     gms_mm_free(this->mdQw); this->mdQw = NULL;
+                                     gms_mm_free(this->mdRw); this->mdRw = NULL;
+                                 }
+                                 else 
+                                 {
+                                     gms_tbb_free(this->mdPw); this->mdPw = NULL;
+                                     gms_tbb_free(this->mdQw); this->mdQw = NULL;
+                                     gms_tbb_free(this->mdRw); this->mdRw = NULL;
+                                 }
                           }
 
                           DerivAerodynAngles_r8_t & 
@@ -102,6 +124,8 @@ namespace gms {
                                 using namespace gms::common;
                                 if(this==&rhs) return (*this);
                                 gms_swap(this->mn,   rhs.mn);
+                                gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                                gms_swap(this->mfree_type,   rhs.mfree_type);
                                 gms_swap(this->mdPw, rhs.mdPw);
                                 gms_swap(this->mdQw, rhs.mdQw);
                                 gms_swap(this->mdRw, rhs.mdRw);
@@ -119,51 +143,21 @@ namespace gms {
                           {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
-                               this->mdPw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdQw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdRw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               if(this->mmalloc_type==true)
+                               {
+                                   this->mdPw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdQw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdRw{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               }
+                               else 
+                               {
+                                   this->mdPw{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdQw{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdRw{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               }
                           }
 
-                         bool dump_state_to_file(const char * fname) const noexcept(false)
-                         {
-                              assert(fname != nullptr, "Null-pointer!!");
-                              File * fp = nullptr;
-                              bool b_result;
-
-                              fp = std::fopen(fname,"w");
-                              if(!fp)
-                              {
-                                  std::printf("[%s]: failed to open a file: %s\n",__PRETTY_FUNCTION__,fname);
-                                  b_result = false;
-                                  return b_result;
-                              }
-
-                              fprintf(fp,"Writing content of array mdPw[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdPw[%llu,%d] = %2.9f\n",i,this->mn,this->mdPw[i]);
-                              }
-                              fprintf(fp,"\n\n");
-                              
-                              fprintf(fp,"Writing content of array mdQw[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdQw[%llu,%d] = %2.9f\n",i,this->mn,this->mdQw[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp,"Writing content of array mdRw[%d] to file: %s, status: started\n\n",this->mn,fname);
-                              for(std::size_t i = 0ULL; i != this->mn; ++i)
-                              {
-                                  fprintf(fp, "mdRw[%llu,%d] = %2.9f\n",i,this->mn,this->mdRw[i]);
-                              }
-                              fprintf(fp,"\n\n");
-
-                              fprintf(fp, "Finished writing a content to file: %s\n", fname);
-                              fclose(fp);
-                              b_result = true;
-                              return b_result;
-                         }             
+                       
                    };
         }
 }
