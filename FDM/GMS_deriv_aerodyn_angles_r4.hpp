@@ -37,7 +37,6 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <cstdio>
 #include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
@@ -70,7 +69,9 @@ namespace gms {
 
                           DerivAerodynAngles_r4_t() = delete;
 
-                          inline explicit DerivAerodynAngles_r4_t(const std::size_t n) noexcept(false)
+                          inline explicit DerivAerodynAngles_r4_t(const std::size_t n,
+                                                                  const bool malloc_type,
+                                                                  const bool free_type) noexcept(false)
                           {
                                  assert(n>0);
                                  this->mn = n;
