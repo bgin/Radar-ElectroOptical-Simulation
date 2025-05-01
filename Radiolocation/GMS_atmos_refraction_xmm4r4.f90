@@ -3612,4 +3612,25 @@ module atmos_refraction_xmm4r4
             del2.v  = del21.v+del22.v+del23.v  
       end function analytic_sol_tropo_del2_wvle5cm_deg0_80_f523_xmm4r4
 
+      ! Final calculation of refractive angle.
+        ! Formula 5.17, page: 95
+      pure function refraction_angle_tropo_wvle5cm_f517_xmm4r4(delnA,z0,beta,Hc0,R0) result(alpha)
+#if defined(__INTEL_COMPILER) && !defined(__GNUC__)           
+            !dir$ optimize:3
+            !dir$ attributes code_align : 32 :: refraction_angle_tropo_wvle5cm_f517_xmm4r4
+            !dir$ attributes forceinline :: refraction_angle_tropo_wvle5cm_f517_xmm4r4
+#endif 
+
+            type(XMM4r4_t),    intent(in) :: delnA 
+            type(XMM4r4_t),    intent(in) :: z0 
+            type(XMM4r4_t),    intent(in) :: beta 
+            type(XMM4r4_t),    intent(in) :: Hc0 
+            type(XMM4r4_t),    intent(in) :: R0 
+            type(XMM4r4_t)                :: alpha
+            type(XMM4r4_t),    automatic  :: del1, del2 
+            del1  =  analytic_sol_tropo_del1_wvle5cm_deg0_80_f522_xmm4r4(delnA,z0,beta,Hc0)
+            del2  =  analytic_sol_tropo_del2_wvle5cm_deg0_80_f523_xmm4r4(delnA,z0,beta,Hc0,R0)
+            alpha.v = del1.v+del2.v  
+        end function refraction_angle_tropo_wvle5cm_f517_xmm4r4
+
 end module atmos_refraction_xmm4r4
