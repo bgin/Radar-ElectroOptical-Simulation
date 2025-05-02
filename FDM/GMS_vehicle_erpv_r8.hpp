@@ -39,8 +39,7 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
+#include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 #if (USE_PMC_INSTRUMENTATION) == 1
@@ -72,7 +71,7 @@ namespace gms {
 #endif                        
                             VehicleERPV_r8_t() = delete;
 
-                            inline explicit (const std::size_t n) noexcept(true)
+                            inline VehicleERPV_r8_t (const std::size_t n) noexcept(true)
                             {
                                    assert(n>0);
                                    this->mn = n;
