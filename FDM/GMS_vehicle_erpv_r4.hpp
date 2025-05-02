@@ -38,8 +38,7 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
+#include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 #if (USE_PMC_INSTRUMENTATION) == 1
@@ -69,16 +68,22 @@ namespace gms {
                             float * __restrict mVyv;    // velocity component at yv.
                             float * __restrict mVzv;    // velocity component at zv 
                             std::size_t        mn;
+                            bool               mmalloc_type; // true for gms_mm_malloc, false for gms_tbb_malloc
+                            bool               mfree_type;   // true for gms_mm_free,   false for gms_tbb_free
 #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,8)
+                        PAD_TO(0,6)
 #endif                           
                                                   
                             VehicleERPV_r4_t() = delete;
 
-                            inline explicit (const std::size_t n) noexcept(true)
+                            inline  VehicleERPV_r4_t(const std::size_t n,
+                                                     const bool malloc_type,
+                                                     const bool free_type) noexcept(true)
                             {
-                                   assert(n>0);
+                                   assert(n>0ULL);
                                    this->mn = n;
+                                   this->mmalloc_type = malloc_type;
+                                   this->mfree_type   = free_type;
 #if (USE_PMC_INSTRUMENTATION) == 1
                                    HW_PMC_COLLECTION_PROLOGE_BODY   
 #endif                                
@@ -93,6 +98,8 @@ namespace gms {
                             inline VehicleERPV_r4_t(VehicleERPV_r4_t && rhs) noexcept(true)
                             {
                                    this->mn     = rhs.mn;
+                                   this->mmalloc_type = rhs.mmalloc_type;
+                                   this->mfree_type   = rhs.mfree_type;
                                    this->mdR    = &rhs.mdR[0];
                                    this->mdLon  = &rhs.mdLon[0];
                                    this->mdLat  = &rhs.mdLat[0];
@@ -105,21 +112,24 @@ namespace gms {
                             inline ~VehicleERPV_r4_t() noexcept(true)
                             {
                                 using namespace gms::common;
-#if (USE_TBB_MEM_ALLOCATORS) == 1
-                                gms_tbb_free(this->mVzv);  this->mVzv  = NULL;
-                                gms_tbb_free(this->mVyv);  this->mVyv  = NULL;
-                                gms_tbb_free(this->mVxv);  this->mVxv  = NULL;
-                                gms_tbb_free(this->mdLat); this->mdLat = NULL;
-                                gms_tbb_free(this->mdLon); this->mdLon = NULL;
-                                gms_tbb_free(this->mdR);   this->mdR   = NULL;
-#else
-                                gms_mm_free(this->mVzv);  this->mVzv  = NULL;
-                                gms_mm_free(this->mVyv);  this->mVyv  = NULL;
-                                gms_mm_free(this->mVxv);  this->mVxv  = NULL;
-                                gms_mm_free(this->mdLat); this->mdLat = NULL;
-                                gms_mm_free(this->mdLon); this->mdLon = NULL;
-                                gms_mm_free(this->mdR);   this->mdR   = NULL;
-#endif
+                                if(this->mmfree_type==true)
+                                {
+                                    gms_mm_free(this->mVzv);  this->mVzv  = NULL;
+                                    gms_mm_free(this->mVyv);  this->mVyv  = NULL;
+                                    gms_mm_free(this->mVxv);  this->mVxv  = NULL;
+                                    gms_mm_free(this->mdLat); this->mdLat = NULL;
+                                    gms_mm_free(this->mdLon); this->mdLon = NULL;
+                                    gms_mm_free(this->mdR);   this->mdR   = NULL;
+                                }
+                                else 
+                                {
+                                    gms_tbb_free(this->mVzv);  this->mVzv  = NULL;
+                                    gms_tbb_free(this->mVyv);  this->mVyv  = NULL;
+                                    gms_tbb_free(this->mVxv);  this->mVxv  = NULL;
+                                    gms_tbb_free(this->mdLat); this->mdLat = NULL;
+                                    gms_tbb_free(this->mdLon); this->mdLon = NULL;
+                                    gms_tbb_free(this->mdR);   this->mdR   = NULL;
+                                }
                                 this->mn = 0ULL;
                             }
 
@@ -131,6 +141,8 @@ namespace gms {
                                   if(this==&rhs) return (*this);
 
                                   gms_swap(this->mn,    rhs.mn);
+                                  gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                                  gms_swap(this->mfree_type,   rhs.mfree_type);
                                   gms_swap(this->mdR,   rhs.mdR);
                                   gms_swap(this->mdLon, rhs.mdLon);
                                   gms_swap(this->mdLat, rhs.mdLat);
@@ -149,23 +161,28 @@ namespace gms {
                             {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
-#if (USE_TBB_MEM_ALLOCATORS) == 1
-                               this->mdR{  reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mdLon{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mdLat{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mVxv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mVyv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mVzv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-#else
+                               if(this->mmalloc_type==true)
+                               {
+                                   this->mdR{  reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdLon{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mdLat{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mVxv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mVyv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                   this->mVzv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               }
+                               else 
+                               {
+                                   this->mdR{  reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdLon{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mdLat{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mVxv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mVyv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                   this->mVzv{reinterpret_cast<float * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               }
 
-                               this->mdR{  reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdLon{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mdLat{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mVxv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mVyv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mVzv{reinterpret_cast<float * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-#endif 
-                            } 
+                            }  
+ 
+                            
 
                           
                 };
