@@ -38,8 +38,7 @@ namespace file_info {
 }
 
 #include <cstdint>
-#include <immintrin.h>
-#include <cstdlib>
+#include <cassert>
 #include "GMS_config.h"
 #include "GMS_malloc.h"
 #if (USE_PMC_INSTRUMENTATION) == 1
@@ -58,23 +57,29 @@ namespace gms
 
        namespace fdm
        {
-              
+                  /*Bernard Etkin, "Dynamics of Atmospheric Flight", eq: 5.3.18, 5.3.22, page: 132-133*/
                 struct __ATTR_ALIGN__(64) VehicleEIA_r8_t final 
                 {
                        double * __restrict mAxv;  //acceleration component: xv.
                        double * __restrict mAyv;  //acceleration component: yv.
                        double * __restrict mAzv;  //acceleration component: zv 
                        std::size_t        mn;
+                       bool               mmalloc_type; // true for gms_mm_malloc, false for gms_tbb_malloc
+                       bool               mfree_type;   // true for gms_mm_free,   false for gms_tbb_free
 #if (USE_STRUCT_PADDING) == 1
-                        PAD_TO(0,32)
+                        PAD_TO(0,30)
 #endif                      
 
                         VehicleEIA_r8_t() = delete;
 
-                        inline VehicleEIA_r8_t(const std::size_t n) noexcept(false)
+                        inline VehicleEIA_r8_t(const std::size_t n,
+                                               const bool malloc_type,
+                                               const bool free_type) noexcept(false)
                         {
-                              assert(n>0);
+                              assert(n>0ULL);
                               this->mn = n;
+                              this->mmalloc_type = malloc_type;
+                              this->mfree_type   = free_type;
 #if (USE_PMC_INSTRUMENTATION) == 1
                                    HW_PMC_COLLECTION_PROLOGE_BODY   
 #endif   
@@ -89,6 +94,8 @@ namespace gms
                         inline VehicleEIA_r8_t(VehicleEIA_r8_t && rhs) noexcept(true)
                         {
                                this->mn   = rhs.mn;
+                               this->mmalloc_type = rhs.mmalloc_type;
+                               this->mfree_type   = rhs.mfree_type;
                                this->mAxv = &rhs.mAxv[0];
                                this->mAyv = &rhs.mAyv[0];
                                this->mAzv = &rhs.mAzv[0];
@@ -97,15 +104,18 @@ namespace gms
                         inline ~VehicleEIA_r8_t() noexcept(true)
                         {
                                using namespace gms::common;
-#if (USE_TBB_MEM_ALLOCATORS) == 1
-                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
-                               gms_tbb_free(this->mAyv); this->mAyv = NULL;
-                               gms_tbb_free(this->mAzv); this->mAzv = NULL;
-#else
-                               gms_mm_free(this->mAzv); this->mAzv = NULL;
-                               gms_mm_free(this->mAyv); this->mAyv = NULL;
-                               gms_mm_free(this->mAzv); this->mAzv = NULL;
-#endif
+                               if(this->mfree_type==true)
+                               {
+                                  gms_mm_free(this->mAzv); this->mAzv = NULL;
+                                  gms_mm_free(this->mAyv); this->mAyv = NULL;
+                                  gms_mm_free(this->mAzv); this->mAzv = NULL;
+                               }
+                               else 
+                               {
+                                  gms_tbb_free(this->mAzv); this->mAzv = NULL;
+                                  gms_tbb_free(this->mAyv); this->mAyv = NULL;
+                                  gms_tbb_free(this->mAzv); this->mAzv = NULL;
+                               }
                                this->mn = 0ULL;
                         }
 
@@ -117,6 +127,8 @@ namespace gms
                                if(this==&rhs) return (*this);
 
                                gms_swap(this->mn,  rhs.mn);
+                               gms_swap(this->mmalloc_type, rhs.mmalloc_type);
+                               gms_swap(this->mfree_type,   rhs.mfree_type);
                                gms_swap(this->mAxv,rhs.mAxv);
                                gms_swap(this->mAyv,rhs.mAyv);
                                gms_swap(this->mAzv,rhs.mAzv);
@@ -133,16 +145,21 @@ namespace gms
                         {
                                using namespace gms::common;
                                const std::size_t mnbytes{size_mnbytes()};
-#if (USE_TBB_MEM_ALLOCATORS) == 1
-                               this->mAxv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mAyv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-                               this->mAzv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
-#else
-                               this->mAxv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mAyv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-                               this->mAzv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
-#endif
+                               if(this->mmalloc_type==true)
+                               {
+                                  this->mAxv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                  this->mAyv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                                  this->mAzv{reinterpret_cast<double * __restrict>(gms_mm_malloc(mnbytes,64ULL))};
+                               }
+                               else 
+                               {
+                                  this->mAxv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                  this->mAyv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                                  this->mAzv{reinterpret_cast<double * __restrict>(gms_tbb_malloc(mnbytes,64ULL))};
+                               }
+                
                         }
+                        
                 };
        } //fdm
        
