@@ -37,68 +37,65 @@
 #include "GMS_32f_64f_add_64f_avx.h"
 
 
-	 void dsp_32f_64f_add_64f_u_avx(double * __restrict  c,
-					float * __restrict  b,
-					float * __restrict  a,
-					const int32_t npoints) {
+	 void dsp_32f_64f_add_64f_u_avx(double      * __restrict  c,
+					                const float * __restrict  a,
+					                const double * __restrict b,
+					                const int32_t npoints) {
 	      DSP_32F_64F_ADD_64F_AVX_BLOCK     
+          double * __restrict       ptr_c = c;
+          const float * __restrict  ptr_a = a;
+          const double * __restrict ptr_b = b;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
 #endif
 	       for(; idx != len; ++idx) {
-                   aVal = _mm256_loadu_ps(a);
-		   aVal1 = _mm256_extractf128_ps(aVal, 0);
-		   aDbl1 = _mm256_cvtps_pd(aVal1);
-                   aVal2 = _mm256_extractf128_ps(aVal, 1);
-		   aDbl2 = _mm256_cvtps_pd(aVal2);
-		   bVal1 = _mm256_loadu_pd(b);
-		   cVal1 = _mm256_add_pd(aDbl1, bVal1);
-                   bVal2 = _mm256_loadu_pd(b+4);
-                   cVal2 = _mm256_add_pd(aDbl2, bVal2);
-		   _mm256_storeu_pd(c,cVal1);
-                   _mm256_storeu_pd(c+4,  cVal2);      
-                   a += 8;
-                   b += 8;
-                   c += 8;
+                aVal = _mm256_loadu_ps(ptr_a);
+		        aVal1 = _mm256_extractf128_ps(aVal, 0);
+		        aDbl1 = _mm256_cvtps_pd(aVal1);
+                aVal2 = _mm256_extractf128_ps(aVal, 1);
+		        aDbl2 = _mm256_cvtps_pd(aVal2);
+		        bVal1 = _mm256_loadu_pd(ptr_b);
+		        cVal1 = _mm256_add_pd(aDbl1, bVal1);
+                bVal2 = _mm256_loadu_pd(ptr_b+4);
+                cVal2 = _mm256_add_pd(aDbl2, bVal2);
+		        _mm256_storeu_pd(ptr_c,cVal1);
+                _mm256_storeu_pd(ptr_c+4,  cVal2);      
+                   ptr_a += 8;
+                   ptr_b += 8;
+                   ptr_c += 8;
                }
                idx = len*8;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma loop_count min(1),avg(4),max(7)
 #endif
                for(; idx != npoints; ++idx) {
-                     c[i] = ((double)a[i])+b[i];
+                     ptr_c[idx] = ((double)ptr_a[idx])+ptr_b[idx];
 	       }
 	 }
 
 	
-	 void dsp_32f_64f_add_64f_a_avx(double * __restrict __ATTR_ALIGN__(32) c,
-	                                float  * __restrict __ATTR_ALIGN__(32) b,
-					float  * __restrict __ATTR_ALIGN__(32) a,
-					const int32_t npoints) {
+	 void dsp_32f_64f_add_64f_a_avx(double * __restrict __ATTR_ALIGN__(32)        c,
+	                                const float  * __restrict __ATTR_ALIGN__(32)  a,
+					                const double  * __restrict __ATTR_ALIGN__(32) b,
+					                const int32_t npoints) {
              DSP_32F_64F_ADD_64F_AVX_BLOCK
-#if defined __ICC || defined __INTEL_COMPILER
-              __assume_aligned(c,32);
-	      __assume_aligned(b,32);
-	      __assume_aligned(a,32);
-#elif defined __GNUC__ || !defined __INTEL_COMPILER
-              c = (double*)__builtin_assume_aligned(c,32);
-	      b = (float*) __builtin_assume_aligned(b,32);
-	      a = (float*) __builtin_assume_aligned(a,32);
-#endif
+             double * __restrict       ptr_c = c;
+             const float * __restrict  ptr_a = a;
+             const double * __restrict ptr_b = b;
 #if defined __ICC || defined __INTEL_COMPILER
 #pragma code_align(32)
 #endif
                for(; idx != len; ++idx) {
-                   aVal = _mm256_load_ps(a);
-		   aVal1 = _mm256_extractf128_ps(aVal,0);
-		   aDbl1 = _mm256_cvtps_pd(aVal1);
+                   aVal  = _mm256_load_ps(a);
+		           aVal1 = _mm256_extractf128_ps(aVal,0);
+		           aDbl1 = _mm256_cvtps_pd(aVal1);
                    aVal2 = _mm256_extractf128_ps(aVal,1);
-		   aDbl2 = _mm256_cvtps_pd(aVal2);
-		   bVal1 = _mm256_load_pd(b);
-		   cVal1 = _mm256_add_pd(aDbl1, bVal1);
+		           aDbl2 = _mm256_cvtps_pd(aVal2);
+		           bVal1 = _mm256_load_pd(b);
+		           cVal1 = _mm256_add_pd(aDbl1, bVal1);
                    bVal2 = _mm256_load_pd(b+4);
                    cVal2 = _mm256_add_pd(aDbl2, bVal2);
-		   _mm256_store_pd(c,cVal1);
+		           _mm256_store_pd(c,cVal1);
                    _mm256_store_pd(c+4,cVal2);      
                    a += 8;
                    b += 8;
@@ -109,7 +106,7 @@
 #pragma loop_count min(1),avg(4),max(7)
 #endif
                for(; idx != npoints; ++idx) {
-                     c[i] = ((double)a[i])+b[i];
+                     c[idx] = ((double)a[idx])+b[idx];
 	       }        
 	 }
 
