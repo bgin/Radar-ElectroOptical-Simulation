@@ -1,7 +1,7 @@
 
 #ifndef __GMS_CONFIG_H__
 #define __GMS_CONFIG_H__
-
+#include <string>
 
 namespace file_info {
 
@@ -10,10 +10,10 @@ namespace file_info {
      const unsigned int  gGMS_CONFIG_MICRO = 0;
      const unsigned int  gGMS_CONFIG_FULLVER = 1000U*gGMS_CONFIG_MAJOR+
                                         100U*gGMS_CONFIG_MINOR+10U*gGMS_CONFIG_MINOR;
-     const * char const  pgGMS_CONFIG_CREATION_DATE = "26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)";
-     const * char const  pgGMS_CONFIG_BUILD_DATE    = __DATE__ " " __TIME__;
-     const * char const  pgGMS_CONFIG_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-     const * char const  pgGMS_CONFIG_SYNOPSIS      = "GMS configuration global settings.";
+     static const std::string  GMS_CONFIG_CREATION_DATE{"26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)"};
+     static const std::string  GMS_CONFIG_BUILD_DATE{ __DATE__ __TIME__};
+     static const std::string  GMS_CONFIG_AUTHOR{"Programmer: Bernard Gingold, contact: beniekg@gmail.com"};
+     static const std::string  GMS_CONFIG_SYNOPSIS{"GMS configuration global settings."};
 
 }
 
@@ -261,13 +261,11 @@ Intel MKL support.
 Include all headers - master header file.
 */
 #if !defined(USE_MKL)
-#define USE_MKL 1
+#define USE_MKL 0
 #endif
 
-#if USE_MKL == 1 && defined (GMS_COMPILED_BY_ICC)
-#include <mkl.h>
-#else
-#error "COMPILE_TIME_ERROR: Cannot include MKL: headers!"
+#if (USE_MKL) == 1
+#include <../../../intel/oneapi/2023.1.0/include/mkl.h>
 #endif
 
 // Use accurate floating-point library Intel lbfp754 library
@@ -303,15 +301,15 @@ Include all headers - master header file.
 #define PAD_TO(ordinal,size) \
   char pad##ordinal[(size)];
 #endif
-
+/*
 #if !defined (PAD_TO_ALIGNED) && !defined (__linux)
 #define PAD_TO_ALIGNED(alignment,ordinal,size) \
 	__declspec(align((alignment))) char pad##ordinal[(size)];
 #elif !defined (PAD_TO_ALIGNED) && defined (__linux)
-#define PAD_TO_ALIGNED(alignment,ordinal,size) #
-        __attribute__((align((alignment))) char pad##ordinal[(size)];
+#define PAD_TO_ALIGNED(alignment,ordinal,size) 
+        __attribute__((align(alignment))) char pad##ordinal[(size)];
 #endif
-
+*/
 #if !defined (ALIGN_AT) && !defined (__linux)
 #define ALIGN_AT(alignment) \
 	__declspec(align((alignment)))
@@ -391,27 +389,23 @@ constexpr unsigned int L2_PREF_LONG{ 8 };
 #endif
 
 // Highly CPU dependend
-#if defined MACHINE_CPU_NAME  // Later should be encoded as ASCII integral type
-#if defined (ICC_PREFETCH_L1)
-constexpr unsigned int L1_MAX_FLOATS{ 8000 };
-constexpr size_t L1_MAX_DOUBLES{ 4000 };
-constexpr unsigned long long L1_MAX_CAPACITY_F32{ 8000ULL };
-constexpr unsigned long long L1_MAX_CAPACITY_F64{4000ULL};
-#endif
-// Highly CPU dependend
-#if defined ICC_PREFETCH_L2
-constexpr unsigned int L2_MAX_FLOATS{ 8 * L1_MAX_FLOATS };
-constexpr unsigned int L2_MAX_DOUBLES{ 8 * L1_MAX_DOUBLES };
-#endif
-// Highly CPU dependend
-#if defined ICC_PREFETCH_L3
-constexpr unsigned int L3_MAX_FLOATS{ 1572864 };
-constexpr unsigned int L3_MAX_DOUBLES{786432};
 
-#else
-#error "COMPILE_TIME_ERROR: Please define your CPU type!!"
-#endif
-#endif
+#define L1_MAX_FLOATS 8000
+#define L1_MAX_DOUBLES 4000 
+#define L1_MAX_CAPACITY_F32 8000
+#define L1_MAX_CAPACITY_F64 4000
+
+// Highly CPU dependend
+
+#define L2_MAX_FLOATS  8 * L1_MAX_FLOATS 
+#define L2_MAX_DOUBLES 8 * L1_MAX_DOUBLES
+
+// Highly CPU dependend
+
+#define L3_MAX_FLOATS 1572864 
+#define L3_MAX_DOUBLES 786432
+
+
 
 /*
 	Performance measurement
