@@ -37,7 +37,7 @@ void unit_test_dsp_32f_64f_add_64f_u_avx()
      {
          const float tra{srand_a()};
          buf_a[i] = tra;
-         const float trb{srand_b()};
+         const double trb{srand_b()};
          buf_b[i] = trb;
      }
      printf("[Unit-Test]: -- End of data initialization\n");
@@ -89,7 +89,7 @@ void unit_test_dsp_32f_64f_add_64f_a_avx()
      {
          const float tra{srand_a()};
          buf_a[i] = tra;
-         const float trb{srand_b()};
+         const double trb{srand_b()};
          buf_b[i] = trb;
      }
      printf("[Unit-Test]: -- End of data initialization\n");
