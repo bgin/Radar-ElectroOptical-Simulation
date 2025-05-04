@@ -1,19 +1,20 @@
 
 #ifndef __GMS_CONFIG_H__
 #define __GMS_CONFIG_H__
-#include <string>
+
 
 namespace file_info {
 
-     const unsigned int  gGMS_CONFIG_MAJOR = 1;
-     const unsigned int  gGMS_CONFIG_MINOR = 1;
-     const unsigned int  gGMS_CONFIG_MICRO = 0;
-     const unsigned int  gGMS_CONFIG_FULLVER = 1000U*gGMS_CONFIG_MAJOR+
-                                        100U*gGMS_CONFIG_MINOR+10U*gGMS_CONFIG_MINOR;
-     static const std::string  GMS_CONFIG_CREATION_DATE{"26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)"};
-     static const std::string  GMS_CONFIG_BUILD_DATE{ __DATE__ __TIME__};
-     static const std::string  GMS_CONFIG_AUTHOR{"Programmer: Bernard Gingold, contact: beniekg@gmail.com"};
-     static const std::string  GMS_CONFIG_SYNOPSIS{"GMS configuration global settings."};
+     const unsigned int  GMS_CONFIG_MAJOR = 1;
+     const unsigned int  GMS_CONFIG_MINOR = 1;
+     const unsigned int  GMS_CONFIG_MICRO = 0;
+     const unsigned int  GMS_CONFIG_FULLVER = 1000U*GMS_CONFIG_MAJOR+
+                                        100U*GMS_CONFIG_MINOR+10U*GMS_CONFIG_MINOR;
+     static const char  GMS_CONFIG_CREATION_DATE[] = "26-09-2018 21:06 +00200 (THR 26 SEP 2019 GMT+2)";
+     static const char  GMS_CONFIG_BUILD_DATE[]    =  __DATE__;
+     static const char  GMS_CONFIG_BUILD_DATE[]    =  __TIME__;
+     static const char  GMS_CONFIG_AUTHOR[]        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
+     static const char  GMS_CONFIG_SYNOPSIS[]      = "GMS configuration global settings.";
 
 }
 
