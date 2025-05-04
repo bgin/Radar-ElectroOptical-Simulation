@@ -35,33 +35,35 @@
  */
 
 
-#include <cstdint>
+#include <stdint.h>
 #include "GMS_config.h"
 
 #if !defined(DSP_32F_64F_ADD_64F_AVX_BLOCK)
-    #define DSP_32F_64F_ADD_64F_AVX_BLOCK                                   \
-               int32_t idx = 0;                                             \
-	       const int32_t len = npoints/8;                               \
-	       register __m256 aVal;                                        \
+    #define DSP_32F_64F_ADD_64F_AVX_BLOCK                                   \                                                                          
+	           int32_t idx = 0;                                             \
+	           const int32_t len = npoints/8;                               \
+	           register __m256 aVal;                                        \
                register  __m128 aVal1, aVal2;                               \
-               register __m256d aDbl1, aDbl2, bVal1, bVal2, cVal1, cVal2;
-     #endif
-
+               register __m256d aDbl1, aDbl2, bVal1, bVal2, cVal1, cVal2;   
+#endif	                                                            
+   
        
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
+#pragma intel optimization_level 3
 	void dsp_32f_64f_add_64f_u_avx(double * __restrict  c,
-					float * __restrict  b,
-					float * __restrict  a,
-					const int32_t npoints); 
+					               const float * __restrict  a,
+					               const double  * __restrict  b,
+					               const int32_t npoints); 
 
 	 
 	 __ATTR_HOT__
 	 __ATTR_ALIGN__(32)
+#pragma intel optimization_level 3
 	 void dsp_32f_64f_add_64f_a_avx(double * __restrict __ATTR_ALIGN__(32) c,
-	                                float  * __restrict __ATTR_ALIGN__(32) b,
-					float  * __restrict __ATTR_ALIGN__(32) a,
-					const int32_t npoints); 
+	                                const float  * __restrict __ATTR_ALIGN__(32) a,
+					                const double  * __restrict __ATTR_ALIGN__(32) b,
+					                const int32_t npoints); 
 
 
 
