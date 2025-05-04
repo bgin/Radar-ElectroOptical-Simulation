@@ -1,25 +1,8 @@
 
-/*MIT License
-Copyright (c) 2020 Bernard Gingold
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
 
 #ifndef __GMS_ANTENNA_COMMON_ADT_AVX_H__
 #define __GMS_ANTENNA_COMMON_ADT_AVX_H__ 171220230546
+
 
 
 namespace file_info {
@@ -30,9 +13,10 @@ namespace file_info {
      const unsigned int GMS_ANTENNA_COMMON_ADT_AVX_FULLVER =
        1000U*GMS_ANTENNA_COMMON_ADT_AVX_MAJOR+100U*GMS_ANTENNA_COMMON_ADT_AVX_MINOR+
        10U*GMS_ANTENNA_COMMON_ADT_AVX_MICRO;
-     const char * const GMS_ANTENNA_COMMON_ADT_AVX_CREATION_DATE = "17-12-2023 05:46 +00200 (SUN 17 DEC 2023 GMT+2)";
-     const char * const GMS_ANTENNA_COMMON_ADT_AVX_BUILD_DATE    = __DATE__ " " __TIME__;
-     const char * const GMS_ANTENNA_COMMON_ADT_AVX_SYNOPSIS      = "Antenna model common abstract data types -- AVX based."
+     static const char GMS_ANTENNA_COMMON_ADT_AVX_CREATION_DATE[] = "17-12-2023 05:46 +00200 (SUN 17 DEC 2023 GMT+2)";
+     static const char GMS_ANTENNA_COMMON_ADT_AVX_BUILD_DATE[]    = __DATE__;
+     static const char GMS_ANTENNA_COMMON_ADT_AVX_BUILD_TIME[]    = __TIME__;
+     static const char GMS_ANTENNA_COMMON_ADT_AVX_SYNOPSIS[]      = "Antenna model common abstract data types -- AVX based.";
 
 }
 
