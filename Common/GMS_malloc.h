@@ -24,8 +24,10 @@ namespace  file_info {
 #include <cassert>
 #include <omp.h> // OMP allocators
 #include <alloca.h>
+#include <iostream>
+#include "GMS_config.h"
 #include "tbb/scalable_allocator.h"
-#include "GMS_error_macros.h"
+
 
 
 //Handy macros for page alignment (mmap)
@@ -52,7 +54,7 @@ namespace  file_info {
 #endif
 
 #if !defined(ALIGN_TO_PAGE_1GiB)
-    #define ALIGN_TO_PAGE_1GiB(x)
+    #define ALIGN_TO_PAGE_1GiB(x) \
        (((x) + HUGE_PAGE_1GiB - 1) / HUGE_PAGE_1GiB * HUGE_PAGE_1GiB)
 #endif
 
@@ -72,11 +74,10 @@ namespace gms {
                Modified: 30-08-2021 09:44AM +00200
             */
 
-        __ATTR_ALWAYS_INLINE__
-	    __ATTR_ALIGN__(32)
-	    std::size_t
+        __forceinline 
+	   	std::size_t
 	    add_cacheline_pad_float(const std::size_t len) {
-                constexpr std::size_t misalign = 0ULL;
+        std::size_t misalign = 0ULL;
 		std::size_t pad = 0ULL;
 		misalign = len % 16;
 		pad = len + (misalign == 0 ? 0 : 16 - misalign);
@@ -84,11 +85,10 @@ namespace gms {
 	    }
 
 
-	    __ATTR_ALWAYS_INLINE__
-	    __ATTR_ALIGN__(32)
+	    __forceinline 
 	    std::size_t
 	    add_cacheline_pad_double(const std::size_t len) {
-                constexpr std::size_t misalign = 0ULL;
+        std::size_t misalign = 0ULL;
 		std::size_t pad = 0ULL;
 		misalign = len % 8;
 		pad = len + (misalign == 0 ? 0 : 8 - misalign);
@@ -96,39 +96,33 @@ namespace gms {
    	    }
 		
 	
-	      __ATTR_COLD__
-	      __attribute__ ((malloc))
-	      __attribute__ ((returns_nonnull))
-	      __attribute__ ((assume_aligned(64)))
-	      __attribute__ ((alloc_size(1)))
-          void * gms_mm_malloc(const std::size_t len,
+	    __forceinline 
+	    void * gms_mm_malloc(const std::size_t len,
 	                           const std::size_t alignment) {
 
 		     void * __restrict ptr = NULL;
-	         ptr = _mm_malloc(len, alignment));
+	         ptr = _mm_malloc(len, alignment);
                      if (NULL == ptr && len != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                 std::cerr << " Not implemented yet!!";
+	                 std::cerr << " Not implemented yet!!" << "\n";
 #endif
-	                 ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+	                 std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                 std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                 std::exit(EXIT_FAILURE);
 	            }
                      return (ptr);
 	      }
 
 
-	      __ATTR_COLD__
+	      __forceinline 
 	      void gms_mm_free(void * __restrict ptr) {
                    _mm_free(ptr);
 	      }
 
 
 		  /*TBB-based allocators*/
-          __ATTR_COLD__
-	      __attribute__ ((malloc))
-	      __attribute__ ((returns_nonnull))
-	      __attribute__ ((assume_aligned(64)))
-	      __attribute__ ((alloc_size(1)))
-		  void * __restrict gms_tbb_malloc(const std::size_t nbytes,
+          __forceinline 
+	      void * __restrict gms_tbb_malloc(const std::size_t nbytes,
 		                        const std::size_t alignment)
 		  {
 			     assert(nbytes>0);
@@ -136,14 +130,16 @@ namespace gms {
                  ptr                   = scalable_aligned_malloc(nbytes,alignment);
 				 if (NULL == ptr && nbytes != 0ULL) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                 std::cerr << " Not implemented yet!!";
+	                  std::cerr << " Not implemented yet!!" << "\n";
 #endif
-	                 ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+	                   std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                   std::exit(EXIT_FAILURE);
 	            }
 				return ptr;
 		  }
 
-		   __ATTR_COLD__
+		   __forceinline 
 		   void gms_tbb_free(void * __restrict ptr)
 		   {
 			    if(ptr == NULL) return;
@@ -155,7 +151,7 @@ namespace gms {
 #define ALIGNED_ALLOCA(p, s, a) { \
   char *c_ptr = alloca((s) + (a)); \
   int64 off1 = (a) - 1; \
-  int64 i_ptr64 = ((int64)c_ptr) + off1); \
+  int64 i_ptr64 = ((int64)c_ptr) + off1; \
   (p) = (void*)(i_ptr64 - (i_ptr64 & off1)); \
 }
 
@@ -167,16 +163,13 @@ namespace gms {
 		// Subroutines include an error handling
 		// See: https://man7.org/linux/man-pages/man2/mmap.2.html
 		//
-		// void *mmap(void *addr, size_t length, int prot, int flags,
+		// void *mmap(void *addr, size_t length, int prot, int flags, std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                 
                 //  int fd, off_t offset);
 
 
 
-		 __ATTR_COLD__
-		 __attribute__ ((malloc))
-		 __attribute__ ((alloc_size(1)))
-		 __attribute__ ((returns_nonnull))
-		 __attribute__ ((assume_aligned(4096)))
+		 
 		 template<typename T>
 		 void * gms_mmap_4KiB(const std::size_t length,
 		                      const int32_t prot,
@@ -189,22 +182,20 @@ namespace gms {
                       std::size_t nlargep= totmem/(4096ULL);
                       if(totmem != nlargep*4096ULL) nlargep++;
                       totmem = nlargep*4096ULL;           
-                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
+                      ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
                       if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!"
+	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		           ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                   std::exit(EXIT_FAILURE);
                         }
 			return (ptr);
 		 }
 				          
 
-        __ATTR_COLD__
-		__attribute__ ((malloc))
-		__attribute__ ((alloc_size(1)))
-		__attribute__ ((returns_nonnull))
-		__attribute__ ((assume_aligned(2097152)))
+       
 		template<typename T>
 		void *  gms_mmap_2MiB(const std::size_t length,
 		                      const int32_t prot,
@@ -218,22 +209,20 @@ namespace gms {
                       std::size_t nlargep= totmem/(2097152ULL);
                       if(totmem != nlargep*2097152ULL) nlargep++;
                       totmem = nlargep*2097152ULL;           
-                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
+                      ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
 		      if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                  std::cerr << "Requested stack-backtrace -- not implemented yet!!"
+	                  std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		          ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                   std::exit(EXIT_FAILURE);
                        }
                        return (ptr);
 		}
 
 
-		__ATTR_COLD__
-		__attribute__ ((malloc))
-		__attribute__ ((alloc_size(1)))
-		__attribute__ ((returns_nonnull))
-		__attribute__ ((assume_aligned(1073741824)))
+		
 		template<typename T>
                 void * gms_mmap_1GiB(const std::size_t length,
 		                     const int32_t prot,
@@ -246,18 +235,20 @@ namespace gms {
                       std::size_t nlargep= totmem/(1073741824ULL);
                       if(totmem != nlargep*1073741824ULL) nlargep++;
                       totmem = nlargep*1073741824ULL;           
-                      ptr = mmap(NULL,totmem,prot,flag,fd,offset); 
+                      ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
 		      if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!"
+	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		           ABORT_ON_ERROR(__PRETTY_FUNCTION__, MALLOC_FAILED)
+		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
+	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                   std::exit(EXIT_FAILURE);
                        }
 		       return (ptr);
 		}
 
 		
-		__ATTR_COLD__
+		
 		template<typename T>		       
                 int gms_ummap(void * __restrict ptr,
 		              const std::size_t len) {
@@ -267,7 +258,7 @@ namespace gms {
 
 
 	    
-		__ATTR_HOT__ 
+		
 		template<typename T> 
 		void gms_swap(T &a, T&b) 
 		{
@@ -278,17 +269,20 @@ namespace gms {
 
 		/* TBB Memory Pool class.*/
 
+
+             
+              
+#if __cplusplus >= 202002L	
+
 #ifndef TBB_PREVIEW_MEMORY_POOL
-#define TBB_PREVIEW_MEMORY_POOL
+#define TBB_PREVIEW_MEMORY_POOL 1
 #endif 
 #include <type_traits>
 #include <concepts>
 #include <memory>
 #include "oneapi/tbb/scalable_allocator.h"
 #include "oneapi/tbb/memory_pool.h"
-             
-              
-#if __cplusplus >= 201703L			     
+
 			     /*Slightly modified from the tit/core/par/memory_pool.h*/
 			     template<typename T>
 				 requires std::is_object_v<T> && std::is_trivially_destructible_v<T>
@@ -333,6 +327,19 @@ namespace gms {
 }
 
 				 */
+
+				/*Helper enum classes for tbb and mm_malloc functions calls*/
+                enum class MEM_ALLOC_FUNC_TYPE : int32_t
+				{
+                           CALL_MM_MALLOC,
+						   CALL_TBB_MALLOC
+				};
+
+				enum class MEM_FREE_FUNC_TYPE : int32_t 
+				{
+					       CALL_MM_FREE,
+						   CALL_TBB_FREE
+				};
 
 
 	} // common
