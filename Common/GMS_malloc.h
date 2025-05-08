@@ -25,6 +25,8 @@ namespace  file_info {
 #include <omp.h> // OMP allocators
 #include <alloca.h>
 #include <iostream>
+#include <cerrno>
+#include <cstring>
 #include "GMS_config.h"
 #include "tbb/scalable_allocator.h"
 
@@ -106,8 +108,8 @@ namespace gms {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                 std::cerr << " Not implemented yet!!" << "\n";
 #endif
-	                 std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
-	                 std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                 std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << std::strerror(errno) << "\n";
+	                 std::cerr << "at: " __FILE__ ":" << __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
 	                 std::exit(EXIT_FAILURE);
 	            }
                      return (ptr);
@@ -132,8 +134,8 @@ namespace gms {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
 	                  std::cerr << " Not implemented yet!!" << "\n";
 #endif
-	                   std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
-	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
+	                   std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << std::strerror(errno) << "\n";
+	                   std::cerr << "at: " __FILE__ ":" <<  __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
 	                   std::exit(EXIT_FAILURE);
 	            }
 				return ptr;
@@ -185,13 +187,14 @@ namespace gms {
                       ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
                       if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
+	                        std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
-	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
-	                   std::exit(EXIT_FAILURE);
+                            std::cerr << "value of ptr="  << std::hex << ptr << "\n";
+		                    std::cerr << "[" << __DATE__ << " : " << __TIME__ << " ] " << "[ERROR]:" << std::strerror(errno) << "\n";
+	                        std::cerr << "at: " __FILE__ ":" << __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
+	                        std::exit(EXIT_FAILURE);
                         }
-			return (ptr);
+			          return (ptr);
 		 }
 				          
 
@@ -210,13 +213,14 @@ namespace gms {
                       if(totmem != nlargep*2097152ULL) nlargep++;
                       totmem = nlargep*2097152ULL;           
                       ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
-		      if((ptr == (void*)(-1))) {
+		              if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                  std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
+	                           std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
-	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
-	                   std::exit(EXIT_FAILURE);
+                               std::cerr << "value of ptr= " <<  std::hex << ptr << "\n";
+		                       std::cerr << "[ " << __DATE__ << " : " << __TIME__ << "] " << std::strerror(errno) << "\n";
+	                           std::cerr << "at: " __FILE__ ":" << __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
+	                           std::exit(EXIT_FAILURE);
                        }
                        return (ptr);
 		}
@@ -230,21 +234,22 @@ namespace gms {
 				     const int32_t fd,
 				     const off_t offset) {
 
-		      void * ptr = nullptr; 
+		              void * ptr = nullptr; 
                       std::size_t totmem = sizeof(T)*length;   
                       std::size_t nlargep= totmem/(1073741824ULL);
                       if(totmem != nlargep*1073741824ULL) nlargep++;
                       totmem = nlargep*1073741824ULL;           
                       ptr = mmap(NULL,totmem,prot,flags,fd,offset); 
-		      if((ptr == (void*)(-1))) {
+		              if((ptr == (void*)(-1))) {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                   std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
+	                         std::cerr << "Requested stack-backtrace -- not implemented yet!!" << "\n";
 #endif
-		               std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "MEMORY ALLOCATION FAILURE!!" << "\n";
-	                   std::cerr << "at " << __FILE__ << ":" << __LINE__ << "in:" << __PRETTY_FUNCTION__ << "\n";
-	                   std::exit(EXIT_FAILURE);
+                             std::cerr << "value of ptr= " <<  std::hex << ptr << "\n";
+		                     std::cerr << "[ " << __DATE__ << " : " << __TIME__ << "] " << std::strerror(errno) << "\n";
+	                         std::cerr << "at: " __FILE__ ":" << __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
+	                         std::exit(EXIT_FAILURE);
                        }
-		       return (ptr);
+		              return (ptr);
 		}
 
 		
