@@ -9,6 +9,7 @@
 static const char *fun_names[] = {"Args_7_ReferenceFrame_float_t", "ARGS_11_ReferenceFrame_float_t"};
                                   
 
+void unit_test_Args_7_ReferenceFrame_float_t_Ctor();
 
 void unit_test_Args_7_ReferenceFrame_float_t_Ctor()
 {
@@ -114,6 +115,8 @@ void unit_test_Args_7_ReferenceFrame_float_t_Ctor()
      printf("[Unit-Test]: Reached Normal End of Test: %s\n", fun_names[0]);
      fclose(fp);
 }
+
+void unit_test_Args_11_ReferenceFrame_float_Ctor();
 
 void unit_test_Args_11_ReferenceFrame_float_Ctor()
 {
