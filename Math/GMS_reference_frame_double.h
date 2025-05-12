@@ -53,7 +53,7 @@ namespace file_info {
 
 namespace gms {
 
-       namespace fdm {
+       
             
                  /* Inertial Reference Frame single-precision */
                 struct __ATTR_ALIGN__(64) ReferenceFrame_double_t 
@@ -374,7 +374,7 @@ namespace gms {
                 };
 
 
-       } // fdm
+      
 
 } // gms
 
