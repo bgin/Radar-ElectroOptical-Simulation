@@ -13,7 +13,7 @@ void unit_test_Args_7_ReferenceFrame_float_t_Ctor();
 
 void unit_test_Args_7_ReferenceFrame_float_t_Ctor()
 {
-     using namespace gms::fdm;
+     using namespace gms;
      constexpr std::size_t nx{4096ULL};
      constexpr std::size_t ny{4096ULL};
      constexpr std::size_t nz{4096ULL};
@@ -29,6 +29,7 @@ void unit_test_Args_7_ReferenceFrame_float_t_Ctor()
      printf("[Unit-Test]: Started test of:  %s()\n", fun_names[0]);
      ReferenceFrame_float_t testReferenceFrame = ReferenceFrame_float_t(nx,ny,nz,orig_x,orig_y,orig_z,dt);
      printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n", typeid(testReferenceFrame).name());
+     testReferenceFrame.info_size_and_alignment();
      fp = fopen(fname,"w+");
      if(!fp)
      {
@@ -120,7 +121,7 @@ void unit_test_Args_11_ReferenceFrame_float_Ctor();
 
 void unit_test_Args_11_ReferenceFrame_float_Ctor()
 {
-     using namespace gms::fdm;
+     using namespace gms;
      constexpr std::size_t nx{4096ULL};
      constexpr std::size_t ny{4096ULL};
      constexpr std::size_t nz{4096ULL};
@@ -142,6 +143,7 @@ void unit_test_Args_11_ReferenceFrame_float_Ctor()
      ReferenceFrame_float_t testReferenceFrame = ReferenceFrame_float_t(nx,ny,nz,orig_x,orig_y,orig_z,dt,
                                                                         prot,flags,fd,offset,fsize);
      printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n", typeid(testReferenceFrame).name());
+     testReferenceFrame.info_size_and_alignment();
      fp = fopen(fname,"w+");
      if(!fp)
      {
