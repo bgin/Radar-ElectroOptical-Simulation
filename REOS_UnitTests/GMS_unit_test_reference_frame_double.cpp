@@ -27,7 +27,8 @@ void unit_test_Args_7_ReferenceFrame_double_t_Ctor()
      FILE * fp = NULL; 
      printf("[Unit-Test]: Started test of:  %s()\n", fun_names[0]);
      ReferenceFrame_double_t testReferenceFrame = ReferenceFrame_double_t(nx,ny,nz,orig_x,orig_y,orig_z,dt);
-     printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n", typeid(testReferenceFrame).name());
+     printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n\n", typeid(testReferenceFrame).name());
+     testReferenceFrame.info_size_and_alignment();
      fp = fopen(fname,"w+");
      if(!fp)
      {
@@ -140,7 +141,8 @@ void unit_test_Args_11_ReferenceFrame_double_t_Ctor()
      printf("[Unit-Test]: Started test of:  %s()\n", fun_names[1]);
      ReferenceFrame_double_t testReferenceFrame = ReferenceFrame_double_t(nx,ny,nz,orig_x,orig_y,orig_z,dt,
                                                                           prot,flags,fd,offset,fsize);
-     printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n", typeid(testReferenceFrame).name());
+     printf("[Unit-Test]: Instantiation of object Constructor of type: %s\n\n", typeid(testReferenceFrame).name());
+     testReferenceFrame.info_size_and_alignment();
      fp = fopen(fname,"w+");
      if(!fp)
      {
@@ -232,7 +234,7 @@ void unit_test_Args_11_ReferenceFrame_double_t_Ctor()
 
 int main()
 {
-    //unit_test_Args_7_ReferenceFrame_double_t_Ctor();
+    unit_test_Args_7_ReferenceFrame_double_t_Ctor();
     unit_test_Args_11_ReferenceFrame_double_t_Ctor();
     return 0;
 }
