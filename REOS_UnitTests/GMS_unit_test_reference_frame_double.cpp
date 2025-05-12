@@ -12,7 +12,7 @@ void unit_test_Args_7_ReferenceFrame_double_t_Ctor();
 
 void unit_test_Args_7_ReferenceFrame_double_t_Ctor()
 {
-     using namespace gms::fdm;
+     using namespace gms;
      constexpr std::size_t nx{4096ULL};
      constexpr std::size_t ny{4096ULL};
      constexpr std::size_t nz{4096ULL};
@@ -120,7 +120,7 @@ void unit_test_Args_11_ReferenceFrame_double_t_Ctor();
 
 void unit_test_Args_11_ReferenceFrame_double_t_Ctor()
 {
-     using namespace gms::fdm;
+     using namespace gms;
      constexpr std::size_t nx{4096ULL};
      constexpr std::size_t ny{4096ULL};
      constexpr std::size_t nz{4096ULL};
