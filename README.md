@@ -1,7 +1,6 @@
 # Radar-IR-EOS-Simulation
 
-This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation
-and missile guidance system.
+This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation.
 The main purpose is to achieve a realistic system modeling and simulation as much as possible, hence the main sources of knowledge
 is a engineering and technical literature reaching design level (candidate of science and experienced system
 engineers and designers).
