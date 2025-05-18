@@ -24,10 +24,11 @@ The main structure of the projects is a collection of free standing 'modules' pr
 various modelled components.
 It is a software library of framework and may be used as computational backend of larger program of be
 connected to GUI front-end.
-Currently only hundreds (circa 400) kernels belonging to AVX512 double and single precision executing path
+Currently only a few hundreds (circa 1000) kernels belonging to SSE/AVX/AVX512 double and single precision executing path
 were implemented.
 All of these kernels compute analytical Radar Cross Section of simple and to lesser extent complex objects.
-
+Beside aforestated, the Antennae modeling computational kernels were developed which describe various radiation
+characteristics of different antennae.
 
 
 
