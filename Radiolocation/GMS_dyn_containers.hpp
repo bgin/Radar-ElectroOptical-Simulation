@@ -26,15 +26,10 @@ namespace file_info {
 #include <complex>
 #include <vector>
 #include <exception> //std::terminate
-#ifdef __INTEL_COMPILER
-#include </home/bernard/intel/oneapi/compiler/2023.1.0/linux/compiler/perf_headers/c++/valarray.h>
-//#include <.../.../intel/oneapi/compiler/2023.1.0/linux/compiler/perf_headers/c++/valarray.h>
-#else
 #include <valarray>
-#endif
 #include <cstring> // std::memcpy
 #include <iostream>
-#include "GMS_config"
+#include "GMS_config.h"
 #include "GMS_malloc.h"
 #include "GMS_simd_memops.h"
 
@@ -59,7 +54,7 @@ namespace gms {
                       std::size_t                      mnz;
                       bool                             ismmap;
 
-                     inline DC3D_c4_t() noxcept(true) 
+                     inline DC3D_c4_t() noexcept(true) 
                      {
                           
                           this->mnx  = 0ULL;
@@ -96,7 +91,7 @@ namespace gms {
                              this->mny = ny;
                              this->mnz = nz;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_4KiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
@@ -105,7 +100,7 @@ namespace gms {
                                                  gms_mmap_4KiB<std::complex<float>>(this->mnz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_2MiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
@@ -114,7 +109,7 @@ namespace gms {
                                                  gms_mmap_2MiB<std::complex<float>>(this->mnz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_1GiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
@@ -195,6 +190,7 @@ namespace gms {
                           this->mnx    = rhs.mnx;
                           this->mny    = rhs.mny;
                           this->mnz    = rhs.mnz;
+                          this->ismmap = rhs.ismmap;
                           this->m_Ex   = &rhs.m_Ex[0];
                           this->m_Ey   = &rhs.m_Ey[0];
                           this->m_Ez   = &rhs.m_Ez[0];
@@ -211,7 +207,7 @@ namespace gms {
                      inline ~DC3D_c4_t() noexcept(false) {
                       
                           using namespace gms::common;
-                          if(this->issmap) {
+                          if(this->ismmap) {
                               int32_t err1{}, err2{}, err3{};
                              err1 = gms_ummap<std::complex<float>>(this->m_Ex,this->mnx); this->m_Ex = NULL;
                              err2 = gms_ummap<std::complex<float>>(this->m_Ey,this->mny); this->m_Ey = NULL;
@@ -244,6 +240,7 @@ namespace gms {
                            this->mnx     = rhs.mnx;
                            this->mny     = rhs.mny;
                            this->mnz     = rhs.mnz;
+                           this->ismmap  = rhs.ismmap;
                            this->m_Ex    = &rhs.m_Ex[0];
                            this->m_Ey    = &rhs.m_Ey[0];
                            this->m_Ez    = &rhs.m_Ez[0];
@@ -269,7 +266,7 @@ namespace gms {
                      public:
                      inline void info_size_alignment() const 
                      {
-                         std:cout << "alignof(struct DC3D_c4_t) = " << alignof(DC3D_c4_t) << '\n'
+                         std::cout << "alignof(struct DC3D_c4_t) = " << alignof(DC3D_c4_t) << '\n'
                                   << "sizeof(struct  DC3D_c4_t) = " << sizeof(DC3D_c4_t)  << '\n'
                                   << std::hex << std::showbase      << '\n'
                                   << "&this->m_Ex               =" << (void*)&this->m_Ex  << "\n"
@@ -294,7 +291,7 @@ namespace gms {
                       std::size_t                      mny;
                       bool                             ismmap;
 
-                     inline DC2D_c4_t() noxcept(true) 
+                     inline DC2D_c4_t() noexcept(true) 
                      {
                           
                           this->mnx   = 0ULL;
@@ -326,21 +323,21 @@ namespace gms {
                              this->mnx = nx;
                              this->mny = ny;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_4KiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
                                                  gms_mmap_4KiB<std::complex<float>>(this->mny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_2MiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
                                                  gms_mmap_2MiB<std::complex<float>>(this->mny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_1GiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->m_Ey = (std::complex<float>*)
@@ -429,7 +426,7 @@ namespace gms {
                      {
                       
                           using namespace gms::common;
-                          if(this->issmap) 
+                          if(this->ismmap) 
                           {
                              int32_t err1{}, err2{};
                              err1 = gms_ummap<std::complex<float>>(this->m_Ex,this->mnx); this->m_Ex = NULL;
@@ -479,9 +476,9 @@ namespace gms {
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->mny,64ULL);
                      }
 
-                     inline void info_size_and_alignment() const 
+                     inline void info_size_alignment() const 
                      {
-                          std:cout << "alignof(struct DC2D_c4_t) = " << alignof(DC2D_c4_t) << '\n'
+                          std::cout << "alignof(struct DC2D_c4_t) = " << alignof(DC2D_c4_t) << '\n'
                                    << "sizeof(struct  DC2D_c4_t) = " << sizeof(DC2D_c4_t)  << '\n'
                                    << std::hex << std::showbase      << '\n'
                                    << "&this->m_Ex               ="  << (void*)&this->m_Ex  << "\n"
@@ -501,7 +498,7 @@ namespace gms {
                       std::size_t                      mnx;
                       bool                             ismmap;
 
-                     inline DC1D_c4_t() noxcept(true)
+                     inline DC1D_c4_t() noexcept(true)
                      {
                           
                           this->mnx   = 0ULL;
@@ -517,7 +514,7 @@ namespace gms {
                           this->ismmap = false;
                       }  
                       
-                     inline  DC1D_c4_t(const std::size_t _mnx,
+                     inline  DC1D_c4_t(const std::size_t nx,
                                        const int32_t prot,
                                        const int32_t flags,
                                        const int32_t fd,
@@ -527,17 +524,17 @@ namespace gms {
                              using namespace gms::common;
                              this->mnx = nx;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_4KiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_2MiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (std::complex<float>*)
                                                  gms_mmap_1GiB<std::complex<float>>(this->mnx,prot,flags,fd,offset);
                                       this->ismmap = true;
@@ -606,7 +603,7 @@ namespace gms {
                      inline ~DC1D_c4_t() noexcept(false)
                      {
                           using namespace gms::common;
-                          if(this->issmap) 
+                          if(this->ismmap) 
                           { 
                              int32_t err1{};
                              err1 = gms_ummap<std::complex<float>>(this->m_Ex,this->mnx); this->m_Ex = NULL;
@@ -639,7 +636,7 @@ namespace gms {
                            rhs.m_Ex    = NULL;
                            return (*this);
                       }
-                      
+                      private:
                       inline void allocate() noexcept(false)
                       {
                           using namespace gms::common;
@@ -647,10 +644,10 @@ namespace gms {
                                          gms_mm_malloc( sizeof(std::complex<float>)*this->mnx,64ULL);
                        
                      }
-
-                     inline void info_size_and_alignment() const 
+                     public: 
+                     inline void info_size_alignment() const 
                      {
-                          std:cout << "alignof(struct DC1D_c4_t) = " << alignof(DC1D_c4_t) << '\n'
+                          std::cout << "alignof(struct DC1D_c4_t) = " << alignof(DC1D_c4_t) << '\n'
                                    << "sizeof(struct  DC1D_c4_t) = " << sizeof(DC1D_c4_t)  << '\n'
                                    << std::hex << std::showbase      << '\n'
                                    << "&this->m_Ex               ="  << (void*)&this->m_Ex  << "\n"
@@ -713,7 +710,7 @@ namespace gms {
                              this->mny = ny;
                              this->mnz = nz;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Exr = (float*)
                                                   gms_mmap_4KiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -728,7 +725,7 @@ namespace gms {
                                                   gms_mmap_4KiB<float>(this->mnz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Exr = (float*)
                                                   gms_mmap_2MiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -743,7 +740,7 @@ namespace gms {
                                                   gms_mmap_2MiB<float>(this->mnz,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Exr = (float*)
                                                   gms_mmap_1GiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -780,7 +777,7 @@ namespace gms {
                                this->ismmap = false;
                                const std::size_t lenx = sizeof(float)*this->mnx;
                                const std::size_t leny = sizeof(float)*this->mny;
-                               const std::size_t lenx = sizeof(float)*this->mnz;
+                               const std::size_t lenz = sizeof(float)*this->mnz;
                                std::memcpy(this->m_Exr,&Exr[0],lenx);
                                std::memcpy(this->m_Exi,&Exi[0],lenx);
                                std::memcpy(this->m_Eyr,&Eyr[0],leny);
@@ -825,11 +822,11 @@ namespace gms {
                                                 const float * __restrict Ezr,
                                                 const float * __restrict Ezi) noexcept(false)
                      {
-                         
+                          using namespace gms::common;
                           this->mnx = nx;
                           this->mny = ny;
                           this->mnz = nz;
-                          allocate()
+                          allocate();
                           this->ismmap = false;
 #if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                      avx512_uncached_memmove(&this->m_Exr[0],&Exr[0],this->mnx);
@@ -936,7 +933,7 @@ namespace gms {
                             rhs.m_Ezi     = NULL;
                             return (*this);
                       }
-                      
+                   private:  
                    inline void allocate() noexcept(false)
                    {
                         using namespace gms::common;
@@ -947,10 +944,10 @@ namespace gms {
                         this->m_Ezr  = (float*)gms_mm_malloc(sizeof(float)*this->mnz,64ULL);
                         this->m_Ezi  = (float*)gms_mm_malloc(sizeof(float)*this->mnz,64ULL);
                    }    
-
-                   inline void info_size_and_alignment() const
+                   public:
+                   inline void info_size_alignment() const
                    {
-                        std:cout  << "alignof(struct DC3D_r4_t) = "  << alignof(DC3D_r4_t) << '\n'
+                        std::cout  << "alignof(struct DC3D_r4_t) = "  << alignof(DC3D_r4_t) << '\n'
                                   << "sizeof(struct  DC3D_r4_t) = "  << sizeof(DC3D_r4_t)  << '\n'
                                   << std::hex << std::showbase       << '\n'
                                   << "&this->m_Exr              ="  << (void*)&this->m_Exr << "\n"
@@ -1012,7 +1009,7 @@ namespace gms {
                              this->mnx = nx;
                              this->mny = ny;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Exr = (float*)
                                                   gms_mmap_4KiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -1023,7 +1020,7 @@ namespace gms {
                                                   gms_mmap_4KiB<float>(this->mny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Exr = (float*)
                                                   gms_mmap_2MiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -1034,7 +1031,7 @@ namespace gms {
                                                   gms_mmap_2MiB<float>(this->mny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Exr = (float*)
                                                   gms_mmap_1GiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -1099,10 +1096,10 @@ namespace gms {
                                         const float * __restrict Eyr,
                                         const float * __restrict Eyi) noexcept(false)
                       {                                   
-                         
+                          using namespace gms::common;
                           this->mnx = nx;
                           this->mny = ny;
-                          allocate()
+                          allocate();
                           this->ismmap = false;
 #if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->m_Exr[0],&Exr[0],this->mnx);
@@ -1188,7 +1185,7 @@ namespace gms {
                             rhs.m_Eyi     = NULL;
                             return (*this);
                       }
-                      
+                   private: 
                    inline void allocate() noexcept(false)
                    {
                         using namespace gms::common;
@@ -1198,10 +1195,10 @@ namespace gms {
                         this->m_Eyi  = (float*)gms_mm_malloc(sizeof(float)*this->mny,64ULL);
                        
                    }  
-
-                   inline void info_size_and_alignment() const 
+                   public: 
+                   inline void info_size_alignment() const 
                    {
-                        std:cout  << "alignof(struct DC2D_r4_t) = "  << alignof(DC2D_r4_t) << '\n'
+                        std::cout  << "alignof(struct DC2D_r4_t) = "  << alignof(DC2D_r4_t) << '\n'
                                   << "sizeof(struct  DC2D_r4_t) = "  << sizeof(DC2D_r4_t)  << '\n'
                                   << std::hex << std::showbase       << '\n'
                                   << "&this->m_Exr              =" << (void*)&this->m_Exr << "\n"
@@ -1250,23 +1247,23 @@ namespace gms {
                                         const int32_t fsize) noexcept(false)
                      {
                              using namespace gms::common;
-                             this->mnx = _nx;
+                             this->mnx = nx;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Exr = (float*)
                                                   gms_mmap_4KiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
                                                   gms_mmap_4KiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Exr = (float*)
                                                   gms_mmap_2MiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
                                                   gms_mmap_2MiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Exr = (float*)
                                                   gms_mmap_1GiB<float>(this->mnx,prot,flags,fd,offset);
                                       this->m_Exi = (float*)
@@ -1312,9 +1309,9 @@ namespace gms {
                                         const float * __restrict Exr,   
                                         const float * __restrict Exi) noexcept(false)
                       {
-                                                             
+                          using namespace gms::common;                                 
                           this->mnx = nx;
-                          allocate()
+                          allocate();
                           this->ismmap = false;
 #if (USE_GMS_DYN_CONTAINERS_NT_STORES)  == 1
 	                  avx512_uncached_memmove(&this->m_Exr[0],&Exr[0],this->mnx);
@@ -1381,7 +1378,7 @@ namespace gms {
                             rhs.m_Exi       = NULL;
                             return (*this);
                       }
-                      
+                   private: 
                    inline void allocate() noexcept(false)
                    {
                         using namespace gms::common;
@@ -1389,10 +1386,10 @@ namespace gms {
                         this->m_Exi  = (float*)gms_mm_malloc(sizeof(float)*this->mnx,64ULL);
                                              
                    }    
-
-                   inline void info_size_and_alignment() const 
+                   public: 
+                   inline void info_size_alignment() const 
                    {
-                         std:cout  << "alignof(struct DC1D_r4_t) = "   << alignof(DC1D_r4_t) << '\n'
+                         std::cout  << "alignof(struct DC1D_r4_t) = "   << alignof(DC1D_r4_t) << '\n'
                                    << "sizeof(struct  DC1D_r4_t) = "   << sizeof(DC1D_r4_t)  << '\n'
                                    << std::hex << std::showbase        << '\n'
                                    << "&this->m_Exr              ="    << (void*)&this->m_Exr  << "\n"
@@ -1456,7 +1453,7 @@ namespace gms {
                              this->m_ny = ny;
                              this->m_nz = nz;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (T*)
                                                  gms_mmap_4KiB<T>(this->m_nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
@@ -1465,7 +1462,7 @@ namespace gms {
                                                  gms_mmap_4KiB<T>(this->m_nz,prot,flags,fd,offset);           
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (T*)
                                                  gms_mmap_2MiB<T>(this->m_nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
@@ -1474,7 +1471,7 @@ namespace gms {
                                                  gms_mmap_2MiB<T>(this->m_nz,prot,flags,fd,offset);    
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (T*)
                                                  gms_mmap_1GiB<T>(this->m_nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
@@ -1490,7 +1487,7 @@ namespace gms {
                      }
                       
                       
-                    inline   DC3D_t(   const std::vector<T> &Ex
+                    inline   DC3D_t(   const std::vector<T> &Ex,
                                        const std::vector<T> &Ey,
                                        const std::vector<T> &Ez) noexcept(false)
                     {   
@@ -1508,7 +1505,7 @@ namespace gms {
                           std::memcpy(this->m_Ez,&Ez[0],lenz);                           
                      }
                      
-                    inline   DC3D_t(   const std::valarray<T> &Ex
+                    inline   DC3D_t(   const std::valarray<T> &Ex,
                                        const std::valarray<T> &Ey,
                                        const std::valarray<T> &Ez) noexcept(false)
                     {   
@@ -1686,21 +1683,21 @@ namespace gms {
                              this->nx = _nx;
                              this->ny = _ny;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (T*)
                                                  gms_mmap_4KiB<T>(this->nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
                                                  gms_mmap_4KiB<T>(this->ny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (T*)
                                                  gms_mmap_2MiB<T>(this->nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
                                                  gms_mmap_2MiB<T>(this->ny,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (T*)
                                                  gms_mmap_1GiB<T>(this->nx,prot,flags,fd,offset);
                                       this->m_Ey = (T*)
@@ -1714,7 +1711,7 @@ namespace gms {
                      }
                       
                       
-                    inline   DC2D_t(   const std::vector<T> &Ex
+                    inline   DC2D_t(   const std::vector<T> &Ex,
                                        const std::vector<T> &Ey) noexcept(true)
                     {
                                        
@@ -1729,7 +1726,7 @@ namespace gms {
                                            
                      }
                      
-                    inline   DC2D_t(   const std::valarray<T> &Ex
+                    inline   DC2D_t(   const std::valarray<T> &Ex,
                                        const std::valarray<T> &Ey) noexcept(true)
                     {
                                       
@@ -1874,17 +1871,17 @@ namespace gms {
                              using namespace gms::common;
                              this->nx = _nx;
                              switch (fsize) {
-                                 case:0
+                                 case 0:
                                       this->m_Ex = (T*)
                                                  gms_mmap_4KiB<T>(this->nx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:1
+                                 case 1:
                                       this->m_Ex = (T*)
                                                  gms_mmap_2MiB<T>(this->nx,prot,flags,fd,offset);
                                       this->ismmap = true;
                                  break;
-                                 case:2
+                                 case 2:
                                       this->m_Ex = (T*)
                                                  gms_mmap_1GiB<T>(this->nx,prot,flags,fd,offset);
                                       this->ismmap = true;
@@ -1992,7 +1989,7 @@ namespace gms {
            };
            
            
-           
+         
            
               
               
