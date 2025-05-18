@@ -6,7 +6,7 @@ is a engineering and technical literature reaching design level (candidate of sc
 engineers and designers).
 
 The second firm foundation which this project stand upon is being wholly optimized at basic level of massive manual vectorization by 
-leveraging Intel Intrinsic programming i.e. usage of AVX/AVX2/AVX512 code path for almost every algorithm which is vectorizable.
+leveraging Intel Intrinsic programming i.e. usage of SSE/AVX/AVX2/AVX512 code path for almost every algorithm which is vectorizable.
 Compiler-level autovectorization is of secondary importance and is being inserted mainly to vectorize descriptive statistics routines
 and profiling metrics calculations.
 
