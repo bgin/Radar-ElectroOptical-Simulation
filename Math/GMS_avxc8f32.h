@@ -1077,7 +1077,7 @@ namespace gms {
 						    mgte = _mm256_setzero_ps();
 						    mgte = _mm256_cmp_ps(abs_real(y.m_re),
 						                         abs_real(y.m_im),
-									 _CMP_GE_OQ);
+									             _CMP_GE_OQ);
 						    ratio = _mm256_setzero_ps();
 						    denom = _mm256_setzero_ps();
 						    if(_mm256_testz_ps(mgte,mgte)) 
@@ -1094,10 +1094,9 @@ namespace gms {
 							{
                                 ratio   = _mm256_div_ps(y.m_re,y.m_im);
 	                            denom   = _mm256_add_ps(y.m_im,_mm256_mul_ps(ratio,y.m_re));
-	                            re_part = _mm256_div_ps(_mm256_add_ps(
-	                                                              _mm256_mul_ps(x.m_re,ratio)),denom);
-	                            im_part = _mm256_div_ps(_mm256_sub_ps(
-	                                                              _mm256_mul_ps(x.m_im,ratio)),denom);
+	                            re_part = _mm256_div_ps(_mm256_add_ps(x.m_re,_mm256_mul_ps(x.m_re,ratio)),denom);
+	                            im_part = _mm256_div_ps(_mm256_sub_ps(x.m_im,_mm256_mul_ps(x.m_im,ratio)),denom);
+	                                                             
 	                            return (AVXc8f32{re_part,im_part});
 						    }
 						    
