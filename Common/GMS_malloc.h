@@ -27,6 +27,7 @@ namespace  file_info {
 #include <iostream>
 #include <cerrno>
 #include <cstring>
+#include <cxxabi.h> // for demangle function 
 #include "GMS_config.h"
 #include "tbb/scalable_allocator.h"
 
@@ -96,6 +97,8 @@ namespace gms {
 		pad = len + (misalign == 0 ? 0 : 8 - misalign);
 		return (pad);
    	    }
+
+		
 		
 	
 	    __forceinline 
@@ -120,6 +123,19 @@ namespace gms {
 	      void gms_mm_free(void * __restrict ptr) {
                    _mm_free(ptr);
 	      }
+
+		  inline char * 
+		  demangle(const char * mangled_name,
+		           int32_t & status)
+		  {
+			   std::size_t buf_size{512};
+			   char * out_buf{reinterpret_cast<char*>(gms_mm_malloc(buf_size,64ULL))};
+			   char  * result{NULL};
+               int32_t stat{1};
+               result = abi::__cxa_demangle(mangled_name,out_buf,&buf_size,&stat);
+			   status = stat;
+			   return result;
+		  }
 
 
 		  /*TBB-based allocators*/
