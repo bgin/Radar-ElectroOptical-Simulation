@@ -97,6 +97,133 @@ sse_memset_unroll8x_ps(float * dst,const float filler,std::size_t size)
 #pragma optimize GCC target("sse")
 #endif
 
+void
+gms::common::
+sse_memset_unroll16x_ps(float * dst,const float filler,std::size_t size)
+{
+    const __m128 vfiller{_mm_setr_ps(filler,filler,filler,filler)};
+    float * p_dst{dst};
+    const float cfiller{filler};
+
+    while(((uintptr_t)p_dst & 15) && size)
+    {
+        *p_dst++ = cfiller;
+         --size;
+    }
+
+    while(size >= 64ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+          _mm_store_ps(p_dst+8ULL,  vfiller);
+          _mm_store_ps(p_dst+12ULL, vfiller);
+          _mm_store_ps(p_dst+16ULL, vfiller);
+          _mm_store_ps(p_dst+20ULL, vfiller);
+          _mm_store_ps(p_dst+24ULL, vfiller);
+          _mm_store_ps(p_dst+28ULL, vfiller);
+          _mm_store_ps(p_dst+32ULL, vfiller);
+          _mm_store_ps(p_dst+36ULL, vfiller);
+          _mm_store_ps(p_dst+40ULL, vfiller);
+          _mm_store_ps(p_dst+44ULL, vfiller);
+          _mm_store_ps(p_dst+48ULL, vfiller);
+          _mm_store_ps(p_dst+52ULL, vfiller);
+          _mm_store_ps(p_dst+56ULL, vfiller);
+          _mm_store_ps(p_dst+60ULL, vfiller);
+
+          size  -= 64ULL;
+          p_dst += 64ULL;
+    }
+
+    while(size >= 48ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+          _mm_store_ps(p_dst+8ULL,  vfiller);
+          _mm_store_ps(p_dst+12ULL, vfiller);
+          _mm_store_ps(p_dst+16ULL, vfiller);
+          _mm_store_ps(p_dst+20ULL, vfiller);
+          _mm_store_ps(p_dst+24ULL, vfiller);
+          _mm_store_ps(p_dst+28ULL, vfiller);
+          _mm_store_ps(p_dst+32ULL, vfiller);
+          _mm_store_ps(p_dst+36ULL, vfiller);
+          _mm_store_ps(p_dst+40ULL, vfiller);
+          _mm_store_ps(p_dst+44ULL, vfiller);
+
+          size  -= 48ULL;
+          p_dst += 48ULL;
+    }
+
+    while(size >= 32ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+          _mm_store_ps(p_dst+8ULL,  vfiller);
+          _mm_store_ps(p_dst+12ULL, vfiller);
+          _mm_store_ps(p_dst+16ULL, vfiller);
+          _mm_store_ps(p_dst+20ULL, vfiller);
+          _mm_store_ps(p_dst+24ULL, vfiller);
+          _mm_store_ps(p_dst+28ULL, vfiller);
+
+          size  -= 32ULL;
+          p_dst += 32ULL;
+    }
+
+    while(size >= 24ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+          _mm_store_ps(p_dst+8ULL,  vfiller);
+          _mm_store_ps(p_dst+12ULL, vfiller);
+          _mm_store_ps(p_dst+16ULL, vfiller);
+          _mm_store_ps(p_dst+20ULL, vfiller);
+
+          size  -= 24ULL;
+          p_dst += 24ULL;
+    }
+
+    while(size >= 16ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+          _mm_store_ps(p_dst+8ULL,  vfiller);
+          _mm_store_ps(p_dst+12ULL, vfiller);
+
+          size  -= 16ULL;
+          p_dst += 16ULL;
+    }
+
+    while(size >= 8ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+          _mm_store_ps(p_dst+4ULL,  vfiller);
+
+          size  -= 8ULL;
+          p_dst += 8ULL;
+    }
+
+    while(size >= 4ULL)
+    {
+          _mm_store_ps(p_dst+0ULL,  vfiller);
+
+          size  -= 4ULL;
+          p_dst += 4ULL;
+    }
+
+    while(size)
+    {
+        *p_dst = cfiller;
+        size--;
+        p_dst++;
+    }
+}
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)
+#pragma intel optimization_level 3 
+#pragma intel optimization_parameter target_arch=SSE
+#elif defined (__GNUC__) && (!defined (__INTEL_COMPILER)	|| !defined(__ICC))
+#pragma optimize GCC target("sse")
+#endif
+
 void 
 gms::common::
 sse_memset_unroll8x_pd(double * dst,const double filler,std::size_t size)
