@@ -397,8 +397,8 @@ void unit_test_sse_memset_unroll16x_ps()
 
 int main()
 {
-    //unit_test_sse_memset_unroll8x_ps();
-    //unit_test_sse_memset_unroll8x_pd();
+    unit_test_sse_memset_unroll8x_ps();
+    unit_test_sse_memset_unroll8x_pd();
     unit_test_sse_memset_unroll16x_ps();
     return 0;
 }
