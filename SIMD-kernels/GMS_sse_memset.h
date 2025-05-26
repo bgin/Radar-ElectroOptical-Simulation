@@ -27,20 +27,22 @@ namespace common
 
 __ATTR_HOT__ 
 __ATTR_ALIGN__(32)
-void sse_memset_unroll8x_ps(float *,const float,std::size_t);
+void sse_memset_unroll8x_ps(float * __restrict__ ,const float,std::size_t);
 
 
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
-void sse_memset_unroll16x_ps(float *,const float,std::size_t);
+void sse_memset_unroll16x_ps(float * __restrict__ ,const float,std::size_t);
 
 
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
-void sse_memset_unroll8x_pd(double *,const double,std::size_t);
+void sse_memset_unroll8x_pd(double * __restrict__ ,const double,std::size_t);
 
 
-
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+void sse_memset_unroll16x_pd(double * __restrict__,const double,std::size_t);
 
 
 
