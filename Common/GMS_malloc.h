@@ -1,6 +1,6 @@
 
 #ifndef __GMS_MALLOC_H__
-#define __GMS_MALLOC_H__
+#define __GMS_MALLOC_H__ 011020191914
 
 
 
@@ -77,7 +77,11 @@ namespace gms {
                Modified: 30-08-2021 09:44AM +00200
             */
 
-        __forceinline 
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
+	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif       
 	   	std::size_t
 	    add_cacheline_pad_float(const std::size_t len) {
         std::size_t misalign = 0ULL;
@@ -88,7 +92,11 @@ namespace gms {
 	    }
 
 
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
 	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif 	    
 	    std::size_t
 	    add_cacheline_pad_double(const std::size_t len) {
         std::size_t misalign = 0ULL;
@@ -100,8 +108,11 @@ namespace gms {
 
 		
 		
-	
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
 	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif 
 	    void * gms_mm_malloc(const std::size_t len,
 	                           const std::size_t alignment) {
 
@@ -119,7 +130,12 @@ namespace gms {
 	      }
 
 
-	      __forceinline 
+
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
+	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif 	       
 	      void gms_mm_free(void * __restrict ptr) {
                    _mm_free(ptr);
 	      }
@@ -139,7 +155,11 @@ namespace gms {
 
 
 		  /*TBB-based allocators*/
-          __forceinline 
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
+	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif           
 	      void * __restrict gms_tbb_malloc(const std::size_t nbytes,
 		                        const std::size_t alignment)
 		  {
@@ -157,7 +177,11 @@ namespace gms {
 				return ptr;
 		  }
 
-		   __forceinline 
+#if defined(__INTEL_COMPILER) || defined(__ICC)	
+	    __forceinline 
+#elif defined(__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+       __attribute__((always_inline))
+#endif 		   
 		   void gms_tbb_free(void * __restrict ptr)
 		   {
 			    if(ptr == NULL) return;
