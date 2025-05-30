@@ -153,7 +153,7 @@ namespace gms {
 			   return result;
 		  }
 
-
+#if !defined(__GNUC__)
 		  /*TBB-based allocators*/
 #if defined(__INTEL_COMPILER) || defined(__ICC)	
 	    __forceinline 
@@ -188,7 +188,7 @@ namespace gms {
 				scalable_aligned_free(ptr);
 		   }
 
-
+#endif 
 
 #define ALIGNED_ALLOCA(p, s, a) { \
   char *c_ptr = alloca((s) + (a)); \
