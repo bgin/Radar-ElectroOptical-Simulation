@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 #include <cstdlib>
-#include <algorithm>
 #include "GMS_sse_memset.h"
 
 /*
@@ -58,7 +57,7 @@ void unit_test_sse_memset_unroll8x_ps()
      bool  b16_fail{false};
      bool  b5_fail{false};
      bool  b1_fail{false};
-     printf("[UNIT-TEST]: %s() ---> STARTED\n", __PRETTY_FUNCTION__);
+     printf("[UNIT-TEST]: %s ---> STARTED\n", __PRETTY_FUNCTION__);
      printf("[UNIT-TEST--#1]: -- fill buffer of size: %llu with value=%.7f\n",size_4000,fill);
 #if 0
      BREAK_INT3();
@@ -155,7 +154,7 @@ void unit_test_sse_memset_unroll8x_ps()
             b1_fail = true;
      }
      if(b1_fail==false) {printf(ANSI_COLOR_GREEN "[UNIT-TEST--#7]: PASSED!!" ANSI_RESET_ALL "\n");}
-     printf("[UNIT-TEST]: %s() ---> ENDED\n", __PRETTY_FUNCTION__);
+     printf("[UNIT-TEST]: %s() ---> ENDED CORRECTLY\n", __PRETTY_FUNCTION__);
 
 
 }
