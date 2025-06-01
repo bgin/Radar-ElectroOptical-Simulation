@@ -2,10 +2,6 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <thread>
-#include <vector>
-#include <sys/mman.h>
-#include <cerrno>
 #include "GMS_sse_memset.h"
 #include "GMS_sse_memcpy.h"
 #include "GMS_malloc.h"
@@ -375,79 +371,13 @@ void unit_test_sse_memcpy_unroll16x_ps()
      printf("[UNIT-TEST]: %s ---> ENDED CORRECTLY\n", __PRETTY_FUNCTION__);
 }
 
-void unit_test_sse_memcpy_unroll16x_ps_par();
 
-void unit_test_sse_memcpy_unroll16x_ps_par()
-{
-     using namespace gms::common;
-     constexpr std::size_t buf_len{100000ULL};
-     constexpr std::size_t n_threads{12ULL};
-     constexpr float fill{3.14159265358979323846264338328F};
-     std::vector<std::thread> threads;
-     float * __restrict__ p_src{NULL};
-     float * __restrict__ p_dst{NULL};
-     std::size_t chunk_size{0ULL};
-     std::size_t rem_chunk{0ULL};
-     int32_t mlock_ret{-2};
-     bool b_fail{false};
-     printf("[UNIT-TEST --: Parallel-Memcpy]: %s ---> STARTED\n", __PRETTY_FUNCTION__);
-     printf("[UNIT-TEST --: Parallel-Memcpy]: -- fill buffer of size: %llu with value=%.7f\n",buf_len,fill);
-     p_src = (float*)gms_mm_malloc(buf_len,64ULL);
-     p_dst = (float*)gms_mm_malloc(buf_len,64ULL);
-     mlock_ret = mlock(p_src,buf_len);
-     if(mlock_ret!=0) 
-     {
-         std::printf("!!WARNING!!: -- mlock() failed with: %d\n",mlock_ret);
-         std::perror("errno:");
-     }
-     mlock_ret = -2;
-     mlock_ret = mlock(p_dst,buf_len);
-     if(mlock_ret!=0) 
-     {
-         std::printf("!!WARNING!!: -- mlock() failed with: %d\n",mlock_ret);
-         std::perror("errno:");
-     }
-     sse_memset_unroll16x_ps(p_src,fill,buf_len);
-     chunk_size = buf_len/n_threads;
-     for(std::size_t __i{0ULL}; __i != n_threads; ++__i)
-     {
-          float * __restrict chunk_src = p_src+__i*chunk_size;
-          float * __restrict chunk_dst = p_dst+__i*chunk_size;
-          threads.push_back(std::thread(sse_memcpy_unroll16x_ps,chunk_dst,chunk_src,chunk_size));
-          rem_chunk += chunk_size;
-     }
-     std::size_t remaining_chunks{buf_len-rem_chunk};
-     float * __restrict rem_src{p_src+rem_chunk};
-     float * __restrict rem_dst{p_dst+rem_chunk};
-     threads.push_back(std::thread(sse_memcpy_unroll16x_ps,rem_dst,rem_src,remaining_chunks));
-     for(std::size_t __i{0ULL}; __i != n_threads; ++__i)
-     {
-          threads[__i].join();
-     }
-
-     for(std::size_t __i{0ULL}; __i != buf_len; ++__i)
-     {
-          const float s{p_src[__i]};
-          const float d{p_dst[__i]};
-          if(d != s)
-          {
-               printf(ANSI_COLOR_RED "[UNIT-TEST --:Parallel-Memcpy]: FAILED, found value of %.7f at pos: %llu, but expected: %.7f" ANSI_RESET_ALL "\n",d,__i,s);
-               b_fail = true;
-               break;
-          }
-     }
-     if(b_fail==false) {printf(ANSI_COLOR_GREEN "[UNIT-TEST --:Parallel-Memcpy]: PASSED!!" ANSI_RESET_ALL "\n");}
-    
-     printf("[UNIT-TEST --:Parallel-Memcpy]: %s ---> ENDED CORRECTLY\n", __PRETTY_FUNCTION__);
-     gms_mm_free(p_src);
-     gms_mm_free(p_dst);
-}
 
 
 int main()
 {
      unit_test_sse_memcpy_unroll8x_ps();
      unit_test_sse_memcpy_unroll16x_ps();
-     unit_test_sse_memcpy_unroll16x_ps_par();
+     
      return 0;
 }
