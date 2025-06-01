@@ -29,13 +29,35 @@ namespace gms
 namespace common
 {
 
+#if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+__attribute__((no_sanitize("coverage")))
+#endif
 __ATTR_HOT__ 
 __ATTR_ALIGN__(32)
 void sse_memcpy_unroll8x_ps(float * __restrict__,float * __restrict__,std::size_t);
 
+#if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+__attribute__((no_sanitize("coverage")))
+#endif
 __ATTR_HOT__ 
 __ATTR_ALIGN__(32)
 void sse_memcpy_unroll16x_ps(float * __restrict__,float * __restrict__,std::size_t);
+
+#if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+__attribute__((no_sanitize("coverage")))
+#endif
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+void sse_memcpy_unroll8x_pd(double * __restrict__,double * __restrict__,std::size_t);
+
+#if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
+__attribute__((no_sanitize("coverage")))
+#endif
+__ATTR_HOT__
+__ATTR_ALIGN__(32)
+void sse_memcpy_unroll16x_pd(double * __restrict__,double * __restrict__,std::size_t);
+
+
 
 } // common
 }// gms
