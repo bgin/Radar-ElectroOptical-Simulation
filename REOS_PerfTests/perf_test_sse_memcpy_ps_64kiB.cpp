@@ -214,7 +214,7 @@ void test_runner_omp_sections_1st_seq();
 void test_runner_omp_sections_1st_seq()
 {
     using namespace gms::common;
-    constexpr std::size_t sz{64000ull};
+    constexpr std::size_t sz{16000ull};
     constexpr std::size_t nbytes{(std::size_t)sizeof(float)*sz};
     constexpr std::size_t alignment{16ull};
     constexpr float filler{3.14159265358979323846264338328F};
@@ -246,7 +246,7 @@ void test_runner_omp_sections_1st_seq()
     {
         printf("[**ERROR**]: -- setenv reported an error=%d\n",setenv_ret);
     }
-    setenv_ret = setenv("OMP_PROC_BIND","scatter",1);
+    setenv_ret = setenv("OMP_PROC_BIND","spread",1);
     if(setenv_ret==-1)
     {
         printf("[**ERROR**]: -- setenv reported an error=%d\n",setenv_ret);
@@ -414,6 +414,21 @@ void test_runner_single_thread(const int32_t cpu,const int32_t priority)
 
 }
 
+__attribute__((hot))
+__attribute__((noinline))
+void test_runner_omp_parallel();
+
+void test_runner_omp_parallel()
+{
+const int32_t priority{99};
+int32_t tid;
+#pragma omp parallel shared(priority) private(tid) num_threads(omp_get_max_threads())
+{
+      tid = omp_get_thread_num();
+      test_runner_single_thread(tid,priority);
+}
+}
+
 
 
 int main()
@@ -421,7 +436,7 @@ int main()
     std::clock_t seed{};
     int32_t      which{-1};
     seed = std::clock();
-    auto rand{std::bind(std::uniform_int_distribution<int32_t>{0,1},
+    auto rand{std::bind(std::uniform_int_distribution<int32_t>{0,2},
                           std::mt19937(seed))};
     which = rand();
     switch (which)
@@ -430,11 +445,14 @@ int main()
         test_runner_omp_sections_1st_seq();
         break;
         case 1 :
-        for(int32_t __i{0}; __i != omp_get_num_procs(); ++__i)
-        {
-               test_runner_single_thread(__i,99);
-        }
+        test_runner_single_thread(5,99);
         break;
+        case 2 : 
+        test_runner_omp_parallel();
+        break;
+        default:
+        printf("[**ERROR**] -- Invalid switch case=%d\n",which);
+        std::terminate();
     }
     
     
