@@ -25,7 +25,8 @@
   contact: beniekg@gmail.com
 */
 
-namespace file_info {
+namespace file_info 
+{
 
  const unsigned int GMS_SPHER_GRAD_AVX_MAJOR = 1U;
  const unsigned int GMS_SPHER_GRAD_AVX_MINOR = 0U;
@@ -35,7 +36,7 @@ namespace file_info {
  const char * const GMS_SPHER_GRAD_AVX_CREATION_DATE = "17-05-2022 08:48 +00200 (TUE 17 MAY 2022 08:48 GMT+2)";
  const char * const GMS_SPHER_GRAD_AVX_BUILD_DATE    = __DATE__ " " __TIME__ ;
  const char * const GMS_SPHER_GRAD_AVX_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
- const char * const GMS_SPHER_GRAD_AVX_SYNOPSIS      = "AVX based spherical coordinates hessians and jacobians functions (vectorized)."
+ const char * const GMS_SPHER_GRAD_AVX_SYNOPSIS      = "AVX based spherical coordinates hessians and jacobians functions (vectorized).";
 
 
 }
@@ -61,7 +62,7 @@ namespace gms {
  */
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
                     
-                      __ATTR_VECTORCALL__
+                     __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm4r8_a(double * __restrict __ATTR_ALIGN__(32) J0,
 		                                   double * __restrict __ATTR_ALIGN__(32) J1,
@@ -78,7 +79,7 @@ namespace gms {
 						   const int32_t sysType); 
 
 		    
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm4r8_u(double * __restrict J0,
 		                                   double * __restrict J1,
@@ -94,10 +95,10 @@ namespace gms {
 						   const __m256d z,
 						   const int32_t sysType); 
 
-             
+#if 0            
 
 
-		       __ATTR_VECTORCALL__
+		       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) J0,
 		                                    float * __restrict __ATTR_ALIGN__(32) J1,
@@ -114,7 +115,7 @@ namespace gms {
 						    const int32_t sysType);
 
 		    
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm8r4_u(float * __restrict J0,
 		                                    float * __restrict J1,
@@ -136,7 +137,7 @@ namespace gms {
                     */
 
 		     
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm4r8(__m256d * __restrict __ATTR_ALIGN__(32) J, //flatten 9x1 array
 		                                 const __m256d x,
@@ -145,7 +146,7 @@ namespace gms {
 						 const int32_t sysType); 
 
 		     
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm8r4(__m256 * __restrict __ATTR_ALIGN__(32) J,
 		                                  const __m256 x,
@@ -164,7 +165,7 @@ namespace gms {
 	              
 
                    
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_hess_ymm4r8(__m256d * __restrict __ATTR_ALIGN__(32) H,
 		                                 const __m256d G0,
@@ -173,7 +174,7 @@ namespace gms {
 						 const int32_t sysType); 
 
 		    
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_hess_ymm8r4(__m256 * __restrict __ATTR_ALIGN__(32) H,
 		                                  const __m256 G0,
@@ -190,7 +191,7 @@ namespace gms {
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/		   
 
                      
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_grad_ymm4r8_a(double * __restrict __ATTR_ALIGN__(32) Mat0,
 		                                   double * __restrict __ATTR_ALIGN__(32) Mat1,
@@ -208,7 +209,7 @@ namespace gms {
 						 const int32_t sysType); 
 
 		      
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_grad_ymm4r8_u(double * __restrict  Mat0,
 		                                   double * __restrict  Mat1,
@@ -226,7 +227,7 @@ namespace gms {
 						   const int32_t sysType);
 
 
-		       __ATTR_VECTORCALL__
+		       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_grad_ymm8r4_a(float * __restrict __ATTR_ALIGN__(32) Mat0,
 		                                    float * __restrict __ATTR_ALIGN__(32) Mat1,
@@ -245,7 +246,7 @@ namespace gms {
 
 
 		   
-                       __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_grad_ymm8r4_u(float * __restrict  Mat0,
 		                                    float * __restrict  Mat1,
@@ -261,6 +262,7 @@ namespace gms {
 						    const __m256 Rx_z,
 						    const __m256 * __restrict __ATTR_ALIGN__(32) M,
 						    const int32_t sysType); 
+#endif  
 
 	
     } // math
