@@ -95,7 +95,7 @@ namespace gms {
 						   const __m256d z,
 						   const int32_t sysType); 
 
-#if 0            
+           
 
 
 		       __ATTR_ALIGN__(32)
@@ -136,7 +136,7 @@ namespace gms {
                         instead of SoA.
                     */
 
-		     
+#if 0		     
                        __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void  spher_inv_jac_ymm4r8(__m256d * __restrict __ATTR_ALIGN__(32) J, //flatten 9x1 array
@@ -153,7 +153,7 @@ namespace gms {
 						  const __m256 y,
 						  const __m256 z,
 						  const int32_t sysType); 
-
+#endif 
 /**SPHERANGHESSIANCPP A C++-only implementation of a function for
  *          computing the Hessian of azimuth and elevation in spherical
  *          coordinates.  See the Matlab equivalent for more comments.
@@ -169,18 +169,18 @@ namespace gms {
                       __ATTR_HOT__
 		      void spher_ang_hess_ymm4r8(__m256d * __restrict __ATTR_ALIGN__(32) H,
 		                                 const __m256d G0,
-						 const __m256d G1,
-						 const __m256d G2,
-						 const int32_t sysType); 
+						                 const __m256d G1,
+						                 const __m256d G2,
+						                 const int32_t sysType); 
 
 		    
                        __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_hess_ymm8r4(__m256 * __restrict __ATTR_ALIGN__(32) H,
-		                                  const __m256 G0,
-						  const __m256 G1,
-						  const __m256 G2,
-						  const int32_t sysType);
+		                                const __m256 G0,
+						                const __m256 G1,
+						                const __m256 G2,
+						                const int32_t sysType);
 /*A C++-only implementations of functions for computing the gradient of
 *spherical azimuth and elevation angles. See the Matlab equivalent for
 *more comments.
@@ -190,7 +190,7 @@ namespace gms {
 **/
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/		   
 
-                     
+#if 0                     
                        __ATTR_ALIGN__(32)
                       __ATTR_HOT__
 		      void spher_ang_grad_ymm4r8_a(double * __restrict __ATTR_ALIGN__(32) Mat0,
