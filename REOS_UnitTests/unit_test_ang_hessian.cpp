@@ -5,6 +5,7 @@
 #include <ctime>
 #include <random>
 #include <functional>
+#include <cfloat>
 #include "GMS_malloc.h" // for demangle
 #include "GMS_spher_grad_avx.h"
 
@@ -59,15 +60,15 @@ void unit_test_ang_hessian_ymm4r8()
                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
              }
              seed_x = std::clock();
-             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.0,1.57079632679489661923132169164),
+             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.1,1.57079632679489661923132169164),
                                    std::mt19937(seed_x))};
              x = _mm256_setr_pd(rand_x(),rand_x(),rand_x(),rand_x());
              seed_y = std::clock();
-             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.0,6.283185307179586476925286766559),
+             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.1,6.283185307179586476925286766559),
                                    std::mt19937(seed_y))};
              y = _mm256_setr_pd(rand_y(),rand_y(),rand_y(),rand_y());
              seed_z = std::clock();
-             auto rand_z{std::bind(std::uniform_real_distribution<double>(0.0,50000),
+             auto rand_z{std::bind(std::uniform_real_distribution<double>(1.0,50000),
                                    std::mt19937(seed_z))};
              z = _mm256_setr_pd(rand_z(),rand_z(),rand_z(),rand_z());
              sysType = 0;
@@ -99,15 +100,15 @@ void unit_test_ang_hessian_ymm4r8()
                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
              }
              seed_x = std::clock();
-             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.0,1.57079632679489661923132169164),
+             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.1,1.57079632679489661923132169164),
                                    std::mt19937(seed_x))};
              x = _mm256_setr_pd(rand_x(),rand_x(),rand_x(),rand_x());
              seed_y = std::clock();
-             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.0,6.283185307179586476925286766559),
+             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.1,6.283185307179586476925286766559),
                                    std::mt19937(seed_y))};
              y = _mm256_setr_pd(rand_y(),rand_y(),rand_y(),rand_y());
              seed_z = std::clock();
-             auto rand_z{std::bind(std::uniform_real_distribution<double>(0.0,50000),
+             auto rand_z{std::bind(std::uniform_real_distribution<double>(1.0,50000.0),
                                    std::mt19937(seed_z))};
              z = _mm256_setr_pd(rand_z(),rand_z(),rand_z(),rand_z());
              sysType = 1;
@@ -139,15 +140,15 @@ void unit_test_ang_hessian_ymm4r8()
                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
              }
              seed_x = std::clock();
-             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.0,1.57079632679489661923132169164),
+             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.1,1.57079632679489661923132169164),
                                    std::mt19937(seed_x))};
              x = _mm256_setr_pd(rand_x(),rand_x(),rand_x(),rand_x());
              seed_y = std::clock();
-             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.0,6.283185307179586476925286766559),
+             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.1,6.283185307179586476925286766559),
                                    std::mt19937(seed_y))};
              y = _mm256_setr_pd(rand_y(),rand_y(),rand_y(),rand_y());
              seed_z = std::clock();
-             auto rand_z{std::bind(std::uniform_real_distribution<double>(0.0,50000),
+             auto rand_z{std::bind(std::uniform_real_distribution<double>(1.0,50000.0),
                                    std::mt19937(seed_z))};
              z = _mm256_setr_pd(rand_z(),rand_z(),rand_z(),rand_z());
              sysType = 2;
@@ -179,15 +180,15 @@ void unit_test_ang_hessian_ymm4r8()
                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
              }
              seed_x = std::clock();
-             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.0,1.57079632679489661923132169164),
+             auto rand_x{std::bind(std::uniform_real_distribution<double>(0.1,1.57079632679489661923132169164),
                                    std::mt19937(seed_x))};
              x = _mm256_setr_pd(rand_x(),rand_x(),rand_x(),rand_x());
              seed_y = std::clock();
-             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.0,6.283185307179586476925286766559),
+             auto rand_y{std::bind(std::uniform_real_distribution<double>(0.1,6.283185307179586476925286766559),
                                    std::mt19937(seed_y))};
              y = _mm256_setr_pd(rand_y(),rand_y(),rand_y(),rand_y());
              seed_z = std::clock();
-             auto rand_z{std::bind(std::uniform_real_distribution<double>(0.0,50000),
+             auto rand_z{std::bind(std::uniform_real_distribution<double>(1.0,50000.0),
                                    std::mt19937(seed_z))};
              z = _mm256_setr_pd(rand_z(),rand_z(),rand_z(),rand_z());
              sysType = 3;
@@ -207,8 +208,201 @@ void unit_test_ang_hessian_ymm4r8()
     }
 }
 
+__attribute__((hot))
+__attribute__((noinline))
+__attribute__((aligned(32)))
+void unit_test_ang_hessian_ymm8r4();
+
+void unit_test_ang_hessian_ymm8r4()
+{
+    constexpr int32_t nelems{144};
+    __attribute__((aligned(32)))
+    __m256 H[18];
+    __m256 x;
+    __m256 y;
+    __m256 z;
+    float * __restrict__ pH{nullptr};
+    std::clock_t seed_x{0ull};
+    std::clock_t seed_y{0ull};
+    std::clock_t seed_z{0ull};
+    std::clock_t seed_distro{0ull};
+    int32_t which{-1};
+    int32_t sysType{-1};
+    seed_distro = std::clock();
+    auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+    which = rand();
+
+    switch (which)
+    {
+         case 0 : 
+         {
+             std::uniform_real_distribution<float> uniform_distro;
+             char * distro_name{NULL};
+             int32_t status{9999};
+             distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+             if(distro_name != NULL && status == 0)
+             {
+                   printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                   gms::common::gms_mm_free(distro_name);
+             }
+             else
+             {
+                   printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                   if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+             }
+             seed_x = std::clock();
+             auto rand_x{std::bind(std::uniform_real_distribution<float>(0.1f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+             x = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x());
+             seed_y = std::clock();
+             auto rand_y{std::bind(std::uniform_real_distribution<float>(0.1f,6.283185307179586476925286766559f),
+                                   std::mt19937(seed_y))};
+             y = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y());
+             seed_z = std::clock();
+             auto rand_z{std::bind(std::uniform_real_distribution<float>(1.0f,50000.0f),
+                                   std::mt19937(seed_z))};
+             z = _mm256_setr_ps(rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z());
+             sysType = 0;
+             printf("[UNIT-TEST]: -- START: spher_ang_hess_ymm8r4().\n");
+             gms::math::spher_ang_hess_ymm8r4(H,x,y,z,sysType);
+             printf("[UNIT-TEST:] -- Dumping the results for sysType=%d\n",sysType);
+             pH = (float* __restrict)&H[0];
+             for(int32_t __i{0}; __i != nelems; ++__i)
+             {
+                 printf("H[%d]=%.7f\n",__i, pH[__i]);
+             }
+             printf("[UNIT-TEST]: -- END: spher_ang_hess_ymm8r4().\n");
+         } 
+         break;
+         case 1 :
+         {
+             std::uniform_real_distribution<double> uniform_distro;
+             char * distro_name{NULL};
+             int32_t status{9999};
+             distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+             if(distro_name != NULL && status == 0)
+             {
+                   printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                   gms::common::gms_mm_free(distro_name);
+             }
+             else
+             {
+                   printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                   if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+             }
+             seed_x = std::clock();
+             auto rand_x{std::bind(std::uniform_real_distribution<float>(0.1f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+             x = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x());
+             seed_y = std::clock();
+             auto rand_y{std::bind(std::uniform_real_distribution<float>(0.1f,6.283185307179586476925286766559f),
+                                   std::mt19937(seed_y))};
+             y = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y());
+             seed_z = std::clock();
+             auto rand_z{std::bind(std::uniform_real_distribution<float>(1.0f,50000.0f),
+                                   std::mt19937(seed_z))};
+             z = _mm256_setr_ps(rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z());
+             sysType = 1;
+             printf("[UNIT-TEST]: -- START: spher_ang_hess_ymm8r4().\n");
+             gms::math::spher_ang_hess_ymm8r4(H,x,y,z,sysType);
+             printf("[UNIT-TEST:] -- Dumping the results for sysType=%d\n",sysType);
+             pH = (float* __restrict)&H[0];
+             for(int32_t __i{0}; __i != nelems; ++__i)
+             {
+                 printf("H[%d]=%.7f\n",__i, pH[__i]);
+             }
+             printf("[UNIT-TEST]: -- END: spher_ang_hess_ymm8r4().\n");
+         }
+         break;
+         case 2 : 
+         {
+             std::uniform_real_distribution<double> uniform_distro;
+             char * distro_name{NULL};
+             int32_t status{9999};
+             distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+             if(distro_name != NULL && status == 0)
+             {
+                   printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                   gms::common::gms_mm_free(distro_name);
+             }
+             else
+             {
+                   printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                   if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+             }
+             seed_x = std::clock();
+             auto rand_x{std::bind(std::uniform_real_distribution<float>(0.1f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+             x = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x());
+             seed_y = std::clock();
+             auto rand_y{std::bind(std::uniform_real_distribution<float>(0.1f,6.283185307179586476925286766559f),
+                                   std::mt19937(seed_y))};
+             y = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y());
+             seed_z = std::clock();
+             auto rand_z{std::bind(std::uniform_real_distribution<float>(1.0f,50000.0f),
+                                   std::mt19937(seed_z))};
+             z = _mm256_setr_ps(rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z());
+             sysType = 2;
+             printf("[UNIT-TEST]: -- START: spher_ang_hess_ymm8r4().\n");
+             gms::math::spher_ang_hess_ymm8r4(H,x,y,z,sysType);
+             printf("[UNIT-TEST:] -- Dumping the results for sysType=%d\n",sysType);
+             pH = (float* __restrict)&H[0];
+             for(int32_t __i{0}; __i != nelems; ++__i)
+             {
+                 printf("H[%d]=%.7f\n",__i, pH[__i]);
+             }
+             printf("[UNIT-TEST]: -- END: spher_ang_hess_ymm8r4().\n");
+         }
+         break;
+         case 3 :
+         {
+            std::uniform_real_distribution<double> uniform_distro;
+             char * distro_name{NULL};
+             int32_t status{9999};
+             distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+             if(distro_name != NULL && status == 0)
+             {
+                   printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                   gms::common::gms_mm_free(distro_name);
+             }
+             else
+             {
+                   printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                   if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+             }
+             seed_x = std::clock();
+             auto rand_x{std::bind(std::uniform_real_distribution<float>(0.1f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+             x = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x(),rand_x());
+             seed_y = std::clock();
+             auto rand_y{std::bind(std::uniform_real_distribution<float>(0.1f,6.283185307179586476925286766559f),
+                                   std::mt19937(seed_y))};
+             y = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y(),rand_y());
+             seed_z = std::clock();
+             auto rand_z{std::bind(std::uniform_real_distribution<float>(1.0f,50000.0f),
+                                   std::mt19937(seed_z))};
+             z = _mm256_setr_ps(rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z(),rand_z());
+             sysType = 3;
+             printf("[UNIT-TEST]: -- START: spher_ang_hess_ymm8r4().\n");
+             gms::math::spher_ang_hess_ymm8r4(H,x,y,z,sysType);
+             printf("[UNIT-TEST:] -- Dumping the results for sysType=%d\n",sysType);
+             pH = (float* __restrict)&H[0];
+             for(int32_t __i{0}; __i != nelems; ++__i)
+             {
+                 printf("H[%d]=%.7f\n",__i, pH[__i]);
+             }
+             printf("[UNIT-TEST]: -- END: spher_ang_hess_ymm8r4().\n");
+         }
+         break;
+         default : 
+              return;
+    }
+}
+
 int main()
 {
     unit_test_ang_hessian_ymm4r8();
+    unit_test_ang_hessian_ymm8r4();
     return 0;
 }
