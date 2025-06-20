@@ -10,37 +10,39 @@
 
 
 
-namespace gms {
+namespace gms 
+{
 
 
-          namespace math {
+namespace math 
+{
 
 	             // In-place
-	              __ATTR_REGCALL__
-                      __ATTR_HOT__
+	          __ATTR_REGCALL__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
-		     void transpose_ymm8r4_8x8_ip(__m256 &x0,
+		     void transpose_ymm8r4_8x8_ip( __m256 &x0,
 		                                   __m256 &x1,
-						   __m256 &x2,
-						   __m256 &x3,
-						   __m256 &x4,
-						   __m256 &x5,
-						   __m256 &x6,
-						   __m256 &x7); 
+						                   __m256 &x2,
+						                   __m256 &x3,
+						                   __m256 &x4,
+						                   __m256 &x5,
+						                   __m256 &x6,
+						                   __m256 &x7); 
 						   
 
 	               // In-place
-	              __ATTR_REGCALL__
-                      __ATTR_HOT__
+	          __ATTR_REGCALL__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		       void transpose_u_ymm8r4_8x8_ip(float * __restrict x0,
-		                                     float * __restrict x1,
-						     float * __restrict x2,
-						     float * __restrict x3,
-						     float * __restrict x4,
-						     float * __restrict x5,
-						     float * __restrict x6,
-						     float * __restrict x7); 
+		                                      float * __restrict x1,
+						                      float * __restrict x2,
+						                      float * __restrict x3,
+						                      float * __restrict x4,
+						                      float * __restrict x5,
+						                      float * __restrict x6,
+						                      float * __restrict x7); 
 
 
 		    // In-place
@@ -59,59 +61,40 @@ namespace gms {
 
 
 		        // In-place
-	              __ATTR_REGCALL__
-                       __ATTR_HOT__
+	          __ATTR_REGCALL__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      void transpose_u_ymm8r4_8x8_ip(float * __restrict x); 
 
 
 		          // In-place
-	              __ATTR_REGCALL__
-                      __ATTR_HOT__
+	          __ATTR_REGCALL__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
-		      void transpose_u_ymm8r4_8x8_ip(float * __restrict __ATTR_ALIGN__(32) x); 
+		      void transpose_a_ymm8r4_8x8_ip(float * __restrict __ATTR_ALIGN__(32) x); 
 
 
 
 		      __ATTR_REGCALL__
-                      __ATTR_HOT__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		    void transpose_u_ymm8r4_8x8(float * __restrict x,
-		                                  float * __restrict y); 
+		                                float * __restrict y); 
 
 
 		      __ATTR_REGCALL__
-                      __ATTR_HOT__
+              __ATTR_HOT__
 		      __ATTR_ALIGN__(32)
 		      void transpose_a_ymm8r4_8x8(float * __restrict __ATTR_ALIGN__(32) x,
 		                                  float * __restrict __ATTR_ALIGN__(32) y); 
-		  }
+		  
 
-#include <cstdint>
-
-
-                      __ATTR_REGCALL__
-                      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		     void transpose_u_ymm8r4_8x8_v2(float * __restrict x,
-		                                     float * __restrict y,
-						     const int32_t n); 
-
-
-
-
-		      __ATTR_REGCALL__
-                      __ATTR_HOT__
-		      __ATTR_ALIGN__(32)
-		     void transpose_a_ymm8r4_8x8_v2(float * __restrict __ATTR_ALIGN__(32) x,
-		                                     float * __restrict __ATTR_ALIGN__(32) y,
-						     const int32_t n); 
 
 
 
 		 
 
-     }
+}
 
 
 }
