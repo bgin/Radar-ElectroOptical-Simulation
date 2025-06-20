@@ -52,24 +52,24 @@
 
                       
                      
-                      __128d gms::math::range_rate_2d_xmm2r8(const __128d tar_x,
-		                                   const __128d tar_y,
-						   const __128d tar_xD,
-						   const __128d tar_yD,
-						   const __128d tx_x,
-						   const __128d tx_y,
-						   const __128d tx_xD,
-						   const __128d tx_yD,
-						   const __128d rx_x,
-						   const __128d rx_y,
-						   const __128d rx_xD,
-						   const __128d rx_yD,
+                      _m128d gms::math::range_rate_2d_xmm2r8(const __m128d tar_x,
+		                                   const __m128d tar_y,
+						   const __m128d tar_xD,
+						   const __m128d tar_yD,
+						   const __m128d tx_x,
+						   const __m128d tx_y,
+						   const __m128d tx_xD,
+						   const __m128d tx_yD,
+						   const __m128d rx_x,
+						   const __m128d rx_y,
+						   const __m128d rx_xD,
+						   const __m128d rx_yD,
 						   const bool useHalfRange) {
 
-                        __128d rr = _mm_setzero_pd(); // return value i.e. rate-range
-			const __128d half = _mm_set1_pd(0.5);
-			__128d dtr0,dtr1,dtl0,dtl1,mag;
-			__128d t0,t1,t2,t3,t4;
+                        __m128d rr = _mm_setzero_pd(); // return value i.e. rate-range
+			const __m128d half = _mm_set1_pd(0.5);
+			__m128d dtr0,dtr1,dtl0,dtl1,mag;
+			__m128d t0,t1,t2,t3,t4;
 			dtr0 = _mm_sub_pd(tar_x,rx_x);
 			dtr1 = _mm_sub_pd(tar_y,rx_x);
 			mag  = _mm_sqrt_pd(_mm_add_pd(_mm_mul_pd(dtr0,dtr0),
@@ -100,24 +100,24 @@
 		   
 		   
                         
-                      __128 gms::math::range_rate_2d_xmm4r4(const __128 tar_x,
-		                                   const __128 tar_y,
-						   const __128 tar_xD,
-						   const __128 tar_yD,
-						   const __128 tx_x,
-						   const __128 tx_y,
-						   const __128 tx_xD,
-						   const __128 tx_yD,
-						   const __128 rx_x,
-						   const __128 rx_y,
-						   const __128 rx_xD,
-						   const __128 rx_yD,
+                      __m128 gms::math::range_rate_2d_xmm4r4(const __m128 tar_x,
+		                                   const __m128 tar_y,
+						   const __m128 tar_xD,
+						   const __m128 tar_yD,
+						   const __m128 tx_x,
+						   const __m128 tx_y,
+						   const __m128 tx_xD,
+						   const __m128 tx_yD,
+						   const __m128 rx_x,
+						   const __m128 rx_y,
+						   const __m128 rx_xD,
+						   const __m128 rx_yD,
 						   const bool useHalfRange) {
 
-                        __128 rr = _mm_setzero_ps(); // return value i.e. rate-range
-			const __128 half = _mm_set1_ps(0.5f);
-			__128 dtr0,dtr1,dtl0,dtl1,mag;
-			__128 t0,t1,t2,t3,t4;
+                        __m128 rr = _mm_setzero_ps(); // return value i.e. rate-range
+			const __m128 half = _mm_set1_ps(0.5f);
+			__m128 dtr0,dtr1,dtl0,dtl1,mag;
+			__m128 t0,t1,t2,t3,t4;
 			dtr0 = _mm_sub_ps(tar_x,rx_x);
 			dtr1 = _mm_sub_ps(tar_y,rx_x);
 			mag  = _mm_sqrt_ps(_mm_add_ps(_mm_mul_ps(dtr0,dtr0),
@@ -169,30 +169,30 @@
 				   
                     
                       
-                      __128d gms::math::range_rate_3d_xmm2r8(const __128d tar_x,
-		                                   const __128d tar_y,
-						   const __128d tar_z,
-						   const __128d tar_xD,
-						   const __128d tar_yD,
-						   const __128d tar_zD,
-						   const __128d tx_x,
-						   const __128d tx_y,
-						   const __128d tx_z,
-						   const __128d tx_xD,
-						   const __128d tx_yD,
-						   const __128d tx_zD,
-						   const __128d rx_x,
-						   const __128d rx_y,
-						   const __128d rx_z,
-						   const __128d rx_xD,
-						   const __128d rx_yD,
-						   const __128d rx_zD,
+                      __m128d gms::math::range_rate_3d_xmm2r8(const __m128d tar_x,
+		                                   const __m128d tar_y,
+						   const __m128d tar_z,
+						   const __m128d tar_xD,
+						   const __m128d tar_yD,
+						   const __m128d tar_zD,
+						   const __m128d tx_x,
+						   const __m128d tx_y,
+						   const __m128d tx_z,
+						   const __m128d tx_xD,
+						   const __m128d tx_yD,
+						   const __m128d tx_zD,
+						   const __m128d rx_x,
+						   const __m128d rx_y,
+						   const __m128d rx_z,
+						   const __m128d rx_xD,
+						   const __m128d rx_yD,
+						   const __m128d rx_zD,
 						   const bool useHalfRange) {
 
-                          __128d rr = _mm_setzero_pd(); // return value i.e. rate-range
-			  const __128d half = _mm_set1_pd(0.5);
-			  __128d dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
-		          __128d t0,t1,t2,t3,t4,t5;
+                          __m128d rr = _mm_setzero_pd(); // return value i.e. rate-range
+			  const __m128d half = _mm_set1_pd(0.5);
+			  __m128d dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
+		          __m128d t0,t1,t2,t3,t4,t5;
 			  dtr0 = _mm_sub_pd(tar_x,rx_x);
 			  dtr1 = _mm_sub_pd(tar_y,rx_y);
 			  dtr2 = _mm_sub_pd(tar_z,rx_z);
@@ -233,30 +233,30 @@
 
 		     
                     
-                      __128 gms::math::range_rate_3d_xmm4r4(const __128 tar_x,
-		                                   const __128 tar_y,
-						   const __128 tar_z,
-						   const __128 tar_xD,
-						   const __128 tar_yD,
-						   const __128 tar_zD,
-						   const __128 tx_x,
-						   const __128 tx_y,
-						   const __128 tx_z,
-						   const __128 tx_xD,
-						   const __128 tx_yD,
-						   const __128 tx_zD,
-						   const __128 rx_x,
-						   const __128 rx_y,
-						   const __128 rx_z,
-						   const __128 rx_xD,
-						   const __128 rx_yD,
-						   const __128 rx_zD,
+                      __m128 gms::math::range_rate_3d_xmm4r4(const __m128 tar_x,
+		                                   const __m128 tar_y,
+						   const __m128 tar_z,
+						   const __m128 tar_xD,
+						   const __m128 tar_yD,
+						   const __m128 tar_zD,
+						   const __m128 tx_x,
+						   const __m128 tx_y,
+						   const __m128 tx_z,
+						   const __m128 tx_xD,
+						   const __m128 tx_yD,
+						   const __m128 tx_zD,
+						   const __m128 rx_x,
+						   const __m128 rx_y,
+						   const __m128 rx_z,
+						   const __m128 rx_xD,
+						   const __m128 rx_yD,
+						   const __m128 rx_zD,
 						   const bool useHalfRange) {
 
-                          __128 rr = _mm_setzero_ps(); // return value i.e. rate-range
-			  const __128 half = _mm_set1_ps(0.5f);
-			  __128 dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
-		          __128 t0,t1,t2,t3,t4,t5;
+                          __m128 rr = _mm_setzero_ps(); // return value i.e. rate-range
+			  const __m128 half = _mm_set1_ps(0.5f);
+			  __m128 dtr0,dtr1,dtr2,dtl0,dtl1,dtl2,mag;
+		          __m128 t0,t1,t2,t3,t4,t5;
 			  dtr0 = _mm_sub_ps(tar_x,rx_x);
 			  dtr1 = _mm_sub_ps(tar_y,rx_y);
 			  dtr2 = _mm_sub_ps(tar_z,rx_z);
@@ -303,13 +303,13 @@
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
 		     
                     
-                      __128d gms::math::range_grad_xmm2r8(const __128d p,
-					        const __128d Tx,
-					        const __128d Rx,
+                      __m128d gms::math::range_grad_xmm2r8(const __m128d p,
+					        const __m128d Tx,
+					        const __m128d Rx,
 					        const bool useHalfRange) {
 
-			  const __128d half = _mm_set1_pd(0.5);
-			  __128d temp,vnorm,J;
+			  const __m128d half = _mm_set1_pd(0.5);
+			  __m128d temp,vnorm,J;
 			  double norm        = 0.0;
 			  //deltaTx=x-lTx;
 			  temp  = _mm_sub_pd(p,Tx);
@@ -336,13 +336,13 @@
 
 		     
                     
-                      __128 gms::math::range_grad_xmm4r4(const __128 p,
-					        const __128 Tx,
-					        const __128 Rx,
+                      __m128 gms::math::range_grad_xmm4r4(const __m128 p,
+					        const __m128 Tx,
+					        const __m128 Rx,
 					        const bool useHalfRange) {
 
-			  const __128 half = _mm_set1_ps(0.5f);
-			  __128 temp,vnorm,J;
+			  const __m128 half = _mm_set1_ps(0.5f);
+			  __m128 temp,vnorm,J;
 			  float norm        = 0.0f;
 			  //deltaTx=x-lTx;
 			  temp  = _mm_sub_ps(p,Tx);
@@ -387,17 +387,17 @@
 		                                     double * __restrict __ATTR_ALIGN__(16) H_1,
 						     double * __restrict __ATTR_ALIGN__(16) H_2,
 						     double * __restrict __ATTR_ALIGN__(16) H_3,
-						     const __128d x_0,
-						     const __128d x_1,
+						     const __m128d x_0,
+						     const __m128d x_1,
 						     const bool useHalfRange) {
 
-			   const __128d _2   = _mm_set1_pd(2.0);
-			   const __128d _1   = _mm_set1_pd(1.0);
-			   const __128d xC2  = _mm_mul_pd(x_0,x_0);
-			   const __128d yC2  = _mm_mul_pd(x_1,x_1);
-			   const __128d r    = _mm_sqrt_pd(_mm_add_pd(xC2,yC2));
-			   const __128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
-			   const __128d invr = _mm_div_pd(_1,r);
+			   const __m128d _2   = _mm_set1_pd(2.0);
+			   const __m128d _1   = _mm_set1_pd(1.0);
+			   const __m128d xC2  = _mm_mul_pd(x_0,x_0);
+			   const __m128d yC2  = _mm_mul_pd(x_1,x_1);
+			   const __m128d r    = _mm_sqrt_pd(_mm_add_pd(xC2,yC2));
+			   const __m128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
+			   const __m128d invr = _mm_div_pd(_1,r);
 			   _mm_store_pd(&H_0[0],_mm_add_pd(_mm_div_pd(xmm2r8_negate(xC2),
 			                                                    r3),invr));
 			   _mm_store_pd(&H_1[0],_mm_div_pd(_mm_mul_pd(xmm2r8_negate(x_0),
@@ -420,17 +420,17 @@
 		                                     double * __restrict H_1,
 						     double * __restrict H_2,
 						     double * __restrict H_3,
-						     const __128d x_0,
-						     const __128d x_1,
+						     const __m128d x_0,
+						     const __m128d x_1,
 						     const bool useHalfRange) {
 
-			   const __128d _2   = _mm_set1_pd(2.0);
-			   const __128d _1   = _mm_set1_pd(1.0);
-			   const __128d xC2  = _mm_mul_pd(x_0,x_0);
-			   const __128d yC2  = _mm_mul_pd(x_1,x_1);
-			   const __128d r    = _mm_sqrt_pd(_mm_add_pd(xC2,yC2));
-			   const __128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
-			   const __128d invr = _mm_div_pd(_1,r);
+			   const __m128d _2   = _mm_set1_pd(2.0);
+			   const __m128d _1   = _mm_set1_pd(1.0);
+			   const __m128d xC2  = _mm_mul_pd(x_0,x_0);
+			   const __m128d yC2  = _mm_mul_pd(x_1,x_1);
+			   const __m128d r    = _mm_sqrt_pd(_mm_add_pd(xC2,yC2));
+			   const __m128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
+			   const __m128d invr = _mm_div_pd(_1,r);
 			   _mm_storeu_pd(&H_0[0],_mm_add_pd(_mm_div_pd(xmm2r8_negate(xC2),
 			                                                    r3),invr));
 			   _mm_storeu_pd(&H_1[0],_mm_div_pd(_mm_mul_pd(xmm2r8_negate(x_0),
@@ -453,17 +453,17 @@
 		                                      float * __restrict __ATTR_ALIGN__(16) H_1,
 						      float * __restrict __ATTR_ALIGN__(16) H_2,
 						      float * __restrict __ATTR_ALIGN__(16) H_3,
-						      const __128 x_0,
-						      const __128 x_1,
+						      const __m128 x_0,
+						      const __m128 x_1,
 						      const bool useHalfRange) {
 
-			   const __128 _2   = _mm_set1_ps(2.0f);
-			   const __128 _1   = _mm_set1_ps(1.0f);
-			   const __128 xC2  = _mm_mul_ps(x_0,x_0);
-			   const __128 yC2  = _mm_mul_ps(x_1,x_1);
-			   const __128 r    = _mm_sqrt_ps(_mm_add_ps(xC2,yC2));
-			   const __128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
-			   const __128 invr = _mm_div_ps(_1,r);
+			   const __m128 _2   = _mm_set1_ps(2.0f);
+			   const __m128 _1   = _mm_set1_ps(1.0f);
+			   const __m128 xC2  = _mm_mul_ps(x_0,x_0);
+			   const __m128 yC2  = _mm_mul_ps(x_1,x_1);
+			   const __m128 r    = _mm_sqrt_ps(_mm_add_ps(xC2,yC2));
+			   const __m128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
+			   const __m128 invr = _mm_div_ps(_1,r);
 			   _mm_store_ps(&H_0[0],_mm_add_ps(_mm_div_ps(xmm4r4_negate(xC2),
 			                                                    r3),invr));
 			   _mm_store_ps(&H_1[0],_mm_div_ps(_mm_mul_ps(xmm4r4_negate(x_0),
@@ -486,17 +486,17 @@
 		                                      float * __restrict  H_1,
 						      float * __restrict  H_2,
 						      float * __restrict  H_3,
-						      const __128 x_0,
-						      const __128 x_1,
+						      const __m128 x_0,
+						      const __m128 x_1,
 						      const bool useHalfRange) {
 
-			   const __128 _2   = _mm_set1_ps(2.0f);
-			   const __128 _1   = _mm_set1_ps(1.0f);
-			   const __128 xC2  = _mm_mul_ps(x_0,x_0);
-			   const __128 yC2  = _mm_mul_ps(x_1,x_1);
-			   const __128 r    = _mm_sqrt_ps(_mm_add_ps(xC2,yC2));
-			   const __128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
-			   const __128 invr = _mm_div_ps(_1,r);
+			   const __m128 _2   = _mm_set1_ps(2.0f);
+			   const __m128 _1   = _mm_set1_ps(1.0f);
+			   const __m128 xC2  = _mm_mul_ps(x_0,x_0);
+			   const __m128 yC2  = _mm_mul_ps(x_1,x_1);
+			   const __m128 r    = _mm_sqrt_ps(_mm_add_ps(xC2,yC2));
+			   const __m128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
+			   const __m128 invr = _mm_div_ps(_1,r);
 			   _mm_storeu_ps(&H_0[0],_mm_add_ps(_mm_div_ps(xmm4r4_negate(xC2),
 			                                                    r3),invr));
 			   _mm_storeu_ps(&H_1[0],_mm_div_ps(_mm_mul_ps(xmm4r4_negate(x_0),
@@ -524,18 +524,18 @@
 						     double * __restrict __ATTR_ALIGN__(16) H_6,
 						     double * __restrict __ATTR_ALIGN__(16) H_7,
 						     double * __restrict __ATTR_ALIGN__(16) H_8,
-						     const __128d x_0,
-						     const __128d x_1,
-						     const __128d x_2,
+						     const __m128d x_0,
+						     const __m128d x_1,
+						     const __m128d x_2,
 						     const bool useHalfRange) {
-                           __128d invr,invr3;
-                           const __128d _1   = _mm_set1_pd(1.0);
-			   const __128d xC2  = _mm_mul_pd(x_0,x_0);
-			   const __128d yC2  = _mm_mul_pd(x_1,x_1);
-			   const __128d zC2  = _mm_mul_pd(x_2,x_2);
-			   const __128d r    = _mm_sqrt_pd(
+                           __m128d invr,invr3;
+                           const __m128d _1   = _mm_set1_pd(1.0);
+			   const __m128d xC2  = _mm_mul_pd(x_0,x_0);
+			   const __m128d yC2  = _mm_mul_pd(x_1,x_1);
+			   const __m128d zC2  = _mm_mul_pd(x_2,x_2);
+			   const __m128d r    = _mm_sqrt_pd(
 			                              _mm_add_pd(xC2,_mm_add_pd(yC2,zC2)));
-			   const __128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
+			   const __m128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
 			   invr               = _mm_div_pd(_1,r);
 			   invr3              = _mm_div_pd(_1,r3);
 			   _mm_store_pd(&H_0[0],_mm_fmadd_pd(xmm2r8_negate(xC2),invr3,invr));
@@ -551,23 +551,23 @@
 			   _mm_store_pd(&H_7[0],_mm_load_pd(&H_5[0]));
 			   _mm_store_pd(&H_8[0],_mm_fmadd_pd(xmm2r8_negate(zC2),invr3,invr));
 			   if(useHalfRange) {
-			       const __128d t0 = _mm_load_pd(&H_0[0]);
+			       const __m128d t0 = _mm_load_pd(&H_0[0]);
                                _mm_store_pd(&H_0[0],_mm_add_pd(t0,t0));
-			       const __128d t1 = _mm_load_pd(&H_1[0]);
+			       const __m128d t1 = _mm_load_pd(&H_1[0]);
 			      _mm_store_pd(&H_1[0],_mm_add_pd(t1,t1));
-			       const __128d t2 = _mm_load_pd(&H_2[0]);
+			       const __m128d t2 = _mm_load_pd(&H_2[0]);
 			      _mm_store_pd(&H_2[0],_mm_add_pd(t2,t2));
-			       const __128d t3 = _mm_load_pd(&H_3[0]);
+			       const __m128d t3 = _mm_load_pd(&H_3[0]);
 			      _mm_store_pd(&H_3[0],_mm_add_pd(t3,t3));
-			       const __128d t4 = _mm_load_pd(&H_4[0]);
+			       const __m128d t4 = _mm_load_pd(&H_4[0]);
 			      _mm_store_pd(&H_4[0],_mm_add_pd(t4,t4));
-			       const __128d t5 = _mm_load_pd(&H_5[0]);
+			       const __m128d t5 = _mm_load_pd(&H_5[0]);
 			      _mm_store_pd(&H_5[0],_mm_add_pd(t5,t5));
-			       const __128d t6 = _mm_load_pd(&H_6[0]);
+			       const __m128d t6 = _mm_load_pd(&H_6[0]);
 			      _mm_store_pd(&H_6[0],_mm_add_pd(t6,t6));
-			       const __128d t7 = _mm_load_pd(&H_7[0]);
+			       const __m128d t7 = _mm_load_pd(&H_7[0]);
 			      _mm_store_pd(&H_7[0],_mm_add_pd(t7,t7));
-			       const __128d t8 = _mm_load_pd(&H_8[0]);
+			       const __m128d t8 = _mm_load_pd(&H_8[0]);
 			      _mm_store_pd(&H_8[0],_mm_add_pd(t8,t8));
 			   }
 		    }
@@ -584,18 +584,18 @@
 						     double * __restrict H_6,
 						     double * __restrict H_7,
 						     double * __restrict H_8,
-						   const __128d x_0,
-						   const __128d x_1,
-						   const __128d x_2,
+						   const __m128d x_0,
+						   const __m128d x_1,
+						   const __m128d x_2,
 						   const bool useHalfRange) {
-                           __128d invr,invr3;
-                           const __128d _1   = _mm_set1_pd(1.0);
-			   const __128d xC2  = _mm_mul_pd(x_0,x_0);
-			   const __128d yC2  = _mm_mul_pd(x_1,x_1);
-			   const __128d zC2  = _mm_mul_pd(x_2,x_2);
-			   const __128d r    = _mm_sqrt_pd(
+                           __m128d invr,invr3;
+                           const __m128d _1   = _mm_set1_pd(1.0);
+			   const __m128d xC2  = _mm_mul_pd(x_0,x_0);
+			   const __m128d yC2  = _mm_mul_pd(x_1,x_1);
+			   const __m128d zC2  = _mm_mul_pd(x_2,x_2);
+			   const __m128d r    = _mm_sqrt_pd(
 			                              _mm_add_pd(xC2,_mm_add_pd(yC2,zC2)));
-			   const __128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
+			   const __m128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
 			   invr               = _mm_div_pd(_1,r);
 			   invr3              = _mm_div_pd(_1,r3);
 			   _mm_storeu_pd(&H_0[0],_mm_fmadd_pd(xmm2r8_negate(xC2),invr3,invr));
@@ -611,23 +611,23 @@
 			   _mm_storeu_pd(&H_7[0],_mm_load_pd(&H_5[0]));
 			   _mm_storeu_pd(&H_8[0],_mm_fmadd_pd(xmm2r8_negate(zC2),invr3,invr));
 			   if(useHalfRange) {
-			       const __128d t0 = _mm_loadu_pd(&H_0[0]);
+			       const __m128d t0 = _mm_loadu_pd(&H_0[0]);
                                _mm_storeu_pd(&H_0[0],_mm_add_pd(t0,t0));
-			       const __128d t1 = _mm_loadu_pd(&H_1[0]);
+			       const __m128d t1 = _mm_loadu_pd(&H_1[0]);
 			      _mm_storeu_pd(&H_1[0],_mm_add_pd(t1,t1));
-			       const __128d t2 = _mm_loadu_pd(&H_2[0]);
+			       const __m128d t2 = _mm_loadu_pd(&H_2[0]);
 			      _mm_storeu_pd(&H_2[0],_mm_add_pd(t2,t2));
-			       const __128d t3 = _mm_loadu_pd(&H_3[0]);
+			       const __m128d t3 = _mm_loadu_pd(&H_3[0]);
 			      _mm_storeu_pd(&H_3[0],_mm_add_pd(t3,t3));
-			       const __128d t4 = _mm_loadu_pd(&H_4[0]);
+			       const __m128d t4 = _mm_loadu_pd(&H_4[0]);
 			      _mm_storeu_pd(&H_4[0],_mm_add_pd(t4,t4));
-			       const __128d t5 = _mm_loadu_pd(&H_5[0]);
+			       const __m128d t5 = _mm_loadu_pd(&H_5[0]);
 			      _mm_storeu_pd(&H_5[0],_mm_add_pd(t5,t5));
-			       const __128d t6 = _mm_loadu_pd(&H_6[0]);
+			       const __m128d t6 = _mm_loadu_pd(&H_6[0]);
 			      _mm_storeu_pd(&H_6[0],_mm_add_pd(t6,t6));
-			       const __128d t7 = _mm_loadu_pd(&H_7[0]);
+			       const __m128d t7 = _mm_loadu_pd(&H_7[0]);
 			      _mm_storeu_pd(&H_7[0],_mm_add_pd(t7,t7));
-			       const __128d t8 = _mm_loadu_pd(&H_8[0]);
+			       const __m128d t8 = _mm_loadu_pd(&H_8[0]);
 			      _mm_storeu_pd(&H_8[0],_mm_add_pd(t8,t8));
 			   }
 		    }
@@ -636,19 +636,19 @@
 
 		     
                      
-		      void gms::math::range_hessian_3d_xmm2r8(__128d * __restrict __ATTR_ALIGN__(16) H,
-		                                   const __128d x_0,
-						   const __128d x_1,
-						   const __128d x_2,
+		      void gms::math::range_hessian_3d_xmm2r8(__m128d * __restrict __ATTR_ALIGN__(16) H,
+		                                   const __m128d x_0,
+						   const __m128d x_1,
+						   const __m128d x_2,
 						   const bool useHalfRange) {
-                           __128d invr,invr3;
-                           const __128d _1   = _mm_set1_pd(1.0);
-			   const __128d xC2  = _mm_mul_pd(x_0,x_0);
-			   const __128d yC2  = _mm_mul_pd(x_1,x_1);
-			   const __128d zC2  = _mm_mul_pd(x_2,x_2);
-			   const __128d r    = _mm_sqrt_pd(
+                           __m128d invr,invr3;
+                           const __m128d _1   = _mm_set1_pd(1.0);
+			   const __m128d xC2  = _mm_mul_pd(x_0,x_0);
+			   const __m128d yC2  = _mm_mul_pd(x_1,x_1);
+			   const __m128d zC2  = _mm_mul_pd(x_2,x_2);
+			   const __m128d r    = _mm_sqrt_pd(
 			                              _mm_add_pd(xC2,_mm_add_pd(yC2,zC2)));
-			   const __128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
+			   const __m128d r3   = _mm_mul_pd(r,_mm_mul_pd(r,r));
 			   invr               = _mm_div_pd(_1,r);
 			   invr3              = _mm_div_pd(_1,r3);
 			   H[0]                = _mm_fmadd_pd(xmm2r8_negate(xC2),invr3,invr);
@@ -689,18 +689,18 @@
 						      float * __restrict __ATTR_ALIGN__(16) H_6,
 						      float * __restrict __ATTR_ALIGN__(16) H_7,
 						      float * __restrict __ATTR_ALIGN__(16) H_8,
-						      const __128 x_0,
-						      const __128 x_1,
-						      const __128 x_2,
+						      const __m128 x_0,
+						      const __m128 x_1,
+						      const __m128 x_2,
 						      const bool useHalfRange) {
-                           __128 invr,invr3;
-                           const __128 _1   = _mm_set1_ps(1.0f);
-			   const __128 xC2  = _mm_mul_ps(x_0,x_0);
-			   const __128 yC2  = _mm_mul_ps(x_1,x_1);
-			   const __128 zC2  = _mm_mul_ps(x_2,x_2);
-			   const __128 r    = _mm_sqrt_ps(
+                           __m128 invr,invr3;
+                           const __m128 _1   = _mm_set1_ps(1.0f);
+			   const __m128 xC2  = _mm_mul_ps(x_0,x_0);
+			   const __m128 yC2  = _mm_mul_ps(x_1,x_1);
+			   const __m128 zC2  = _mm_mul_ps(x_2,x_2);
+			   const __m128 r    = _mm_sqrt_ps(
 			                              _mm_add_ps(xC2,_mm_add_ps(yC2,zC2)));
-			   const __128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
+			   const __m128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
 			   invr               = _mm_div_ps(_1,r);
 			   invr3              = _mm_div_ps(_1,r3);
 			   _mm_store_pd(&H_0[0],_mm_fmadd_ps(xmm4r4_negate(xC2),invr3,invr));
@@ -716,23 +716,23 @@
 			   _mm_store_pd(&H_7[0],_mm_store_pd(&H_5[0]));
 			   _mm_store_pd(&H_8[0],_mm_fmadd_ps(xmm4r4_negate(zC2),invr3,invr));
 			   if(useHalfRange) {
-                               const __128 t0 = _mm_load_ps(&H_0[0]);
+                               const __m128 t0 = _mm_load_ps(&H_0[0]);
                                _mm_store_ps(&H_0[0],_mm_add_ps(t0,t0));
-			       const __128 t1 = _mm_load_ps(&H_1[0]);
+			       const __m128 t1 = _mm_load_ps(&H_1[0]);
 			      _mm_store_ps(&H_1[0],_mm_add_ps(t1,t1));
-			       const __128 t2 = _mm_load_ps(&H_2[0]);
+			       const __m128 t2 = _mm_load_ps(&H_2[0]);
 			      _mm_store_ps(&H_2[0],_mm_add_ps(t2,t2));
-			       const __128 t3 = _mm_load_ps(&H_3[0]);
+			       const __m128 t3 = _mm_load_ps(&H_3[0]);
 			      _mm_store_ps(&H_3[0],_mm_add_ps(t3,t3));
-			       const __128 t4 = _mm_load_ps(&H_4[0]);
+			       const __m128 t4 = _mm_load_ps(&H_4[0]);
 			      _mm_store_ps(&H_4[0],_mm_add_ps(t4,t4));
-			       const __128 t5 = _mm_load_ps(&H_5[0]);
+			       const __m128 t5 = _mm_load_ps(&H_5[0]);
 			      _mm_store_ps(&H_5[0],_mm_add_ps(t5,t5));
-			       const __128 t6 = _mm_load_ps(&H_6[0]);
+			       const __m128 t6 = _mm_load_ps(&H_6[0]);
 			      _mm_store_ps(&H_6[0],_mm_add_ps(t6,t6));
-			       const __128 t7 = _mm_load_ps(&H_7[0]);
+			       const __m128 t7 = _mm_load_ps(&H_7[0]);
 			      _mm_store_ps(&H_7[0],_mm_add_ps(t7,t7));
-			       const __128 t8 = _mm_load_ps(&H_8[0]);
+			       const __m128 t8 = _mm_load_ps(&H_8[0]);
 			      _mm_store_ps(&H_8[0],_mm_add_ps(t8,t8));
 			   }
 		    }
@@ -749,18 +749,18 @@
 						      float * __restrict  H_6,
 						      float * __restrict  H_7,
 						      float * __restrict  H_8,
-						      const __128 x_0,
-						      const __128 x_1,
-						      const __128 x_2,
+						      const __m128 x_0,
+						      const __m128 x_1,
+						      const __m128 x_2,
 						      const bool useHalfRange) {
-                           __128 invr,invr3;
-                           const __128 _1   = _mm_set1_ps(1.0f);
-			   const __128 xC2  = _mm_mul_ps(x_0,x_0);
-			   const __128 yC2  = _mm_mul_ps(x_1,x_1);
-			   const __128 zC2  = _mm_mul_ps(x_2,x_2);
-			   const __128 r    = _mm_sqrt_ps(
+                           __m128 invr,invr3;
+                           const __m128 _1   = _mm_set1_ps(1.0f);
+			   const __m128 xC2  = _mm_mul_ps(x_0,x_0);
+			   const __m128 yC2  = _mm_mul_ps(x_1,x_1);
+			   const __m128 zC2  = _mm_mul_ps(x_2,x_2);
+			   const __m128 r    = _mm_sqrt_ps(
 			                              _mm_add_ps(xC2,_mm_add_ps(yC2,zC2)));
-			   const __128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
+			   const __m128 r3   = _mm_mul_ps(r,_mm_mul_ps(r,r));
 			   invr               = _mm_div_ps(_1,r);
 			   invr3              = _mm_div_ps(_1,r3);
 			   _mm_storeu_pd(&H_0[0],_mm_fmadd_ps(xmm4r4_negate(xC2),invr3,invr));
@@ -776,23 +776,23 @@
 			   _mm_storeu_pd(&H_7[0],_mm_store_pd(&H_5[0]));
 			   _mm_storeu_pd(&H_8[0],_mm_fmadd_ps(xmm4r4_negate(zC2),invr3,invr));
 			   if(useHalfRange) {
-                               const __128 t0 = _mm_loadu_ps(&H_0[0]);
+                               const __m128 t0 = _mm_loadu_ps(&H_0[0]);
                                _mm_storeu_ps(&H_0[0],_mm_add_ps(t0,t0));
-			       const __128 t1 = _mm_loadu_ps(&H_1[0]);
+			       const __m128 t1 = _mm_loadu_ps(&H_1[0]);
 			      _mm_storeu_ps(&H_1[0],_mm_add_ps(t1,t1));
-			       const __128 t2 = _mm_loadu_ps(&H_2[0]);
+			       const __m128 t2 = _mm_loadu_ps(&H_2[0]);
 			      _mm_storeu_ps(&H_2[0],_mm_add_ps(t2,t2));
-			       const __128 t3 = _mm_loadu_ps(&H_3[0]);
+			       const __m128 t3 = _mm_loadu_ps(&H_3[0]);
 			      _mm_storeu_ps(&H_3[0],_mm_add_ps(t3,t3));
-			       const __128 t4 = _mm_loadu_ps(&H_4[0]);
+			       const __m128 t4 = _mm_loadu_ps(&H_4[0]);
 			      _mm_storeu_ps(&H_4[0],_mm_add_ps(t4,t4));
-			       const __128 t5 = _mm_loadu_ps(&H_5[0]);
+			       const __m128 t5 = _mm_loadu_ps(&H_5[0]);
 			      _mm_storeu_ps(&H_5[0],_mm_add_ps(t5,t5));
-			       const __128 t6 = _mm_loadu_ps(&H_6[0]);
+			       const __m128 t6 = _mm_loadu_ps(&H_6[0]);
 			      _mm_storeu_ps(&H_6[0],_mm_add_ps(t6,t6));
-			       const __128 t7 = _mm_loadu_ps(&H_7[0]);
+			       const __m128 t7 = _mm_loadu_ps(&H_7[0]);
 			      _mm_storeu_ps(&H_7[0],_mm_add_ps(t7,t7));
-			       const __128 t8 = _mm_loadu_ps(&H_8[0]);
+			       const __m128 t8 = _mm_loadu_ps(&H_8[0]);
 			      _mm_storeu_ps(&H_8[0],_mm_add_ps(t8,t8));
 			   }
 		    }
@@ -805,36 +805,36 @@
 
 		     
                    
-		      void gms::math::range_hess_gen_2d_xmm2r8(__128d &H_0,
-		                                    __128d &H_1,
-						    __128d &H_2,
-						    __128d &H_3,
-						    const __128d x_0,
-						    const __128d x_1,
-						    const __128d rx_0,
-						    const __128d rx_1,
-						    const __128d tx_0,
-						    const __128d tx_1,
+		      void gms::math::range_hess_gen_2d_xmm2r8(__m128d &H_0,
+		                                    __m128d &H_1,
+						    __m128d &H_2,
+						    __m128d &H_3,
+						    const __m128d x_0,
+						    const __m128d x_1,
+						    const __m128d rx_0,
+						    const __m128d rx_1,
+						    const __m128d tx_0,
+						    const __m128d tx_1,
 						    const bool useHalfRange) {
 
-			  __128d inv1,inv2,inv3,inv4;
-                          const __128d _1     = _mm_set1_pd(1.0);
-			  const __128d _0_5   = _mm_set1_pd(0.5);
-			  const __128d dRxx   = _mm_sub_pd(x_0,rx_0);
-			  const __128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
-			  const __128d dRxy   = _mm_sub_pd(x_1,rx_1);
-			  const __128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
-			  const __128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
+			  __m128d inv1,inv2,inv3,inv4;
+                          const __m128d _1     = _mm_set1_pd(1.0);
+			  const __m128d _0_5   = _mm_set1_pd(0.5);
+			  const __m128d dRxx   = _mm_sub_pd(x_0,rx_0);
+			  const __m128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
+			  const __m128d dRxy   = _mm_sub_pd(x_1,rx_1);
+			  const __m128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
+			  const __m128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
 			  inv1                 = _mm_div_pd(_1,nrmdRx);
-			  const __128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
+			  const __m128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_pd(_1,nrmdRx3);
-			  const __128d dTxx   = _mm_sub_pd(x_0,tx_0);
-			  const __128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
-			  const __128d dTxy   = _mm_sub_pd(x_1,tx_1);
-			  const __128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
-			  const __128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
+			  const __m128d dTxx   = _mm_sub_pd(x_0,tx_0);
+			  const __m128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
+			  const __m128d dTxy   = _mm_sub_pd(x_1,tx_1);
+			  const __m128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
+			  const __m128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
 			  inv2                 = _mm_div_pd(_1,nrmdTx);
-			  const __128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
+			  const __m128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_pd(_1,nrmdTx3);
 			  H_0                  = _mm_sub_pd(_mm_fmadd_pd(xmm2r8_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_pd(dTxx2,inv4,inv2));
@@ -862,32 +862,32 @@
 		                                      double * __restrict __ATTR_ALIGN__(16) H_1,
 						      double * __restrict __ATTR_ALIGN__(16) H_2,
 						      double * __restrict __ATTR_ALIGN__(16) H_3,
-						      const __128d x_0,
-						      const __128d x_1,
-						      const __128d rx_0,
-						      const __128d rx_1,
-						      const __128d tx_0,
-						      const __128d tx_1,
+						      const __m128d x_0,
+						      const __m128d x_1,
+						      const __m128d rx_0,
+						      const __m128d rx_1,
+						      const __m128d tx_0,
+						      const __m128d tx_1,
 						      const bool useHalfRange) {
 
-			  __128d inv1,inv2,inv3,inv4;
-                          const __128d _1     = _mm_set1_pd(1.0);
-			  const __128d _0_5   = _mm_set1_pd(0.5);
-			  const __128d dRxx   = _mm_sub_pd(x_0,rx_0);
-			  const __128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
-			  const __128d dRxy   = _mm_sub_pd(x_1,rx_1);
-			  const __128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
-			  const __128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
+			  __m128d inv1,inv2,inv3,inv4;
+                          const __m128d _1     = _mm_set1_pd(1.0);
+			  const __m128d _0_5   = _mm_set1_pd(0.5);
+			  const __m128d dRxx   = _mm_sub_pd(x_0,rx_0);
+			  const __m128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
+			  const __m128d dRxy   = _mm_sub_pd(x_1,rx_1);
+			  const __m128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
+			  const __m128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
 			  inv1                 = _mm_div_pd(_1,nrmdRx);
-			  const __128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
+			  const __m128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_pd(_1,nrmdRx3);
-			  const __128d dTxx   = _mm_sub_pd(x_0,tx_0);
-			  const __128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
-			  const __128d dTxy   = _mm_sub_pd(x_1,tx_1);
-			  const __128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
-			  const __128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
+			  const __m128d dTxx   = _mm_sub_pd(x_0,tx_0);
+			  const __m128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
+			  const __m128d dTxy   = _mm_sub_pd(x_1,tx_1);
+			  const __m128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
+			  const __m128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
 			  inv2                 = _mm_div_pd(_1,nrmdTx);
-			  const __128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
+			  const __m128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_pd(_1,nrmdTx3);
 			  _mm_store_pd(&H_0[0],_mm_sub_pd(_mm_fmadd_pd(xmm2r8_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_pd(dTxx2,inv4,inv2)));
@@ -914,32 +914,32 @@
 		                                      double * __restrict H_1,
 						      double * __restrict H_2,
 						      double * __restrict H_3,
-						      const __128d x_0,
-						      const __128d x_1,
-						      const __128d rx_0,
-						      const __128d rx_1,
-						      const __128d tx_0,
-						      const __128d tx_1,
+						      const __m128d x_0,
+						      const __m128d x_1,
+						      const __m128d rx_0,
+						      const __m128d rx_1,
+						      const __m128d tx_0,
+						      const __m128d tx_1,
 						      const bool useHalfRange) {
 
-			  __128d inv1,inv2,inv3,inv4;
-                          const __128d _1     = _mm_set1_pd(1.0);
-			  const __128d _0_5   = _mm_set1_pd(0.5);
-			  const __128d dRxx   = _mm_sub_pd(x_0,rx_0);
-			  const __128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
-			  const __128d dRxy   = _mm_sub_pd(x_1,rx_1);
-			  const __128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
-			  const __128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
+			  __m128d inv1,inv2,inv3,inv4;
+                          const __m128d _1     = _mm_set1_pd(1.0);
+			  const __m128d _0_5   = _mm_set1_pd(0.5);
+			  const __m128d dRxx   = _mm_sub_pd(x_0,rx_0);
+			  const __m128d dRxx2  = _mm_mul_pd(dRxx,dRxx);
+			  const __m128d dRxy   = _mm_sub_pd(x_1,rx_1);
+			  const __m128d dRxy2  = _mm_mul_pd(dRxy2,dRxy2);
+			  const __m128d nrmdRx = _mm_sqrt_pd(_mm_add_pd(dRxx2,dRxy2));
 			  inv1                 = _mm_div_pd(_1,nrmdRx);
-			  const __128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
+			  const __m128d nrmdRx3= _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_pd(_1,nrmdRx3);
-			  const __128d dTxx   = _mm_sub_pd(x_0,tx_0);
-			  const __128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
-			  const __128d dTxy   = _mm_sub_pd(x_1,tx_1);
-			  const __128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
-			  const __128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
+			  const __m128d dTxx   = _mm_sub_pd(x_0,tx_0);
+			  const __m128d dTxx2  = _mm_mul_pd(dTxx,dTxx);
+			  const __m128d dTxy   = _mm_sub_pd(x_1,tx_1);
+			  const __m128d dTxy2  = _mm_mul_pd(dTxy2,dTxy2);
+			  const __m128d nrmdTx = _mm_sqrt_pd(_mm_add_pd(dTxx2,dTxy2));
 			  inv2                 = _mm_div_pd(_1,nrmdTx);
-			  const __128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
+			  const __m128d nrmdTx3= _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_pd(_1,nrmdTx3);
 			  _mm_storeu_pd(&H_0[0],_mm_sub_pd(_mm_fmadd_pd(xmm2r8_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_pd(dTxx2,inv4,inv2)));
@@ -964,36 +964,36 @@
 
 		     
                      
-		      void gms::math::range_hess_gen_2d_xmm4r4(__128 &H_0,
-		                                     __128 &H_1,
-						     __128 &H_2,
-						     __128 &H_3,
-						     const __128 x_0,
-						     const __128 x_1,
-						     const __128 rx_0,
-						     const __128 rx_1,
-						     const __128 tx_0,
-						     const __128 tx_1,
+		      void gms::math::range_hess_gen_2d_xmm4r4(__m128 &H_0,
+		                                     __m128 &H_1,
+						     __m128 &H_2,
+						     __m128 &H_3,
+						     const __m128 x_0,
+						     const __m128 x_1,
+						     const __m128 rx_0,
+						     const __m128 rx_1,
+						     const __m128 tx_0,
+						     const __m128 tx_1,
 						     const bool useHalfRange) {
 
-			  __128 inv1,inv2,inv3,inv4;
-                          const __128 _1     = _mm_set1_ps(1.0f);
-			  const __128 _0_5   = _mm_set1_ps(0.5f);
-			  const __128 dRxx   = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy   = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
-			  const __128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
+			  __m128 inv1,inv2,inv3,inv4;
+                          const __m128 _1     = _mm_set1_ps(1.0f);
+			  const __m128 _0_5   = _mm_set1_ps(0.5f);
+			  const __m128 dRxx   = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy   = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
+			  const __m128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
 			  inv1                 = _mm_div_ps(_1,nrmdRx);
-			  const __128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
+			  const __m128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx   = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy   = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
-			  const __128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
+			  const __m128 dTxx   = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy   = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
+			  const __m128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
 			  inv2                 = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
+			  const __m128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_ps(_1,nrmdTx3);
 			  H_0                  = _mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_ps(dTxx2,inv4,inv2));
@@ -1020,32 +1020,32 @@
 		                                       float * __restrict __ATTR_ALIGN__(16) H_1,
 						       float * __restrict __ATTR_ALIGN__(16) H_2,
 						       float * __restrict __ATTR_ALIGN__(16) H_3,
-						       const __128 x_0,
-						       const __128 x_1,
-						       const __128 rx_0,
-						       const __128 rx_1,
-						       const __128 tx_0,
-						       const __128 tx_1,
+						       const __m128 x_0,
+						       const __m128 x_1,
+						       const __m128 rx_0,
+						       const __m128 rx_1,
+						       const __m128 tx_0,
+						       const __m128 tx_1,
 						       const bool useHalfRange) {
 
-			  __128 inv1,inv2,inv3,inv4;
-                          const __128 _1     = _mm_set1_ps(1.0f);
-			  const __128 _0_5   = _mm_set1_ps(0.5f);
-			  const __128 dRxx   = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy   = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
-			  const __128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
+			  __m128 inv1,inv2,inv3,inv4;
+                          const __m128 _1     = _mm_set1_ps(1.0f);
+			  const __m128 _0_5   = _mm_set1_ps(0.5f);
+			  const __m128 dRxx   = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy   = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
+			  const __m128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
 			  inv1                 = _mm_div_ps(_1,nrmdRx);
-			  const __128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
+			  const __m128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx   = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy   = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
-			  const __128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
+			  const __m128 dTxx   = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy   = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
+			  const __m128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
 			  inv2                 = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
+			  const __m128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_ps(_1,nrmdTx3);
 			  _mm_store_ps(&H_0[0],_mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_ps(dTxx2,inv4,inv2)));
@@ -1072,32 +1072,32 @@
 		                                       float * __restrict  H_1,
 						       float * __restrict  H_2,
 						       float * __restrict  H_3,
-						       const __128 x_0,
-						       const __128 x_1,
-						       const __128 rx_0,
-						       const __128 rx_1,
-						       const __128 tx_0,
-						       const __128 tx_1,
+						       const __m128 x_0,
+						       const __m128 x_1,
+						       const __m128 rx_0,
+						       const __m128 rx_1,
+						       const __m128 tx_0,
+						       const __m128 tx_1,
 						       const bool useHalfRange) {
 
-			  __128 inv1,inv2,inv3,inv4;
-                          const __128 _1     = _mm_set1_ps(1.0f);
-			  const __128 _0_5   = _mm_set1_ps(0.5f);
-			  const __128 dRxx   = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy   = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
-			  const __128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
+			  __m128 inv1,inv2,inv3,inv4;
+                          const __m128 _1     = _mm_set1_ps(1.0f);
+			  const __m128 _0_5   = _mm_set1_ps(0.5f);
+			  const __m128 dRxx   = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2  = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy   = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2  = _mm_mul_ps(dRxy2,dRxy2);
+			  const __m128 nrmdRx = _mm_sqrt_ps(_mm_add_ps(dRxx2,dRxy2));
 			  inv1                 = _mm_div_ps(_1,nrmdRx);
-			  const __128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
+			  const __m128 nrmdRx3= _mm_mul_ps(nrmdRx,_mm_mul_ps(nrmdRx,nrmdRx));
 			  inv3                 = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx   = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy   = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
-			  const __128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
+			  const __m128 dTxx   = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2  = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy   = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2  = _mm_mul_ps(dTxy2,dTxy2);
+			  const __m128 nrmdTx = _mm_sqrt_ps(_mm_add_ps(dTxx2,dTxy2));
 			  inv2                 = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
+			  const __m128 nrmdTx3= _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx,nrmdTx));
 			  inv4                 = _mm_div_ps(_1,nrmdTx3);
 			  _mm_storeu_ps(&H_0[0],_mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv3,inv1),
 			                                       _mm_fmadd_ps(dTxx2,inv4,inv2)));
@@ -1123,51 +1123,51 @@
 
 		     
                      
-		      void gms::math::range_hess_3d_xmm2r8(__128d &H_0,
-		                                __128d &H_1,
-						__128d &H_2,
-						__128d &H_3,
-						__128d &H_4,
-						__128d &H_5,
-						__128d &H_6,
-						__128d &H_7,
-						__128d &H_8,
-						const __128d x_0,
-						const __128d x_1,
-						const __128d x_2,
-						const __128d rx_0,
-						const __128d rx_1,
-						const __128d rx_2,
-						const __128d tx_0,
-						const __128d tx_1,
-						const __128d tx_2,
+		      void gms::math::range_hess_3d_xmm2r8(__m128d &H_0,
+		                                __m128d &H_1,
+						__m128d &H_2,
+						__m128d &H_3,
+						__m128d &H_4,
+						__m128d &H_5,
+						__m128d &H_6,
+						__m128d &H_7,
+						__m128d &H_8,
+						const __m128d x_0,
+						const __m128d x_1,
+						const __m128d x_2,
+						const __m128d rx_0,
+						const __m128d rx_1,
+						const __m128d rx_2,
+						const __m128d tx_0,
+						const __m128d tx_1,
+						const __m128d tx_2,
 						const bool useHalfRange) {
 
 
-			  const __128d _1      = _mm_set1_pd(1.0);
-			  const __128d _0_5    = _mm_set1_pd(0.5);
-			  const __128d dRxx    = _mm_sub_pd(x_0,rx_0);
-			  const __128d dRxx2   = _mm_mul_pd(dRxx,dRxx);
-			  const __128d dRxy    = _mm_sub_pd(x_1,rx_1);
-			  const __128d dRxy2   = _mm_mul_pd(dRxy,dRxy);
-			  const __128d dRxz    = _mm_sub_pd(x_2,rx_2);
-			  const __128d dRxz2   = _mm_mul_pd(dRxz,dRxz);
-			  const __128d nrmdRx  = _mm_sqrt_pd(_mm_mul_pd(dRxx2,
+			  const __m128d _1      = _mm_set1_pd(1.0);
+			  const __m128d _0_5    = _mm_set1_pd(0.5);
+			  const __m128d dRxx    = _mm_sub_pd(x_0,rx_0);
+			  const __m128d dRxx2   = _mm_mul_pd(dRxx,dRxx);
+			  const __m128d dRxy    = _mm_sub_pd(x_1,rx_1);
+			  const __m128d dRxy2   = _mm_mul_pd(dRxy,dRxy);
+			  const __m128d dRxz    = _mm_sub_pd(x_2,rx_2);
+			  const __m128d dRxz2   = _mm_mul_pd(dRxz,dRxz);
+			  const __m128d nrmdRx  = _mm_sqrt_pd(_mm_mul_pd(dRxx2,
 			                                                       _mm_mul_pd(dRxy2,dRxz2)));
-			  const __128d inv0    = _mm_div_pd(_1,nrmdRx);						      
-			  const __128d nrmdRx3 = _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
-			  const __128d inv1    = _mm_div_pd(_1,nrmdRx3);
-			  const __128d dTxx    = _mm_sub_pd(x_0,tx_0);
-			  const __128d dTxx2   = _mm_mul_pd(dTxx,dTxx);
-			  const __128d dTxy    = _mm_sub_pd(x_1,tx_1);
-			  const __128d dTxy2   = _mm_mul_pd(dTxy,dTxy);
-			  const __128d dTxz    = _mm_sub_pd(x_2,tx_2);
-			  const __128d dTxz2   = _mm_mul_pd(dTxz,dTxz);
-			  const __128d nrmdTx  = _mm_sqrt_pd(_mm_mul_pd(dTxx2,
+			  const __m128d inv0    = _mm_div_pd(_1,nrmdRx);						      
+			  const __m128d nrmdRx3 = _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m128d inv1    = _mm_div_pd(_1,nrmdRx3);
+			  const __m128d dTxx    = _mm_sub_pd(x_0,tx_0);
+			  const __m128d dTxx2   = _mm_mul_pd(dTxx,dTxx);
+			  const __m128d dTxy    = _mm_sub_pd(x_1,tx_1);
+			  const __m128d dTxy2   = _mm_mul_pd(dTxy,dTxy);
+			  const __m128d dTxz    = _mm_sub_pd(x_2,tx_2);
+			  const __m128d dTxz2   = _mm_mul_pd(dTxz,dTxz);
+			  const __m128d nrmdTx  = _mm_sqrt_pd(_mm_mul_pd(dTxx2,
 			                                                       _mm_mul_pd(dTxy2,dTxz2)));
-			  const __128d inv3    = _mm_div_pd(_1,nrmdTx);
-			  const __128d nrmdTx3 = _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx3,nrmdTx3));
-			  const __128d inv2    = _mm_div_pd(_1,nrmdTx3);
+			  const __m128d inv3    = _mm_div_pd(_1,nrmdTx);
+			  const __m128d nrmdTx3 = _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx3,nrmdTx3));
+			  const __m128d inv2    = _mm_div_pd(_1,nrmdTx3);
 			  H_0                   = _mm_sub_pd(_mm_fmadd_pd(xmm2r8_negate(dRxx2),inv1,inv0),
 			                                        _mm_fmadd_pd(dTxx2,inv2,inv3));
 			  H_1                   = _mm_sub_pd(_mm_mul_pd(xmm2r8_negate(dRxx),
@@ -1214,42 +1214,42 @@
 						   double * __restrict __ATTR_ALIGN__(16) H_6,
 						   double * __restrict __ATTR_ALIGN__(16) H_7,
 						   double * __restrict __ATTR_ALIGN__(16) H_8,
-						   const __128d x_0,
-						   const __128d x_1,
-						   const __128d x_2,
-						   const __128d rx_0,
-						   const __128d rx_1,
-						   const __128d rx_2,
-						   const __128d tx_0,
-						   const __128d tx_1,
-						   const __128d tx_2,
+						   const __m128d x_0,
+						   const __m128d x_1,
+						   const __m128d x_2,
+						   const __m128d rx_0,
+						   const __m128d rx_1,
+						   const __m128d rx_2,
+						   const __m128d tx_0,
+						   const __m128d tx_1,
+						   const __m128d tx_2,
 						   const bool useHalfRange) {
 
 
-			  const __128d _1      = _mm_set1_pd(1.0);
-			  const __128d _0_5    = _mm_set1_pd(0.5);
-			  const __128d dRxx    = _mm_sub_pd(x_0,rx_0);
-			  const __128d dRxx2   = _mm_mul_pd(dRxx,dRxx);
-			  const __128d dRxy    = _mm_sub_pd(x_1,rx_1);
-			  const __128d dRxy2   = _mm_mul_pd(dRxy,dRxy);
-			  const __128d dRxz    = _mm_sub_pd(x_2,rx_2);
-			  const __128d dRxz2   = _mm_mul_pd(dRxz,dRxz);
-			  const __128d nrmdRx  = _mm_sqrt_pd(_mm_mul_pd(dRxx2,
+			  const __m128d _1      = _mm_set1_pd(1.0);
+			  const __m128d _0_5    = _mm_set1_pd(0.5);
+			  const __m128d dRxx    = _mm_sub_pd(x_0,rx_0);
+			  const __m128d dRxx2   = _mm_mul_pd(dRxx,dRxx);
+			  const __m128d dRxy    = _mm_sub_pd(x_1,rx_1);
+			  const __m128d dRxy2   = _mm_mul_pd(dRxy,dRxy);
+			  const __m128d dRxz    = _mm_sub_pd(x_2,rx_2);
+			  const __m128d dRxz2   = _mm_mul_pd(dRxz,dRxz);
+			  const __m128d nrmdRx  = _mm_sqrt_pd(_mm_mul_pd(dRxx2,
 			                                                       _mm_mul_pd(dRxy2,dRxz2)));
-			  const __128d inv0    = _mm_div_pd(_1,nrmdRx);						      
-			  const __128d nrmdRx3 = _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
-			  const __128d inv1    = _mm_div_pd(_1,nrmdRx3);
-			  const __128d dTxx    = _mm_sub_pd(x_0,tx_0);
-			  const __128d dTxx2   = _mm_mul_pd(dTxx,dTxx);
-			  const __128d dTxy    = _mm_sub_pd(x_1,tx_1);
-			  const __128d dTxy2   = _mm_mul_pd(dTxy,dTxy);
-			  const __128d dTxz    = _mm_sub_pd(x_2,tx_2);
-			  const __128d dTxz2   = _mm_mul_pd(dTxz,dTxz);
-			  const __128d nrmdTx  = _mm_sqrt_pd(_mm_mul_pd(dTxx2,
+			  const __m128d inv0    = _mm_div_pd(_1,nrmdRx);						      
+			  const __m128d nrmdRx3 = _mm_mul_pd(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m128d inv1    = _mm_div_pd(_1,nrmdRx3);
+			  const __m128d dTxx    = _mm_sub_pd(x_0,tx_0);
+			  const __m128d dTxx2   = _mm_mul_pd(dTxx,dTxx);
+			  const __m128d dTxy    = _mm_sub_pd(x_1,tx_1);
+			  const __m128d dTxy2   = _mm_mul_pd(dTxy,dTxy);
+			  const __m128d dTxz    = _mm_sub_pd(x_2,tx_2);
+			  const __m128d dTxz2   = _mm_mul_pd(dTxz,dTxz);
+			  const __m128d nrmdTx  = _mm_sqrt_pd(_mm_mul_pd(dTxx2,
 			                                                       _mm_mul_pd(dTxy2,dTxz2)));
-			  const __128d inv3    = _mm_div_pd(_1,nrmdTx);
-			  const __128d nrmdTx3 = _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx3,nrmdTx3));
-			  const __128d inv2    = _mm_div_pd(_1,nrmdTx3);
+			  const __m128d inv3    = _mm_div_pd(_1,nrmdTx);
+			  const __m128d nrmdTx3 = _mm_mul_pd(nrmdTx,_mm_mul_pd(nrmdTx3,nrmdTx3));
+			  const __m128d inv2    = _mm_div_pd(_1,nrmdTx3);
 			  _mm_store_pd(&H_0[0],_mm_sub_pd(_mm_fmadd_pd(xmm2r8_negate(dRxx2),inv1,inv0),
 			                                        _mm_fmadd_pd(dTxx2,inv2,inv3)));
 			  _mm_store_pd(&H_1[0],_mm_sub_pd(_mm_mul_pd(xmm2r8_negate(dRxx),
@@ -1288,51 +1288,51 @@
 
 		     
                     
-		      void gms::math::range_hess_3d_xmm4r4(__128 &H_0,
-		                                __128 &H_1,
-						__128 &H_2,
-						__128 &H_3,
-						__128 &H_4,
-						__128 &H_5,
-						__128 &H_6,
-						__128 &H_7,
-						__128 &H_8,
-						const __128 x_0,
-						const __128 x_1,
-						const __128 x_2,
-						const __128 rx_0,
-						const __128 rx_1,
-						const __128 rx_2,
-						const __128 tx_0,
-						const __128 tx_1,
-						const __128 tx_2,
+		      void gms::math::range_hess_3d_xmm4r4(__m128 &H_0,
+		                                __m128 &H_1,
+						__m128 &H_2,
+						__m128 &H_3,
+						__m128 &H_4,
+						__m128 &H_5,
+						__m128 &H_6,
+						__m128 &H_7,
+						__m128 &H_8,
+						const __m128 x_0,
+						const __m128 x_1,
+						const __m128 x_2,
+						const __m128 rx_0,
+						const __m128 rx_1,
+						const __m128 rx_2,
+						const __m128 tx_0,
+						const __m128 tx_1,
+						const __m128 tx_2,
 						const bool useHalfRange) {
 
 
-			  const __128 _1      = _mm_set1_ps(1.0f);
-			  const __128 _0_5    = _mm_set1_ps(0.5f);
-			  const __128 dRxx    = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy    = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
-			  const __128 dRxz    = _mm_sub_ps(x_2,rx_2);
-			  const __128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
-			  const __128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
+			  const __m128 _1      = _mm_set1_ps(1.0f);
+			  const __m128 _0_5    = _mm_set1_ps(0.5f);
+			  const __m128 dRxx    = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy    = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
+			  const __m128 dRxz    = _mm_sub_ps(x_2,rx_2);
+			  const __m128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
+			  const __m128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
 			                                                       _mm_mul_ps(dRxy2,dRxz2)));
-			  const __128 inv0    = _mm_div_ps(_1,nrmdRx);						      
-			  const __128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
-			  const __128 inv1    = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx    = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy    = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
-			  const __128 dTxz    = _mm_sub_ps(x_2,tx_2);
-			  const __128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
-			  const __128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
+			  const __m128 inv0    = _mm_div_ps(_1,nrmdRx);						      
+			  const __m128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m128 inv1    = _mm_div_ps(_1,nrmdRx3);
+			  const __m128 dTxx    = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy    = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
+			  const __m128 dTxz    = _mm_sub_ps(x_2,tx_2);
+			  const __m128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
+			  const __m128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
 			                                                       _mm_mul_ps(dTxy2,dTxz2)));
-			  const __128 inv3    = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
-			  const __128 inv2    = _mm_div_ps(_1,nrmdTx3);
+			  const __m128 inv3    = _mm_div_ps(_1,nrmdTx);
+			  const __m128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
+			  const __m128 inv2    = _mm_div_ps(_1,nrmdTx3);
 			  H_0                   = _mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv1,inv0),
 			                                        _mm_fmadd_ps(dTxx2,inv2,inv3));
 			  H_1                   = _mm_sub_ps(_mm_mul_ps(xmm4r4_negate(dRxx),
@@ -1379,42 +1379,42 @@
 						   float * __restrict __ATTR_ALIGN__(16) H_6,
 						   float * __restrict __ATTR_ALIGN__(16) H_7,
 						   float * __restrict __ATTR_ALIGN__(16) H_8,
-						   const __128 x_0,
-						   const __128 x_1,
-						   const __128 x_2,
-						   const __128 rx_0,
-						   const __128 rx_1,
-						   const __128 rx_2,
-						   const __128 tx_0,
-						   const __128 tx_1,
-						   const __128 tx_2,
+						   const __m128 x_0,
+						   const __m128 x_1,
+						   const __m128 x_2,
+						   const __m128 rx_0,
+						   const __m128 rx_1,
+						   const __m128 rx_2,
+						   const __m128 tx_0,
+						   const __m128 tx_1,
+						   const __m128 tx_2,
 						   const bool useHalfRange) {
 
 
-			  const __128 _1      = _mm_set1_ps(1.0f);
-			  const __128 _0_5    = _mm_set1_ps(0.5f);
-			  const __128 dRxx    = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy    = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
-			  const __128 dRxz    = _mm_sub_ps(x_2,rx_2);
-			  const __128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
-			  const __128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
+			  const __m128 _1      = _mm_set1_ps(1.0f);
+			  const __m128 _0_5    = _mm_set1_ps(0.5f);
+			  const __m128 dRxx    = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy    = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
+			  const __m128 dRxz    = _mm_sub_ps(x_2,rx_2);
+			  const __m128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
+			  const __m128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
 			                                                       _mm_mul_ps(dRxy2,dRxz2)));
-			  const __128 inv0    = _mm_div_ps(_1,nrmdRx);						      
-			  const __128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
-			  const __128 inv1    = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx    = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy    = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
-			  const __128 dTxz    = _mm_sub_ps(x_2,tx_2);
-			  const __128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
-			  const __128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
+			  const __m128 inv0    = _mm_div_ps(_1,nrmdRx);						      
+			  const __m128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m128 inv1    = _mm_div_ps(_1,nrmdRx3);
+			  const __m128 dTxx    = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy    = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
+			  const __m128 dTxz    = _mm_sub_ps(x_2,tx_2);
+			  const __m128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
+			  const __m128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
 			                                                       _mm_mul_ps(dTxy2,dTxz2)));
-			  const __128 inv3    = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
-			  const __128 inv2    = _mm_div_ps(_1,nrmdTx3);
+			  const __m128 inv3    = _mm_div_ps(_1,nrmdTx);
+			  const __m128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
+			  const __m128 inv2    = _mm_div_ps(_1,nrmdTx3);
 			  _mm_store_ps(&H_0[0],_mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv1,inv0),
 			                                        _mm_fmadd_ps(dTxx2,inv2,inv3)));
 			  _mm_store_ps(&H_1[0],_mm_sub_ps(_mm_mul_ps(xmm4r4_negate(dRxx),
@@ -1461,42 +1461,42 @@
 						   float * __restrict H_6,
 						   float * __restrict H_7,
 						   float * __restrict H_8,
-						   const __128 x_0,
-						   const __128 x_1,
-						   const __128 x_2,
-						   const __128 rx_0,
-						   const __128 rx_1,
-						   const __128 rx_2,
-						   const __128 tx_0,
-						   const __128 tx_1,
-						   const __128 tx_2,
+						   const __m128 x_0,
+						   const __m128 x_1,
+						   const __m128 x_2,
+						   const __m128 rx_0,
+						   const __m128 rx_1,
+						   const __m128 rx_2,
+						   const __m128 tx_0,
+						   const __m128 tx_1,
+						   const __m128 tx_2,
 						   const bool useHalfRange) {
 
 
-			  const __128 _1      = _mm_set1_ps(1.0f);
-			  const __128 _0_5    = _mm_set1_ps(0.5f);
-			  const __128 dRxx    = _mm_sub_ps(x_0,rx_0);
-			  const __128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
-			  const __128 dRxy    = _mm_sub_ps(x_1,rx_1);
-			  const __128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
-			  const __128 dRxz    = _mm_sub_ps(x_2,rx_2);
-			  const __128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
-			  const __128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
+			  const __m128 _1      = _mm_set1_ps(1.0f);
+			  const __m128 _0_5    = _mm_set1_ps(0.5f);
+			  const __m128 dRxx    = _mm_sub_ps(x_0,rx_0);
+			  const __m128 dRxx2   = _mm_mul_ps(dRxx,dRxx);
+			  const __m128 dRxy    = _mm_sub_ps(x_1,rx_1);
+			  const __m128 dRxy2   = _mm_mul_ps(dRxy,dRxy);
+			  const __m128 dRxz    = _mm_sub_ps(x_2,rx_2);
+			  const __m128 dRxz2   = _mm_mul_ps(dRxz,dRxz);
+			  const __m128 nrmdRx  = _mm_sqrt_ps(_mm_mul_ps(dRxx2,
 			                                                       _mm_mul_ps(dRxy2,dRxz2)));
-			  const __128 inv0    = _mm_div_ps(_1,nrmdRx);						      
-			  const __128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
-			  const __128 inv1    = _mm_div_ps(_1,nrmdRx3);
-			  const __128 dTxx    = _mm_sub_ps(x_0,tx_0);
-			  const __128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
-			  const __128 dTxy    = _mm_sub_ps(x_1,tx_1);
-			  const __128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
-			  const __128 dTxz    = _mm_sub_ps(x_2,tx_2);
-			  const __128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
-			  const __128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
+			  const __m128 inv0    = _mm_div_ps(_1,nrmdRx);						      
+			  const __m128 nrmdRx3 = _mm_mul_ps(nrmdRx,_mm_mul_pd(nrmdRx3,nrmdRx3));
+			  const __m128 inv1    = _mm_div_ps(_1,nrmdRx3);
+			  const __m128 dTxx    = _mm_sub_ps(x_0,tx_0);
+			  const __m128 dTxx2   = _mm_mul_ps(dTxx,dTxx);
+			  const __m128 dTxy    = _mm_sub_ps(x_1,tx_1);
+			  const __m128 dTxy2   = _mm_mul_ps(dTxy,dTxy);
+			  const __m128 dTxz    = _mm_sub_ps(x_2,tx_2);
+			  const __m128 dTxz2   = _mm_mul_ps(dTxz,dTxz);
+			  const __m128 nrmdTx  = _mm_sqrt_ps(_mm_mul_ps(dTxx2,
 			                                                       _mm_mul_ps(dTxy2,dTxz2)));
-			  const __128 inv3    = _mm_div_ps(_1,nrmdTx);
-			  const __128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
-			  const __128 inv2    = _mm_div_ps(_1,nrmdTx3);
+			  const __m128 inv3    = _mm_div_ps(_1,nrmdTx);
+			  const __m128 nrmdTx3 = _mm_mul_ps(nrmdTx,_mm_mul_ps(nrmdTx3,nrmdTx3));
+			  const __m128 inv2    = _mm_div_ps(_1,nrmdTx3);
 			  _mm_storeu_ps(&H_0[0],_mm_sub_ps(_mm_fmadd_ps(xmm4r4_negate(dRxx2),inv1,inv0),
 			                                        _mm_fmadd_ps(dTxx2,inv2,inv3)));
 			  _mm_storeu_ps(&H_1[0],_mm_sub_ps(_mm_mul_ps(xmm4r4_negate(dRxx),
@@ -1569,51 +1569,51 @@
 	 	    
 	             
                     
-		      void gms::math::cart_to_ruv_xmm2r8(__128d &r,
-		                              __128d &u,
-					      __128d &v,
-					      __128d &w,
-					      const __128d C_x,
-					      const __128d C_y,
-					      const __128d C_z,
-					      const __128d T_x,
-					      const __128d T_y,
-					      const __128d T_z,
-					      const __128d R_x,
-					      const __128d R_y,
-					      const __128d R_z,
-					      const __128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+		      void gms::math::cart_to_ruv_xmm2r8(__m128d &r,
+		                              __m128d &u,
+					      __m128d &v,
+					      __m128d &w,
+					      const __m128d C_x,
+					      const __m128d C_y,
+					      const __m128d C_z,
+					      const __m128d T_x,
+					      const __m128d T_y,
+					      const __m128d T_z,
+					      const __m128d R_x,
+					      const __m128d R_y,
+					      const __m128d R_z,
+					      const __m128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					      const bool useHalfRange) {
 
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d r1,r2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128d M0 = M[0];
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d r1,r2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -1626,7 +1626,7 @@
 			  r     = _mm_add_pd(r1,r2);
 			  v     = _mm_div_pd(CL1,r1);
 			  if(useHalfRange) {
-                             const __128d _0_5 = _mm_set1_pd(0.5);
+                             const __m128d _0_5 = _mm_set1_pd(0.5);
 			     r  = _mm_mul_pd(r,_0_5);
 			  }
 		     }
@@ -1638,47 +1638,47 @@
 		                                double * __restrict __ATTR_ALIGN__(16) u,
 					        double * __restrict __ATTR_ALIGN__(16) v,
 					        double * __restrict __ATTR_ALIGN__(16) w,
-					      const __128d C_x,
-					      const __128d C_y,
-					      const __128d C_z,
-					      const __128d T_x,
-					      const __128d T_y,
-					      const __128d T_z,
-					      const __128d R_x,
-					      const __128d R_y,
-					      const __128d R_z,
-					      const __128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+					      const __m128d C_x,
+					      const __m128d C_y,
+					      const __m128d C_z,
+					      const __m128d T_x,
+					      const __m128d T_y,
+					      const __m128d T_z,
+					      const __m128d R_x,
+					      const __m128d R_y,
+					      const __m128d R_z,
+					      const __m128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					      const bool useHalfRange) {
 
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d r1,r2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128d M0 = M[0];
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d r1,r2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -1691,7 +1691,7 @@
 			  _mm_store_pd(&r[0],_mm_add_pd(r1,r2));
 			  _mm_store_pd(&v[0],_mm_div_pd(CL1,r1));
 			  if(useHalfRange) {
-                             const __128d _0_5 = _mm_set1_pd(0.5);
+                             const __m128d _0_5 = _mm_set1_pd(0.5);
 			     _mm_store_pd(&r[0],_mm_mul_pd(_mm_load_pd(&r[0],_0_5)));
 			  }
 		     }
@@ -1703,47 +1703,47 @@
 		                                double * __restrict u,
 					        double * __restrict v,
 					        double * __restrict w,
-					      const __128d C_x,
-					      const __128d C_y,
-					      const __128d C_z,
-					      const __128d T_x,
-					      const __128d T_y,
-					      const __128d T_z,
-					      const __128d R_x,
-					      const __128d R_y,
-					      const __128d R_z,
-					      const __128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+					      const __m128d C_x,
+					      const __m128d C_y,
+					      const __m128d C_z,
+					      const __m128d T_x,
+					      const __m128d T_y,
+					      const __m128d T_z,
+					      const __m128d R_x,
+					      const __m128d R_y,
+					      const __m128d R_z,
+					      const __m128d * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					      const bool useHalfRange) {
 
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d r1,r2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128d M0 = M[0];
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d r1,r2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -1756,7 +1756,7 @@
 			  _mm_storeu_pd(&r[0],_mm_add_pd(r1,r2));
 			  _mm_storeu_pd(&v[0],_mm_div_pd(CL1,r1));
 			  if(useHalfRange) {
-                             const __128d _0_5 = _mm_set1_pd(0.5);
+                             const __m128d _0_5 = _mm_set1_pd(0.5);
 			     _mm_storeu_pd(&r[0],_mm_mul_pd(_mm_loadu_pd(&r[0],_0_5)));
 			  }
 		     }
@@ -1767,51 +1767,51 @@
 
 		     
                      
-		      void gms::math::cart_to_ruv_xmm4r4(__128 &r,
-		                               __128 &u,
-					       __128 &v,
-					       __128 &w,
-					      const __128 C_x,
-					      const __128 C_y,
-					      const __128 C_z,
-					      const __128 T_x,
-					      const __128 T_y,
-					      const __128 T_z,
-					      const __128 R_x,
-					      const __128 R_y,
-					      const __128 R_z,
-					      const __128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+		      void gms::math::cart_to_ruv_xmm4r4(__m128 &r,
+		                               __m128 &u,
+					       __m128 &v,
+					       __m128 &w,
+					      const __m128 C_x,
+					      const __m128 C_y,
+					      const __m128 C_z,
+					      const __m128 T_x,
+					      const __m128 T_y,
+					      const __m128 T_z,
+					      const __m128 R_x,
+					      const __m128 R_y,
+					      const __m128 R_z,
+					      const __m128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					      const bool useHalfRange) {
 
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 r1,r2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128 M0 = M[0];
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 r1,r2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -1824,7 +1824,7 @@
 			  r     = _mm_add_ps(r1,r2);
 			  v     = _mm_div_ps(CL1,r1);
 			  if(useHalfRange) {
-                             const __128 _0_5 = _mm_set1_ps(0.5f);
+                             const __m128 _0_5 = _mm_set1_ps(0.5f);
 			     r  = _mm_mul_ps(r,_0_5);
 			  }
 		     }
@@ -1836,47 +1836,47 @@
 		                                 float * __restrict __ATTR_ALIGN__(16) u,
 					         float * __restrict __ATTR_ALIGN__(16) v,
 					         float * __restrict __ATTR_ALIGN__(16) w,
-					         const __128 C_x,
-					         const __128 C_y,
-					         const __128 C_z,
-					         const __128 T_x,
-					         const __128 T_y,
-					         const __128 T_z,
-					         const __128 R_x,
-					         const __128 R_y,
-					         const __128 R_z,
-					         const __128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+					         const __m128 C_x,
+					         const __m128 C_y,
+					         const __m128 C_z,
+					         const __m128 T_x,
+					         const __m128 T_y,
+					         const __m128 T_z,
+					         const __m128 R_x,
+					         const __m128 R_y,
+					         const __m128 R_z,
+					         const __m128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					         const bool useHalfRange) {
 
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 r1,r2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128 M0 = M[0];
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 r1,r2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -1889,7 +1889,7 @@
 			  _mm_store_ps(&r[0],_mm_add_ps(r1,r2));
 			  _mm_store_ps(&v[0],_mm_div_ps(CL1,r1));
 			  if(useHalfRange) {
-                             const __128 _0_5 = _mm_set1_ps(0.5f);
+                             const __m128 _0_5 = _mm_set1_ps(0.5f);
 			     _mm_store_ps(&r[0],_mm_mul_ps(_mm_load_ps(&r[0],_0_5)));
 			  }
 		     }
@@ -1901,47 +1901,47 @@
 		                                 float * __restrict u,
 					         float * __restrict v,
 					         float * __restrict w,
-					         const __128 C_x,
-					         const __128 C_y,
-					         const __128 C_z,
-					         const __128 T_x,
-					         const __128 T_y,
-					         const __128 T_z,
-					         const __128 R_x,
-					         const __128 R_y,
-					         const __128 R_z,
-					         const __128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
+					         const __m128 C_x,
+					         const __m128 C_y,
+					         const __m128 C_z,
+					         const __m128 T_x,
+					         const __m128 T_y,
+					         const __m128 T_z,
+					         const __m128 R_x,
+					         const __m128 R_y,
+					         const __m128 R_z,
+					         const __m128 * __restrict __ATTR_ALIGN__(16) M, //flattened 3x3 matrix
 					         const bool useHalfRange) {
 
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 r1,r2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  const __128 M0 = M[0];
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 r1,r2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -1954,7 +1954,7 @@
 			  _mm_storeu_ps(&r[0],_mm_add_ps(r1,r2));
 			  _mm_storeu_ps(&v[0],_mm_div_ps(CL1,r1));
 			  if(useHalfRange) {
-                             const __128 _0_5 = _mm_set1_ps(0.5f);
+                             const __m128 _0_5 = _mm_set1_ps(0.5f);
 			     _mm_storeu_ps(&r[0],_mm_mul_ps(_mm_loadu_ps(&r[0],_0_5)));
 			  }
 		     }
@@ -2013,53 +2013,53 @@
 
 	             
                      
-		      void gms::math::cart_to_sphere_xmm2r8(__128d &range,
-		                                 __128d &az,
-						 __128d &elev,
-						 const __128d C_x,
-						 const __128d C_y,
-						 const __128d C_z,
-						 const __128d T_x,
-						 const __128d T_y,
-						 const __128d T_z,
-						 const __128d R_x,
-						 const __128d R_y,
-						 const __128d R_z,
-						 const __128d * __restrict __ATTR_ALIGN__(16) M,
+		      void gms::math::cart_to_sphere_xmm2r8(__m128d &range,
+		                                 __m128d &az,
+						 __m128d &elev,
+						 const __m128d C_x,
+						 const __m128d C_y,
+						 const __m128d C_z,
+						 const __m128d T_x,
+						 const __m128d T_y,
+						 const __m128d T_z,
+						 const __m128d R_x,
+						 const __m128d R_y,
+						 const __m128d R_z,
+						 const __m128d * __restrict __ATTR_ALIGN__(16) M,
 						 const int sysType,
 						 const bool useHalfRange) {
 
-			  const __128d _0   = _mm_setzero_pd();
-			  const __128d _0_5 = _mm_set1_pd(0.5);
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128d r1,r2;
-			  const __128d M0 = M[0];
+			  const __m128d _0   = _mm_setzero_pd();
+			  const __m128d _0_5 = _mm_set1_pd(0.5);
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128d r1,r2;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -2080,11 +2080,11 @@
 			     }
 			     elev = _mm_atan2_pd(CL2,_mm_hypot_pd(CL0,CL1));
 			     if(sysType==2) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				elev              = _mm_sub_pd(pi2,elev);
 			     }
 			     else if(sysType==3) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				az                = _mm_sub_pd(pi2,az);
 			     }
 			  }
@@ -2112,50 +2112,50 @@
 		      void gms::math::cart_to_sphere_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) range,
 		                                   double * __restrict __ATTR_ALIGN__(16) az,
 						   double * __restrict __ATTR_ALIGN__(16) elev,
-						   const __128d C_x,
-						   const __128d C_y,
-						   const __128d C_z,
-						   const __128d T_x,
-						   const __128d T_y,
-						   const __128d T_z,
-						   const __128d R_x,
-						   const __128d R_y,
-						   const __128d R_z,
-						   const __128d * __restrict __ATTR_ALIGN__(16) M,
+						   const __m128d C_x,
+						   const __m128d C_y,
+						   const __m128d C_z,
+						   const __m128d T_x,
+						   const __m128d T_y,
+						   const __m128d T_z,
+						   const __m128d R_x,
+						   const __m128d R_y,
+						   const __m128d R_z,
+						   const __m128d * __restrict __ATTR_ALIGN__(16) M,
 						   const int sysType,
 						   const bool useHalfRange) {
 
-			  const __128d _0   = _mm_setzero_pd();
-			  const __128d _0_5 = _mm_set1_pd(0.5);
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128d r1,r2;
-			  const __128d M0 = M[0];
+			  const __m128d _0   = _mm_setzero_pd();
+			  const __m128d _0_5 = _mm_set1_pd(0.5);
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128d r1,r2;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -2176,11 +2176,11 @@
 			     }
 			     _mm_store_pd(&elev[0],_mm_atan2_pd(CL2,_mm_hypot_pd(CL0,CL1)));
 			     if(sysType==2) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				_mm_store_pd(&elev[0],_mm_sub_pd(pi2,_mm_load_pd(&elev[0])));
 			     }
 			     else if(sysType==3) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				_mm_store_pd(&az[0],_mm_sub_pd(pi2,_mm_load_pd(&az[0])));
 			     }
 			  }
@@ -2208,50 +2208,50 @@
 		      void gms::math::cart_to_sphere_xmm2r8_u(double * __restrict  range,
 		                                   double * __restrict  az,
 						   double * __restrict  elev,
-						   const __128d C_x,
-						   const __128d C_y,
-						   const __128d C_z,
-						   const __128d T_x,
-						   const __128d T_y,
-						   const __128d T_z,
-						   const __128d R_x,
-						   const __128d R_y,
-						   const __128d R_z,
-						   const __128d * __restrict __ATTR_ALIGN__(16) M,
+						   const __m128d C_x,
+						   const __m128d C_y,
+						   const __m128d C_z,
+						   const __m128d T_x,
+						   const __m128d T_y,
+						   const __m128d T_z,
+						   const __m128d R_x,
+						   const __m128d R_y,
+						   const __m128d R_z,
+						   const __m128d * __restrict __ATTR_ALIGN__(16) M,
 						   const int sysType,
 						   const bool useHalfRange) {
 
-			  const __128d _0   = _mm_setzero_pd();
-			  const __128d _0_5 = _mm_set1_pd(0.5);
-                          __128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128d diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128d r1,r2;
-			  const __128d M0 = M[0];
+			  const __m128d _0   = _mm_setzero_pd();
+			  const __m128d _0_5 = _mm_set1_pd(0.5);
+                          __m128d CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128d diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128d r1,r2;
+			  const __m128d M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_pd(C_x,R_x);
-			  const __128d M1 = M[1];
+			  const __m128d M1 = M[1];
 			  diff1 = _mm_sub_pd(C_y,R_y);
-			  const __128d M2 = M[2];
+			  const __m128d M2 = M[2];
 			  diff2 = _mm_sub_pd(C_z,R_z);
-			  const __128d M3 = M[3];
+			  const __m128d M3 = M[3];
 			  diff3 = _mm_sub_pd(T_x,R_x);
-			  const __128d M4 = M[4];
+			  const __m128d M4 = M[4];
 			  diff4 = _mm_sub_pd(T_y,R_y);
-			  const __128d M5 = M[5];
+			  const __m128d M5 = M[5];
 			  diff5 = _mm_sub_pd(T_z,R_z);
-			  const __128d M6 = M[6];
+			  const __m128d M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_pd(M0,diff3,_mm_fmadd_pd(M3,diff4,_mm_mul_pd(M6,diff5)));
 			  CL0   = _mm_fmadd_pd(M0,diff0,_mm_fmadd_pd(M3,diff1,_mm_mul_pd(M6,diff2)));
-			  const __128d M7 = M[7];
+			  const __m128d M7 = M[7];
 			  CL1   = _mm_fmadd_pd(M1,diff0,_mm_fmadd_pd(M4,diff1,_mm_mul_pd(M7,diff2)));
 			  TxL1  = _mm_fmadd_pd(M1,diff3,_mm_fmadd_pd(M4,diff4,_mm_mul_pd(M7,diff5)));
-			  const __128d M8 = M[8];
+			  const __m128d M8 = M[8];
 			  CL2   = _mm_fmadd_pd(M2,diff0,_mm_fmadd_pd(M5,diff1,_mm_mul_pd(M8,diff2)));
 			  TxL2  = _mm_fmadd_pd(M2,diff3,_mm_fmadd_pd(M5,diff4,_mm_mul_pd(M8,diff5)));
 			  ///Receiver to target.
-			  __128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
+			  __m128d sarg = _mm_fmadd_pd(CL0,CL0,_mm_fmadd_pd(CL1,CL1,_mm_mul_pd(CL2,CL2)));
 			  r1    = _mm_sqrt_pd(sarg);
 			  diff0 = _mm_sub_pd(CL0,TxL0);
 			  diff1 = _mm_sub_pd(CL1,TxL1);
@@ -2272,11 +2272,11 @@
 			     }
 			     _mm_storeu_pd(&elev[0],_mm_atan2_pd(CL2,_mm_hypot_pd(CL0,CL1)));
 			     if(sysType==2) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				_mm_storeu_pd(&elev[0],_mm_sub_pd(pi2,_mm_loadu_pd(&elev[0])));
 			     }
 			     else if(sysType==3) {
-                                const __128d pi2 = _mm_set1_pd(1.5707963267948966192313);
+                                const __m128d pi2 = _mm_set1_pd(1.5707963267948966192313);
 				_mm_storeu_pd(&az[0],_mm_sub_pd(pi2,_mm_loadu_pd(&az[0])));
 			     }
 			  }
@@ -2305,53 +2305,53 @@
 
 		     
                       
-		      void gms::math::cart_to_sphere_xmm4r4(__128 &range,
-		                                  __128 &az,
-						  __128 &elev,
-						  const __128 C_x,
-						  const __128 C_y,
-						  const __128 C_z,
-						  const __128 T_x,
-						  const __128 T_y,
-						  const __128 T_z,
-						  const __128 R_x,
-						  const __128 R_y,
-						  const __128 R_z,
-						  const __128 * __restrict __ATTR_ALIGN__(16) M,
+		      void gms::math::cart_to_sphere_xmm4r4(__m128 &range,
+		                                  __m128 &az,
+						  __m128 &elev,
+						  const __m128 C_x,
+						  const __m128 C_y,
+						  const __m128 C_z,
+						  const __m128 T_x,
+						  const __m128 T_y,
+						  const __m128 T_z,
+						  const __m128 R_x,
+						  const __m128 R_y,
+						  const __m128 R_z,
+						  const __m128 * __restrict __ATTR_ALIGN__(16) M,
 						  const int sysType,
 						  const bool useHalfRange) {
 
-			  const __128 _0   = _mm_setzero_ps();
-			  const __128 _0_5 = _mm_set1_ps(0.5f);
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128 r1,r2;
-			  const __128 M0 = M[0];
+			  const __m128 _0   = _mm_setzero_ps();
+			  const __m128 _0_5 = _mm_set1_ps(0.5f);
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128 r1,r2;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -2372,11 +2372,11 @@
 			     }
 			     elev = _mm_atan2_ps(CL2,_mm_hypot_ps(CL0,CL1));
 			     if(sysType==2) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				elev              = _mm_sub_ps(pi2,elev);
 			     }
 			     else if(sysType==3) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				az                = _mm_sub_ps(pi2,az);
 			     }
 			  }
@@ -2404,50 +2404,50 @@
 		      void gms::math::cart_to_sphere_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) range,
 		                                    float * __restrict __ATTR_ALIGN__(16) az,
 						    float * __restrict __ATTR_ALIGN__(16) elev,
-						    const __128 C_x,
-						    const __128 C_y,
-						    const __128 C_z,
-						    const __128 T_x,
-						    const __128 T_y,
-						    const __128 T_z,
-						    const __128 R_x,
-						    const __128 R_y,
-						    const __128 R_z,
-						    const __128 * __restrict __ATTR_ALIGN__(16) M,
+						    const __m128 C_x,
+						    const __m128 C_y,
+						    const __m128 C_z,
+						    const __m128 T_x,
+						    const __m128 T_y,
+						    const __m128 T_z,
+						    const __m128 R_x,
+						    const __m128 R_y,
+						    const __m128 R_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M,
 						    const int sysType,
 						    const bool useHalfRange) {
 
-			  const __128 _0   = _mm_setzero_ps();
-			  const __128 _0_5 = _mm_set1_ps(0.5f);
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128 r1,r2;
-			  const __128 M0 = M[0];
+			  const __m128 _0   = _mm_setzero_ps();
+			  const __m128 _0_5 = _mm_set1_ps(0.5f);
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128 r1,r2;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -2468,11 +2468,11 @@
 			     }
 			     _mm_store_ps(&elev[0],_mm_atan2_ps(CL2,_mm_hypot_ps(CL0,CL1)));
 			     if(sysType==2) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				_mm_store_ps(&elev[0],_mm_sub_ps(pi2,_mm_load_ps(&elev[0])));
 			     }
 			     else if(sysType==3) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				_mm_store_ps(&az[0],_mm_sub_ps(pi2,_mm_load_ps(&az[0])));
 			     }
 			  }
@@ -2501,50 +2501,50 @@
 		      void gms::math::cart_to_sphere_xmm4r4_u(float * __restrict  range,
 		                                    float * __restrict  az,
 						    float * __restrict  elev,
-						    const __128 C_x,
-						    const __128 C_y,
-						    const __128 C_z,
-						    const __128 T_x,
-						    const __128 T_y,
-						    const __128 T_z,
-						    const __128 R_x,
-						    const __128 R_y,
-						    const __128 R_z,
-						    const __128 * __restrict __ATTR_ALIGN__(16) M,
+						    const __m128 C_x,
+						    const __m128 C_y,
+						    const __m128 C_z,
+						    const __m128 T_x,
+						    const __m128 T_y,
+						    const __m128 T_z,
+						    const __m128 R_x,
+						    const __m128 R_y,
+						    const __m128 R_z,
+						    const __m128 * __restrict __ATTR_ALIGN__(16) M,
 						    const int sysType,
 						    const bool useHalfRange) {
 
-			  const __128 _0   = _mm_setzero_ps();
-			  const __128 _0_5 = _mm_set1_ps(0.5f);
-                          __128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
-			  __128 diff0,diff1,diff2,diff3,diff4,diff5;
-			  __128 r1,r2;
-			  const __128 M0 = M[0];
+			  const __m128 _0   = _mm_setzero_ps();
+			  const __m128 _0_5 = _mm_set1_ps(0.5f);
+                          __m128 CL0,CL1,CL2,TxL0,TxL1,TxL2;
+			  __m128 diff0,diff1,diff2,diff3,diff4,diff5;
+			  __m128 r1,r2;
+			  const __m128 M0 = M[0];
 			  //Compute the target location in the receiver's coordinate system.
 			  diff0 = _mm_sub_ps(C_x,R_x);
-			  const __128 M1 = M[1];
+			  const __m128 M1 = M[1];
 			  diff1 = _mm_sub_ps(C_y,R_y);
-			  const __128 M2 = M[2];
+			  const __m128 M2 = M[2];
 			  diff2 = _mm_sub_ps(C_z,R_z);
-			  const __128 M3 = M[3];
+			  const __m128 M3 = M[3];
 			  diff3 = _mm_sub_ps(T_x,R_x);
-			  const __128 M4 = M[4];
+			  const __m128 M4 = M[4];
 			  diff4 = _mm_sub_ps(T_y,R_y);
-			  const __128 M5 = M[5];
+			  const __m128 M5 = M[5];
 			  diff5 = _mm_sub_ps(T_z,R_z);
-			  const __128 M6 = M[6];
+			  const __m128 M6 = M[6];
 			   //Compute the transmitter location in the receiver's local coordinate
                           //system.
 			  TxL0  = _mm_fmadd_ps(M0,diff3,_mm_fmadd_ps(M3,diff4,_mm_mul_ps(M6,diff5)));
 			  CL0   = _mm_fmadd_ps(M0,diff0,_mm_fmadd_ps(M3,diff1,_mm_mul_ps(M6,diff2)));
-			  const __128 M7 = M[7];
+			  const __m128 M7 = M[7];
 			  CL1   = _mm_fmadd_ps(M1,diff0,_mm_fmadd_ps(M4,diff1,_mm_mul_ps(M7,diff2)));
 			  TxL1  = _mm_fmadd_ps(M1,diff3,_mm_fmadd_ps(M4,diff4,_mm_mul_ps(M7,diff5)));
-			  const __128 M8 = M[8];
+			  const __m128 M8 = M[8];
 			  CL2   = _mm_fmadd_ps(M2,diff0,_mm_fmadd_ps(M5,diff1,_mm_mul_ps(M8,diff2)));
 			  TxL2  = _mm_fmadd_ps(M2,diff3,_mm_fmadd_ps(M5,diff4,_mm_mul_ps(M8,diff5)));
 			  ///Receiver to target.
-			  __128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
+			  __m128 sarg = _mm_fmadd_ps(CL0,CL0,_mm_fmadd_ps(CL1,CL1,_mm_mul_ps(CL2,CL2)));
 			  r1    = _mm_sqrt_ps(sarg);
 			  diff0 = _mm_sub_ps(CL0,TxL0);
 			  diff1 = _mm_sub_ps(CL1,TxL1);
@@ -2565,11 +2565,11 @@
 			     }
 			     _mm_store_ups(&elev[0],_mm_atan2_ps(CL2,_mm_hypot_ps(CL0,CL1)));
 			     if(sysType==2) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				_mm_storeu_ps(&elev[0],_mm_sub_ps(pi2,_mm_loadu_ps(&elev[0])));
 			     }
 			     else if(sysType==3) {
-                                const __128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
+                                const __m128 pi2 = _mm_set1_ps(1.5707963267948966192313f);
 				_mm_storeu_ps(&az[0],_mm_sub_ps(pi2,_mm_loadu_ps(&az[0])));
 			     }
 			  }

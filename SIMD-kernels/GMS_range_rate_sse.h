@@ -71,7 +71,7 @@ namespace gms {
 
                       
                       __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __m128d range_rate_2d_xmm2r8(const __m128d tar_x,
 		                                   const __m128d tar_y,
 						   const __m128d tar_xD,
@@ -88,8 +88,8 @@ namespace gms {
 
 
 		   
-		        __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+		             __ATTR_HOT__
+                     __ATTR_ALIGN__(32)
                       __m128 range_rate_2d_xmm4r4(const __m128 tar_x,
 		                                   const __m128 tar_y,
 						   const __m128 tar_xD,
@@ -128,7 +128,7 @@ namespace gms {
 				   
                     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __m128d range_rate_3d_xmm2r8(const __m128d tar_x,
 		                                   const __m128d tar_y,
 						   const __m128d tar_z,
@@ -152,7 +152,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                       __ATTR_ALIGN__(32)
                       __m128 range_rate_3d_xmm4r4(const __m128 tar_x,
 		                                   const __m128 tar_y,
 						   const __m128 tar_z,
@@ -182,14 +182,14 @@ namespace gms {
 /*(UNCLASSIFIED) DISTRIBUTION STATEMENT A. Approved for public release.*/
 		     
                        __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
                       __m128d range_grad_xmm2r8(const __m128d p,
 					        const __m128d Tx,
 					        const __m128d Rx,
 					        const bool useHalfRange); 
 					        
 	                  __ATTR_HOT__
-                      __ATTR_VECTORCALL__	        
+                      __ATTR_ALIGN__(32)	        
                       __m128 range_grad_xmm4r4(const __m128 p,
 					        const __m128 Tx,
 					        const __m128 Rx,
@@ -228,7 +228,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                     __ATTR_ALIGN__(32)
 		      void range_hessian_2d_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) H_0,
 		                                     double * __restrict __ATTR_ALIGN__(16) H_1,
 						     double * __restrict __ATTR_ALIGN__(16) H_2,
@@ -240,7 +240,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hessian_2d_xmm2r8_u(double * __restrict H_0,
 		                                     double * __restrict H_1,
 						     double * __restrict H_2,
@@ -252,7 +252,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hessian_2d_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) H_0,
 		                                      float * __restrict __ATTR_ALIGN__(16) H_1,
 						      float * __restrict __ATTR_ALIGN__(16) H_2,
@@ -264,7 +264,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                         __ATTR_ALIGN__(32)
 		      void range_hessian_2d_xmm4r4_u(float * __restrict  H_0,
 		                                      float * __restrict  H_1,
 						      float * __restrict  H_2,
@@ -274,8 +274,8 @@ namespace gms {
 						      const bool useHalfRange);
 						      
 						      
-		         __ATTR_HOT__
-                      __ATTR_VECTORCALL__			      
+		             __ATTR_HOT__
+                     __ATTR_ALIGN__(32)		      
 		      void range_hessian_3d_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) H_0,
 		                                     double * __restrict __ATTR_ALIGN__(16) H_1,
 						     double * __restrict __ATTR_ALIGN__(16) H_2,
@@ -294,7 +294,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                        __ATTR_ALIGN__(32)
 		      void range_hessian_3d_xmm2r8_u(double * __restrict H_0,
 		                                     double * __restrict H_1,
 						     double * __restrict H_2,
@@ -311,7 +311,7 @@ namespace gms {
 						   
 				
 		            __ATTR_HOT__
-                      __ATTR_VECTORCALL__		   
+                    __ATTR_ALIGN__(32)		   
 		      void range_hessian_3d_xmm2r8(__m128d * __restrict __ATTR_ALIGN__(16) H,
 		                                   const __m128d x_0,
 						   const __m128d x_1,
@@ -322,7 +322,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                         __ATTR_ALIGN__(32)
 		      void range_hessian_3d_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) H_0,
 		                                      float * __restrict __ATTR_ALIGN__(16) H_1,
 						      float * __restrict __ATTR_ALIGN__(16) H_2,
@@ -340,7 +340,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                        __ATTR_ALIGN__(32)
 		      void range_hessian_3d_xmm4r4_u(float * __restrict  H_0,
 		                                      float * __restrict  H_1,
 						      float * __restrict  H_2,
@@ -370,7 +370,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                         __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm2r8(__m128d &H_0,
 		                                    __m128d &H_1,
 						    __m128d &H_2,
@@ -387,7 +387,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) H_0,
 		                                      double * __restrict __ATTR_ALIGN__(16) H_1,
 						      double * __restrict __ATTR_ALIGN__(16) H_2,
@@ -403,7 +403,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm2r8_u(double * __restrict H_0,
 		                                      double * __restrict H_1,
 						      double * __restrict H_2,
@@ -419,7 +419,7 @@ namespace gms {
 
 	     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm4r4(__m128 &H_0,
 		                                     __m128 &H_1,
 						     __m128 &H_2,
@@ -435,7 +435,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) H_0,
 		                                       float * __restrict __ATTR_ALIGN__(16) H_1,
 						       float * __restrict __ATTR_ALIGN__(16) H_2,
@@ -450,7 +450,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_gen_2d_xmm4r4_u(float * __restrict  H_0,
 		                                       float * __restrict  H_1,
 						       float * __restrict  H_2,
@@ -466,7 +466,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_3d_xmm2r8(__m128d &H_0,
 		                                __m128d &H_1,
 						__m128d &H_2,
@@ -489,7 +489,7 @@ namespace gms {
 
 		     
                        __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_3d_xmm2r8_a( double * __restrict __ATTR_ALIGN__(16) H_0,
 		                                   double * __restrict __ATTR_ALIGN__(16) H_1,
 						   double * __restrict __ATTR_ALIGN__(16) H_2,
@@ -513,7 +513,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_3d_xmm4r4(__m128 &H_0,
 		                                __m128 &H_1,
 						__m128 &H_2,
@@ -536,7 +536,7 @@ namespace gms {
 		     
                     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_3d_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) H_0,
 		                                   float * __restrict __ATTR_ALIGN__(16) H_1,
 						   float * __restrict __ATTR_ALIGN__(16) H_2,
@@ -560,7 +560,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void range_hess_3d_xmm4r4_u(float * __restrict H_0,
 		                                   float * __restrict H_1,
 						   float * __restrict H_2,
@@ -619,7 +619,7 @@ namespace gms {
 	 	    
 	             
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm2r8(__m128d &r,
 		                              __m128d &u,
 					      __m128d &v,
@@ -638,7 +638,7 @@ namespace gms {
 
 		     
                         __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) r,
 		                                double * __restrict __ATTR_ALIGN__(16) u,
 					        double * __restrict __ATTR_ALIGN__(16) v,
@@ -657,7 +657,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm2r8_u(double * __restrict r,
 		                                double * __restrict u,
 					        double * __restrict v,
@@ -677,7 +677,7 @@ namespace gms {
 
 		     
                       __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm4r4(__m128 &r,
 		                               __m128 &u,
 					       __m128 &v,
@@ -696,7 +696,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) r,
 		                                 float * __restrict __ATTR_ALIGN__(16) u,
 					         float * __restrict __ATTR_ALIGN__(16) v,
@@ -716,7 +716,7 @@ namespace gms {
 
 		      
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_ruv_xmm4r4_u(float * __restrict r,
 		                                 float * __restrict u,
 					         float * __restrict v,
@@ -786,7 +786,7 @@ namespace gms {
 
 	             
                           __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm2r8(__m128d &range,
 		                                 __m128d &az,
 						 __m128d &elev,
@@ -806,7 +806,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm2r8_a(double * __restrict __ATTR_ALIGN__(16) range,
 		                                   double * __restrict __ATTR_ALIGN__(16) az,
 						   double * __restrict __ATTR_ALIGN__(16) elev,
@@ -826,7 +826,7 @@ namespace gms {
 
 		     
                           __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm2r8_u(double * __restrict  range,
 		                                   double * __restrict  az,
 						   double * __restrict  elev,
@@ -846,7 +846,7 @@ namespace gms {
 
 		     
                           __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm4r4(__m128 &range,
 		                                  __m128 &az,
 						  __m128 &elev,
@@ -865,7 +865,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm4r4_a(float * __restrict __ATTR_ALIGN__(16) range,
 		                                    float * __restrict __ATTR_ALIGN__(16) az,
 						    float * __restrict __ATTR_ALIGN__(16) elev,
@@ -885,7 +885,7 @@ namespace gms {
 
 		     
                          __ATTR_HOT__
-                      __ATTR_VECTORCALL__
+                      __ATTR_ALIGN__(32)
 		      void cart_to_sphere_xmm4r4_u(float * __restrict  range,
 		                                    float * __restrict  az,
 						    float * __restrict  elev,
