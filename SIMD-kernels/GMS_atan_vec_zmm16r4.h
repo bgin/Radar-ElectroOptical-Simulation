@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace file_version {
+namespace file_version 
+{
 
     const unsigned int GMS_ATAN_VEC_ZMM16R4_MAJOR = 1U;
     const unsigned int GMS_ATAN_VEC_ZMM16R4_MINOR = 0U;
@@ -34,76 +35,43 @@ namespace file_version {
     const char * const GMS_ATAN_VEC_ZMM16R4_CREATION_DATE = "10-12-2022 17:02 AM +00200 (SAT 10 DEC 2022 GMT+2)";
     const char * const GMS_ATAN_VEC_ZMM16R4_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_ATAN_VEC_ZMM16R4_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_ATAN_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized vector of atan values."
+    const char * const GMS_ATAN_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized vector of atan values.";
 
 }
 
 #include <cstdint>
+#include <immintrin.h>
 #include "GMS_config.h"
 
+#if !defined(ATAN_VEC_ZMM16R4_USE_SLEEF)
+#define ATAN_VEC_ZMM16R4_USE_SLEEF 0
+#endif 
 
-namespace  gms {
+#if !defined(ATAN_VEC_ZMM16R4_INTERLEAVE_SIMD_OPS)
+#define ATAN_VEC_ZMM16R4_INTERLEAVE_SIMD_OPS 1
+#endif 
+
+#if !defined(ATAN_VEC_ZMM16R4_USE_SOFT_PREFETCH)
+#define ATAN_VEC_ZMM16R4_USE_SOFT_PREFETCH 1
+#endif 
+
+namespace  gms 
+{
+
+namespace  math 
+{
 
 
-         namespace  math {
-
-/*
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_atan_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
                  
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           void atanv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x,
-                                                   float * __restrict __ATTR_ALIGN__(64) y,
-                                                   const __m512 a,
-                                                   const __m512 b,
-                                                   const __m512 c,
-                                                   const int32_t n); 
-                                                   
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void atanv_mask_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x, 
-                                                       const float * __restrict __ATTR_ALIGN__(64) z,
-                                                       float * __restrict __ATTR_ALIGN__(64) y,
-                                                       const __mmask16 * __restrict __ATTR_ALIGN__(64) m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive); 
-                                                       
-                     
-
-                
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void atanv_mask_zmm16r4_unroll_10x_u(const float * __restrict  x, 
-                                                       const float * __restrict  z,
-                                                       float * __restrict  y,
-                                                       const __mmask16 *  m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive); 
-                                                       
-                          
-
-
-
-              /*
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_atan_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
+                                               float * __restrict __ATTR_ALIGN__(64) y,
+                                               const __m512 a,
+                                               const __m512 b,
+                                               const __m512 c,
+                                               const int32_t n); 
+                                            
                  
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -115,10 +83,10 @@ namespace  gms {
                                                   const int32_t n); 
                
                /*
-                    Calls non-SVML implementation of sine function
+                    Calls non-SVML implementation of atan function
                     SLEEF version is inlined.
                 */
-                  
+#if (ATAN_VEC_ZMM16R4_USE_SLEEF) == 1                  
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	            void atanv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x,
@@ -131,17 +99,7 @@ namespace  gms {
 	           void atanv_zmm16r4_unroll_10x_u(const float * __restrict  x,
                                                   float * __restrict  y,
                                                   const int32_t n); 
-                                                  
-
- /*             
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_atan_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
-
+#endif                                                   
                   
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -152,16 +110,7 @@ namespace  gms {
                                                    const __m512 c,
                                                    const int32_t n); 
                                                    
-
-               /*             
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_atan_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
-
+ 
                    
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -176,46 +125,18 @@ namespace  gms {
                     Calls non-SVML implementation of sine function
                     SLEEF version is inlined.
                 */
-                   
+#if (ATAN_VEC_ZMM16R4_USE_SLEEF) == 1                   
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
 	           void atanv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) x,
                                                   float * __restrict __ATTR_ALIGN__(64) y,
                                                   const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void atanv_mask_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) x, 
-                                                       const float * __restrict __ATTR_ALIGN__(64) z,
-                                                       float * __restrict __ATTR_ALIGN__(64) y,
-                                                       const __mmask16 * __restrict __ATTR_ALIGN__(64) m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive);
-                                                       
+                                           
+#endif 	          
+                       
                   
                   
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void atanv_mask_zmm16r4_unroll_6x_u(const float * __restrict  x, 
-                                                       const float * __restrict  z,
-                                                       float * __restrict  y,
-                                                       const __mmask16 *  m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive);
-
-
-
-
-
-
-
-              
+	                        
 
                     
 
