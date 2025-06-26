@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace file_version {
+namespace file_version 
+{
 
     const unsigned int GMS_CABS_VEC_ZMM16R4_MAJOR = 1U;
     const unsigned int GMS_CABS_VEC_ZMM16R4_MINOR = 0U;
@@ -34,22 +35,30 @@ namespace file_version {
     const char * const GMS_CABS_VEC_ZMM16R4_CREATION_DATE = "19-12-2022 09:22 AM +00200 (MON 19 DEC 2022 GMT+2)";
     const char * const GMS_CABS_VEC_ZMM16R4_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_CABS_VEC_ZMM16R4_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_CABS_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized complex argument form."
+    const char * const GMS_CABS_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized complex argument form.";
 
 }
 
 #include <cstdint>
 #include "GMS_config.h"
 
+#if !defined(CABS_VEC_ZMM16R4_USE_SLEEF)
+#define CABS_VEC_ZMM16R4_USE_SLEEF 0
+#endif 
+
+#if !defined(CABS_VEC_ZMM16R4_USE_SOFT_PREFETCH)
+#define CABS_VEC_ZMM16R4_USE_SOFT_PREFETCH 1
+#endif 
 
 
+namespace  gms 
+{
 
 
-namespace  gms {
+          namespace math 
+          {
 
-
-          namespace math {
-
+#if (CABS_VEC_ZMM16R4_USE_SLEEF) == 1
                 
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
@@ -98,7 +107,54 @@ namespace  gms {
                                                    float * __restrict  __ATTR_ALIGN__(64) cabs,
                                                    const int32_t n); 
 
+#else 
+            __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_16x_u(const float * __restrict re,
+                                                   const float * __restrict im,
+                                                   float * __restrict  cabs,
+                                                   const int32_t n); 
 
+                 
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_16x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                                   const float * __restrict __ATTR_ALIGN__(64) im,
+                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                                   const int32_t n); 
+
+               
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                                   const float * __restrict __ATTR_ALIGN__(64) im,
+                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                                   const int32_t n); 
+
+                   
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_10x_u(const float * __restrict re,
+                                                   const float * __restrict im,
+                                                   float * __restrict  cabs,
+                                                   const int32_t n); 
+
+                   __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_6x_u( const float * __restrict re,
+                                                   const float * __restrict im,
+                                                   float * __restrict  cabs,
+                                                   const int32_t n); 
+
+
+                 
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void cabsv_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) re,
+                                                   const float * __restrict __ATTR_ALIGN__(64) im,
+                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                                   const int32_t n); 
+#endif
                  
 
 

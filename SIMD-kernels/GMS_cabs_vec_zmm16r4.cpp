@@ -23,20 +23,25 @@ SOFTWARE.
 
 
 #include <immintrin.h>
+#include <cmath> 
 #include "GMS_cabs_vec_zmm16r4.h"
-#include "GMS_sleefsimdsp.hpp"
-#include "GMS_cephes.h"
+#if (CABS_VEC_ZMM16R4_USE_SLEEF) == 1
+#include "GMS_sleefsimdsp.h"
+#endif 
+//#include "GMS_cephes.h"
 
 
 
-
+#if (CABS_VEC_ZMM16R4_USE_SLEEF) == 1
 	           
-	                 void gms::math::cabsv_zmm16r4_unroll_16x_u(const float * __restrict re,
-                                                   const float * __restrict im,
-                                                   float * __restrict  cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_16x_u(const float * __restrict re,
+                                           const float * __restrict im,
+                                           float * __restrict  cabs,
+                                           const int32_t n) 
+{
 
-                         if(__builtin_expect(0==n,0)) { return;}
+                        if(__builtin_expect(0==n,0)) { return;}
+
                            vfloat zmm0,zmm1,zmm2,zmm3;
                            vfloat zmm4,zmm5,zmm6,zmm7;
                            vfloat zmm8,zmm9,zmm10,zmm11;
@@ -45,115 +50,133 @@ SOFTWARE.
                            vfloat zmm20,zmm21,zmm22,zmm23;
                            vfloat zmm24,zmm25,zmm26,zmm27;
                            vfloat zmm28,zmm29,zmm30,zmm31;
-                          int32_t i;
 
-                        for(i = 0; (i+255) < n; i += 256) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                           int32_t i;
+
+                        for(i = 0; (i+255) < n; i += 256) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_loadu_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_loadu_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_loadu_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_loadu_ps(&im[i+32]);
-                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
-                              zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);                             
+                              zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13)); 
                               _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_loadu_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_loadu_ps(&im[i+48]);
-                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
-                              zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);                                  
+                              zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18)); 
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_loadu_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_loadu_ps(&im[i+64]);
-                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);                             
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_loadu_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_loadu_ps(&im[i+80]);
-                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);                               
                               zmm29  = xsqrtf(_mm512_add_ps(zmm26,zmm28));
                               _mm512_storeu_ps(&cabs[i+80],zmm29);
-                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
                               zmm30  = _mm512_loadu_ps(&re[i+96]);
                               zmm31  = _mm512_mul_ps(zmm30,zmm30);
                               zmm0   = _mm512_loadu_ps(&im[i+96]);
                               zmm1   = _mm512_mul_ps(zmm0,zmm0);
                               zmm2   = xsqrtf(_mm512_add_ps(zmm31,zmm1));
                               _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
                               zmm3  = _mm512_loadu_ps(&re[i+112]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = _mm512_loadu_ps(&im[i+112]);
-                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);                              
                               zmm7  = xsqrtf(_mm512_add_ps(zmm4,zmm6));
                               _mm512_storeu_ps(&cabs[i+112],zmm7);
-                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
                               zmm8  = _mm512_loadu_ps(&re[i+128]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = _mm512_loadu_ps(&im[i+128]);
-                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);                               
                               zmm12 = xsqrtf(_mm512_add_ps(zmm9,zmm11));
                               _mm512_storeu_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
                               zmm13 = _mm512_loadu_ps(&re[i+144]);
                               zmm14 = _mm512_mul_ps(zmm13,zmm13);
                               zmm15 = _mm512_loadu_ps(&im[i+144]);
-                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15)
                               zmm17 = xsqrtf(_mm512_add_ps(zmm14,zmm16));
                               _mm512_storeu_ps(&cabs[i+144],zmm17);
-                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
                               zmm18 = _mm512_loadu_ps(&re[i+160]);
                               zmm19 = _mm512_mul_ps(zmm18,zmm18);
                               zmm20 = _mm512_loadu_ps(&im[i+160]);
                               zmm21 = _mm512_mul_ps(zmm20,zmm20);
                               zmm22 = xsqrtf(_mm512_add_ps(zmm19,zmm21));
                               _mm512_storeu_ps(&cabs[i+160],zmm22);
+                              _mm_prefetch((const char*)&re[i+176],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+176],_MM_HINT_T0);
                               zmm23 = _mm512_loadu_ps(&re[i+176]);
                               zmm24 = _mm512_mul_ps(zmm23,zmm23);
                               zmm25 = _mm512_loadu_ps(&im[i+176]);
                               zmm26 = _mm512_mul_ps(zmm25,zmm25);
                               zmm27 = xsqrtf(_mm512_add_ps(zmm24,zmm26));
                               _mm512_storeu_ps(&cabs[i+176],zmm27);
-                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
                               zmm28 = _mm512_loadu_ps(&re[i+192]);
                               zmm29 = _mm512_mul_ps(zmm28,zmm28);
                               zmm30 = _mm512_loadu_ps(&im[i+192]);
                               zmm31 = _mm512_mul_ps(zmm30,zmm30);
                               zmm0  = xsqrtf(_mm512_add_ps(zmm29,zmm31));
                               _mm512_storeu_ps(&cabs[i+192],zmm0);
+                              _mm_prefetch((const char*)&re[i+208],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+208],_MM_HINT_T0);
                               zmm1  = _mm512_loadu_ps(&re[i+208]);
                               zmm2  = _mm512_mul_ps(zmm1,zmm1);
                               zmm3  = _mm512_loadu_ps(&im[i+208]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = xsqrtf(_mm512_add_ps(zmm2,zmm4));
                               _mm512_storeu_ps(&cabs[i+208],zmm5);
-                              _mm_prefetch((const char*)&re[i+256],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+256],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
                               zmm6  = _mm512_loadu_ps(&re[i+224]);
                               zmm7  = _mm512_mul_ps(zmm6,zmm6);
                               zmm8  = _mm512_loadu_ps(&im[i+224]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = xsqrtf(_mm512_add_ps(zmm7,zmm9));
                               _mm512_storeu_ps(&cabs[i+224],zmm10);
+                              _mm_prefetch((const char*)&re[i+240],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+240],_MM_HINT_T0);
                               zmm11 = _mm512_loadu_ps(&re[i+240]);
                               zmm12 = _mm512_mul_ps(zmm11,zmm11);
                               zmm13 = _mm512_loadu_ps(&im[i+240]);
@@ -162,7 +185,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+240],zmm15);
                         }
 
-                         for(; (i+191) < n; i += 192) {
+                         for(; (i+191) < n; i += 192) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -237,7 +261,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+176],zmm27);
                         }
 
-                         for(; (i+127) < n; i += 128) {
+                        for(; (i+127) < n; i += 128)
+                        {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -288,7 +313,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+112],zmm7);
                         }
 
-                         for(; (i+79) < n; i += 80) {
+                        for(; (i+79) < n; i += 80) 
+                        {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -321,7 +347,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -348,7 +375,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -363,7 +391,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -372,20 +401,22 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+0],zmm4);
                         }
 
-                         for(; (i+0) < n; i += 1) {
+                        for(; (i+0) < n; i += 1) 
+                         {
                               const float xre = re[i];
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
-                        }
-
+                              cabs[i]         = std::sqrt(re2+im2);
+                         }
+}
 
                 
-                   void gms::math::cabsv_zmm16r4_unroll_16x_a(const float * __restrict __ATTR_ALIGN__(64) re,
-                                                   const float * __restrict __ATTR_ALIGN__(64) im,
-                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_16x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n) 
+{
 
                          if(__builtin_expect(0==n,0)) { return;}
                            vfloat zmm0,zmm1,zmm2,zmm3;
@@ -398,113 +429,130 @@ SOFTWARE.
                            vfloat zmm28,zmm29,zmm30,zmm31;
                           int32_t i;
 
-                        for(i = 0; (i+255) < n; i += 256) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+255) < n; i += 256) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_load_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_load_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_store_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_load_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_load_ps(&im[i+32]);
                               zmm13  = _mm512_mul_ps(zmm12,zmm12);
                               zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
                               _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_load_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_load_ps(&im[i+48]);
                               zmm18  = _mm512_mul_ps(zmm17,zmm17);
                               zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
                               _mm512_store_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_load_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_load_ps(&im[i+64]);
                               zmm23  = _mm512_mul_ps(zmm22,zmm22);
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_load_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_load_ps(&im[i+80]);
                               zmm28  = _mm512_mul_ps(zmm27,zmm27);
                               zmm29  = xsqrtf(_mm512_add_ps(zmm26,zmm28));
                               _mm512_store_ps(&cabs[i+80],zmm29);
-                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
                               zmm30  = _mm512_load_ps(&re[i+96]);
                               zmm31  = _mm512_mul_ps(zmm30,zmm30);
                               zmm0   = _mm512_load_ps(&im[i+96]);
                               zmm1   = _mm512_mul_ps(zmm0,zmm0);
                               zmm2   = xsqrtf(_mm512_add_ps(zmm31,zmm1));
                               _mm512_store_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
                               zmm3  = _mm512_load_ps(&re[i+112]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = _mm512_load_ps(&im[i+112]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = xsqrtf(_mm512_add_ps(zmm4,zmm6));
                               _mm512_store_ps(&cabs[i+112],zmm7);
-                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
                               zmm8  = _mm512_load_ps(&re[i+128]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = _mm512_load_ps(&im[i+128]);
                               zmm11 = _mm512_mul_ps(zmm10,zmm10);
                               zmm12 = xsqrtf(_mm512_add_ps(zmm9,zmm11));
                               _mm512_store_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
                               zmm13 = _mm512_load_ps(&re[i+144]);
                               zmm14 = _mm512_mul_ps(zmm13,zmm13);
                               zmm15 = _mm512_load_ps(&im[i+144]);
                               zmm16 = _mm512_mul_ps(zmm15,zmm15);
                               zmm17 = xsqrtf(_mm512_add_ps(zmm14,zmm16));
                               _mm512_store_ps(&cabs[i+144],zmm17);
-                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
                               zmm18 = _mm512_load_ps(&re[i+160]);
                               zmm19 = _mm512_mul_ps(zmm18,zmm18);
                               zmm20 = _mm512_load_ps(&im[i+160]);
                               zmm21 = _mm512_mul_ps(zmm20,zmm20);
                               zmm22 = xsqrtf(_mm512_add_ps(zmm19,zmm21));
                               _mm512_store_ps(&cabs[i+160],zmm22);
+                              _mm_prefetch((const char*)&re[i+176],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+176],_MM_HINT_T0);
                               zmm23 = _mm512_load_ps(&re[i+176]);
                               zmm24 = _mm512_mul_ps(zmm23,zmm23);
                               zmm25 = _mm512_load_ps(&im[i+176]);
                               zmm26 = _mm512_mul_ps(zmm25,zmm25);
                               zmm27 = xsqrtf(_mm512_add_ps(zmm24,zmm26));
                               _mm512_store_ps(&cabs[i+176],zmm27);
-                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
                               zmm28 = _mm512_load_ps(&re[i+192]);
                               zmm29 = _mm512_mul_ps(zmm28,zmm28);
                               zmm30 = _mm512_load_ps(&im[i+192]);
                               zmm31 = _mm512_mul_ps(zmm30,zmm30);
                               zmm0  = xsqrtf(_mm512_add_ps(zmm29,zmm31));
                               _mm512_store_ps(&cabs[i+192],zmm0);
+                              _mm_prefetch((const char*)&re[i+208],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+208],_MM_HINT_T0);
                               zmm1  = _mm512_load_ps(&re[i+208]);
                               zmm2  = _mm512_mul_ps(zmm1,zmm1);
                               zmm3  = _mm512_load_ps(&im[i+208]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = xsqrtf(_mm512_add_ps(zmm2,zmm4));
                               _mm512_store_ps(&cabs[i+208],zmm5);
-                              _mm_prefetch((const char*)&re[i+256],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+256],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
                               zmm6  = _mm512_load_ps(&re[i+224]);
                               zmm7  = _mm512_mul_ps(zmm6,zmm6);
                               zmm8  = _mm512_load_ps(&im[i+224]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = xsqrtf(_mm512_add_ps(zmm7,zmm9));
                               _mm512_store_ps(&cabs[i+224],zmm10);
+                              _mm_prefetch((const char*)&re[i+240],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+240],_MM_HINT_T0);
                               zmm11 = _mm512_load_ps(&re[i+240]);
                               zmm12 = _mm512_mul_ps(zmm11,zmm11);
                               zmm13 = _mm512_load_ps(&im[i+240]);
@@ -513,7 +561,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+240],zmm15);
                         }
 
-                         for(; (i+191) < n; i += 192) {
+                         for(; (i+191) < n; i += 192) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -588,7 +637,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+176],zmm27);
                         }
 
-                         for(; (i+127) < n; i += 128) {
+                         for(; (i+127) < n; i += 128) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -639,7 +689,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+112],zmm7);
                         }
 
-                         for(; (i+79) < n; i += 80) {
+                        for(; (i+79) < n; i += 80) 
+                        {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -672,7 +723,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -699,7 +751,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -714,7 +767,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -723,22 +777,24 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+0],zmm4);
                         }
 
-                         for(; (i+0) < n; i += 1) {
+                        for(; (i+0) < n; i += 1) 
+                        {
                               const float xre = re[i];
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
+                              cabs[i]         = std::sqrt(re2+im2);
                         }
 
               }
 
 
                   
-                   void gms::math::cabsv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) re,
-                                                   const float * __restrict __ATTR_ALIGN__(64) im,
-                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n) 
+{
 
                          if(__builtin_expect(0==n,0)) { return;}
                            vfloat zmm0,zmm1,zmm2,zmm3;
@@ -751,71 +807,82 @@ SOFTWARE.
                            vfloat zmm28,zmm29,zmm30,zmm31;
                           int32_t i;
 
-                        for(i = 0; (i+159) < n; i += 160) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+159) < n; i += 160) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_load_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_load_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_store_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_load_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_load_ps(&im[i+32]);
                               zmm13  = _mm512_mul_ps(zmm12,zmm12);
                               zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
                               _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_load_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_load_ps(&im[i+48]);
                               zmm18  = _mm512_mul_ps(zmm17,zmm17);
                               zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
                               _mm512_store_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_load_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_load_ps(&im[i+64]);
                               zmm23  = _mm512_mul_ps(zmm22,zmm22);
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_load_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_load_ps(&im[i+80]);
                               zmm28  = _mm512_mul_ps(zmm27,zmm27);
                               zmm29  = xsqrtf(_mm512_add_ps(zmm26,zmm28));
                               _mm512_store_ps(&cabs[i+80],zmm29);
-                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
                               zmm30  = _mm512_load_ps(&re[i+96]);
                               zmm31  = _mm512_mul_ps(zmm30,zmm30);
                               zmm0   = _mm512_load_ps(&im[i+96]);
                               zmm1   = _mm512_mul_ps(zmm0,zmm0);
                               zmm2   = xsqrtf(_mm512_add_ps(zmm31,zmm1));
                               _mm512_store_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
                               zmm3  = _mm512_load_ps(&re[i+112]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = _mm512_load_ps(&im[i+112]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = xsqrtf(_mm512_add_ps(zmm4,zmm6));
                               _mm512_store_ps(&cabs[i+112],zmm7);
-                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
                               zmm8  = _mm512_load_ps(&re[i+128]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = _mm512_load_ps(&im[i+128]);
                               zmm11 = _mm512_mul_ps(zmm10,zmm10);
                               zmm12 = xsqrtf(_mm512_add_ps(zmm9,zmm11));
                               _mm512_store_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
                               zmm13 = _mm512_load_ps(&re[i+144]);
                               zmm14 = _mm512_mul_ps(zmm13,zmm13);
                               zmm15 = _mm512_load_ps(&im[i+144]);
@@ -826,7 +893,8 @@ SOFTWARE.
                         }
 
                        
-                         for(; (i+127) < n; i += 128) {
+                         for(; (i+127) < n; i += 128) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -877,7 +945,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+112],zmm7);
                         }
 
-                         for(; (i+79) < n; i += 80) {
+                         for(; (i+79) < n; i += 80) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -910,7 +979,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -937,7 +1007,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -952,7 +1023,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -961,22 +1033,24 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+0],zmm4);
                         }
 
-                         for(; (i+0) < n; i += 1) {
+                         for(; (i+0) < n; i += 1) 
+                         {
                               const float xre = re[i];
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
+                              cabs[i]         = std::sqrt(re2+im2);
                         }
 
-              }
+}
 
 
                  
-                   void gms::math::cabsv_zmm16r4_unroll_10x_u(const float * __restrict re,
-                                                   const float * __restrict im,
-                                                   float * __restrict  cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_10x_u(const float * __restrict re,
+                                           const float * __restrict im,
+                                           float * __restrict  cabs,
+                                           const int32_t n) 
+{
 
                          if(__builtin_expect(0==n,0)) { return;}
                            vfloat zmm0,zmm1,zmm2,zmm3;
@@ -989,71 +1063,82 @@ SOFTWARE.
                            vfloat zmm28,zmm29,zmm30,zmm31;
                           int32_t i;
 
-                        for(i = 0; (i+159) < n; i += 160) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+159) < n; i += 160) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_loadu_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_loadu_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_loadu_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_loadu_ps(&im[i+32]);
                               zmm13  = _mm512_mul_ps(zmm12,zmm12);
                               zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
                               _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_loadu_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_loadu_ps(&im[i+48]);
                               zmm18  = _mm512_mul_ps(zmm17,zmm17);
                               zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_loadu_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_loadu_ps(&im[i+64]);
                               zmm23  = _mm512_mul_ps(zmm22,zmm22);
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_loadu_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_loadu_ps(&im[i+80]);
                               zmm28  = _mm512_mul_ps(zmm27,zmm27);
                               zmm29  = xsqrtf(_mm512_add_ps(zmm26,zmm28));
                               _mm512_storeu_ps(&cabs[i+80],zmm29);
-                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
                               zmm30  = _mm512_loadu_ps(&re[i+96]);
                               zmm31  = _mm512_mul_ps(zmm30,zmm30);
                               zmm0   = _mm512_loadu_ps(&im[i+96]);
                               zmm1   = _mm512_mul_ps(zmm0,zmm0);
                               zmm2   = xsqrtf(_mm512_add_ps(zmm31,zmm1));
                               _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
                               zmm3  = _mm512_loadu_ps(&re[i+112]);
                               zmm4  = _mm512_mul_ps(zmm3,zmm3);
                               zmm5  = _mm512_loadu_ps(&im[i+112]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = xsqrtf(_mm512_add_ps(zmm4,zmm6));
                               _mm512_storeu_ps(&cabs[i+112],zmm7);
-                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
                               zmm8  = _mm512_loadu_ps(&re[i+128]);
                               zmm9  = _mm512_mul_ps(zmm8,zmm8);
                               zmm10 = _mm512_loadu_ps(&im[i+128]);
                               zmm11 = _mm512_mul_ps(zmm10,zmm10);
                               zmm12 = xsqrtf(_mm512_add_ps(zmm9,zmm11));
                               _mm512_storeu_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
                               zmm13 = _mm512_loadu_ps(&re[i+144]);
                               zmm14 = _mm512_mul_ps(zmm13,zmm13);
                               zmm15 = _mm512_loadu_ps(&im[i+144]);
@@ -1064,7 +1149,8 @@ SOFTWARE.
                         }
 
                        
-                         for(; (i+127) < n; i += 128) {
+                         for(; (i+127) < n; i += 128) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1115,7 +1201,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+112],zmm7);
                         }
 
-                         for(; (i+79) < n; i += 80) {
+                         for(; (i+79) < n; i += 80) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1148,7 +1235,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1175,7 +1263,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1190,7 +1279,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16)
+                          {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1204,17 +1294,18 @@ SOFTWARE.
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
+                              cabs[i]         = std::sqrt(re2+im2);
                         }
 
-                }
+}
 
 
                  
-                   void gms::math::cabsv_zmm16r4_unroll_6x_u( const float * __restrict re,
-                                                   const float * __restrict im,
-                                                   float * __restrict  cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_6x_u(const float * __restrict re,
+                                          const float * __restrict im,
+                                          float * __restrict  cabs,
+                                          const int32_t n) 
+{
 
                          if(__builtin_expect(0==n,0)) { return;}
                            vfloat zmm0,zmm1,zmm2,zmm3;
@@ -1227,43 +1318,50 @@ SOFTWARE.
                            vfloat zmm28,zmm29;
                           int32_t i;
 
-                        for(i = 0; (i+95) < n; i += 96) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+95) < n; i += 96)
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_loadu_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_loadu_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_loadu_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_loadu_ps(&im[i+32]);
                               zmm13  = _mm512_mul_ps(zmm12,zmm12);
                               zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
                               _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_loadu_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_loadu_ps(&im[i+48]);
                               zmm18  = _mm512_mul_ps(zmm17,zmm17);
                               zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_loadu_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_loadu_ps(&im[i+64]);
                               zmm23  = _mm512_mul_ps(zmm22,zmm22);
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_loadu_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_loadu_ps(&im[i+80]);
@@ -1276,7 +1374,8 @@ SOFTWARE.
                        
                         
 
-                         for(; (i+79) < n; i += 80) {
+                         for(; (i+79) < n; i += 80) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1309,7 +1408,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1336,7 +1436,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1351,7 +1452,8 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16) 
+                         {
                               zmm0  = _mm512_loadu_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_loadu_ps(&im[i+0]);
@@ -1360,22 +1462,24 @@ SOFTWARE.
                               _mm512_storeu_ps(&cabs[i+0],zmm4);
                         }
 
-                         for(; (i+0) < n; i += 1) {
+                         for(; (i+0) < n; i += 1) 
+                         {
                               const float xre = re[i];
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
+                              cabs[i]         = std::sqrt(re2+im2);
                         }
 
-                }
+}
 
 
                 
-                   void gms::math::cabsv_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) re,
-                                                   const float * __restrict __ATTR_ALIGN__(64) im,
-                                                   float * __restrict  __ATTR_ALIGN__(64) cabs,
-                                                   const int32_t n) {
+void gms::math::cabsv_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n)
+{
 
                          if(__builtin_expect(0==n,0)) { return;}
                            vfloat zmm0,zmm1,zmm2,zmm3;
@@ -1388,43 +1492,50 @@ SOFTWARE.
                            vfloat zmm28,zmm29;
                           int32_t i;
 
-                        for(i = 0; (i+95) < n; i += 96) {
-                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+95) < n; i += 96) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
                               zmm3  = _mm512_mul_ps(zmm2,zmm2);
                               zmm4  = xsqrtf(_mm512_add_ps(zmm1,zmm3));
                               _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
                               zmm5  = _mm512_load_ps(&re[i+16]);
                               zmm6  = _mm512_mul_ps(zmm5,zmm5);
                               zmm7  = _mm512_load_ps(&im[i+16]);
                               zmm8  = _mm512_mul_ps(zmm7,zmm7);
                               zmm9  = xsqrtf(_mm512_add_ps(zmm6,zmm8));
                               _mm512_store_ps(&cabs[i+16],zmm9);
-                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
                               zmm10  = _mm512_load_ps(&re[i+32]);
                               zmm11  = _mm512_mul_ps(zmm10,zmm10);
                               zmm12  = _mm512_load_ps(&im[i+32]);
                               zmm13  = _mm512_mul_ps(zmm12,zmm12);
                               zmm14  = xsqrtf(_mm512_add_ps(zmm11,zmm13));
                               _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
                               zmm15  = _mm512_load_ps(&re[i+48]);
                               zmm16  = _mm512_mul_ps(zmm15,zmm15);
                               zmm17  = _mm512_load_ps(&im[i+48]);
                               zmm18  = _mm512_mul_ps(zmm17,zmm17);
                               zmm19  = xsqrtf(_mm512_add_ps(zmm16,zmm18));
                               _mm512_store_ps(&cabs[i+48],zmm19);
-                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
-                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
                               zmm20  = _mm512_load_ps(&re[i+64]);
                               zmm21  = _mm512_mul_ps(zmm21,zmm21);
                               zmm22  = _mm512_load_ps(&im[i+64]);
                               zmm23  = _mm512_mul_ps(zmm22,zmm22);
                               zmm24  = xsqrtf(_mm512_add_ps(zmm21,zmm23));
                               _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
                               zmm25  = _mm512_load_ps(&re[i+80]);
                               zmm26  = _mm512_mul_ps(zmm25,zmm25);
                               zmm27  = _mm512_load_ps(&im[i+80]);
@@ -1437,7 +1548,8 @@ SOFTWARE.
                        
                       
 
-                         for(; (i+79) < n; i += 80) {
+                         for(; (i+79) < n; i += 80) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -1470,7 +1582,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+64],zmm23);
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -1497,7 +1610,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+48],zmm19);
                         }
 
-                         for(; (i+31) < n; i += 32) {
+                         for(; (i+31) < n; i += 32) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -1512,7 +1626,8 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+16],zmm9);
                         }
 
-                         for(; (i+15) < n; i += 16) {
+                         for(; (i+15) < n; i += 16) 
+                         {
                               zmm0  = _mm512_load_ps(&re[i+0]);
                               zmm1  = _mm512_mul_ps(zmm0,zmm0);
                               zmm2  = _mm512_load_ps(&im[i+0]);
@@ -1521,18 +1636,1634 @@ SOFTWARE.
                               _mm512_store_ps(&cabs[i+0],zmm4);
                         }
 
-                         for(; (i+0) < n; i += 1) {
+                         for(; (i+0) < n; i += 1) 
+                         {
                               const float xre = re[i];
                               const float re2 = xre*xre;
                               const float xim = im[i];
                               const float im2 = xim*xim;
-                              cabs[i]         = ceph_sqrtf(re2+im2);
+                              cabs[i]         = std::sqrt(re2+im2);
+                        }
+
+}
+
+
+#else 
+
+void gms::math::cabsv_zmm16r4_unroll_16x_u(const float * __restrict re,
+                                           const float * __restrict im,
+                                           float * __restrict  cabs,
+                                           const int32_t n) 
+{
+
+                        if(__builtin_expect(0==n,0)) { return;}
+
+                           __m512 zmm0,zmm1,zmm2,zmm3;
+                           __m512 zmm4,zmm5,zmm6,zmm7;
+                           __m512 zmm8,zmm9,zmm10,zmm11;
+                           __m512 zmm12,zmm13,zmm14,zmm15;
+                           __m512 zmm16,zmm17,zmm18,zmm19;
+                           __m512 zmm20,zmm21,zmm22,zmm23;
+                           __m512 zmm24,zmm25,zmm26,zmm27;
+                           __m512 zmm28,zmm29,zmm30,zmm31;
+
+                           int32_t i;
+
+                        for(i = 0; (i+255) < n; i += 256) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);                             
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13)); 
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);                                  
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18)); 
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);                             
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);                               
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm30  = _mm512_loadu_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_loadu_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
+                              zmm3  = _mm512_loadu_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_loadu_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);                              
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_storeu_ps(&cabs[i+112],zmm7);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              zmm8  = _mm512_loadu_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_loadu_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);                               
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_storeu_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
+                              zmm13 = _mm512_loadu_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_loadu_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_storeu_ps(&cabs[i+144],zmm17);
+                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              zmm18 = _mm512_loadu_ps(&re[i+160]);
+                              zmm19 = _mm512_mul_ps(zmm18,zmm18);
+                              zmm20 = _mm512_loadu_ps(&im[i+160]);
+                              zmm21 = _mm512_mul_ps(zmm20,zmm20);
+                              zmm22 = _mm512_sqrt_ps(_mm512_add_ps(zmm19,zmm21));
+                              _mm512_storeu_ps(&cabs[i+160],zmm22);
+                              _mm_prefetch((const char*)&re[i+176],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+176],_MM_HINT_T0);
+                              zmm23 = _mm512_loadu_ps(&re[i+176]);
+                              zmm24 = _mm512_mul_ps(zmm23,zmm23);
+                              zmm25 = _mm512_loadu_ps(&im[i+176]);
+                              zmm26 = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27 = _mm512_sqrt_ps(_mm512_add_ps(zmm24,zmm26));
+                              _mm512_storeu_ps(&cabs[i+176],zmm27);
+                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
+                              zmm28 = _mm512_loadu_ps(&re[i+192]);
+                              zmm29 = _mm512_mul_ps(zmm28,zmm28);
+                              zmm30 = _mm512_loadu_ps(&im[i+192]);
+                              zmm31 = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0  = _mm512_sqrt_ps(_mm512_add_ps(zmm29,zmm31));
+                              _mm512_storeu_ps(&cabs[i+192],zmm0);
+                              _mm_prefetch((const char*)&re[i+208],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+208],_MM_HINT_T0);
+                              zmm1  = _mm512_loadu_ps(&re[i+208]);
+                              zmm2  = _mm512_mul_ps(zmm1,zmm1);
+                              zmm3  = _mm512_loadu_ps(&im[i+208]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_sqrt_ps(_mm512_add_ps(zmm2,zmm4));
+                              _mm512_storeu_ps(&cabs[i+208],zmm5);
+                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
+                              zmm6  = _mm512_loadu_ps(&re[i+224]);
+                              zmm7  = _mm512_mul_ps(zmm6,zmm6);
+                              zmm8  = _mm512_loadu_ps(&im[i+224]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_sqrt_ps(_mm512_add_ps(zmm7,zmm9));
+                              _mm512_storeu_ps(&cabs[i+224],zmm10);
+                              _mm_prefetch((const char*)&re[i+240],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+240],_MM_HINT_T0);
+                              zmm11 = _mm512_loadu_ps(&re[i+240]);
+                              zmm12 = _mm512_mul_ps(zmm11,zmm11);
+                              zmm13 = _mm512_loadu_ps(&im[i+240]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_sqrt_ps(_mm512_add_ps(zmm12,zmm14));
+                              _mm512_storeu_ps(&cabs[i+240],zmm15);
+                        }
+
+                         for(; (i+191) < n; i += 192) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_loadu_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_loadu_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_loadu_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_loadu_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_storeu_ps(&cabs[i+112],zmm7);
+                              zmm8  = _mm512_loadu_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_loadu_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_storeu_ps(&cabs[i+128],zmm12);
+                              zmm13 = _mm512_loadu_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_loadu_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_storeu_ps(&cabs[i+144],zmm17);
+                              zmm18 = _mm512_loadu_ps(&re[i+160]);
+                              zmm19 = _mm512_mul_ps(zmm18,zmm18);
+                              zmm20 = _mm512_loadu_ps(&im[i+160]);
+                              zmm21 = _mm512_mul_ps(zmm20,zmm20);
+                              zmm22 = _mm512_sqrt_ps(_mm512_add_ps(zmm19,zmm21));
+                              _mm512_storeu_ps(&cabs[i+160],zmm22);
+                              zmm23 = _mm512_loadu_ps(&re[i+176]);
+                              zmm24 = _mm512_mul_ps(zmm23,zmm23);
+                              zmm25 = _mm512_loadu_ps(&im[i+176]);
+                              zmm26 = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27 = _mm512_sqrt_ps(_mm512_add_ps(zmm24,zmm26));
+                              _mm512_storeu_ps(&cabs[i+176],zmm27);
+                        }
+
+                        for(; (i+127) < n; i += 128)
+                        {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_loadu_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_loadu_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_loadu_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_loadu_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_storeu_ps(&cabs[i+112],zmm7);
+                        }
+
+                        for(; (i+79) < n; i += 80) 
+                        {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                        }
+
+                        for(; (i+0) < n; i += 1) 
+                         {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
+                         }
+}
+
+                
+void gms::math::cabsv_zmm16r4_unroll_16x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n) 
+{
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                            __m512 zmm0,zmm1,zmm2,zmm3;
+                            __m512 zmm4,zmm5,zmm6,zmm7;
+                            __m512 zmm8,zmm9,zmm10,zmm11;
+                            __m512 zmm12,zmm13,zmm14,zmm15;
+                            __m512 zmm16,zmm17,zmm18,zmm19;
+                            __m512 zmm20,zmm21,zmm22,zmm23;
+                            __m512 zmm24,zmm25,zmm26,zmm27;
+                            __m512 zmm28,zmm29,zmm30,zmm31;
+                          int32_t i;
+
+                        for(i = 0; (i+255) < n; i += 256) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm30  = _mm512_load_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_load_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_store_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
+                              zmm3  = _mm512_load_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_load_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_store_ps(&cabs[i+112],zmm7);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              zmm8  = _mm512_load_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_load_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_store_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
+                              zmm13 = _mm512_load_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_load_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_store_ps(&cabs[i+144],zmm17);
+                              _mm_prefetch((const char*)&re[i+160],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+160],_MM_HINT_T0);
+                              zmm18 = _mm512_load_ps(&re[i+160]);
+                              zmm19 = _mm512_mul_ps(zmm18,zmm18);
+                              zmm20 = _mm512_load_ps(&im[i+160]);
+                              zmm21 = _mm512_mul_ps(zmm20,zmm20);
+                              zmm22 = _mm512_sqrt_ps(_mm512_add_ps(zmm19,zmm21));
+                              _mm512_store_ps(&cabs[i+160],zmm22);
+                              _mm_prefetch((const char*)&re[i+176],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+176],_MM_HINT_T0);
+                              zmm23 = _mm512_load_ps(&re[i+176]);
+                              zmm24 = _mm512_mul_ps(zmm23,zmm23);
+                              zmm25 = _mm512_load_ps(&im[i+176]);
+                              zmm26 = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27 = _mm512_sqrt_ps(_mm512_add_ps(zmm24,zmm26));
+                              _mm512_store_ps(&cabs[i+176],zmm27);
+                              _mm_prefetch((const char*)&re[i+192],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+192],_MM_HINT_T0);
+                              zmm28 = _mm512_load_ps(&re[i+192]);
+                              zmm29 = _mm512_mul_ps(zmm28,zmm28);
+                              zmm30 = _mm512_load_ps(&im[i+192]);
+                              zmm31 = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0  = _mm512_sqrt_ps(_mm512_add_ps(zmm29,zmm31));
+                              _mm512_store_ps(&cabs[i+192],zmm0);
+                              _mm_prefetch((const char*)&re[i+208],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+208],_MM_HINT_T0);
+                              zmm1  = _mm512_load_ps(&re[i+208]);
+                              zmm2  = _mm512_mul_ps(zmm1,zmm1);
+                              zmm3  = _mm512_load_ps(&im[i+208]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_sqrt_ps(_mm512_add_ps(zmm2,zmm4));
+                              _mm512_store_ps(&cabs[i+208],zmm5);
+                              _mm_prefetch((const char*)&re[i+224],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+224],_MM_HINT_T0);
+                              zmm6  = _mm512_load_ps(&re[i+224]);
+                              zmm7  = _mm512_mul_ps(zmm6,zmm6);
+                              zmm8  = _mm512_load_ps(&im[i+224]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_sqrt_ps(_mm512_add_ps(zmm7,zmm9));
+                              _mm512_store_ps(&cabs[i+224],zmm10);
+                              _mm_prefetch((const char*)&re[i+240],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+240],_MM_HINT_T0);
+                              zmm11 = _mm512_load_ps(&re[i+240]);
+                              zmm12 = _mm512_mul_ps(zmm11,zmm11);
+                              zmm13 = _mm512_load_ps(&im[i+240]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_sqrt_ps(_mm512_add_ps(zmm12,zmm14));
+                              _mm512_store_ps(&cabs[i+240],zmm15);
+                        }
+
+                         for(; (i+191) < n; i += 192) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_store_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_load_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_load_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_store_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_load_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_load_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_store_ps(&cabs[i+112],zmm7);
+                              zmm8  = _mm512_load_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_load_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_store_ps(&cabs[i+128],zmm12);
+                              zmm13 = _mm512_load_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_load_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_store_ps(&cabs[i+144],zmm17);
+                              zmm18 = _mm512_load_ps(&re[i+160]);
+                              zmm19 = _mm512_mul_ps(zmm18,zmm18);
+                              zmm20 = _mm512_load_ps(&im[i+160]);
+                              zmm21 = _mm512_mul_ps(zmm20,zmm20);
+                              zmm22 = _mm512_sqrt_ps(_mm512_add_ps(zmm19,zmm21));
+                              _mm512_store_ps(&cabs[i+160],zmm22);
+                              zmm23 = _mm512_load_ps(&re[i+176]);
+                              zmm24 = _mm512_mul_ps(zmm23,zmm23);
+                              zmm25 = _mm512_load_ps(&im[i+176]);
+                              zmm26 = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27 = _mm512_sqrt_ps(_mm512_add_ps(zmm24,zmm26));
+                              _mm512_store_ps(&cabs[i+176],zmm27);
+                        }
+
+                         for(; (i+127) < n; i += 128) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_load_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_load_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_store_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_load_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_load_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_store_ps(&cabs[i+112],zmm7);
+                        }
+
+                        for(; (i+79) < n; i += 80) 
+                        {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                        }
+
+                        for(; (i+0) < n; i += 1) 
+                        {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
                         }
 
               }
 
 
+                  
+void gms::math::cabsv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n) 
+{
 
+                         if(__builtin_expect(0==n,0)) { return;}
+                         __m512  zmm0,zmm1,zmm2,zmm3;
+                         __m512  zmm4,zmm5,zmm6,zmm7;
+                         __m512  zmm8,zmm9,zmm10,zmm11;
+                         __m512  zmm12,zmm13,zmm14,zmm15;
+                         __m512  zmm16,zmm17,zmm18,zmm19;
+                         __m512  zmm20,zmm21,zmm22,zmm23;
+                         __m512  zmm24,zmm25,zmm26,zmm27;
+                         __m512  zmm28,zmm29,zmm30,zmm31;
+                          int32_t i;
+
+                        for(i = 0; (i+159) < n; i += 160) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm30  = _mm512_load_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_load_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_store_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
+                              zmm3  = _mm512_load_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_load_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_store_ps(&cabs[i+112],zmm7);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              zmm8  = _mm512_load_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_load_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_store_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
+                              zmm13 = _mm512_load_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_load_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_store_ps(&cabs[i+144],zmm17);
+                             
+                        }
+
+                       
+                         for(; (i+127) < n; i += 128) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_load_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_load_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_store_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_load_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_load_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_store_ps(&cabs[i+112],zmm7);
+                        }
+
+                         for(; (i+79) < n; i += 80) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                        }
+
+                         for(; (i+0) < n; i += 1) 
+                         {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
+                        }
+
+}
+
+
+                 
+void gms::math::cabsv_zmm16r4_unroll_10x_u(const float * __restrict re,
+                                           const float * __restrict im,
+                                           float * __restrict  cabs,
+                                           const int32_t n) 
+{
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                         __m512  zmm0,zmm1,zmm2,zmm3;
+                         __m512  zmm4,zmm5,zmm6,zmm7;
+                         __m512  zmm8,zmm9,zmm10,zmm11;
+                         __m512  zmm12,zmm13,zmm14,zmm15;
+                         __m512  zmm16,zmm17,zmm18,zmm19;
+                         __m512  zmm20,zmm21,zmm22,zmm23;
+                         __m512  zmm24,zmm25,zmm26,zmm27;
+                         __m512  zmm28,zmm29,zmm30,zmm31;
+                          int32_t i;
+
+                        for(i = 0; (i+159) < n; i += 160) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                              _mm_prefetch((const char*)&re[i+96],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+96],_MM_HINT_T0);
+                              zmm30  = _mm512_loadu_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_loadu_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              _mm_prefetch((const char*)&re[i+112],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+112],_MM_HINT_T0);
+                              zmm3  = _mm512_loadu_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_loadu_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_storeu_ps(&cabs[i+112],zmm7);
+                              _mm_prefetch((const char*)&re[i+128],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+128],_MM_HINT_T0);
+                              zmm8  = _mm512_loadu_ps(&re[i+128]);
+                              zmm9  = _mm512_mul_ps(zmm8,zmm8);
+                              zmm10 = _mm512_loadu_ps(&im[i+128]);
+                              zmm11 = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12 = _mm512_sqrt_ps(_mm512_add_ps(zmm9,zmm11));
+                              _mm512_storeu_ps(&cabs[i+128],zmm12);
+                              _mm_prefetch((const char*)&re[i+144],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+144],_MM_HINT_T0);
+                              zmm13 = _mm512_loadu_ps(&re[i+144]);
+                              zmm14 = _mm512_mul_ps(zmm13,zmm13);
+                              zmm15 = _mm512_loadu_ps(&im[i+144]);
+                              zmm16 = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17 = _mm512_sqrt_ps(_mm512_add_ps(zmm14,zmm16));
+                              _mm512_storeu_ps(&cabs[i+144],zmm17);
+                           
+                        }
+
+                       
+                         for(; (i+127) < n; i += 128) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                              zmm30  = _mm512_loadu_ps(&re[i+96]);
+                              zmm31  = _mm512_mul_ps(zmm30,zmm30);
+                              zmm0   = _mm512_loadu_ps(&im[i+96]);
+                              zmm1   = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2   = _mm512_sqrt_ps(_mm512_add_ps(zmm31,zmm1));
+                              _mm512_storeu_ps(&cabs[i+96],zmm2);
+                              zmm3  = _mm512_loadu_ps(&re[i+112]);
+                              zmm4  = _mm512_mul_ps(zmm3,zmm3);
+                              zmm5  = _mm512_loadu_ps(&im[i+112]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_sqrt_ps(_mm512_add_ps(zmm4,zmm6));
+                              _mm512_storeu_ps(&cabs[i+112],zmm7);
+                        }
+
+                         for(; (i+79) < n; i += 80) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16)
+                          {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                        }
+
+                         for(; (i+0) < n; i += 1) {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
+                        }
+
+}
+
+
+                 
+void gms::math::cabsv_zmm16r4_unroll_6x_u(const float * __restrict re,
+                                          const float * __restrict im,
+                                          float * __restrict  cabs,
+                                          const int32_t n) 
+{
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                         __m512  zmm0,zmm1,zmm2,zmm3;
+                         __m512  zmm4,zmm5,zmm6,zmm7;
+                         __m512  zmm8,zmm9,zmm10,zmm11;
+                         __m512  zmm12,zmm13,zmm14,zmm15;
+                         __m512  zmm16,zmm17,zmm18,zmm19;
+                         __m512  zmm20,zmm21,zmm22,zmm23;
+                         __m512  zmm24,zmm25,zmm26,zmm27;
+                         __m512  zmm28,zmm29;
+                          int32_t i;
+
+                        for(i = 0; (i+95) < n; i += 96)
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_loadu_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_loadu_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_storeu_ps(&cabs[i+80],zmm29);
+                             
+                        }
+
+                       
+                        
+
+                         for(; (i+79) < n; i += 80) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_loadu_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_loadu_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_storeu_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_loadu_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_loadu_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_loadu_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_loadu_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_storeu_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_loadu_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_loadu_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) 
+                         {
+                              zmm0  = _mm512_loadu_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_loadu_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                        }
+
+                         for(; (i+0) < n; i += 1) 
+                         {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
+                        }
+
+}
+
+
+                
+void gms::math::cabsv_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) re,
+                                           const float * __restrict __ATTR_ALIGN__(64) im,
+                                           float * __restrict  __ATTR_ALIGN__(64) cabs,
+                                           const int32_t n)
+{
+
+                         if(__builtin_expect(0==n,0)) { return;}
+                         __m512  zmm0,zmm1,zmm2,zmm3;
+                         __m512  zmm4,zmm5,zmm6,zmm7;
+                         __m512  zmm8,zmm9,zmm10,zmm11;
+                         __m512  zmm12,zmm13,zmm14,zmm15;
+                         __m512  zmm16,zmm17,zmm18,zmm19;
+                         __m512  zmm20,zmm21,zmm22,zmm23;
+                         __m512  zmm24,zmm25,zmm26,zmm27;
+                         __m512  zmm28,zmm29;
+                          int32_t i;
+
+                        for(i = 0; (i+95) < n; i += 96) 
+                        {
+                              _mm_prefetch((const char*)&re[i+0],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+0],_MM_HINT_T0);
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              _mm_prefetch((const char*)&re[i+16],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+16],_MM_HINT_T0);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                              _mm_prefetch((const char*)&re[i+32],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+32],_MM_HINT_T0);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_store_ps(&cabs[i+32],zmm14);
+                              _mm_prefetch((const char*)&re[i+48],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+48],_MM_HINT_T0);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              _mm_prefetch((const char*)&re[i+64],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+64],_MM_HINT_T0);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                              _mm_prefetch((const char*)&re[i+80],_MM_HINT_T0);
+                              _mm_prefetch((const char*)&im[i+80],_MM_HINT_T0);
+                              zmm25  = _mm512_load_ps(&re[i+80]);
+                              zmm26  = _mm512_mul_ps(zmm25,zmm25);
+                              zmm27  = _mm512_load_ps(&im[i+80]);
+                              zmm28  = _mm512_mul_ps(zmm27,zmm27);
+                              zmm29  = _mm512_sqrt_ps(_mm512_add_ps(zmm26,zmm28));
+                              _mm512_store_ps(&cabs[i+80],zmm29);
+                                                          
+                        }
+
+                       
+                      
+
+                         for(; (i+79) < n; i += 80) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                              zmm20  = _mm512_load_ps(&re[i+64]);
+                              zmm21  = _mm512_mul_ps(zmm21,zmm21);
+                              zmm22  = _mm512_load_ps(&im[i+64]);
+                              zmm23  = _mm512_mul_ps(zmm22,zmm22);
+                              zmm24  = _mm512_sqrt_ps(_mm512_add_ps(zmm21,zmm23));
+                              _mm512_store_ps(&cabs[i+64],zmm23);
+                        }
+
+                         for(; (i+63) < n; i += 64) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_storeu_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_storeu_ps(&cabs[i+16],zmm9);
+                              zmm10  = _mm512_load_ps(&re[i+32]);
+                              zmm11  = _mm512_mul_ps(zmm10,zmm10);
+                              zmm12  = _mm512_load_ps(&im[i+32]);
+                              zmm13  = _mm512_mul_ps(zmm12,zmm12);
+                              zmm14  = _mm512_sqrt_ps(_mm512_add_ps(zmm11,zmm13));
+                              _mm512_storeu_ps(&cabs[i+32],zmm14);
+                              zmm15  = _mm512_load_ps(&re[i+48]);
+                              zmm16  = _mm512_mul_ps(zmm15,zmm15);
+                              zmm17  = _mm512_load_ps(&im[i+48]);
+                              zmm18  = _mm512_mul_ps(zmm17,zmm17);
+                              zmm19  = _mm512_sqrt_ps(_mm512_add_ps(zmm16,zmm18));
+                              _mm512_store_ps(&cabs[i+48],zmm19);
+                        }
+
+                         for(; (i+31) < n; i += 32) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                              zmm5  = _mm512_load_ps(&re[i+16]);
+                              zmm6  = _mm512_mul_ps(zmm5,zmm5);
+                              zmm7  = _mm512_load_ps(&im[i+16]);
+                              zmm8  = _mm512_mul_ps(zmm7,zmm7);
+                              zmm9  = _mm512_sqrt_ps(_mm512_add_ps(zmm6,zmm8));
+                              _mm512_store_ps(&cabs[i+16],zmm9);
+                        }
+
+                         for(; (i+15) < n; i += 16) 
+                         {
+                              zmm0  = _mm512_load_ps(&re[i+0]);
+                              zmm1  = _mm512_mul_ps(zmm0,zmm0);
+                              zmm2  = _mm512_load_ps(&im[i+0]);
+                              zmm3  = _mm512_mul_ps(zmm2,zmm2);
+                              zmm4  = _mm512_sqrt_ps(_mm512_add_ps(zmm1,zmm3));
+                              _mm512_store_ps(&cabs[i+0],zmm4);
+                        }
+
+                         for(; (i+0) < n; i += 1) 
+                         {
+                              const float xre = re[i];
+                              const float re2 = xre*xre;
+                              const float xim = im[i];
+                              const float im2 = xim*xim;
+                              cabs[i]         = std::sqrt(re2+im2);
+                        }
+
+}
+
+#endif 
                  
 
 
