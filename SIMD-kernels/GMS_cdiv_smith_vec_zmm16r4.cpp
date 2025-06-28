@@ -27,18 +27,54 @@ SOFTWARE.
 
 #include <immintrin.h>
 #include "GMS_cdiv_smith_vec_zmm16r4.h"
-#include "GMS_cephes.h"
 
 
-                   void  gms::math::cdivv_smith_zmm16r4_u10x_u( const float * __restrict  xre,
-                                                     const float * __restrict  xim,
-                                                     const float * __restrict  yre,
-                                                     const float * __restrict  yim,
-                                                     float * __restrict        zre,
-                                                     float * __restrict        zim,
-                                                     const int32_t n) { 
+
+
+void  gms::math::cdivv_smith_zmm16r4_u10x_u( const float * __restrict  xre,
+                                             const float * __restrict  xim,
+                                             const float * __restrict  yre,
+                                             const float * __restrict  yim,
+                                             float * __restrict        zre,
+                                             float * __restrict        zim,
+                                             int32_t n) 
+{ 
 
                          if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif  
+
                           __m512 zmm0,zmm1,zmm2,zmm3;
                           __m512 zmm4,zmm5,zmm6,zmm7;
                           __m512 zmm8,zmm9,zmm10,zmm11;
@@ -47,12 +83,16 @@ SOFTWARE.
                           __m512 zmm20,zmm21,zmm22,zmm23;
                           __m512 zmm24,zmm25,zmm26,zmm27;
                           __m512 zmm28,zmm29,zmm30,zmm31;
+                         
                          int32_t i;
-                         for(i = 0; (i+159) < n; i += 160) {
-                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+                         for(i = 0; (i+159) < n; i += 160) 
+                         {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif 
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -70,6 +110,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif 
                              zmm6 = _mm512_loadu_ps(&yre[i+16]); // c
                              zmm7 = _mm512_loadu_ps(&yim[i+16]); // d
                              zmm8 = _mm512_loadu_ps(&xre[i+16]); // a
@@ -87,6 +133,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                 
                              zmm12 = _mm512_loadu_ps(&yre[i+32]); // c
                              zmm13 = _mm512_loadu_ps(&yim[i+32]); // d
                              zmm14 = _mm512_loadu_ps(&xre[i+32]); // a
@@ -104,10 +156,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+#endif                             
                              zmm18 = _mm512_loadu_ps(&yre[i+48]); // c
                              zmm19 = _mm512_loadu_ps(&yim[i+48]); // d
                              zmm20 = _mm512_loadu_ps(&xre[i+48]); // a
@@ -125,6 +179,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                             
                              zmm24 = _mm512_loadu_ps(&yre[i+64]); // c
                              zmm25 = _mm512_loadu_ps(&yim[i+64]); // d
                              zmm26 = _mm512_loadu_ps(&xre[i+64]); // a
@@ -142,6 +202,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                             
                              zmm30 = _mm512_loadu_ps(&yre[i+80]); // c
                              zmm31 = _mm512_loadu_ps(&yim[i+80]); // d
                              zmm0  = _mm512_loadu_ps(&xre[i+80]); // a
@@ -159,10 +225,10 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+80], _mm512_mask_blend_ps(m5,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm1,zmm2,zmm0),zmm3),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
-                             _mm_prefetch((const char *)&xre[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
                              zmm4 = _mm512_loadu_ps(&yre[i+96]); // c
                              zmm5 = _mm512_loadu_ps(&yim[i+96]); // d
                              zmm6 = _mm512_loadu_ps(&xre[i+96]); // a
@@ -180,6 +246,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+96], _mm512_mask_blend_ps(m6,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm7,zmm8,zmm6),zmm9),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm7,_mm512_mul_ps(zmm6,zmm8)),zmm9)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+112],_MM_HINT_T0);
+#endif                                                              
                              zmm10 = _mm512_loadu_ps(&yre[i+112]); // c
                              zmm11 = _mm512_loadu_ps(&yim[i+112]); // d
                              zmm12 = _mm512_loadu_ps(&xre[i+112]); // a
@@ -197,6 +269,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+112], _mm512_mask_blend_ps(m7,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm13,zmm14,zmm12),zmm15),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm13,_mm512_mul_ps(zmm12,zmm14)),zmm15)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+128],_MM_HINT_T0);
+#endif                                                              
                              zmm16 = _mm512_loadu_ps(&yre[i+128]); // c
                              zmm17 = _mm512_loadu_ps(&yim[i+128]); // d
                              zmm18 = _mm512_loadu_ps(&xre[i+128]); // a
@@ -214,11 +292,17 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+128], _mm512_mask_blend_ps(m8,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm19,zmm20,zmm18),zmm21),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm19,_mm512_mul_ps(zmm18,zmm20)),zmm21)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1
+                             _mm_prefetch((const char *)&xre[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+144],_MM_HINT_T0);
+#endif                                                              
                              zmm22 = _mm512_loadu_ps(&yre[i+144]); // c
                              zmm23 = _mm512_loadu_ps(&yim[i+144]); // d
                              zmm24 = _mm512_loadu_ps(&xre[i+144]); // a
                              zmm25 = _mm512_loadu_ps(&xim[i+144]); // b
-                             const __mmask18 m9 = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm22),
+                             const __mmask16 m9 = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm22),
                                                               _mm512_abs_ps(zmm23),
                                                               _CMP_GE_OQ);
                              zmm26 = _mm512_mask_blend_ps(m9,_mm512_div_ps(zmm22,zmm23),
@@ -233,7 +317,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm25,_mm512_mul_ps(zmm24,zmm26)),zmm27)));
                         }
 
-                          for(; (i+127) < n; i += 128) {
+                        for(; (i+127) < n; i += 128) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -372,7 +457,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm13,_mm512_mul_ps(zmm12,zmm14)),zmm15)));
                         }
 
-                          for(; (i+95) < n; i += 96) {
+                        for(; (i+95) < n; i += 96) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -477,7 +563,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                          for(; (i+63) < n; i += 64) {
+                        for(; (i+63) < n; i += 64) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -548,7 +635,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23))); 
                         }
 
-                          for(; (i+31) < n; i += 32) {
+                        for(; (i+31) < n; i += 32) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -585,7 +673,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11))); 
                         }
 
-                          for(; (i+15) < n; i += 16) {
+                        for(; (i+15) < n; i += 16) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -605,14 +694,16 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                         }
 
-                          for(; (i+0) < n ; i += 1) {
+                        for(; (i+0) < n ; i += 1) 
+                        {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -626,7 +717,7 @@ SOFTWARE.
                               }
                         }
  
-               }
+}
 
 
                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -635,15 +726,49 @@ SOFTWARE.
                    
                 
                 
-                   void  gms::math::cdivv_smith_zmm16r4_u10x_a( const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) xim,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yim,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n) { 
+void  gms::math::cdivv_smith_zmm16r4_u10x_a( const float * __restrict __ATTR_ALIGN__(64) xre,
+                                             const float * __restrict __ATTR_ALIGN__(64) xim,
+                                             const float * __restrict __ATTR_ALIGN__(64) yre,
+                                             const float * __restrict __ATTR_ALIGN__(64) yim,
+                                             float * __restrict       __ATTR_ALIGN__(64) zre,
+                                             float * __restrict       __ATTR_ALIGN__(64) zim,
+                                             int32_t n) 
+{ 
 
                          if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif  
                           __m512 zmm0,zmm1,zmm2,zmm3;
                           __m512 zmm4,zmm5,zmm6,zmm7;
                           __m512 zmm8,zmm9,zmm10,zmm11;
@@ -653,11 +778,14 @@ SOFTWARE.
                           __m512 zmm24,zmm25,zmm26,zmm27;
                           __m512 zmm28,zmm29,zmm30,zmm31;
                          int32_t i;
-                         for(i = 0; (i+159) < n; i += 160) {
-                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+                         for(i = 0; (i+159) < n; i += 160) 
+                         {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif 
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -675,6 +803,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif                                                             
                              zmm6 = _mm512_load_ps(&yre[i+16]); // c
                              zmm7 = _mm512_load_ps(&yim[i+16]); // d
                              zmm8 = _mm512_load_ps(&xre[i+16]); // a
@@ -692,6 +826,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                              
                              zmm12 = _mm512_load_ps(&yre[i+32]); // c
                              zmm13 = _mm512_load_ps(&yim[i+32]); // d
                              zmm14 = _mm512_load_ps(&xre[i+32]); // a
@@ -709,10 +849,10 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
                              zmm18 = _mm512_load_ps(&yre[i+48]); // c
                              zmm19 = _mm512_load_ps(&yim[i+48]); // d
                              zmm20 = _mm512_load_ps(&xre[i+48]); // a
@@ -730,6 +870,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                              
                              zmm24 = _mm512_load_ps(&yre[i+64]); // c
                              zmm25 = _mm512_load_ps(&yim[i+64]); // d
                              zmm26 = _mm512_load_ps(&xre[i+64]); // a
@@ -747,6 +893,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                              
                              zmm30 = _mm512_load_ps(&yre[i+80]); // c
                              zmm31 = _mm512_load_ps(&yim[i+80]); // d
                              zmm0  = _mm512_load_ps(&xre[i+80]); // a
@@ -764,10 +916,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+80], _mm512_mask_blend_ps(m5,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm1,zmm2,zmm0),zmm3),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
-                             _mm_prefetch((const char *)&xre[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+144],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+144],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+#endif                             
                              zmm4 = _mm512_load_ps(&yre[i+96]); // c
                              zmm5 = _mm512_load_ps(&yim[i+96]); // d
                              zmm6 = _mm512_load_ps(&xre[i+96]); // a
@@ -785,6 +939,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+96], _mm512_mask_blend_ps(m6,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm7,zmm8,zmm6),zmm9),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm7,_mm512_mul_ps(zmm6,zmm8)),zmm9)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+112],_MM_HINT_T0);
+#endif                                                              
                              zmm10 = _mm512_load_ps(&yre[i+112]); // c
                              zmm11 = _mm512_load_ps(&yim[i+112]); // d
                              zmm12 = _mm512_load_ps(&xre[i+112]); // a
@@ -802,6 +962,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+112], _mm512_mask_blend_ps(m7,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm13,zmm14,zmm12),zmm15),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm13,_mm512_mul_ps(zmm12,zmm14)),zmm15)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+128],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+128],_MM_HINT_T0);
+#endif                                                              
                              zmm16 = _mm512_load_ps(&yre[i+128]); // c
                              zmm17 = _mm512_load_ps(&yim[i+128]); // d
                              zmm18 = _mm512_load_ps(&xre[i+128]); // a
@@ -819,11 +985,17 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+128], _mm512_mask_blend_ps(m8,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm19,zmm20,zmm18),zmm21),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm19,_mm512_mul_ps(zmm18,zmm20)),zmm21)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+144],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+144],_MM_HINT_T0);
+#endif                                                              
                              zmm22 = _mm512_load_ps(&yre[i+144]); // c
                              zmm23 = _mm512_load_ps(&yim[i+144]); // d
                              zmm24 = _mm512_load_ps(&xre[i+144]); // a
                              zmm25 = _mm512_load_ps(&xim[i+144]); // b
-                             const __mmask18 m9 = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm22),
+                             const __mmask16 m9 = _mm512_cmp_ps_mask(_mm512_abs_ps(zmm22),
                                                               _mm512_abs_ps(zmm23),
                                                               _CMP_GE_OQ);
                              zmm26 = _mm512_mask_blend_ps(m9,_mm512_div_ps(zmm22,zmm23),
@@ -838,7 +1010,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm25,_mm512_mul_ps(zmm24,zmm26)),zmm27)));
                         }
 
-                          for(; (i+127) < n; i += 128) {
+                        for(; (i+127) < n; i += 128) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -977,7 +1150,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm13,_mm512_mul_ps(zmm12,zmm14)),zmm15)));
                         }
 
-                          for(; (i+95) < n; i += 96) {
+                        for(; (i+95) < n; i += 96) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1082,7 +1256,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                          for(; (i+63) < n; i += 64) {
+                        for(; (i+63) < n; i += 64) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1153,7 +1328,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23))); 
                         }
 
-                          for(; (i+31) < n; i += 32) {
+                        for(; (i+31) < n; i += 32) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1190,7 +1366,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11))); 
                         }
 
-                          for(; (i+15) < n; i += 16) {
+                        for(; (i+15) < n; i += 16) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1210,14 +1387,15 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                         }
 
-                          for(; (i+0) < n ; i += 1) {
+                        for(; (i+0) < n ; i += 1) 
+                        {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -1231,22 +1409,56 @@ SOFTWARE.
                               }
                         }
  
-               }
+}
 
 
             ///////////////////////////////////////////////////////////////////////////////////////////
 
 
                    
-                   void  gms::math::cdivv_smith_zmm16r4_u8x_u( const float * __restrict  xre,
-                                                     const float * __restrict  xim,
-                                                     const float * __restrict  yre,
-                                                     const float * __restrict  yim,
-                                                     float * __restrict        zre,
-                                                     float * __restrict        zim,
-                                                     const int32_t n) { 
+void  gms::math::cdivv_smith_zmm16r4_u8x_u( const float * __restrict  xre,
+                                            const float * __restrict  xim,
+                                            const float * __restrict  yre,
+                                            const float * __restrict  yim,
+                                            float * __restrict        zre,
+                                            float * __restrict        zim,
+                                            int32_t n) 
+{ 
 
                         if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif  
                          __m512 zmm0,zmm1,zmm2,zmm3;
                          __m512 zmm4,zmm5,zmm6,zmm7;
                          __m512 zmm8,zmm9,zmm10,zmm11;
@@ -1256,11 +1468,14 @@ SOFTWARE.
                          __m512 zmm24,zmm25,zmm26,zmm27;
                          __m512 zmm28,zmm29,zmm30,zmm31;
                         int32_t i;
-                        for(i = 0; (i+127) < n; i += 128) {
-                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+127) < n; i += 128) 
+                        {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif                             
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -1278,6 +1493,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif                                                              
                              zmm6 = _mm512_loadu_ps(&yre[i+16]); // c
                              zmm7 = _mm512_loadu_ps(&yim[i+16]); // d
                              zmm8 = _mm512_loadu_ps(&xre[i+16]); // a
@@ -1295,6 +1516,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                               
                              zmm12 = _mm512_loadu_ps(&yre[i+32]); // c
                              zmm13 = _mm512_loadu_ps(&yim[i+32]); // d
                              zmm14 = _mm512_loadu_ps(&xre[i+32]); // a
@@ -1312,10 +1539,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+#endif                              
                              zmm18 = _mm512_loadu_ps(&yre[i+48]); // c
                              zmm19 = _mm512_loadu_ps(&yim[i+48]); // d
                              zmm20 = _mm512_loadu_ps(&xre[i+48]); // a
@@ -1333,6 +1562,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                               
                              zmm24 = _mm512_loadu_ps(&yre[i+64]); // c
                              zmm25 = _mm512_loadu_ps(&yim[i+64]); // d
                              zmm26 = _mm512_loadu_ps(&xre[i+64]); // a
@@ -1350,6 +1585,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                               
                              zmm30 = _mm512_loadu_ps(&yre[i+80]); // c
                              zmm31 = _mm512_loadu_ps(&yim[i+80]); // d
                              zmm0  = _mm512_loadu_ps(&xre[i+80]); // a
@@ -1367,10 +1608,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+80], _mm512_mask_blend_ps(m5,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm1,zmm2,zmm0),zmm3),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
                              _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+#endif                              
                              zmm4 = _mm512_loadu_ps(&yre[i+96]); // c
                              zmm5 = _mm512_loadu_ps(&yim[i+96]); // d
                              zmm6 = _mm512_loadu_ps(&xre[i+96]); // a
@@ -1388,6 +1631,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+96], _mm512_mask_blend_ps(m6,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm7,zmm8,zmm6),zmm9),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm7,_mm512_mul_ps(zmm6,zmm8)),zmm9)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+112],_MM_HINT_T0);
+#endif                                                               
                              zmm10 = _mm512_loadu_ps(&yre[i+112]); // c
                              zmm11 = _mm512_loadu_ps(&yim[i+112]); // d
                              zmm12 = _mm512_loadu_ps(&xre[i+112]); // a
@@ -1408,7 +1657,8 @@ SOFTWARE.
 
                        }
 
-                         for(; (i+95) < n; i += 96) {
+                       for(; (i+95) < n; i += 96) 
+                       {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -1513,7 +1763,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                          for(; (i+63) < n; i += 64) {
+                        for(; (i+63) < n; i += 64) 
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -1584,7 +1835,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23))); 
                           }
 
-                            for(; (i+31) < n; i += 32) {
+                           for(; (i+31) < n; i += 32) 
+                           {
                                zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                                zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                                zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -1621,7 +1873,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
                           }
 
-                            for(; (i+15) < n; i += 16) {
+                          for(; (i+15) < n; i += 16) 
+                          {
                                zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                                zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                                zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -1641,14 +1894,16 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                          }
 
-                           for(; (i+0) < n; i += 1) {
+                           for(; (i+0) < n; i += 1)
+                           {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -1663,19 +1918,53 @@ SOFTWARE.
 
                          }
 
-                }
+}
 
 
                  
-                   void  gms::math::cdivv_smith_zmm16r4_u8x_a(  const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) xim,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yim,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n) { 
+void  gms::math::cdivv_smith_zmm16r4_u8x_a(  const float * __restrict __ATTR_ALIGN__(64) xre,
+                                             const float * __restrict __ATTR_ALIGN__(64) xim,
+                                             const float * __restrict __ATTR_ALIGN__(64) yre,
+                                             const float * __restrict __ATTR_ALIGN__(64) yim,
+                                             float * __restrict       __ATTR_ALIGN__(64) zre,
+                                             float * __restrict       __ATTR_ALIGN__(64) zim,
+                                             int32_t n) 
+{ 
 
                         if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif                          
                          __m512 zmm0,zmm1,zmm2,zmm3;
                          __m512 zmm4,zmm5,zmm6,zmm7;
                          __m512 zmm8,zmm9,zmm10,zmm11;
@@ -1685,11 +1974,14 @@ SOFTWARE.
                          __m512 zmm24,zmm25,zmm26,zmm27;
                          __m512 zmm28,zmm29,zmm30,zmm31;
                         int32_t i;
-                        for(i = 0; (i+127) < n; i += 128) {
-                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+127) < n; i += 128) 
+                        {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif 
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1707,6 +1999,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif                                                             
                              zmm6 = _mm512_load_ps(&yre[i+16]); // c
                              zmm7 = _mm512_load_ps(&yim[i+16]); // d
                              zmm8 = _mm512_load_ps(&xre[i+16]); // a
@@ -1724,6 +2022,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                              
                              zmm12 = _mm512_load_ps(&yre[i+32]); // c
                              zmm13 = _mm512_load_ps(&yim[i+32]); // d
                              zmm14 = _mm512_load_ps(&xre[i+32]); // a
@@ -1741,10 +2045,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+#endif                            
                              zmm18 = _mm512_load_ps(&yre[i+48]); // c
                              zmm19 = _mm512_load_ps(&yim[i+48]); // d
                              zmm20 = _mm512_load_ps(&xre[i+48]); // a
@@ -1762,6 +2068,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                             
                              zmm24 = _mm512_load_ps(&yre[i+64]); // c
                              zmm25 = _mm512_load_ps(&yim[i+64]); // d
                              zmm26 = _mm512_load_ps(&xre[i+64]); // a
@@ -1779,6 +2091,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                              
                              zmm30 = _mm512_load_ps(&yre[i+80]); // c
                              zmm31 = _mm512_load_ps(&yim[i+80]); // d
                              zmm0  = _mm512_load_ps(&xre[i+80]); // a
@@ -1796,10 +2114,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+80], _mm512_mask_blend_ps(m5,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm1,zmm2,zmm0),zmm3),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
                              _mm_prefetch((const char *)&xre[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&yre[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&xim[i+96],_MM_HINT_T0);
                              _mm_prefetch((const char *)&yim[i+96],_MM_HINT_T0);
+#endif                             
                              zmm4 = _mm512_load_ps(&yre[i+96]); // c
                              zmm5 = _mm512_load_ps(&yim[i+96]); // d
                              zmm6 = _mm512_load_ps(&xre[i+96]); // a
@@ -1817,6 +2137,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+96], _mm512_mask_blend_ps(m6,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm7,zmm8,zmm6),zmm9),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm7,_mm512_mul_ps(zmm6,zmm8)),zmm9)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                           
+                             _mm_prefetch((const char *)&xre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+112],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+112],_MM_HINT_T0);
+#endif                                                                 
                              zmm10 = _mm512_load_ps(&yre[i+112]); // c
                              zmm11 = _mm512_load_ps(&yim[i+112]); // d
                              zmm12 = _mm512_load_ps(&xre[i+112]); // a
@@ -1837,7 +2163,8 @@ SOFTWARE.
 
                        }
 
-                         for(; (i+95) < n; i += 96) {
+                       for(; (i+95) < n; i += 96)
+                       {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -1942,7 +2269,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                          for(; (i+63) < n; i += 64) {
+                        for(; (i+63) < n; i += 64) 
+                        {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2013,7 +2341,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23))); 
                           }
 
-                            for(; (i+31) < n; i += 32) {
+                          for(; (i+31) < n; i += 32) 
+                          {
                                zmm0 = _mm512_load_ps(&yre[i+0]); // c
                                zmm1 = _mm512_load_ps(&yim[i+0]); // d
                                zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2050,7 +2379,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
                           }
 
-                            for(; (i+15) < n; i += 16) {
+                          for(; (i+15) < n; i += 16) 
+                          {
                                zmm0 = _mm512_load_ps(&yre[i+0]); // c
                                zmm1 = _mm512_load_ps(&yim[i+0]); // d
                                zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2070,14 +2400,15 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                          }
 
-                           for(; (i+0) < n; i += 1) {
+                         for(; (i+0) < n; i += 1) 
+                         {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -2092,7 +2423,7 @@ SOFTWARE.
 
                          }
 
-                }
+}
 
 
               /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2100,15 +2431,49 @@ SOFTWARE.
 
                 
                   
-                   void  gms::math::cdivv_smith_zmm16r4_u6x_u( const float * __restrict  xre,
-                                                     const float * __restrict  xim,
-                                                     const float * __restrict  yre,
-                                                     const float * __restrict  yim,
-                                                     float * __restrict        zre,
-                                                     float * __restrict        zim,
-                                                     const int32_t n) { 
+void  gms::math::cdivv_smith_zmm16r4_u6x_u( const float * __restrict  xre,
+                                            const float * __restrict  xim,
+                                            const float * __restrict  yre,
+                                            const float * __restrict  yim,
+                                            float * __restrict        zre,
+                                            float * __restrict        zim,
+                                            int32_t n) 
+{ 
 
                         if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif                                          
                          __m512 zmm0,zmm1,zmm2,zmm3;
                          __m512 zmm4,zmm5,zmm6,zmm7;
                          __m512 zmm8,zmm9,zmm10,zmm11;
@@ -2118,11 +2483,14 @@ SOFTWARE.
                          __m512 zmm24,zmm25,zmm26,zmm27;
                          __m512 zmm28,zmm29,zmm30,zmm31;
                         int32_t i;
-                        for(i = 0; (i+95) < n; i += 96) {
-                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+95) < n; i += 96) 
+                        {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif 
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -2140,6 +2508,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif                                                            
                              zmm6 = _mm512_loadu_ps(&yre[i+16]); // c
                              zmm7 = _mm512_loadu_ps(&yim[i+16]); // d
                              zmm8 = _mm512_loadu_ps(&xre[i+16]); // a
@@ -2157,6 +2531,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                             
                              zmm12 = _mm512_loadu_ps(&yre[i+32]); // c
                              zmm13 = _mm512_loadu_ps(&yim[i+32]); // d
                              zmm14 = _mm512_loadu_ps(&xre[i+32]); // a
@@ -2174,10 +2554,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+#endif                             
                              zmm18 = _mm512_loadu_ps(&yre[i+48]); // c
                              zmm19 = _mm512_loadu_ps(&yim[i+48]); // d
                              zmm20 = _mm512_loadu_ps(&xre[i+48]); // a
@@ -2195,6 +2577,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                              
                              zmm24 = _mm512_loadu_ps(&yre[i+64]); // c
                              zmm25 = _mm512_loadu_ps(&yim[i+64]); // d
                              zmm26 = _mm512_loadu_ps(&xre[i+64]); // a
@@ -2212,6 +2600,12 @@ SOFTWARE.
                              _mm512_storeu_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                              
                              zmm30 = _mm512_loadu_ps(&yre[i+80]); // c
                              zmm31 = _mm512_loadu_ps(&yim[i+80]); // d
                              zmm0  = _mm512_loadu_ps(&xre[i+80]); // a
@@ -2231,7 +2625,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                        for(; (i+63) < n; i += 64)
+                        {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -2302,7 +2697,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
                           }
 
-                          for(; (i+31) < n; i += 32) {
+                          for(; (i+31) < n; i += 32) 
+                          {
                              zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                              zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                              zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -2339,7 +2735,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
                            }
 
-                            for(; (i+15) < n; i += 16) {
+                           for(; (i+15) < n; i += 16) 
+                           {
                                zmm0 = _mm512_loadu_ps(&yre[i+0]); // c
                                zmm1 = _mm512_loadu_ps(&yim[i+0]); // d
                                zmm2 = _mm512_loadu_ps(&xre[i+0]); // a
@@ -2359,14 +2756,16 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                            }
 
-                           for(; (i+0) < n; i += 1) {
+                           for(; (i+0) < n; i += 1) 
+                           {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -2381,22 +2780,56 @@ SOFTWARE.
 
                          }
 
-                }
+}
 
 
           //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
                   
-                   void  gms::math::cdivv_smith_zmm16r4_u6x_a(  const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) xim,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yre,
-                                                     const float * __restrict __ATTR_ALIGN__(64) yim,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict       __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n) { 
+void  gms::math::cdivv_smith_zmm16r4_u6x_a(  const float * __restrict __ATTR_ALIGN__(64) xre,
+                                             const float * __restrict __ATTR_ALIGN__(64) xim,
+                                             const float * __restrict __ATTR_ALIGN__(64) yre,
+                                             const float * __restrict __ATTR_ALIGN__(64) yim,
+                                             float * __restrict       __ATTR_ALIGN__(64) zre,
+                                             float * __restrict       __ATTR_ALIGN__(64) zim,
+                                             int32_t n) 
+{ 
 
                         if(__builtin_expect(0==n,0)) {return;}
+#if (CDIVV_SMITH_ZMM16R4_ADD_PEEL_LOOP) == 1                        
+                         
+                         while(((uintptr_t)&zre & 63 &&
+                                (uintptr_t)&zim & 63) && n)
+                         {
+                              const float yr = *yre;
+                              const float yi = *yim;
+                              const float xr = *xre;
+                              const float xi = *xim;
+                              
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) 
+                              {
+                                 float r   = yi/yr;
+                                 float den = yr+r*yi;
+                                 *zre    = (xr+xi*r)/den;
+                                 *zim    = (xi-xr*r)/den;
+                              }
+                               else {
+                                 float r   = yr/yi;
+                                 float den = yi+r*yr;
+                                 *zre    = (xr*r+xi)/den;
+                                 *zim    = (xi*r+xr)/den;
+                              }
+                              yre++;
+                              yim++;
+                              xre++;
+                              xim++;
+                              zre++;
+                              zim++;
+                              n--;
+                         }
+#endif                                      
                          __m512 zmm0,zmm1,zmm2,zmm3;
                          __m512 zmm4,zmm5,zmm6,zmm7;
                          __m512 zmm8,zmm9,zmm10,zmm11;
@@ -2406,11 +2839,14 @@ SOFTWARE.
                          __m512 zmm24,zmm25,zmm26,zmm27;
                          __m512 zmm28,zmm29,zmm30,zmm31;
                         int32_t i;
-                        for(i = 0; (i+95) < n; i += 96) {
-                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+                        for(i = 0; (i+95) < n; i += 96) 
+                        {
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+0],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+0],_MM_HINT_T0);
+#endif 
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2428,6 +2864,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+0], _mm512_mask_blend_ps(m0,
                                                             _mm512_div_ps(_mm512_fmsub_ps(zmm3,zmm4,zmm2),zmm5),
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+16],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+16],_MM_HINT_T0);
+#endif                                                             
                              zmm6 = _mm512_load_ps(&yre[i+16]); // c
                              zmm7 = _mm512_load_ps(&yim[i+16]); // d
                              zmm8 = _mm512_load_ps(&xre[i+16]); // a
@@ -2445,6 +2887,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+16], _mm512_mask_blend_ps(m1,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm9,zmm10,zmm8),zmm11),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+32],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+32],_MM_HINT_T0);
+#endif                                                              
                              zmm12 = _mm512_load_ps(&yre[i+32]); // c
                              zmm13 = _mm512_load_ps(&yim[i+32]); // d
                              zmm14 = _mm512_load_ps(&xre[i+32]); // a
@@ -2462,10 +2910,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+32], _mm512_mask_blend_ps(m2,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm15,zmm16,zmm14),zmm17),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm15,_mm512_mul_ps(zmm14,zmm16)),zmm17)));
-                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
-                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+48],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+48],_MM_HINT_T0);
+#endif                              
                              zmm18 = _mm512_load_ps(&yre[i+48]); // c
                              zmm19 = _mm512_load_ps(&yim[i+48]); // d
                              zmm20 = _mm512_load_ps(&xre[i+48]); // a
@@ -2483,6 +2933,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+48], _mm512_mask_blend_ps(m3,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm21,zmm22,zmm20),zmm23),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+64],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+64],_MM_HINT_T0);
+#endif                                                              
                              zmm24 = _mm512_load_ps(&yre[i+64]); // c
                              zmm25 = _mm512_load_ps(&yim[i+64]); // d
                              zmm26 = _mm512_load_ps(&xre[i+64]); // a
@@ -2500,6 +2956,12 @@ SOFTWARE.
                              _mm512_store_ps(&zim[i+64], _mm512_mask_blend_ps(m4,
                                                              _mm512_div_ps(_mm512_fmsub_ps(zmm27,zmm28,zmm26),zmm29),
                                                              _mm512_div_ps(_mm512_sub_ps(zmm27,_mm512_mul_ps(zmm26,zmm28)),zmm29)));
+#if (CDIVV_SMITH_ZMM16R4_SOFT_PREFETCH) == 1                          
+                             _mm_prefetch((const char *)&xre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yre[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&xim[i+80],_MM_HINT_T0);
+                             _mm_prefetch((const char *)&yim[i+80],_MM_HINT_T0);
+#endif                                                              
                              zmm30 = _mm512_load_ps(&yre[i+80]); // c
                              zmm31 = _mm512_load_ps(&yim[i+80]); // d
                              zmm0  = _mm512_load_ps(&xre[i+80]); // a
@@ -2519,7 +2981,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm1,_mm512_mul_ps(zmm0,zmm2)),zmm3)));
                         }
 
-                         for(; (i+63) < n; i += 64) {
+                         for(; (i+63) < n; i += 64) 
+                         {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2590,7 +3053,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm21,_mm512_mul_ps(zmm20,zmm22)),zmm23)));
                           }
 
-                          for(; (i+31) < n; i += 32) {
+                          for(; (i+31) < n; i += 32) 
+                          {
                              zmm0 = _mm512_load_ps(&yre[i+0]); // c
                              zmm1 = _mm512_load_ps(&yim[i+0]); // d
                              zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2627,7 +3091,8 @@ SOFTWARE.
                                                              _mm512_div_ps(_mm512_sub_ps(zmm9,_mm512_mul_ps(zmm8,zmm10)),zmm11)));
                            }
 
-                            for(; (i+15) < n; i += 16) {
+                           for(; (i+15) < n; i += 16) 
+                           {
                                zmm0 = _mm512_load_ps(&yre[i+0]); // c
                                zmm1 = _mm512_load_ps(&yim[i+0]); // d
                                zmm2 = _mm512_load_ps(&xre[i+0]); // a
@@ -2647,14 +3112,15 @@ SOFTWARE.
                                                             _mm512_div_ps(_mm512_sub_ps(zmm3,_mm512_mul_ps(zmm2,zmm4)),zmm5)));
                            }
 
-                           for(; (i+0) < n; i += 1) {
+                           for(; (i+0) < n; i += 1) 
+                           {
                               const float yr = yre[i];
                               const float yi = yim[i];
                               const float xr = xre[i];
                               const float xi = xim[i];
                               
-                              if(cephes_fabsf(yi) >= 
-                                 cephes_fabsf(yr)) {
+                              if(CDIVV_SMITH_SCALAR_REM_FABSF(yi) >= 
+                                 CDIVV_SMITH_SCALAR_REM_FABSF(yr)) {
                                  float r   = yi/yr;
                                  float den = yr+r*yi;
                                  zre[i]    = (xr+xi*r)/den;
@@ -2669,7 +3135,7 @@ SOFTWARE.
 
                          }
 
-                }
+}
 
 
 
