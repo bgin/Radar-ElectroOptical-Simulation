@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace file_version {
+namespace file_version 
+{
 
     const unsigned int GMS_ERFCINV_VEC_ZMM16R4_MAJOR = 1U;
     const unsigned int GMS_ERFCINV_VEC_ZMM16R4_MINOR = 0U;
@@ -34,34 +35,38 @@ namespace file_version {
     const char * const GMS_ERFCINV_VEC_ZMM16R4_CREATION_DATE = "09-12-2022 16:14 AM +00200 (FRI 09 DEC 2022 GMT+2)";
     const char * const GMS_ERFCINV_VEC_ZMM16R4_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_ERFCINV_VEC_ZMM16R4_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_ERFCINV_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized vector of inverse complementary error function values."
+    const char * const GMS_ERFCINV_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized vector of inverse complementary error function values.";
 
 }
 
 #include <cstdint>
 #include <immintrin.h>
-#include <cmath>
 #include "GMS_config.h"
 
+#if !defined(ERFCINV_VEC_ZMM16R4_PEEL_LOOP)
+#define ERFCINV_VEC_ZMM16R4_PEEL_LOOP 1
+#endif 
 
-namespace  gms {
+#if !defined(ERFCINV_VEC_ZMM16R4_SOFT_PREFETCH)
+#define ERFCINV_VEC_ZMM16R4_SOFT_PREFETCH 1
+#endif 
+
+#if !defined(ERFCINV_VEC_ZMM16R4_INTERLEAVE_SIMD_OPS)
+#define ERFCINV_VEC_ZMM16R4_INTERLEAVE_SIMD_OPS 1
+#endif 
+
+namespace  gms 
+{
 
 
-         namespace  math {
+namespace  math 
+{
 
-/*
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_erfcinv_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
+
                   
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	        
-                   void erfcinvv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x,
+	           void erfcinvv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x,
                                                    float * __restrict __ATTR_ALIGN__(64) y,
                                                    const __m512 a,
                                                    const __m512 b,
@@ -70,129 +75,49 @@ namespace  gms {
                                                    
 
                
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           
-                   void erfcinvv_mask_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) x, 
-                                                       const float * __restrict __ATTR_ALIGN__(64) z,
-                                                       float * __restrict __ATTR_ALIGN__(64) y,
-                                                       const __mmask16 * __restrict __ATTR_ALIGN__(64) m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive); 
-                                                       
-                       
-
-
-                
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
 	         
-                   void erfcinvv_mask_zmm16r4_unroll_10x_u(const float * __restrict  x, 
-                                                       const float * __restrict  z,
-                                                       float * __restrict  y,
-                                                       const __mmask16 *  m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive); 
 
-
-
-              /*
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_erfcinv_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
+ 
                   
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	         
-                   void erfcinvv_zmm16r4_unroll_10x_u(const float * __restrict  x,
+	           void erfcinvv_zmm16r4_unroll_10x_u(const float * __restrict  x,
                                                   float * __restrict  y,
                                                   const __m512 a,
                                                   const __m512 b,
                                                   const __m512 c,
-                                                  const int32_t n);
+                                                  int32_t n);
               
 
                  
 
- /*             
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_erfcinv_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
+ 
 
                    
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	          
-                   void erfcinvv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) x,
+	           void erfcinvv_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) x,
                                                    float * __restrict __ATTR_ALIGN__(64) y,
                                                    const __m512 a,
                                                    const __m512 b,
                                                    const __m512 c,
                                                    const int32_t n); 
 
-               /*             
-      These sine vector kernels call Intel SVML library
-      sine function implementation which is not inlined
-      by the ICC/ICPC compilers, hence a pre-load call
-      to _mm512_erfcinv_ps and warmup loop are inserted in
-      order to mitigate as far as it is possible the 
-      issue of impossibility of caching ahead of time. 
-*/
+ 
 
                  
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	         
-                   void erfcinvv_zmm16r4_unroll_6x_u(const float * __restrict  x,
+	           void erfcinvv_zmm16r4_unroll_6x_u(const float * __restrict  x,
                                                    float * __restrict  y,
                                                    const __m512 a,
                                                    const __m512 b,
                                                    const __m512 c,
-                                                   const int32_t n); 
+                                                   int32_t n); 
                 
 
                 
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
 	         
-                   void erfcinvv_mask_zmm16r4_unroll_6x_a(const float * __restrict __ATTR_ALIGN__(64) x, 
-                                                       const float * __restrict __ATTR_ALIGN__(64) z,
-                                                       float * __restrict __ATTR_ALIGN__(64) y,
-                                                       const __mmask16 * __restrict __ATTR_ALIGN__(64) m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive);
-                                                       
-
-                 
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	          
-                   void erfcinvv_mask_zmm16r4_unroll_6x_u(const float * __restrict  x, 
-                                                       const float * __restrict  z,
-                                                       float * __restrict  y,
-                                                       const __mmask16 *  m,
-                                                       const __m512 a,
-                                                       const __m512 b,
-                                                       const __m512 c,
-                                                       const int32_t n,
-                                                       const bool additive); 
 
 
 
@@ -201,8 +126,7 @@ namespace  gms {
               
 
                     
-
-        } // math 
+} // math 
  
 
 } // gms
