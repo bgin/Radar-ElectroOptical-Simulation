@@ -19,32 +19,32 @@
 !SOFTWARE.
 !*/
 
-#ifndef __GMS_AVX_MEMCPY_H__
-#define __GMS_AVX_MEMCPY_H__ 030620250652
+#ifndef __GMS_AVX_UNCACHED_MEMCPY_H__
+#define __GMS_AVX_UNCACHED_MEMCPY_H__ 230720250604
 
 namespace  file_info
 {
 
-    const unsigned int GMS_AVX_MEMCPY_MAJOR = 1U;
-    const unsigned int GMS_AVX_MEMCPY_MINOR = 0U;
-    const unsigned int GMS_AVX_MEMCPY_MICRO = 0U;
-    const unsigned int GMS_AVX_MEMCPY_FULLVER =
-      1000U*GMS_AVX_MEMCPY_MAJOR+100U*GMS_AVX_MEMCPY_MINOR+10U*GMS_AVX_MEMCPY_MICRO;
-    const char * const GMS_AVX_MEMCPY_CREATE_DATE = "03-06-2025 06:52 +00200 (TUE 03 JUN 2025 GMT+2)";
-    const char * const GMS_AVX_MEMCPY_BUILD_DATE  = __DATE__ ":" __TIME__;
-    const char * const GMS_AVX_MEMCPY_AUTHOR      =  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
-    const char * const GMS_AVX_MEMCPY_DESCRIPT    =  "AVX memcpy kernels.";
+    const unsigned int GMS_AVX_UNCACHED_MEMCPY_MAJOR = 1U;
+    const unsigned int GMS_AVX_UNCACHED_MEMCPY_MINOR = 0U;
+    const unsigned int GMS_AVX_UNCACHED_MEMCPY_MICRO = 0U;
+    const unsigned int GMS_AVX_UNCACHED_MEMCPY_FULLVER =
+      1000U*GMS_AVX_UNCACHED_MEMCPY_MAJOR+100U*GMS_AVX_UNCACHED_MEMCPY_MINOR+10U*GMS_AVX_UNCACHED_MEMCPY_MICRO;
+    const char * const GMS_AVX_UNCACHED_MEMCPY_CREATE_DATE = "23-07-2025 06:04 +00200 (WED 23 JUL 2025 GMT+2)";
+    const char * const GMS_AVX_UNCACHED_MEMCPY_BUILD_DATE  = __DATE__ ":" __TIME__;
+    const char * const GMS_AVX_UNCACHED_MEMCPY_AUTHOR      =  "Programmer: Bernard Gingold, e-mail: beniekg@gmail.com";
+    const char * const GMS_AVX_UNCACHED_MEMCPY_DESCRIPT    =  "AVX memcpy (uncached) kernels.";
 }
 
 #include <cstdint>
 #include "GMS_config.h"
 
-#if !defined(AVX_MEMCPY_INTERLEAVE_SIMD_OPS)
-#define AVX_MEMCPY_INTERLEAVE_SIMD_OPS 1
+#if !defined(AVX_UNCACHED_MEMCPY_INTERLEAVE_SIMD_OPS)
+#define AVX_UNCACHED_MEMCPY_INTERLEAVE_SIMD_OPS 1
 #endif 
 
-#if !defined(AVX_MEMCPY_SOFT_PREFETCHING)
-#define AVX_MEMCPY_SOFT_PREFETCHING 1
+#if !defined(AVX_UNCACHED_MEMCPY_SOFT_PREFETCHING)
+#define AVX_UNCACHED_MEMCPY_SOFT_PREFETCHING 1
 #endif 
 
 
@@ -58,28 +58,29 @@ __attribute__((no_sanitize("coverage")))
 #endif
 __ATTR_HOT__ 
 __ATTR_ALIGN__(32)
-void avx_memcpy_unroll8x_ps(float * __restrict__,float * __restrict__,std::size_t);
+void avx_uncached_memcpy_unroll8x_ps(float * __restrict__,float * __restrict__,std::size_t);
 
 #if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
 __attribute__((no_sanitize("coverage")))
 #endif
 __ATTR_HOT__ 
 __ATTR_ALIGN__(32)
-void avx_memcpy_unroll16x_ps(float * __restrict__,float * __restrict__,std::size_t);
+void avx_uncached_memcpy_unroll16x_ps(float * __restrict__,float * __restrict__,std::size_t);
+
 
 #if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
 __attribute__((no_sanitize("coverage")))
 #endif
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
-void avx_memcpy_unroll8x_pd(double * __restrict__,double * __restrict__,std::size_t);
+void avx_uncached_memcpy_unroll8x_pd(double * __restrict__,double * __restrict__,std::size_t);
 
 #if defined (__GNUC__) && (!defined(__INTEL_COMPILER) || !defined(__ICC))
 __attribute__((no_sanitize("coverage")))
 #endif
 __ATTR_HOT__
 __ATTR_ALIGN__(32)
-void avx_memcpy_unroll16x_pd(double * __restrict__,double * __restrict__,std::size_t);
+void avx_uncached_memcpy_unroll16x_pd(double * __restrict__,double * __restrict__,std::size_t);
 
 
 } // common
@@ -99,4 +100,4 @@ void avx_memcpy_unroll16x_pd(double * __restrict__,double * __restrict__,std::si
 
 
 
-#endif /*__GMS_AVX_MEMCPY_H__*/
+#endif /*__GMS_AVX_UNCACHED_MEMCPY_H__*/
