@@ -442,7 +442,7 @@ namespace gms
                         else 
                         {
 #if defined (__AVX512F__)
-	                       avx512_memcpy_unroll8x_ps(&this->mx[0]),
+	                       avx512_memcpy_unroll8x_ps(&this->mx[0],
                                                        &m_x[0],this->mnx);
 #elif defined (__AVX__) || defined (__AVX2__) 
                              avx_memcpy_unroll8x_ps(&this->mx[0],
@@ -578,7 +578,182 @@ namespace gms
               
               
             
-           
+            template<std::size_t Nx,uint32_t stream_store>
+            struct  alignas(64) StatV1D_r8_t 
+            {
+                     
+                   typedef double&       reference;
+                   typedef const double& const_reference;
+
+                   std::size_t mnx = Nx;
+#if defined (__AVX512F__)
+                     
+                    __ATTR_ALIGN__(64)  double mx[Nx ? Nx : 8ull];
+#elif defined (__AVX__) || defined (__AVX2__)
+                    __ATTR_ALIGN__(32)  double mx[Nx ? Nx : 4ull];
+#elif defined (__SSE__)
+                    __ATTR_ALIGN__(16)  double mx[Nx ? Nx : 2ull];
+#endif 
+                  // mstream_store = stream_store;
+             
+                    
+                          
+                  inline void copy_fill(double * __restrict m_x,
+                                        const std::size_t n)
+                  {
+                        using namespace gms::common;
+                        if(__builtin_expect(this->mnx!=n,0)) return;
+                        if constexpr (stream_store) // case: non-temporal store is true 
+                        {
+#if defined (__AVX512F__)
+	                       avx512_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                                &m_x[0],this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x[0],this->mnx);
+#elif defined (__SSE__)
+                             sse_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x[0],this->mnx);
+	                      
+#endif
+                        }
+                        else 
+                        {
+#if defined (__AVX512F__)
+	                       avx512_memcpy_unroll8x_pd(&this->mx[0],
+                                                       &m_x[0],this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x[0],this->mnx);
+#elif defined (__SSE__)
+                             sse_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x[0],this->mnx);
+#endif                             
+                        }
+
+                     
+                      }  
+                      
+                                        
+                      
+                  inline void copy_fill(const std::vector<double> &m_x)    //shall be of the same size (no error checking implemented)
+                  {                 
+                          using namespace gms::common;
+                          if(__builtin_expect(this->mnx!=m_x.size(),0)) return;
+                          if constexpr (stream_store) // case: non-temporal store is true 
+                          {
+#if defined (__AVX512F__)
+	                       avx512_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                                &m_x.data(),this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x.data(),this->mnx);
+#elif defined (__SSE__)
+                             sse_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x.data(),this->mnx);
+	                      
+#endif
+                        }
+                        else 
+                        {
+#if defined (__AVX512F__)
+	                       avx512_memcpy_unroll8x_pd(&this->mx[0],
+                                                       &m_x.data(),this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x.data(),this->mnx);
+#elif defined (__SSE__)
+                             sse_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x.data(),this->mnx);
+#endif                             
+                        }
+                          
+                  }
+                     
+                  inline void copy_fill(const std::valarray<double> &m_x)
+                  {                 
+                         
+                          using namespace gms::common;
+                          if(__builtin_expect(this->mnx!=m_x.size(),0)) return;
+                          if constexpr (stream_store) // case: non-temporal store is true 
+                          {
+#if defined (__AVX512F__)
+	                       avx512_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                                &m_x[0],this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x[0],this->mnx);
+#elif defined (__SSE__)
+                             sse_uncached_memcpy_unroll8x_pd(&this->mx[0],
+                                                             &m_x[0],this->mnx);
+	                      
+#endif
+                        }
+                        else 
+                        {
+#if defined (__AVX512F__)
+	                       avx512_memcpy_unroll8x_pd(&this->mx[0],
+                                                       &m_x[0],this->mnx);
+#elif defined (__AVX__) || defined (__AVX2__) 
+                             avx_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x[0],this->mnx);
+#elif defined (__SSE__)
+                             sse_memcpy_unroll8x_pd(&this->mx[0],
+                                                    &m_x[0],this->mnx);
+#endif                             
+                        }
+                                 
+                  }
+                             
+                   
+                                           
+                  double  *  begin() const 
+                  {
+                          
+                          return (std::__addressof(this->mx[0]));
+                  } 
+                    
+                  double  * end() const 
+                  {
+                           return (std::__addressof(this->mx[this->mnx]));
+                  }
+
+                  inline void swap(StatV1D_r8_t &other)
+                  {
+                        std::swap_ranges(begin(),end(),other.begin());
+                  }
+
+                  inline constexpr std::size_t size() const 
+                  {
+                        return this->mnx;
+                  }
+
+                  inline constexpr bool empty() const 
+                  {
+                        return (this->size() == 0ull);
+                  }
+                     
+                  inline reference front()
+                  {
+                        return (*this->begin());
+                  }  
+
+                  inline const_reference front() const 
+                  {
+                        return (*this->begin());
+                  }
+
+                  inline reference back() 
+                  {
+                        return (this->mnx ? *(this->begin()-1ull) : *this->begin());
+                  }
+
+                  inline const_reference back() const 
+                  {
+                        return (this->mnx ? *(this->begin()-1ull) : *this->begin());
+                  }
+              };
+              
               
               
 
