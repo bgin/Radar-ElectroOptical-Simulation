@@ -531,31 +531,56 @@ namespace  gms {
                            return _mm_cvtsd_f64(r);
                       }
 
-		      
-                   
-                      __ATTR_ALWAYS_INLINE__
+			
+             __ATTR_ALWAYS_INLINE__
 		     static inline 
-		      __m256
-		      ymm8r4_abs(const __m256 x) {
-                          const __m256 mask = _mm256_set1_ps(-0.0f); 
-                          return _mm256_andnot_ps(mask, x);
-                     }
+		      __m128
+		      xmm4r4_abs(const __m128 x) 
+			  {
+                          const __m128 mask = _mm_set1_ps(-0.0f); 
+                          return _mm_andnot_ps(mask, x);
+              }
 		     
 
 		     
-                      __ATTR_ALWAYS_INLINE__
+              __ATTR_ALWAYS_INLINE__
 		       static inline 
-                     __m256d
-		     ymm4r8_abs(const __m256d x) {
+             __m128d
+		     xmm2r8_abs(const __m128d x) 
+			 {
+                           const __m128d mask = _mm_set1_pd(-0.0); 
+                           return _mm_andnot_pd(mask, x); 
+             }
+		      
+                   
+             __ATTR_ALWAYS_INLINE__
+		     static inline 
+		      __m256
+		      ymm8r4_abs(const __m256 x) 
+			  {
+                          const __m256 mask = _mm256_set1_ps(-0.0f); 
+                          return _mm256_andnot_ps(mask, x);
+              }
+		     
+
+		     
+              __ATTR_ALWAYS_INLINE__
+		       static inline 
+             __m256d
+		     ymm4r8_abs(const __m256d x) 
+			 {
                            const __m256d mask = _mm256_set1_pd(-0.0); 
                            return _mm256_andnot_pd(mask, x); 
-                     }
+             }
                      
-                     __ATTR_ALWAYS_INLINE__
-                     static inline __m128i 
-                     xmm4i4_maskload(int const * __restrict mem, __m128i mask) {
+
+             __ATTR_ALWAYS_INLINE__
+             static inline 
+			 __m128i 
+             xmm4i4_maskload(int const * __restrict mem, __m128i mask) 
+			 {
                                return _mm_castps_si128(_mm_maskload_ps((float const *) mem, mask));
-                     }
+             }
 
                  
 
