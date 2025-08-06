@@ -841,7 +841,7 @@ namespace math
 
                         register __m128 rep,imp;
                         __m128 t0,t1;
-                        constexpr float inv16 = 0.5;
+                        constexpr float inv16 = 0.25f;
                         float sre,sim;
                         sre = 0.0;
                         rep  = _mm_fmsub_ps(x.re,y.re,
@@ -874,7 +874,7 @@ namespace math
 
                         register __m128 rep,imp,den,rquot,iquot;
                         __m128 t0,t1;
-                        constexpr float inv2 = 0.5;
+                        constexpr float inv2 = 0.25f;
                         float sre,sim;
                         sre  = 0.0;
                         rep  = _mm_fmsub_ps(x.re,y.re,
@@ -991,7 +991,7 @@ namespace math
 
                         register __m128 re,im;
                         __m128 t0,t1;
-                        constexpr float inv2 = 0.5;
+                        constexpr float inv2 = 0.25f;
                         float sre,sim;
                         re   = _mm_fmadd_ps(x.re,y.re,
                                                _mm_mul_ps(x.im,y.im));
@@ -1021,7 +1021,7 @@ namespace math
                                               float * __restrict mre,
                                               float * __restrict mim) {
 
-                        constexpr float inv2 = 0.5;
+                        constexpr float inv2 = 0.25f;
                         __m128 t0,t1;
                         float sre,sim;
                         t0   = _mm_hadd_ps(xre,xre);
@@ -1045,7 +1045,7 @@ namespace math
                                               float * __restrict mre,
                                               float * __restrict mim) {
 
-                        constexpr float inv2 = 0.5;
+                        constexpr float inv2 = 0.25f;
                         __m128 t0,t1;
                         float sre,sim;
                         t0   = _mm_hadd_ps(x.re,x.re);
