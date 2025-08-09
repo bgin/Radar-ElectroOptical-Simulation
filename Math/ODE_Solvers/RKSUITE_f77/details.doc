@@ -1,0 +1,421 @@
+*********************** Organization of details.doc ***************************
+
+ In this file, details.doc, DETAILS are provided about how the codes are 
+ organized.  Included are:
+ (1) The ordering of the subroutines in the file rksuite.for.
+ (2) For each subroutine, there is a brief description, a list of the
+     subroutines it calls, and a list of subroutines that call it directly.
+ (3) A description of the labeled COMMON blocks used for communication
+     throughout RKSUITE.
+ (4) Details of the usage of these COMMON blocks, including which routines
+     initialize, read, or alter variables in each block.
+
+*******************************************************************************
+
+ (1)  Ordering of the subroutines:
+
+ All 26 routines are provided in the one file rksuite.for.  They are ordered to
+ ensure that linking the suite is efficient on your computer.  This order is:
+
+     SETUP
+     UT
+     STAT
+     GLBERR
+     CT
+     INTRP
+     RESET
+     MCONST
+     ENVIRN
+     CONST
+     FORMI
+     EVALI
+     RKMSG
+     RKSIT
+     TRUERR
+     STEP
+     STEPA
+     STEPB
+     STIFF
+     STIFFA
+     STIFFB
+     STIFFC
+     STIFFD
+     DOTPRD
+     SOFTFL
+     CHKFL
+
+*******************************************************************************
+
+ (2)  Brief subroutine descriptions and subroutine calls:
+
+========= the SETUP routine====================================
+
+ SETUP  - setup routine for the integrators UT and CT
+
+          calls:     MCONST, CONST, RKSIT, RKMSG
+          called by: none
+
+========= the UT routine ======================================
+
+ UT     - computes solution of ODE system at specified points
+
+          calls:     CT, INTRP, RESET, RKSIT, RKMSG, CHKFL
+          called by: none
+
+========= user-callable routines (for use with UT and CT) =====
+
+ STAT   - provides statisical information
+
+          calls:     RKSIT, RKMSG
+          called by: none
+
+ GLBERR - provides global error assessment information
+
+          calls:     RKSIT, RKMSG
+          called by: none
+
+========= the CT routine ======================================
+
+ CT     - computes solution of ODE system for a single step
+
+          calls:     STEP, STIFF, TRUERR, RKSIT, RKMSG
+          called by: UT
+
+========= user-callable routines (for use with CT) ============
+
+ INTRP  - interpolation routine
+
+          calls:     FORMI, EVALI, RKSIT, RKMSG
+          called by: UT
+
+ RESET  - resets end of integration range
+
+          calls:     RKSIT, RKMSG
+          called by: UT
+
+========= local machine-dependent constant routine ============
+
+ MCONST - sets local machine-dependent constants
+
+          calls:     ENVIRN
+          called by: SETUP
+
+========= machine-dependent quantities routine ================
+
+ ENVIRN - returns machine-dependent quantities
+
+          calls:     none
+          called by: MCONST
+
+========= auxiliary routines ==================================
+
+ CONST  - initialises coefficients for formula pairs
+
+          calls:     none
+          called by: SETUP
+
+ FORMI  - computes coefficients of interpolants
+
+          calls:     none
+          called by: INTRP
+
+ EVALI  - evaluates interpolants
+
+          calls:     none
+          called by: INTRP
+
+ RKMSG  - handles setting of error flag and printing of messages
+
+          calls:     SOFTFL, CHKFL, RKSIT
+          called by: SETUP, UT, CT, RESET, INTRP, STAT, GLBERR
+
+ RKSIT  - monitors the current situation of the integrator
+
+          calls:     none
+          called by: SETUP, UT, CT, STAT, GLBERR, RESET, INTRP, RKMSG
+
+ TRUERR - computes root-mean-squared running assessment of error
+
+          calls:     STEP
+          called by: CT
+
+ STEP   - takes a step with the Runge-Kutta method selected and
+          estimates the local error
+
+          calls:     STEPA, STEPB
+          called by: CT, TRUERR
+
+ STEPA  - part of scheme for selecting the initial step size
+
+          calls:     none
+          called by: STEP
+
+ STEPB  - additional estimate of the local error for METHOD = 2
+
+          calls:     none
+          called by: STEP
+
+ STIFF  - does inexpensive tests for stiffness to decide if expensive
+          test is necessary
+
+          calls:     STIFFA
+          called by: CT
+
+ STIFFA - does expensive test for stiffness
+
+          calls:     STIFFB, STIFFC, STIFFD, DOTPRD
+          called by: STIFF
+
+ STIFFB - determines dominance of single real eigenvalue (stiff check)
+
+          calls:     none
+          called by: STIFFA
+
+ STIFFC - computes the roots of a quadratic carefully (stiff check)
+
+          calls:     none
+          called by: STIFFA
+
+ STIFFD - estimates product of Jacobian times a vector (stiff check)
+
+          calls:     DOTPRD
+          called by: STIFFA
+
+ DOTPRD - computes weighted Euclidean dot (inner) product
+
+          calls:     none
+          called by: STIFFA, STIFFD
+
+ SOFTFL - soft fail routine for catastrophic errors
+
+          calls:     none
+          called by: RKMSG
+
+ CHKFL - soft fail check routine
+
+          calls:     none
+          called by: UT, RKMSG
+
+*******************************************************************************
+
+ (3) Description of the COMMON blocks used for communication throughout
+     the suite.
+
+C     .. Common Block to hold Problem Definition ..
+      DOUBLE PRECISION  TSTRT, TND, DIR, HSTRT, TOLR
+      INTEGER           NEQN
+      COMMON /RKCOM1/   TSTRT, TND, DIR, HSTRT, TOLR, NEQN
+      SAVE   /RKCOM1/
+
+TSTRT  - the initial point of the range of integration
+TND    - the end point of the range of integration
+DIR    - the direction of integration as determined from TSTRT and TND
+HSTRT  - the initial step size to be used.  When input as 0.0D0, the
+         initial step size is calculated by the code.
+TOLR   - the relative error tolerance specified for the problem
+NEQN   - the number of equations
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block to hold Problem Status ..
+      DOUBLE PRECISION  T, H, TOLD, HOLD
+      INTEGER           NFCN, SVNFCN, OKSTP, FLSTP
+      LOGICAL           FIRST, LAST
+      COMMON /RKCOM2/   T, H, TOLD, HOLD, NFCN, SVNFCN, OKSTP, FLSTP,
+     &                  FIRST, LAST
+      SAVE   /RKCOM2/
+
+T      - the current value of the independent variable
+H      - the next step size to be attempted from T
+TOLD   - the previous value of the independent variable
+HOLD   - the step size taken to advance from TOLD to T
+NFCN   - a counter for the number of function evaluations made in the
+         primary integration.  After a return to report a considerable
+         amount of work, it is reset to 0.
+SVNFCN - a counter used to account for resetting NFCN to 0.  The total
+         number of function evaluations made in the primary integration
+         is SVNFCN + NFCN.
+OKSTP  - the number of successful steps taken in the integration, excluding
+         those made in getting on scale for the first step
+FLSTP  - the number of failed steps in the integration, excluding those made
+         in getting on scale for the first step
+FIRST  - a flag to indicate the first step
+LAST   - a flag to indicate the last step
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block for General Workspace Pointers ..
+      INTEGER           PRTHRS, PRERST, PRWT, PRYOLD, PRSCR, PRY, PRYP,
+     &                  PRSTGS, PRINTP, LNINTP
+      COMMON /RKCOM3/   PRTHRS, PRERST, PRWT, PRYOLD, PRSCR, PRY, PRYP,
+     &                  PRSTGS, PRINTP, LNINTP
+      SAVE   /RKCOM3/
+
+Pointer to the first location in the workspace vector of:
+
+PRTHRS - the THRESHolds of the local error control
+PRERST - the estimated local errors
+PRWT   - the weights of the local error control
+PRYOLD - the solution components at TOLD
+PRSCR  - scratch storage (holds the derivatives at TOLD)
+PRY    - the solution components at T
+PRYP   - the derivatives at T
+PRSTGS - the stages of the RK method
+PRINTP - workspace for interpolation (for use in UT)
+
+LNINTP - length of workspace provided for interpolation (for use in UT)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block to hold Formula Definitions ..
+      DOUBLE PRECISION  A(13,13), B(13), C(13), BHAT(13), R(11,6), E(7)
+      INTEGER           PTR(13), NSTAGE, METHD, MINTP
+      LOGICAL           INTP
+      COMMON /RKCOM4/   A, B, C, BHAT, R, E, PTR, NSTAGE, METHD, MINTP, INTP
+      SAVE   /RKCOM4/
+
+METHD  - the Runge-Kutta method selected
+A, B, C, BHAT - coefficients that define the method
+R      - extra coefficients for METHD=2 for use in interpolation
+E      - extra coefficients for METHD=2 for additional local error estimate
+PTR    - pointers to where individual stages of the RK method are stored in
+         the workspace
+NSTAGE - the number of stages associated with the method
+INTP   - indicates whether interpolation is possible for the method
+MINTP  - the degree of the interpolating polynomial, if one exists
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block to hold Formula Characterisitcs ..
+      DOUBLE PRECISION  TOOSML, COST, SAFETY, EXPON, STBRAD, TANANG,
+     &                  RS, RS1, RS2, RS3, RS4
+      INTEGER           ORDER, LSTSTG, MAXTRY, NSEC
+      LOGICAL           FSAL
+      COMMON /RKCOM5/   TOOSML, COST, SAFETY, EXPON, STBRAD, TANANG,
+     &                  RS, RS1, RS2, RS3, RS4, ORDER, LSTSTG, MAXTRY,
+     &                  NSEC, FSAL
+      SAVE   /RKCOM5/
+
+TOOSML - a quantity for determining the minimum step size for the METHD
+COST   - the number of function evaluations required for a METHD
+SAFETY - the "optimal" step size is reduced by a SAFETY factor
+EXPON  - the reciprocal of the higher order of the pair of Runge-Kutta
+         formulas that constitute a METHD
+STBRAD, 
+TANANG - the radius and tangent of the angle made with the real axis by a
+         sector in the complex plane that approximates the stability region
+RS, RS1,
+RS2,RS3,
+RS4    - bounds used to control the increase/decrease of step size
+ORDER  - the lower order of the pair of Runge-Kutta formulas that
+         constitute a METHD
+LSTSTG - pointer to where the last stage is stored (for use with FSAL)
+MAXTRY - a bound on the number of iterations used by the stiffness checker
+         that depends on the cost of taking a step for a given METHD
+NSEC   - the number of steps in the secondary integration that are
+         equivalent to one step in the primary integration
+FSAL   - indicates for a METHD whether the last stage of a successful
+         step can be used as the first stage of the next step
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block for Global Error Assessment ..
+      DOUBLE PRECISION  MAXERR, LOCMAX
+      INTEGER           GNFCN, PRZSTG, PRZY, PRZYP, PRZERS, PRZERR, PRZYNU
+      LOGICAL           ERASON, ERASFL
+      COMMON /RKCOM6/   MAXERR, LOCMAX, GNFCN, PRZSTG, PRZY, PRZYP,
+     &                  PRZERS, PRZERR, PRZYNU, ERASON, ERASFL
+      SAVE   /RKCOM6/
+
+MAXERR - the maximum contribution to any component of the global error
+         assessment
+LOCMAX - the position in the integration range of MAXERR
+GNFCN  - the number of function evaluations used for global error assessment
+PRZSTG - pointer to where stages for the secondary integration are held
+PRZY   - pointer to solution components of the secondary integration
+PRZYP  - pointer to derivatives of the secondary integration
+PRZERS - pointer to the error estimates of the secondary integration
+PRZERR - pointer to the global error assessment
+PRZYNU - pointer to scratch vector of workspace for secondary integration
+ERASON - indicates whether global error assessment was requested
+ERASFL - indicates whether global assessment broke down
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block for Environment Parameters ..
+      DOUBLE PRECISION  MCHEPS, DWARF, RNDOFF, SQRRMC, CUBRMC, TINY
+      INTEGER           OUTCH
+      COMMON /RKCOM7/   MCHEPS, DWARF, RNDOFF, SQRRMC, CUBRMC, TINY, OUTCH
+      SAVE   /RKCOM7/
+
+MCHEPS - the largest positive machine number such that 
+         1.0D+0 + MACHEPS = 1.0D+0
+DWARF  - the smallest positive machine number
+RNDOFF - 10*MCHEPS
+SQRRMC - the square root of MCHEPS
+CBRRMC - the cube root of MCHEPS
+TINY   - the square root of DWARF
+OUTCH  - the standard output channel
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block for Integrator Options ..
+      LOGICAL           MSG, UTASK
+      COMMON /RKCOM8/   MSG, UTASK
+      SAVE   /RKCOM8/
+
+MSG    - indicates whether error messages have been requested
+UTASK  - indicates whether use of CT or UT has been specified
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+C     .. Common Block for Error Message ..
+      CHARACTER*80      REC(10)
+      COMMON /RKCOM9/   REC
+      SAVE   /RKCOM9/
+
+REC    - holds the error message
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Details of where COMMON blocks are used.
+
+       I - one or more variables in the COMMON block is `I'nitialised
+
+       R - one or more variables in the COMMON block is `R'ead
+
+       A - one or more variables in the COMMON block is `A'ltered
+
+* indicates a user-callable routine
+? indicates the routines for use by someone enforcing/detecting soft failure
+
+
+             RKCOM1 RKCOM2 RKCOM3 RKCOM4 RKCOM5 RKCOM6 RKCOM7 RKCOM8 RKCOM9
+  CONST                           I - -  I - -         - R -
+* CT         - R -  - R A  - R -         - R -  - R A  - R -  - R A  I - -
+  DOTPRD
+  ENVIRN
+  EVALI             - R -         - R -
+  FORMI             - R A         - R -             -
+* GLBERR     - R -  - R -                       - R -         - R -  I - -
+? CHKFL
+  INTRP      - R -         - R -  - R -                       - R -  I - -
+  MCONST                                               I - -
+* RESET      - R A  - R -                - R -         - R -  - R -  I - -
+  RKMSG                                                - R -  - R -  - R A
+  RKSIT
+  SETUP      I - -  I - -  I - -  - R -  - R -  I - -  - R -  I - -  I - -
+? SOFTFL
+* STAT              - R -                - R -  - R -         - R -  I - -
+  STEP       - R -  - R A         - R -  - R -  - - A
+  STEPA      - R -                       - R -         - R -
+  STEPB                           - R -
+  STIFF      - R -  - R A  - R -         - R -                       I - A
+  STIFFA     - R -                       - R -         - R -
+  STIFFB
+  STIFFC
+  STIFFD     - R -  - A -
+  TRUERR            - R -                - R -  - - A         - R -
+* UT         - R A  - R -  - R -  - R -  - R -         - R -  - R -  I - -
+
+*************************** End of details.doc ********************************
