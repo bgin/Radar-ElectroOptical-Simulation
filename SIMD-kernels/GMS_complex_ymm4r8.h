@@ -835,7 +835,7 @@ namespace  gms {
 
                         register __m256d rep,imp;
                         __m256d t0,t1;
-                        constexpr double inv16 = 0.125;
+                        constexpr double inv16 = 0.25;
                         double sre,sim;
                         sre = 0.0;
                         rep  = _mm256_fmsub_pd(x.re,y.re,
@@ -868,7 +868,7 @@ namespace  gms {
 
                         register __m256d rep,imp,den,rquot,iquot;
                         __m256d t0,t1;
-                        constexpr double inv2 = 0.125;
+                        constexpr double inv2 = 0.25;
                         double sre,sim;
                         sre  = 0.0;
                         rep  = _mm256_fmsub_pd(x.re,y.re,
@@ -985,7 +985,7 @@ namespace  gms {
 
                         register __m256d re,im;
                         __m256d t0,t1;
-                        constexpr double inv2 = 0.125;
+                        constexpr double inv2 = 0.25;
                         double sre,sim;
                         re   = _mm256_fmadd_pd(x.re,y.re,
                                                _mm256_mul_pd(x.im,y.im));
@@ -1015,7 +1015,7 @@ namespace  gms {
                                               double * __restrict mre,
                                               double * __restrict mim) {
 
-                        constexpr double inv2 = 0.125;
+                        constexpr double inv2 = 0.25;
                         __m256d t0,t1;
                         double sre,sim;
                         t0   = _mm256_hadd_pd(xre,xre);
@@ -1039,7 +1039,7 @@ namespace  gms {
                                               double * __restrict mre,
                                               double * __restrict mim) {
 
-                        constexpr double inv2 = 0.125;
+                        constexpr double inv2 = 0.25;
                         __m256d t0,t1;
                         double sre,sim;
                         t0   = _mm256_hadd_pd(x.re,x.re);
