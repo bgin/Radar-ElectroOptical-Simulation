@@ -1,5 +1,6 @@
 
 
+
 #ifndef __GMS_CSUB_VEC_ZMM16R4_H__
 #define __GMS_CSUB_VEC_ZMM16R4_H__ 271120220939
 
@@ -35,260 +36,139 @@ namespace file_version {
     const char * const GMS_CSUB_VEC_ZMM16R4_CREATION_DATE = "27-11-2022 09:39 AM +00200 (SUN 27 NOV 2022 GMT+2)";
     const char * const GMS_CSUB_VEC_ZMM16R4_BUILD_DATE    = __DATE__ ":" __TIME__;
     const char * const GMS_CSUB_VEC_ZMM16R4_AUTHOR        = "Programmer: Bernard Gingold, contact: beniekg@gmail.com";
-    const char * const GMS_CSUB_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized decomposed complex vector subtraction operations."
+    const char * const GMS_CSUB_VEC_ZMM16R4_DESCRIPTION   = "AVX512 optimized decomposed complex vector subtraction operations.";
 
 }
 
 #include <cstdint>
 #include "GMS_config.h"
 
+#if !defined(CSUB_VEC_ZMM16R4_ADD_PEEL_LOOP)
+#define CSUB_VEC_ZMM16R4_ADD_PEEL_LOOP 1
+#endif 
 
-namespace gms {
+#if !defined(CSUB_VEC_ZMM16R4_SOFT_PREFETCH)
+#define CSUB_VEC_ZMM16R4_SOFT_PREFETCH 1 
+#endif 
 
-         namespace math {
 
-                  
+namespace gms 
+{
+
+namespace math 
+{
+
+                 
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_16x_u(const float * __restrict  xre,
+	            void csubv_zmm16r4_unroll_16x_u(const float * __restrict  xre,
                                                   const float * __restrict  xim,
                                                   const float * __restrict  yre,
                                                   const float * __restrict  yim,
                                                   float * __restrict        zre,
                                                   float * __restrict        zim,
+                                                  int32_t n); 
+                                                  
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_16x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
                                                   const int32_t n); 
+                                                  
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_10x_u(const float * __restrict  xre,
+                                                  const float * __restrict  xim,
+                                                  const float * __restrict  yre,
+                                                  const float * __restrict  yim,
+                                                  float * __restrict        zre,
+                                                  float * __restrict        zim,
+                                                  int32_t n); 
+                                                  
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_10x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
+                                                  const int32_t n); 
+
+
+                 
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_6x_u(const float * __restrict  xre,
+                                                  const float * __restrict  xim,
+                                                  const float * __restrict  yre,
+                                                  const float * __restrict  yim,
+                                                  float * __restrict        zre,
+                                                  float * __restrict        zim,
+                                                  int32_t n); 
+                                                  
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_6x_a( const float * __restrict  __ATTR_ALIGN__(64) xre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
+                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
+                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
+                                                  const int32_t n); 
+                                                  
+                                                  
+	                                                           
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_10x_u(const float * __restrict xre,
+                                             const float             s,
+                                             float  * __restrict zre,
+                                             int32_t n); 
+                                                  
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) xre,
+                                             const float s,
+                                             float  * __restrict __ATTR_ALIGN__(64) zre,
+                                             const int32_t n); 
+                                                  
+                                                  
+	                                                            
+                                                  
+	           __ATTR_HOT__
+	           __ATTR_ALIGN__(32)
+	           void csubv_zmm16r4_unroll_16x_u(const float * __restrict  xre,
+                                             const float * __restrict  yre,
+                                             float * __restrict        zre,
+                                             int32_t n); 
+                                                  
                                                   
                         
                         
 	           __ATTR_HOT__
 	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_16x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n);
-
-                    
-
-                   __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_u(const float * __restrict  xre,
-                                                  const float * __restrict  xim,
-                                                  const float * __restrict  yre,
-                                                  const float * __restrict  yim,
-                                                  float * __restrict        zre,
-                                                  float * __restrict        zim,
-                                                  const int32_t n); 
-
-
-                
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-
-
-                 
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_6x_u(const float * __restrict  xre,
-                                                  const float * __restrict  xim,
-                                                  const float * __restrict  yre,
-                                                  const float * __restrict  yim,
-                                                  float * __restrict        zre,
-                                                  float * __restrict        zim,
-                                                  const int32_t n); 
+	           void csubv_zmm16r4_unroll_16x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
+                                             const float * __restrict  __ATTR_ALIGN__(64) yre,
+                                             float * __restrict        __ATTR_ALIGN__(64) zre,
+                                             const int32_t n); 
                                                   
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	            void csub_zmm16r4_unroll_6x_a( const float * __restrict  __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yim,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-
-
-                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_16x_u(const float * __restrict xre,
-                                                  const float * __restrict xim, 
-                                                  const __m512             vs,
-                                                  float  * __restrict zre,
-                                                  float  * __restrict zim,
-                                                  const int32_t n); 
                                                   
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_16x_a(const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict __ATTR_ALIGN__(64) xim, 
-                                                  const __m512             vs,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zre,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-
-
-
-                 
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_u(const float * __restrict xre,
-                                                  const float * __restrict xim, 
-                                                  const __m512             vs,
-                                                  float  * __restrict zre,
-                                                  float  * __restrict zim,
-                                                  const int32_t n);
+	          
                                                   
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_a(const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict __ATTR_ALIGN__(64) xim, 
-                                                               vs,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zre,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_6x_u(const float * __restrict xre,
-                                                  const float * __restrict xim, 
-                                                  const __m512             vs,
-                                                  float  * __restrict zre,
-                                                  float  * __restrict zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict __ATTR_ALIGN__(64) xim, 
-                                                  const __m512             vs,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zre,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	          void csub_zmm16r4_unroll_16x_u(const float * __restrict  xre,
-                                                  const float * __restrict  xim,
-                                                  const float * __restrict  yre,
-                                                  float * __restrict        zre,
-                                                  float * __restrict        zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_16x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_u(const float * __restrict  xre,
-                                                  const float * __restrict  xim,
-                                                  const float * __restrict  yre,
-                                                  float * __restrict        zre,
-                                                  float * __restrict        zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_10x_a(const float * __restrict  __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) xim,
-                                                  const float * __restrict  __ATTR_ALIGN__(64) yre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zre,
-                                                  float * __restrict        __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_6x_u( const float * __restrict xre,
-                                                  const float * __restrict xim, 
-                                                  const float * __restrict yre
-                                                  float  * __restrict zre,
-                                                  float  * __restrict zim,
-                                                  const int32_t n); 
-                                                  
-                 
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csub_zmm16r4_unroll_6x_a( const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                  const float * __restrict __ATTR_ALIGN__(64) xim, 
-                                                  const float * __restrict __ATTR_ALIGN__(64) yre,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zre,
-                                                  float  * __restrict __ATTR_ALIGN__(64) zim,
-                                                  const int32_t n); 
-                                                  
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_16x_uip(const float * __restrict xre,
-                                                     const float * __rerstrit xim,
-                                                     float * __restrict zre,
-                                                     float * __restrict zim,
-                                                     const int32_t n); 
-                                                     
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_16x_aip(const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __rerstrit __ATTR_ALIGN__(64) xim,
-                                                     float * __restrict __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n); 
-                                                     
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_10x_aip(const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __rerstrit __ATTR_ALIGN__(64) xim,
-                                                     float * __restrict __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n); 
-                                                     
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_10x_uip(const float * __restrict xre,
-                                                     const float * __rerstrit xim,
-                                                     float * __restrict zre,
-                                                     float * __restrict zim,
-                                                     const int32_t n); 
-                                                     
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_6x_uip(const float * __restrict xre,
-                                                     const float * __rerstrit xim,
-                                                     float * __restrict zre,
-                                                     float * __restrict zim,
-                                                     const int32_t n); 
-
-                       
-                       
-                     
-                     
-	           __ATTR_HOT__
-	           __ATTR_ALIGN__(32)
-	           void csubv_zmm16r4_unroll_6x_aip(const float * __restrict __ATTR_ALIGN__(64) xre,
-                                                     const float * __rerstrit __ATTR_ALIGN__(64) xim,
-                                                     float * __restrict __ATTR_ALIGN__(64) zre,
-                                                     float * __restrict __ATTR_ALIGN__(64) zim,
-                                                     const int32_t n);
-
-
-
-
-
-
-
-                  
+	          
+                                                    
+  
 
         } // math
 
@@ -308,4 +188,4 @@ namespace gms {
 
 
 
-#endif /*__GMS_CADD_VEC_ZMM16R4_HPP__*/
+#endif /*__GMS_CSUB_VEC_ZMM16R4_H__*/
