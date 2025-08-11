@@ -261,13 +261,13 @@ void unit_test_spher_inv_jac_ymm8r4_a()
                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
              }
              seed_x = std::clock();
-             auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+             auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
                                    std::mt19937(seed_x))};
              seed_y = std::clock();
-             auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+             auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
                                    std::mt19937(seed_y))};
              seed_z = std::clock();
-             auto rand_z{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+             auto rand_z{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
                                    std::mt19937(seed_z))};
              for(int32_t __i{0}; __i != 8; ++__i)
              {
