@@ -2044,6 +2044,1183 @@ void unit_test_clog_ymm8c4()
 }
 
 
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cconj_ymm8c4();
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cconj_ymm8c4()
+{
+     using namespace gms::math;
+     constexpr int32_t buf_len{64};
+     constexpr int32_t len_in_float{buf_len*8ull};
+     __attribute__((aligned(32)))
+     ymm8c4_t buf_x[buf_len];
+     __attribute__((aligned(32)))
+     ymm8c4_t alignas(32) buf_z[buf_len];
+     std::clock_t seed_x{0ull};
+     std::clock_t seed_y{0ull};
+     std::clock_t seed_distro{};
+     int32_t iter{-1};
+     int32_t which{-1};
+     seed_distro = std::clock();
+     auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+     which = rand();
+     switch (which) 
+     {
+           case 0 : 
+           {
+               std::uniform_real_distribution<float> uniform_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cconj_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                                                  
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cconj_ymm8c4_v2(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cconj_ymm8c4().\n");
+            }
+            break;
+            case 1 : 
+            {
+               std::normal_distribution<float> norm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(norm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(norm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cconj_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                     
+                            
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cconj_ymm8c4_v2(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cconj_ymm8c4().\n");
+            }
+            break;
+            case 2 : 
+            {
+               std::lognormal_distribution<float> lognorm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(lognorm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(lognorm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cconj_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                    
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cconj_ymm8c4_v2(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cconj_ymm8c4().\n");
+            }
+            break;
+            case 3 : 
+            {
+               std::cauchy_distribution<float> cauchy_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(cauchy_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(cauchy_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cconj_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                      
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cconj_ymm8c4_v2(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cconj_ymm8c4().\n");
+            }
+            break;
+            default : 
+            {
+                  printf("[UNIT-TEST]: Invalid switch variable=%d\n",which);
+                  return;
+            }
+     }
+
+}
+
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_ccos_ymm8c4();
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_ccos_ymm8c4()
+{
+     using namespace gms::math;
+     constexpr int32_t buf_len{64};
+     constexpr int32_t len_in_float{buf_len*8ull};
+     __attribute__((aligned(32)))
+     ymm8c4_t buf_x[buf_len];
+     __attribute__((aligned(32)))
+     ymm8c4_t alignas(32) buf_z[buf_len];
+     std::clock_t seed_x{0ull};
+     std::clock_t seed_y{0ull};
+     std::clock_t seed_distro{};
+     int32_t iter{-1};
+     int32_t which{-1};
+     seed_distro = std::clock();
+     auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+     which = rand();
+     switch (which) 
+     {
+           case 0 : 
+           {
+               std::uniform_real_distribution<float> uniform_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccos_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                                                  
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccos_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccos_ymm8c4().\n");
+            }
+            break;
+            case 1 : 
+            {
+               std::normal_distribution<float> norm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(norm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(norm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccos_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                     
+                            
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccos_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccos_ymm8c4().\n");
+            }
+            break;
+            case 2 : 
+            {
+               std::lognormal_distribution<float> lognorm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(lognorm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(lognorm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccos_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                    
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccos_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccos_ymm8c4().\n");
+            }
+            break;
+            case 3 : 
+            {
+               std::cauchy_distribution<float> cauchy_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(cauchy_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(cauchy_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccos_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                      
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccos_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccos_ymm8c4().\n");
+            }
+            break;
+            default : 
+            {
+                  printf("[UNIT-TEST]: Invalid switch variable=%d\n",which);
+                  return;
+            }
+     }
+
+}
+
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_ccosh_ymm8c4();
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_ccosh_ymm8c4()
+{
+     using namespace gms::math;
+     constexpr int32_t buf_len{64};
+     constexpr int32_t len_in_float{buf_len*8ull};
+     __attribute__((aligned(32)))
+     ymm8c4_t buf_x[buf_len];
+     __attribute__((aligned(32)))
+     ymm8c4_t alignas(32) buf_z[buf_len];
+     std::clock_t seed_x{0ull};
+     std::clock_t seed_y{0ull};
+     std::clock_t seed_distro{};
+     int32_t iter{-1};
+     int32_t which{-1};
+     seed_distro = std::clock();
+     auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+     which = rand();
+     switch (which) 
+     {
+           case 0 : 
+           {
+               std::uniform_real_distribution<float> uniform_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccosh_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                                                  
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccosh_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccosh_ymm8c4().\n");
+            }
+            break;
+            case 1 : 
+            {
+               std::normal_distribution<float> norm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(norm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(norm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccosh_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                     
+                            
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccosh_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccosh_ymm8c4().\n");
+            }
+            break;
+            case 2 : 
+            {
+               std::lognormal_distribution<float> lognorm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(lognorm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(lognorm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccosh_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                    
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccosh_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccosh_ymm8c4().\n");
+            }
+            break;
+            case 3 : 
+            {
+               std::cauchy_distribution<float> cauchy_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(cauchy_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(cauchy_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: ccosh_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                      
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = ccosh_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: ccosh_ymm8c4().\n");
+            }
+            break;
+            default : 
+            {
+                  printf("[UNIT-TEST]: Invalid switch variable=%d\n",which);
+                  return;
+            }
+     }
+
+}
+
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cpow_ymm8c4();
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cpow_ymm8c4()
+{
+     using namespace gms::math;
+     constexpr int32_t buf_len{64};
+     constexpr int32_t len_in_float{buf_len*8ull};
+     __attribute__((aligned(32)))
+     ymm8c4_t buf_x[buf_len];
+     __attribute__((aligned(32)))
+     ymm8c4_t alignas(32) buf_z[buf_len];
+     std::clock_t seed_x{0ull};
+     std::clock_t seed_y{0ull};
+     std::clock_t seed_distro{};
+     int32_t iter{-1};
+     int32_t which{-1};
+     seed_distro = std::clock();
+     auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+     which = rand();
+     switch (which) 
+     {
+           case 0 : 
+           {
+               std::uniform_real_distribution<float> uniform_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cpow_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   const float n{3.124f};
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                                                  
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cpow_ymm8c4(buf_x[__j],n);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cpow_ymm8c4().\n");
+            }
+            break;
+            case 1 : 
+            {
+               std::normal_distribution<float> norm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(norm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(norm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cpow_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   const float n{3.124f};
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                     
+                            
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cpow_ymm8c4(buf_x[__j],n);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cpow_ymm8c4().\n");
+            }
+            break;
+            case 2 : 
+            {
+               std::lognormal_distribution<float> lognorm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(lognorm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(lognorm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cpow_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   const float n{3.124f};
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                    
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cpow_ymm8c4(buf_x[__j],n);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cpow_ymm8c4().\n");
+            }
+            break;
+            case 3 : 
+            {
+               std::cauchy_distribution<float> cauchy_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(cauchy_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(cauchy_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cpow_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   const float n{3.124f};
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                      
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cpow_ymm8c4(buf_x[__j],n);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cpow_ymm8c4().\n");
+            }
+            break;
+            default : 
+            {
+                  printf("[UNIT-TEST]: Invalid switch variable=%d\n",which);
+                  return;
+            }
+     }
+
+}
+
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cexp_ymm8c4();
+
+__attribute__((hot))
+__attribute__((noinline))
+void unit_test_cexp_ymm8c4()
+{
+     using namespace gms::math;
+     constexpr int32_t buf_len{64};
+     constexpr int32_t len_in_float{buf_len*8ull};
+     __attribute__((aligned(32)))
+     ymm8c4_t buf_x[buf_len];
+     __attribute__((aligned(32)))
+     ymm8c4_t alignas(32) buf_z[buf_len];
+     std::clock_t seed_x{0ull};
+     std::clock_t seed_y{0ull};
+     std::clock_t seed_distro{};
+     int32_t iter{-1};
+     int32_t which{-1};
+     seed_distro = std::clock();
+     auto rand{std::bind(std::uniform_int_distribution<int32_t>(0,3),
+                         std::mt19937(seed_distro))};
+     which = rand();
+     switch (which) 
+     {
+           case 0 : 
+           {
+               std::uniform_real_distribution<float> uniform_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(uniform_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(uniform_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::uniform_real_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cexp_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                                                  
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cexp_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cexp_ymm8c4().\n");
+            }
+            break;
+            case 1 : 
+            {
+               std::normal_distribution<float> norm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(norm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(norm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::normal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cexp_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                     
+                            
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cexp_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cexp_ymm8c4().\n");
+            }
+            break;
+            case 2 : 
+            {
+               std::lognormal_distribution<float> lognorm_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(lognorm_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(lognorm_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cexp_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                    
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cexp_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cexp_ymm8c4().\n");
+            }
+            break;
+            case 3 : 
+            {
+               std::cauchy_distribution<float> cauchy_distro;
+               char * distro_name{NULL};
+               int32_t status{9999};
+               distro_name = gms::common::demangle(typeid(cauchy_distro).name(),status);
+               if(distro_name != NULL && status == 0)
+               {
+                    printf("[UNIT-TEST]: Instantiated distribution of type: %s\n\n", distro_name);
+                    gms::common::gms_mm_free(distro_name);
+               }
+               else
+               {
+                    printf("[UNIT-TEST]: Instantiation of object Constructor of type: %s\n\n", typeid(cauchy_distro).name());
+                    if(distro_name != NULL) gms::common::gms_mm_free(distro_name);
+               }
+               seed_x = std::clock();
+               auto rand_x{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_x))};
+               seed_y = std::clock();
+               auto rand_y{std::bind(std::lognormal_distribution<float>(0.0f,1.57079632679489661923132169164f),
+                                   std::mt19937(seed_y))};
+               printf("[UNIT-TEST]: -- START: cexp_ymm8c4().\n");
+               for(int32_t __j{0}; __j != buf_len; ++__j)
+               {
+                   __m256 vrx;
+                   __m256 vix;
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                      
+                      vrx = _mm256_setr_ps(rand_x(),rand_x(),rand_x(),rand_x(),
+                                           rand_x(),rand_x(),rand_x(),rand_x());
+                      vix = _mm256_setr_ps(rand_y(),rand_y(),rand_y(),rand_y(),
+                                           rand_y(),rand_y(),rand_y(),rand_y());
+                      
+                                      
+                   }
+                   buf_x[__j].re = vrx;
+                   buf_x[__j].im = vix;
+                   buf_z[__j]    = cexp_ymm8c4(buf_x[__j]);
+                   float * __restrict pre = reinterpret_cast<float *>(&buf_z[__j].re);
+                   float * __restrict pim = reinterpret_cast<float *>(&buf_z[__j].im);
+                   for(int32_t __i{0}; __i != 8; ++__i)
+                   {
+                       printf("[UNIT_TEST]: iter=%d,result=(%.7f,%.7f)\n",iter++,pre[__i],pim[__i]);
+                   }
+               }
+               printf("[UNIT-TEST]: -- END: cexp_ymm8c4().\n");
+            }
+            break;
+            default : 
+            {
+                  printf("[UNIT-TEST]: Invalid switch variable=%d\n",which);
+                  return;
+            }
+     }
+
+}
 
 
 
@@ -2057,6 +3234,10 @@ int main()
     unit_test_cabs_ymm8c4();
     unit_test_carg_ymm8c4();
     unit_test_clog_ymm8c4();
-
+    unit_test_cconj_ymm8c4();
+    unit_test_ccos_ymm8c4();
+    unit_test_ccosh_ymm8c4();
+    unit_test_cpow_ymm8c4();
+    unit_test_cexp_ymm8c4();
     return 0;
 }
