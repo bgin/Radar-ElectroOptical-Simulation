@@ -6,10 +6,10 @@
 #include "GMS_dyn_array.h"
 
 /*
-   icpc -o unit_test_dyn_array_c4 -fp-model fast=2 -ftz -ggdb -ipo -march=skylake-avx512 -mavx512f -falign-functions=32 -w1 -qopt-report=5  \
-   GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h GMS_hw_perf_macros.h GMS_dyn_array.h unit_test_dyn_array_c4.cpp
+   icpc -o unit_test_dyn_array_c4 -fp-model -std=c++17 fast=2 -ftz -ggdb -ipo -march=skylake-avx512 -mavx512f -falign-functions=32 -w1 -qopt-report=5  \
+   GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h  GMS_dyn_array.h unit_test_dyn_array_c4.cpp
    ASM: 
-   icpc -S -fverbose-asm -masm=intel  -march=skylake-avx512 -mavx512f -falign-functions=32   GMS_config.h GMS_malloc.h GMS_dyn_array.h unit_test_dyn_array_c4.cpp
+   icpc -S -fverbose-asm -masm=intel  -std=c++17 -march=skylake-avx512 -mavx512f -falign-functions=32   GMS_config.h GMS_malloc.h GMS_dyn_array.h unit_test_dyn_array_c4.cpp
 
 */
 
@@ -25,6 +25,7 @@ void unit_test_darray_c4_t_2nd_Ctor()
        std::clock_t seeds[2] = {0ULL};
        std::uniform_real_distribution<float> distros[2]{};
        FILE * fp{NULL};
+
        darray_c4_t test_2nd_Ctor = darray_c4_t(nx);
        char * ctor_name{gms::common::demangle(typeid(test_2nd_Ctor).name(),status)};
        if(status==0 && ctor_name != NULL)
