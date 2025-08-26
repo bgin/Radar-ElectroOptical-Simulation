@@ -42,6 +42,17 @@ namespace file_info
 #define USE_GMS_DYN_ARRAY_NT_STORES 0
 #endif
 
+// Enable for the basic PMC tracing (wall-clock) readout (not statistically rigorous)!!
+#if !defined (DYN_ARRAY_USE_PMC_INSTRUMENTATION)
+#define DYN_ARRAY_USE_PMC_INSTRUMENTATION 0
+#endif 
+
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+#include "GMS_hw_perf_macros.h"
+#endif 
+
+
+
 namespace gms 
 {
 
@@ -66,9 +77,28 @@ namespace gms
                      inline explicit darray_c4_t(const std::size_t nx) noexcept(false)
                      {
                           using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};
+               uint64_t prog_counters_stop[4]  = {};
+               uint64_t tsc_start,tsc_stop;
+               uint64_t act_cyc_start,act_cyc_stop;
+               uint64_t ref_cyc_start,ref_cyc_stop;
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;
+               int32_t core_counter_width;
+               double utilization,nom_ghz,avg_ghz;
+              HW_PMC_COLLECTION_PROLOGE_BODY
+#endif
                           this->mnx = nx;
                           allocate();
                           this->ismmap = false;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+              HW_PMC_COLLECTION_EPILOGE_BODY
+
+              HW_PMC_SHOW_INFO
+	            
+#endif
                       }  
                       
                      inline  darray_c4_t(const std::size_t nx,
@@ -79,6 +109,19 @@ namespace gms
                                          const int32_t fsize) noexcept(false)
                      {
                              using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};                
+               uint64_t prog_counters_stop[4]   = {};                
+               uint64_t tsc_start,tsc_stop;                         
+               uint64_t act_cyc_start,act_cyc_stop;                 
+               uint64_t ref_cyc_start,ref_cyc_stop;                 
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;     
+               int32_t core_counter_width;                          
+               double utilization,nom_ghz,avg_ghz;                  
+               HW_PMC_COLLECTION_PROLOGE_BODY
+#endif
                              this->mnx = nx;
                              switch (fsize) {
                                  case 0:
@@ -98,7 +141,12 @@ namespace gms
                                  break;
                                  default :
                                       allocate();
-                                      this->ismmap = false; // do not call mmap!!                        
+                                      this->ismmap = false; // do not call mmap!!   
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+                HW_PMC_COLLECTION_EPILOGE_BODY
+
+                HW_PMC_SHOW_INFO
+#endif                                                        
                              }          
                      }
                       
@@ -106,24 +154,58 @@ namespace gms
                      {    //shall be of the same size (no error checking implemented)
                                   
                           using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};                
+               uint64_t prog_counters_stop[4]   = {};                
+               uint64_t tsc_start,tsc_stop;                         
+               uint64_t act_cyc_start,act_cyc_stop;                 
+               uint64_t ref_cyc_start,ref_cyc_stop;                 
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;     
+               int32_t core_counter_width;                          
+               double utilization,nom_ghz,avg_ghz;                  
+               HW_PMC_COLLECTION_PROLOGE_BODY
+#endif                          
                           this->mnx = data.size();
                           allocate();
                           this->ismmap = false;
                           const std::size_t lenx{bytes_mnx()};
                           std::memcpy(this->m_data,&data[0],lenx);
-                                                
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               HW_PMC_COLLECTION_EPILOGE_BODY
+
+               HW_PMC_SHOW_INFO
+#endif                                                  
                      }
                      
                      inline darray_c4_t(const std::valarray<std::complex<float>> &data) noexcept(false)
                     {
                                    
                           using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};                
+               uint64_t prog_counters_stop[4]   = {};                
+               uint64_t tsc_start,tsc_stop;                         
+               uint64_t act_cyc_start,act_cyc_stop;                 
+               uint64_t ref_cyc_start,ref_cyc_stop;                 
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;     
+               int32_t core_counter_width;                          
+               double utilization,nom_ghz,avg_ghz;                  
+               HW_PMC_COLLECTION_PROLOGE_BODY
+#endif                           
                           this->mnx = data.size();
                           allocate();
                           this->ismmap = false;
                           const std::size_t lenx{bytes_mnx()};
                           std::memcpy(this->m_data,&data[0],lenx);
-                                                    
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+                   HW_PMC_COLLECTION_EPILOGE_BODY
+
+                   HW_PMC_SHOW_INFO
+#endif                                                    
                      }
                              
                              
@@ -133,11 +215,29 @@ namespace gms
                      {
                                  
                           using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};                
+               uint64_t prog_counters_stop[4]   = {};                
+               uint64_t tsc_start,tsc_stop;                         
+               uint64_t act_cyc_start,act_cyc_stop;                 
+               uint64_t ref_cyc_start,ref_cyc_stop;                 
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;     
+               int32_t core_counter_width;                          
+               double utilization,nom_ghz,avg_ghz;                  
+               HW_PMC_COLLECTION_PROLOGE_BODY
+#endif                           
                           this->mnx = nx;
                           allocate();
                           this->ismmap = false;
                           const std::size_t lenx = sizeof(std::complex<float>)*this->mnx;
                           std::memcpy(this->m_data,&data[0],lenx);
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+                HW_PMC_COLLECTION_EPILOGE_BODY
+
+                HW_PMC_SHOW_INFO
+#endif
                      }  
                    
                      inline  darray_c4_t(darray_c4_t && rhs) noexcept(true)
@@ -155,6 +255,19 @@ namespace gms
                      inline ~darray_c4_t() noexcept(false)
                      {
                           using namespace gms::common;
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               uint64_t prog_counters_start[4] = {};                
+               uint64_t prog_counters_stop[4]   = {};                
+               uint64_t tsc_start,tsc_stop;                         
+               uint64_t act_cyc_start,act_cyc_stop;                 
+               uint64_t ref_cyc_start,ref_cyc_stop;                 
+               [[maybe_unused]] uint64_t dummy1;
+               [[maybe_unused]] uint64_t dummy2;
+               [[maybe_unused]] uint64_t dummy3;     
+               int32_t core_counter_width;                          
+               double utilization,nom_ghz,avg_ghz;                  
+               HW_PMC_COLLECTION_PROLOGE_BODY
+#endif                          
                           if(this->ismmap) 
                           { 
                              int32_t err1{};
@@ -172,6 +285,11 @@ namespace gms
                           {
                              gms_mm_free(this->m_data); this->m_data = NULL;  
                           }  
+#if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
+               HW_PMC_COLLECTION_EPILOGE_BODY
+
+               HW_PMC_SHOW_INFO
+#endif                          
                      }    
                          
                                                                  
