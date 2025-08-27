@@ -2,8 +2,7 @@
 
 This project attempts to model and simulate the innerworking of Radar system, Electro-Optical active and passive sources of IR radiation.
 The main purpose is to achieve a realistic system modeling and simulation as much as possible, hence the main sources of knowledge
-is a engineering and technical literature reaching design level (candidate of science and experienced system
-engineers and designers).
+is a engineering and technical literature reaching design level.
 
 The second firm foundation which this project stand upon is being wholly optimized at basic level of massive manual vectorization by 
 leveraging Intel Intrinsic programming i.e. usage of SSE/AVX/AVX2/AVX512 code path for almost every algorithm which is vectorizable.
