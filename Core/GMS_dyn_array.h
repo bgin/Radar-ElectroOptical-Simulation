@@ -1,4 +1,25 @@
 
+
+
+/*MIT License
+!Copyright (c) 2020 Bernard Gingold
+!Permission is hereby granted, free of charge, to any person obtaining a copy
+!of this software and associated documentation files (the "Software"), to deal
+!in the Software without restriction, including without limitation the rights
+!to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+!copies of the Software, and to permit persons to whom the Software is
+!furnished to do so, subject to the following conditions:
+!The above copyright notice and this permission notice shall be included in all
+!copies or substantial portions of the Software.
+!THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+!IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+!FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+!AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+!LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+!OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+!SOFTWARE.
+!*/
+
 #ifndef __GMS_DYN_ARRAY_H__
 #define __GMS_DYN_ARRAY_H__ 180820251017
 
@@ -71,7 +92,7 @@ namespace gms
                // Simple dynamically allocated arrays without vector-like functionality (growing,resizing, ...etc)
                // Used mainly for the baseband/narrowband signal representation and henceforth processing.
 
-               struct alignas(64) darray_c4_t final 
+               struct alignas(32) darray_c4_t final 
                {
                       
                       std::complex<float> * __restrict m_data;
@@ -312,7 +333,7 @@ namespace gms
                };
 
 
-               struct alignas(64) darray_c8_t final 
+               struct alignas(32) darray_c8_t final 
                {
                       
                       std::complex<double> * __restrict m_data;
@@ -551,7 +572,7 @@ namespace gms
                       
                };
 
-               struct alignas(64) darray_r4_t final 
+               struct alignas(32) darray_r4_t final 
                {
                       
                       float * __restrict               m_data;
@@ -791,7 +812,7 @@ namespace gms
                };
 
 
-               struct alignas(64) darray_r8_t final 
+               struct alignas(32) darray_r8_t final 
                {
                       
                       double * __restrict               m_data;
