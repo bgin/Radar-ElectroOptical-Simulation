@@ -79,7 +79,7 @@ namespace gms {
                       m_param1     = nullptr;
                       m_param2     = nullptr;
                       m_samples    = nullptr;
-                      m_m_pfmetric = nullptr;
+                      m_pfmetric = nullptr;
                       m_metric[64] = {};
                }
                
@@ -100,7 +100,7 @@ namespace gms {
                
                SKX_HW_metric_2_t(const SKX_HW_metric_2_t &) = delete;
                
-               SKX_HW_metric_2_t(SKX_HW_metric_2_t &&) = delete
+               SKX_HW_metric_2_t(SKX_HW_metric_2_t &&) = delete;
                
                ~SKX_HW_metric_2_t() {
                      
