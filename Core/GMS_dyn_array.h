@@ -67,7 +67,7 @@ namespace file_info
 // *** Warning *** -- An access for the PM hardware counters must be enabled for the user-mode space!!
 // 
 #if !defined (DYN_ARRAY_USE_PMC_INSTRUMENTATION)
-#define DYN_ARRAY_USE_PMC_INSTRUMENTATION 1
+#define DYN_ARRAY_USE_PMC_INSTRUMENTATION 0
 #endif 
 
 #if (DYN_ARRAY_USE_PMC_INSTRUMENTATION) == 1
@@ -104,7 +104,7 @@ namespace gms
                           
                           this->mnx     = 0ULL;
                           this->m_data  = NULL;
-                                      
+                          this->ismmap  = false;             
                      } 
                           
                      inline explicit darray_c4_t(const std::size_t nx) noexcept(false)
@@ -233,9 +233,10 @@ namespace gms
                           
                           this->mnx    =  rhs.mnx;
                           this->m_data =  &rhs.m_data[0];
+                          this->ismmap =  rhs.ismmap;
                           rhs.mnx      =  0ULL;
                           rhs.m_data   =  NULL;
-                                                
+                          rhs.ismmap   = false;                      
                       }
                                  
                      darray_c4_t(const darray_c4_t &)             = delete;
@@ -247,7 +248,7 @@ namespace gms
                PMC_VARS                  
                HW_PMC_COLLECTION_PROLOGE_BODY
 #endif                          
-                          if(this->ismmap) 
+                          if(this->ismmap == true) 
                           { 
                              int32_t err1{};
                              err1 = gms_ummap<std::complex<float>>(this->m_data,this->mnx); this->m_data = NULL;
@@ -281,8 +282,10 @@ namespace gms
                                                                                                                 
                            gms_swap(this->mnx,rhs.mnx);
                            gms_swap(this->m_data,rhs.m_data);
+                           gms_swap(this->ismmap,rhs.ismmap);
                            rhs.mnx       = 0ULL;
                            rhs.m_data    = NULL;
+                           rhs.ismmap    = false;
                            return (*this);
                       }
 
@@ -345,7 +348,7 @@ namespace gms
                           
                           this->mnx     = 0ULL;
                           this->m_data  = NULL;
-                                      
+                          this->ismmap  = false;           
                      } 
                           
                      inline explicit darray_c8_t(const std::size_t nx) noexcept(false)
@@ -473,9 +476,10 @@ namespace gms
                           
                           this->mnx    =  rhs.mnx;
                           this->m_data =  &rhs.m_data[0];
+                          this->ismmap =  rhs.ismmap;
                           rhs.mnx      =  0ULL;
                           rhs.m_data   =  NULL;
-                                                
+                          rhs.ismmap   = false;                      
                       }
                                  
                      darray_c8_t(const darray_c8_t &)             = delete;
@@ -487,7 +491,7 @@ namespace gms
                PMC_VARS                  
                HW_PMC_COLLECTION_PROLOGE_BODY
 #endif
-                          if(this->ismmap) 
+                          if(this->ismmap == true) 
                           { 
                              int32_t err1{};
                              err1 = gms_ummap<std::complex<double>>(this->m_data,this->mnx); this->m_data = NULL;
@@ -521,8 +525,10 @@ namespace gms
                                                                                                           
                            gms_swap(this->mnx,rhs.mnx);
                            gms_swap(this->m_data,rhs.m_data);
+                           gms_swap(this->ismmap,rhs.ismmap);
                            rhs.mnx       = 0ULL;
                            rhs.m_data    = NULL;
+                           rhs.ismmap    = false;
                            return (*this);
                       }
 
@@ -584,7 +590,7 @@ namespace gms
                           
                           this->mnx     = 0ULL;
                           this->m_data  = NULL;
-                                      
+                          this->ismmap  = false;          
                      } 
                           
                      inline explicit darray_r4_t(const std::size_t nx) noexcept(false)
@@ -712,9 +718,10 @@ namespace gms
                           
                           this->mnx    =  rhs.mnx;
                           this->m_data =  &rhs.m_data[0];
+                          this->ismmap = rhs.ismmap;
                           rhs.mnx      =  0ULL;
                           rhs.m_data   =  NULL;
-                                                
+                          rhs.ismmap   = false;                      
                       }
                                  
                      darray_r4_t(const darray_r4_t &)             = delete;
@@ -726,8 +733,10 @@ namespace gms
                PMC_VARS                   
                HW_PMC_COLLECTION_PROLOGE_BODY
 #endif
-                          if(this->ismmap) 
+
+                          if(this->ismmap == true) 
                           { 
+                             
                              int32_t err1{};
                              err1 = gms_ummap<float>(this->m_data,this->mnx); this->m_data = NULL;
                              if(__builtin_expect(err1==-1,0))
@@ -760,8 +769,10 @@ namespace gms
                                                                            
                            gms_swap(this->mnx,rhs.mnx);
                            gms_swap(this->m_data,rhs.m_data);
+                           gms_swap(this->ismmap,rhs.ismmap);
                            rhs.mnx       = 0ULL;
                            rhs.m_data    = NULL;
+                           rhs.ismmap    = false;
                            return (*this);
                       }
 
@@ -824,7 +835,7 @@ namespace gms
                           
                           this->mnx     = 0ULL;
                           this->m_data  = NULL;
-                                      
+                          this->ismmap  = false;            
                      } 
                           
                      inline explicit darray_r8_t(const std::size_t nx) noexcept(false)
@@ -952,9 +963,10 @@ namespace gms
                           
                           this->mnx    =  rhs.mnx;
                           this->m_data =  &rhs.m_data[0];
+                          this->ismmap =  rhs.ismmap;
                           rhs.mnx      =  0ULL;
                           rhs.m_data   =  NULL;
-                                                
+                          rhs.ismmap   = false;                     
                       }
                                  
                      darray_r8_t(const darray_r8_t &)             = delete;
@@ -966,7 +978,7 @@ namespace gms
                PMC_VARS                  
                HW_PMC_COLLECTION_PROLOGE_BODY
 #endif
-                          if(this->ismmap) 
+                          if(this->ismmap == true) 
                           { 
                              int32_t err1{};
                              err1 = gms_ummap<double>(this->m_data,this->mnx); this->m_data = NULL;
@@ -1000,8 +1012,10 @@ namespace gms
                                                                            
                            gms_swap(this->mnx,rhs.mnx);
                            gms_swap(this->m_data,rhs.m_data);
+                           gms_swap(this->ismmap,rhs.ismmap);
                            rhs.mnx       = 0ULL;
                            rhs.m_data    = NULL;
+                           rhs.ismmap    = false;
                            return (*this);
                       }
 
