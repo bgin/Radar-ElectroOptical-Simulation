@@ -118,14 +118,16 @@ namespace gms {
 
 		     void * __restrict ptr = NULL;
 	         ptr = _mm_malloc(len, alignment);
-                     if (NULL == ptr && len != 0ULL) {
+             if (NULL == ptr && len != 0ULL) 
+			 {
 #if (PRINT_CALLSTACK_ON_ERROR) == 1
-	                 std::cerr << " Not implemented yet!!" << "\n";
+	                 std::cerr << " Display of the call-stack not implemented yet!!" << "\n";
 #endif
-	                 std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << std::strerror(errno) << "\n";
-	                 std::cerr << "at: " __FILE__ ":" << __LINE__ << " in: " << __PRETTY_FUNCTION__ << "\n";
+	                 std::cerr << "[" << __DATE__ << ":" << __TIME__ << "]" << "\n";
+					 std::cerr <<  "[errno]: --"  << std::strerror(errno) << "\n";
+	                 std::cerr << "at: " __FILE__ ":"    << __LINE__ << " in: " <<  __PRETTY_FUNCTION__ << "\n";
 	                 std::exit(EXIT_FAILURE);
-	            }
+	         }
                      return (ptr);
 	      }
 
