@@ -46,14 +46,24 @@ namespace file_info
 #include <cstdint>
 #include <string>
 #include <complex>
+#include <valarray>
 #include "GMS_config.h"
 #include "GMS_dyn_array.h"
+
+
 
 // Enable non-temporal stores for this class only( used with free-standing operators)
 // defaulted to 0.
 // To be added.
-#if !defined (USE_GMS_AM_WIDEBAND_SIGNAL_NT_STORES)
-#define USE_GMS_AM_WIDEBAND_SIGNAL_NT_STORES 0
+#if !defined (AM_WIDEBAND_SIGNAL_USE_NT_STORES)
+#define AM_WIDEBAND_SIGNAL_USE_NT_STORES 0
+#endif
+
+#ifdef _OPENMP
+// Default init a storage arrays for the first-touch (OpenMP) processing
+#if !defined(AM_WIDEBAND_SIGNAL_INIT_STORAGE)
+#define AM_WIDEBAND_SIGNAL_INIT_STORAGE 1
+#endif 
 #endif
 
 // Enable for the basic PMC tracing (wall-clock) readout (not statistically rigorous)!!
@@ -181,9 +191,11 @@ namespace radiolocation
                  int32_t prot;
                  int32_t flags;
                  int32_t fd;
-                 long offset;
+                 long    offset;
                  int32_t fsize;
           };
+
+          
 
            
           struct alignas(64) AM_wb_signal_t final 
@@ -243,13 +255,35 @@ namespace radiolocation
                                 const std::size_t,
                                 const std::size_t,
                                 const std::size_t,
-                                const int32_t,
+                                const bool,
                                 const int32_t,
                                 const float,
                                 const bool) noexcept(false);
+
+                 AM_wb_signal_t(const std::complex<float>,
+                                const std::complex<float>,
+                                const AM_wb_signal_darray_params_t &,
+                                const std::size_t,
+                                const std::size_t,
+                                const std::size_t,
+                                const std::size_t,
+                                const std::size_t,
+                                const std::size_t,
+                                const bool,
+                                const int32_t,
+                                const float,
+                                const bool) noexcept(false);
+
+                 AM_wb_signal_t(const AM_wb_signal_t &) = delete;
+
+                 AM_wb_signal_t(AM_wb_signal_t &&);
+
+                 AM_wb_signal_t & operator=(const AM_wb_signal_t &) = delete;
+
+                 AM_wb_signal_t & operator=(AM_wb_signal_t &&);
                              
 
-               ~AM_wb_signal_t();
+               ~AM_wb_signal_t() noexcept(false);
 
           }; 
 
