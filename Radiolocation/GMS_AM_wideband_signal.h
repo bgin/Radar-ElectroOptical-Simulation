@@ -66,6 +66,10 @@ namespace file_info
 #endif 
 #endif
 
+#if (AM_WIDEBAND_SIGNAL_INIT_STORAGE) == 1
+#define INIT_BY_STD_FILL 0
+#endif 
+
 // Enable for the basic PMC tracing (wall-clock) readout (not statistically rigorous)!!
 // *** Warning *** -- An access for the PM hardware counters must be enabled for the user-mode space!!
 // 
@@ -283,7 +287,16 @@ namespace radiolocation
                  AM_wb_signal_t & operator=(AM_wb_signal_t &&);
                              
 
-               ~AM_wb_signal_t() noexcept(false);
+                ~AM_wb_signal_t() noexcept(false);
+
+                 void init_storage(const std::complex<float>,
+                                   const float) noexcept(false);
+
+                 static void ceate_signal_plot(const std::size_t,
+                                               const float * __restrict,
+                                               const float * __restrict,
+                                               const std::string &,
+                                               const std::string &);
 
           }; 
 

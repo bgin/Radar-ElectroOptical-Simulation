@@ -1,6 +1,8 @@
 
+#include <iostream>
+#include <fstream>
 #include "GMS_AM_wideband_signal.h"
-
+#include "GMS_sse_memset.h"
 
 std::string gms::radiolocation::AM_wb_signal_t::m_signal_name = 
                     std::string("Amplitude_Modulated_wideband_signal");
@@ -223,6 +225,116 @@ gms::radiolocation
 ::~AM_wb_signal_t()
 {
 
+}
+
+void 
+gms::radiolocation
+::AM_wb_signal_t
+::init_storage(const std::complex<float> cval,
+               const float               rval)
+{
+    using namespace gms::common;
+#if (INIT_BY_STD_FILL) == 0
+    sse_memset_unroll8x_ps(&this->m_code_seq.m_data[0],rval,this->m_baude_rate);
+    sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_carrier.m_data[0]),rval,2ull*this->m_T);
+    sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_cenv.m_data[0]),rval,2ull*this->m_T);
+    sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_signal.m_data[0]),rval,2ull*this->m_T);
+    sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_cenv_spec.m_data[0]),rval,2ull*this->m_T);
+    sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_sig_samp.m_data[0]),rval,2ull*(this->m_T*this->m_N));
+    if(this->m_order == 1)
+    {
+       sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_cenv_corr.m_data[0]),rval,2ull*(this->m_nomegs*this->m_nthets));
+       sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_ambig.m_data[0]),rval,2ull*(this->m_nomegs*this->m_nthets));
+       sse_memset_unroll8x_ps(&this->m_mod_ambig.m_data[0],rval,this->m_nomegs*this->m_nthets);
+       sse_memset_unroll8x_ps(&this->m_cenv_corr_i.m_data[0],rval,this->m_nomegs*this->m_nthets);
+       sse_memset_unroll8x_ps(&this->m_cenv_corr_q.m_data[0],rval,this->m_nomegs*this->m_nthets);
+    }
+    else if(this->m_order == 2)
+    {
+       sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_cenv_corr.m_data[0]),rval,2ull*(this->m_nthets*this->m_nomegs));
+       sse_memset_unroll8x_ps(reinterpret_cast<float *>(&this->m_ambig.m_data[0]),rval,2ull*(this->m_nthets*this->m_nomegs));
+       sse_memset_unroll8x_ps(&this->m_mod_ambig.m_data[0],rval,this->m_nthets*this->m_nomegs);
+       sse_memset_unroll8x_ps(&this->m_cenv_corr_i.m_data[0],rval,this->m_nthets*this->m_nomegs);
+       sse_memset_unroll8x_ps(&this->m_cenv_corr_q.m_data[0],rval,this->m_nthets*this->m_nomegs);
+    }
+    sse_memset_unroll8x_ps(&this->m_carrier_i.m_data[0],rval,this->m_T);
+    sse_memset_unroll8x_ps(&this->m_carrier_q.m_data[0],rval,this->m_T);
+    sse_memset_unroll8x_ps(&this->m_cenv_i.m_data[0],rval,this->m_T);
+    sse_memset_unroll8x_ps(&this->m_cenv_q.m_data[0],rval,this->m_T);
+    sse_memset_unroll8x_ps(&this->m_signal_i.m_data[0],rval,this->m_T);
+    sse_memset_unroll8x_ps(&this->m_signal_q.m_data[0],rval,this->m_T);
+#else 
+    std::fill(this->m_code_seq.m_data,this->m_code_seq.m_data+this->m_T,rval);
+    std::fill(this->m_carrier.m_data,this->m_carrier.m_data+this->m_T,cval);
+    std::fill(this->m_cenv.m_data,this->m_cenv.m_data+this->m_T,cval);
+    std::fill(this->m_signal.m_data,this->m_signal.m_data+this->m_T,cval);
+    std::fill(this->m_cenv_spec.m_data,this->m_cenv_spec.m_data+this->m_T,cval);
+    std::fill(this->m_sig_samp.m_data,this->m_sig_samp.m_data+(this->m_T*this->m_N),cval);
+    if(this->m_order == 1)
+    {
+        std::fill(this->m_cenv_corr.m_data,this->m_cenv_corr.m_data+(this->m_nomegs*this->m_nthets),cval);
+        std::fill(this->m_ambig.m_data,this->m_ambig.m_data+(this->m_nomegs*this->m_nthets),cval);
+        std::fill(this->m_mod_ambig.m_data,this->m_mod_ambig.m_data+(this->m_nomegs*this->m_nthets),rval);
+        std::fill(this->m_cenv_corr_i.m_data,this->m_cenv_corr_i.m_data+(this->m_nomegs*this->m_nthets),rval);
+        std::fill(this->m_cenv_corr_q.m_data,this->m_cenv_corr_q.m_data+(this->m_nomegs*this->m_nthets),rval);
+    }
+    else if(this->m_order == 2)
+    {
+        std::fill(this->m_cenv_corr.m_data,this->m_cenv_corr.m_data+(this->m_nthets*this->m_nomegs),cval);
+        std::fill(this->m_ambig.m_data,this->m_ambig.m_data+(this->m_nthets*this->m_nomegs),cval);
+        std::fill(this->m_mod_ambig.m_data,this->m_mod_ambig.m_data+(this->m_nthets*this->m_nomegs),rval);
+        std::fill(this->m_cenv_corr_i.m_data,this->m_cenv_corr_i.m_data+(this->m_nthets*this->m_nomegs),rval);
+        std::fill(this->m_cenv_corr_q.m_data,this->m_cenv_corr_q.m_data+(this->m_nthets*this->m_nomegs),rval);
+    }
+    std::fill(this->m_carrier_i.m_data,this->m_carrier_i.m_data+this->m_T,rval);
+    std::fill(this->m_carrier_q.m_data,this->m_carrier_i.m_data+this->m_T,rval);
+    std::fill(this->m_cenv_i.m_data,this->m_cenv_i.m_data+this->m_T,rval);
+    std::fill(this->m_cenv_q.m_data,this->m_cenv_q.m_data+this->m_T,rval);
+    std::fill(this->m_signal_i.m_data,this->m_signal_i.m_data+this->m_T,rval);
+    std::fill(this->m_signal_q.m_data,this->m_signal_q.m_data+this->m_T,rval);
+#endif 
+    
+}
+
+void
+gms::radiolocation
+::AM_wb_signal_t
+::ceate_signal_plot(const std::size_t n_samp,
+                    const float * __restrict sig_arg,
+                    const float * __restrict sig_val,
+                    const std::string &header,
+                    const std::string &title)
+{
+    std::string plot_fname;
+    std::string sig_fname;
+    std::ofstream plot_unit;
+    std::ofstream sig_unit;
+    sig_fname = header+"_plot.txt";
+    sig_unit.open(sig_fname.c_str());
+    for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+    {
+        sig_unit.operator<<(" ").operator<<(sig_arg[__i]).operator<<(" ").operator<<(sig_val[__i]).operator<<("\n");
+    }
+    sig_unit.close();
+    std::cout.operator<<("Created signal data file \"").operator<<(sig_fname.c_str()).operator<<("\".\n");
+    plot_fname.operator=(header+"plot_commands.txt");
+    plot_unit.open(plot_fname.c_str());
+    plot_unit.operator<<("#").operator<<(plot_fname.c_str()).operator<<("\n");
+    plot_unit.operator<<("#\n");
+    plot_unit.operator<<("# Usage:\n");
+    plot_unit.operator<<("# gnuplot < ").operator<<(plot_fname.c_str()).operator<<("\n");
+    plot_unit.operator<<("#\n");
+    plot_unit.operator<<("set term png\n");
+    plot_unit.operator<<("set output \"").operator<<(header.c_str()).operator<<(".png\"\n");
+    plot_unit.operator<<("set xlabel 't'\n");
+    plot_unit.operator<<("set ylabel 'y(t)'\n");
+    plot_unit.operator<<("set title '").operator<<(title.c_str()).operator<<("'\n");
+    plot_unit.operator<<("set grid\n");
+    plot_unit.operator<<("set style data lines\n");
+    plot_unit.operator<<("plot \"").operator<<(plot_fname.c_str()).operator<<("\" using 1:2 lw 1 linecolor rgb \"blue\"\n");
+    plot_unit.operator<<("quit\n");
+    plot_unit.close();
+    std::cout << " Created signal data file \"" << plot_fname <<("\"\n");
 }
 
 
