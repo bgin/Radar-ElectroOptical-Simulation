@@ -299,11 +299,12 @@ gms::radiolocation
 void
 gms::radiolocation
 ::AM_wb_signal_t
-::ceate_signal_plot(const std::size_t n_samp,
+::create_signal_plot(const std::size_t n_samp,
                     const float * __restrict sig_arg,
                     const float * __restrict sig_val,
                     const std::string &header,
-                    const std::string &title)
+                    const std::string &title,
+                    const bool is_sig_arg_present)
 {
     std::string plot_fname;
     std::string sig_fname;
@@ -311,30 +312,49 @@ gms::radiolocation
     std::ofstream sig_unit;
     sig_fname = header+"_plot.txt";
     sig_unit.open(sig_fname.c_str());
-    for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+    if(is_sig_arg_present==true)
     {
-        sig_unit.operator<<(" ").operator<<(sig_arg[__i]).operator<<(" ").operator<<(sig_val[__i]).operator<<("\n");
+        for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+        {
+            sig_unit << " " << sig_arg[__i] << " "
+                            << sig_val[__i] << "\n";
+        }
+    }
+    else
+    {
+        for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+        {
+            sig_unit << " " << sig_arg[__i] << "\n";
+         
+        }
     }
     sig_unit.close();
-    std::cout.operator<<("Created signal data file \"").operator<<(sig_fname.c_str()).operator<<("\".\n");
-    plot_fname.operator=(header+"plot_commands.txt");
+    std::cout << "Created signal data file \"" << sig_fname << "\".\n";
+    plot_fname = header+"plot_commands.txt";
     plot_unit.open(plot_fname.c_str());
-    plot_unit.operator<<("#").operator<<(plot_fname.c_str()).operator<<("\n");
-    plot_unit.operator<<("#\n");
-    plot_unit.operator<<("# Usage:\n");
-    plot_unit.operator<<("# gnuplot < ").operator<<(plot_fname.c_str()).operator<<("\n");
-    plot_unit.operator<<("#\n");
-    plot_unit.operator<<("set term png\n");
-    plot_unit.operator<<("set output \"").operator<<(header.c_str()).operator<<(".png\"\n");
-    plot_unit.operator<<("set xlabel 't'\n");
-    plot_unit.operator<<("set ylabel 'y(t)'\n");
-    plot_unit.operator<<("set title '").operator<<(title.c_str()).operator<<("'\n");
-    plot_unit.operator<<("set grid\n");
-    plot_unit.operator<<("set style data lines\n");
-    plot_unit.operator<<("plot \"").operator<<(plot_fname.c_str()).operator<<("\" using 1:2 lw 1 linecolor rgb \"blue\"\n");
-    plot_unit.operator<<("quit\n");
+    plot_unit << "#" << plot_fname << "\n";
+    plot_unit << "#\n";
+    plot_unit << "# Usage:\n";
+    plot_unit << "# gnuplot < " << plot_fname << "\n";
+    plot_unit << "#\n";
+    plot_unit << "set term png\n";
+    plot_unit << "set output \"" << header << ".png\"\n";
+    plot_unit << "set xlabel 't'\n";
+    plot_unit << "set ylabel 'y(t)'\n";
+    plot_unit << "set title '" << title << "'\n";
+    plot_unit << "set grid\n";
+    plot_unit << "set style data lines\n";
+    if(is_sig_arg_present==true)
+    {
+            plot_unit << "plot \"" << plot_fname << "\" using 1:2 lw 1 linecolor rgb \"red\"\n";
+    }
+    else
+    {
+            plot_unit << "plot \"" << plot_fname << "\" lw 1 linecolor rgb \"red\"\n";
+    }
+    plot_unit << "quit\n";
     plot_unit.close();
-    std::cout << " Created signal data file \"" << plot_fname <<("\"\n");
+    std::cout << " Created signal data file \"" << plot_fname << "\"\n";
 }
 
 

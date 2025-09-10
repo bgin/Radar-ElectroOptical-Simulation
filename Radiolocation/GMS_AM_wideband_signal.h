@@ -292,11 +292,14 @@ namespace radiolocation
                  void init_storage(const std::complex<float>,
                                    const float) noexcept(false);
 
-                 static void ceate_signal_plot(const std::size_t,
+                 static void create_signal_plot(const std::size_t,
                                                const float * __restrict,
                                                const float * __restrict,
                                                const std::string &,
-                                               const std::string &);
+                                               const std::string &,
+                                               const bool );
+
+                
 
           }; 
 
