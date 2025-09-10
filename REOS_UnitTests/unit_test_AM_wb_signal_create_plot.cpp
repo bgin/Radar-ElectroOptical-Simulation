@@ -81,8 +81,8 @@ void unit_test_AM_wideband_signal_create_plot()
     std::printf("[UNIT_TEST]: Calling an init_storage member function.\n");
     __symbol_id_1__.init_storage(cfill,rfill);
     std::printf("[UNIT-TEST]:Calling a plotting function.\n");
-    AM_wb_signal_t::ceate_signal_plot(__symbol_id_1__.m_T,__symbol_id_1__.m_signal_i.m_data,
-                                      __symbol_id_1__.m_signal_q.m_data,"create_signal_plot_test","Test_NaN");
+    AM_wb_signal_t::create_signal_plot(__symbol_id_1__.m_T,__symbol_id_1__.m_signal_i.m_data,
+                                      __symbol_id_1__.m_signal_q.m_data,"create_signal_plot_test","Test_NaN",true);
     printf("[UNIT_TEST]: function=%s -- **END**\n", __PRETTY_FUNCTION__);
 
 }
