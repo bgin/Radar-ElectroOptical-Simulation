@@ -1,7 +1,7 @@
 
 # Radar-ElectroOptical-Simulation
 
-This project provides a high-fidelity simulation framework for Radar systems and Electro-Optical (EO) sources, including both active and passive infrared (IR) radiation modeling. The goal is to achieve realistic, design-level system modeling and simulation, following standards and methodologies found in advanced engineering and technical literature.
+This project provides a high-fidelity simulation framework for Radar, Telecommunication and Electro-Optical (EO) systems. The goal is to achieve realistic, design-level system modeling and simulation, following standards and methodologies found in advanced engineering and technical literature.
 
 ## Key Features
 
