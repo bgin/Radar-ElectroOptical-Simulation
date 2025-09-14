@@ -1,5 +1,5 @@
 
-# Radar-ElectroOptical-Simulation
+# Electromagnetic Engineering Modeling Toolkit
 
 This project provides a high-fidelity simulation framework for Radar, Telecommunication and Electro-Optical (EO) systems. The goal is to achieve realistic, design-level system modeling and simulation, following standards and methodologies found in advanced engineering and technical literature.
 
