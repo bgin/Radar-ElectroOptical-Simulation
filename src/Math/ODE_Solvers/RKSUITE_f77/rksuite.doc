@@ -1,0 +1,1194 @@
+************************* Start of rksuite.doc ********************************
+
+This document describes the use of the suite of Runge-Kutta codes
+
+                  RKSUITE Release 1.0  November 1991
+
+                             written by
+
+          R.W. Brankin (*),  I. Gladwell(**),  and  L.F. Shampine (**)
+
+The authors would very much appreciate receiving notification of errors
+and constructive criticism of the suite.
+
+
+ (*)  Numerical Algorithms Group Ltd.
+      Wilkinson House
+      Jordan Hill Road
+      Oxford OX2 8DR
+      U.K.
+      email: richard@nag.co.uk
+             na.brankin@na-net.ornl.gov
+      International phone: + 44 865 511245
+      International fax: + 44 865 310139
+
+ (**) Department of Mathematics
+      Southern Methodist University
+      Dallas, Texas 75275
+      U.S.A.
+      email: h5nr1001@vm.cis.smu.edu
+      U.S. phone: (214) 692-2542
+      U.S. fax: (214) 692-4138
+
+**************************** RKSUITE Overview *********************************
+
+ RKSUITE is a suite of codes based on Runge-Kutta formulas that solves the
+ initial value problem for a first order system of ordinary differential
+ equations using Runge-Kutta methods. The codes integrate
+
+             y' = f(t,y),     y(t     ) = y
+                                 start     start
+
+ where y is the vector of NEQ solution components and t is the independent
+ variable. The integration proceeds from t = t      to t = t   .
+                                              start         end
+
+ RKSUITE contains two integration codes, UT and CT, and a number of
+ associated setup and diagnostic subroutines. You choose either UT or CT
+ and set other variables which define the integration task by a call to the
+ subroutine SETUP. UT solves the "Usual Task", namely integrating the system
+ of differential equations to obtain answers at points you specify.  CT is
+ used for all more "Complicated Task"s.  It is easy to change between UT
+ and CT.  All arguments accessible to you have the same meanings in both
+ codes.  (However, the length, LENWRK, of the workspace, WORK(*), depends on 
+ which code is being used and which capabilities are invoked.)
+
+ The distribution version of RKSUITE is in DOUBLE PRECISION. A REAL version 
+ is also available.  When solving ordinary differential equations on most 
+ computers, it is advisable to use DOUBLE PRECISION.  However, if DOUBLE 
+ PRECISION provides more than about 20 significant figures, the REAL version
+ will usually be satisfactory, provided that the accuracy required of the 
+ solution is meaningful in the REAL machine precision.
+
+ RKSUITE requires three environmental constants OUTCH, MCHEPS, DWARF.  When
+ you use RKSUITE, you may need to know their values. You can obtain them
+ by calling the subroutine ENVIRN in the suite:
+
+        CALL ENVIRN(OUTCH,MCHPES,DWARF)
+
+ returns values
+
+    OUTCH     - INTEGER
+                Standard output channel on the machine being used.
+    MCHEPS    - DOUBLE PRECISION
+                The unit of roundoff, that is, the largest positive number
+                such that 1.0D0 + MCHEPS = 1.0D0.
+    DWARF     - DOUBLE PRECISION
+                The smallest positive number on the machine being used.
+
+ Some errors that can arise in the use of RKSUITE are catastrophic.  Examples
+ include input arguments that are meaningless in context or are inconsistent,
+ and calls to subroutines that have not been initialized or cannot be used in 
+ the context prevailing.  A catastrophic error will automatically lead to an
+ explanatory message on the output channel OUTCH and the program STOPping. (It
+ is possible to override this STOP so that the main program can go on to
+ another task.  This is done by means of the subroutines SOFTFL and CHKFL --
+ see the descriptions of the subroutines for instructions.)
+
+*******************************************************************************
+---------------------Description of Subroutine SETUP------------------------
+
+
+      SUBROUTINE SETUP(NEQ,TSTART,YSTART,TEND,TOL,THRES,METHOD,TASK,ERRASS,
+                       HSTART,WORK,LENWRK,MESAGE)
+
+ SETUP initializes the computation, so it is normally called only once. A call
+ to SETUP must precede the first call to UT or CT.  Any subsequent call to
+ SETUP reinitializes the computation.  When calling SETUP, you must specify
+ the
+
+ INPUT VARIABLES
+
+    NEQ       - INTEGER
+                The number of differential equations (the number of
+                solution components) in the system.
+                Constraint: NEQ >= 1
+    TSTART    - DOUBLE PRECISION
+                The initial value of the independent variable.
+    YSTART(*) - DOUBLE PRECISION array of length NEQ
+                The vector of initial values of the solution components.
+    TEND      - DOUBLE PRECISION
+                The integration proceeds from TSTART in the direction
+                of TEND. You can, and often will, terminate the integration
+                before reaching TEND, but you cannot integrate past TEND.
+                Constraint: TEND must be clearly distinguishable from TSTART
+                in the precision available.
+
+ The integration proceeds by steps from TSTART towards TEND. An approximate
+ solution Y(*) is computed at each step. For each component Y(L), L = 1,2,
+ ...,NEQ, the error made in the step, i.e. the local error, is estimated.
+ The step size is chosen automatically so that the integration will proceed
+ efficiently while keeping this local error estimate smaller than a tolerance
+ that you specify by means of parameters TOL and THRES(*).
+
+ You should consider carefully how you want the local error to be controlled.
+ This code basically uses relative local error control, with TOL being the 
+ desired relative accuracy.  For reliable computation, codes must work with
+ approximate solutions that have some correct digits, so you are not allowed
+ to specify TOL greater than 0.01D0.  It is impossible to compute a numerical
+ solution more accurate than the correctly rounded value of the true solution,
+ so you are not allowed to specify a TOL that is too small for the precision
+ you are using.  Specifically, TOL must be greater than ten times the machine-
+ dependent parameter MCHEPS.
+
+ The magnitude of the local error in Y(L) on any step will not be greater
+ than TOL*max("size(L)",THRES(L)) where "size(L)" is an average magnitude
+ of Y(L) over the step. If THRES(L) is smaller than the current value of
+ "size(L)", this is a relative error test and TOL indicates how many
+ significant digits you want in Y(L).  If THRES(L) is larger than the
+ current value of "size(L)", this is an absolute error test with tolerance
+ TOL*THRES(L).  Relative error control is the recommended mode of operation,
+ but pure relative error control, THRES(L) = 0.0D0, is not permitted.
+ Specifically, THRES(L) cannot be smaller than the machine-dependent
+ parameter SQRT(DWARF).  It is often the case that a solution component Y(L)
+ is of no interest when it is smaller in magnitude than a certain threshold.
+ You can inform the code of this by setting THRES(L) to this threshold. In
+ this way you avoid the cost of computing significant digits in Y(L) when
+ only the fact that it is smaller than the threshold is of interest. This 
+ matter is important when Y(L) vanishes, and in particular, when the initial
+ value YSTART(L) vanishes.  An appropriate threshold depends on the general
+ size of Y(L) in the course of the integration.  Physical reasoning may help
+ you select suitable threshold values.  If you do not know what to expect of
+ Y(*), you can find out by a preliminary integration using UT with nominal 
+ values of THRES(*). As UT steps from TSTART towards TEND, for each L = 1,2,
+ ...,NEQ it forms YMAX(L), the largest magnitude of Y(L) computed at any step
+ in the integration so far.  Using it you can determine more appropriate values
+ for THRES(*) for an accurate integration.  You might, for example, take 
+ THRES(L) to be 10.0D0*MCHEPS times the final value of YMAX(L).
+
+    TOL       - DOUBLE PRECISION
+                The relative error tolerance.
+                Constraint: 0.01D0 >= TOL >= 10.D0*MCHEPS
+    THRES(*)  - DOUBLE PRECISION array of length NEQ
+                For L = 1,2,...,NEQ, THRES(L) is a threshold for solution
+                component Y(L). Choose it so that the value of Y(L) is not
+                important when Y(L) is smaller in magnitude than THRES(L).
+                Constraint: THRES(L) >= SQRT(DWARF)
+
+ Like practically all codes, UT and CT control local error rather than the
+ true (global) error, the difference between the numerical and true solution.
+ Control of the local error controls the true error indirectly.  Roughly
+ speaking, the code produces a solution that satisfies the differential
+ equation with a discrepancy bounded in magnitude by the error tolerance.
+ What this implies about how close the numerical solution is to the true
+ solution depends on the stability of the problem.  Most practical problems
+ are at least moderately stable, and the true error is then comparable to
+ the error tolerance. To judge the accuracy of the numerical solution, you
+ could reduce TOL substantially, e.g. use 0.1D0*TOL, and solve the problem
+ again.  This will usually result in a rather more accurate solution, and
+ the true error of the first integration can be estimated by comparison.
+ Alternatively, a global error assessment can be computed automatically 
+ by setting ERRASS (see below) to .TRUE..  Because indirect control of the
+ true error by controlling the local error is generally satisfactory and 
+ because both ways of assessing true errors cost twice, or more, the cost 
+ of the integration itself, such assessments are used mostly for spot checks, 
+ selecting appropriate tolerances for local error control, and exploratory 
+ computations.
+
+ RKSUITE implements three Runge-Kutta formula pairs, and you must select
+ one for the integration.
+
+    METHOD    - INTEGER
+                Specify which Runge-Kutta pair is to be used.
+                 = 1 - use the (2,3) pair
+                 = 2 - use the (4,5) pair
+                 = 3 - use the (7,8) pair
+                Constraint: 1 <= METHOD <= 3
+
+ The best choice for METHOD depends on the problem.  The order of accuracy is
+ 3,5,8, respectively.  As a rule, the smaller TOL is, the larger you should
+ take the value of METHOD.  If the components THRES(L) are small enough that
+ you are effectively specifying relative error control, experience suggests
+
+                  TOL            most efficient METHOD
+               -2      -4
+             10   -- 10                   1
+               -3      -6
+             10   -- 10                   2
+               -5
+             10   --                      3
+
+ The overlap in the ranges of tolerances appropriate for a given METHOD
+ merely reflects the dependence of efficiency on the problem being solved.
+ Making TOL smaller will normally make the integration more expensive.
+ However, in the range of tolerances appropriate to a METHOD, the increase
+ in cost is modest. There are situations for which one METHOD, or even this
+ kind of code, is a poor choice.  You should not specify a very small
+ THRES(L), like SQRT(DWARF), when the Lth solution component might vanish.
+ In particular, you should not do this when YSTART(L) = 0.0D0.  If you do,
+ the code will have to work hard with any METHOD to compute significant
+ digits, but METHOD = 1 is a particularly poor choice in this situation.  All
+ three METHODs are inefficient when the problem is "stiff".  If it is only
+ mildly stiff, you can solve it with acceptable efficiency with METHOD = 1,
+ but if it is moderately or very stiff, a code designed specifically for such
+ problems will be much more efficient.  The higher the order, i.e. the larger
+ METHOD, the more smoothness is required of the solution for the METHOD to
+ be efficient.
+
+ You must decide which integrator, UT or CT, to use. UT solves the "Usual
+ Task", namely integrating the system of differential equations to obtain
+ answers at points you specify.  CT is used for all more "Complicated Task"s.
+
+      TASK - CHARACTER*(*)
+             Only the first character of TASK is significant.
+             TASK(1:1) = `U' or `u' - UT is to be used
+                       = `C' or `c' - CT is to be used
+             Constraint: TASK(1:1) = `U' or `u' or `C' or `c'
+
+ An assessment of the true (global) error is provided by setting ERRASS =
+ .TRUE.. The error assessment is updated at each step. Its value can be
+ obtained at any time by a call to subroutine GLBERR.
+
+ Warning:   The code monitors the computation of the global error assessment
+ and reports any doubts it has about the reliability of the results.  The 
+ assessment scheme requires some smoothness of f(t,y), and it can be deceived
+ if f is insufficiently smooth.  At very crude tolerances the numerical
+ solution can become so inaccurate that it is impossible to continue assessing
+ the accuracy reliably.  At very stringent tolerances the effects of finite
+ precision arithmetic can make it impossible to assess the accuracy reliably. 
+ In either case the code returns with a message and a flag (UFLAG = 6 in UT
+ and CFLAG = 6 in CT) reporting that global error assessment has broken down.
+
+      ERRASS  - LOGICAL
+                = .FALSE. - do not attempt to assess the true error.
+                = .TRUE.  - assess the true error, the difference between
+                            the numerical solution and the true solution.
+                            (The cost of this is roughly twice the cost 
+                            of the integration itself with METHODs 2 and 3,
+                            and three times with METHOD = 1.)
+
+ The first step of the integration is critical because it sets the scale of
+ the problem. The integrator will find a starting step size automatically if
+ you set the variable HSTART to 0.0D0. Automatic selection of the first step
+ is so effective that you should normally use it.  Nevertheless, you might
+ want to specify a trial value for the first step to be certain that the code
+ recognizes the scale on which phenomena occur near the initial point. Also,
+ automatic computation of the first step size involves some cost, so supplying
+ a good value for this step size will result in a less expensive start.  If you
+ are confident that you have a good value, provide it in the variable HSTART.
+
+      HSTART  - DOUBLE PRECISION
+                0.0D0     - The code will select automatically the first
+                            step size (recommended choice).
+                non-zero  - The code will try ABS(HSTART) for the first step
+                            size of the integration.
+
+ You must provide working memory for SETUP, UT, and CT in the array WORK(*).
+ Do not alter the contents of this array after calling SETUP.  Just how much
+ memory is needed depends on which METHOD is used.  LENWRK tells the code
+ how much memory you are providing.
+
+ WORKSPACE
+
+    WORK(*) - DOUBLE PRECISION array of length LENWRK
+              Do not alter the contents of this array after calling SETUP.
+
+ INPUT VARIABLES
+
+    LENWRK  - INTEGER
+              Length of WORK(*): How big LENWRK must be depends
+              on the task and how it is to be solved.  
+              
+              LENWRK = 32*NEQ is sufficient for all cases. 
+              
+              If storage is a problem, the least storage possible 
+              in the various cases is:
+
+                If TASK = `U' or `u', then
+                  if ERRASS = .FALSE. and
+                    METHOD = 1, LENWRK must be at least 10*NEQ
+                           = 2                          20*NEQ
+                           = 3                          16*NEQ
+                  if ERRASS = .TRUE. and
+                    METHOD = 1, LENWRK must be at least 17*NEQ
+                           = 2                          32*NEQ
+                           = 3                          21*NEQ
+
+                If TASK = `C' or `c', then
+                  if ERRASS = .FALSE. and
+                    METHOD = 1, LENWRK must be at least 10*NEQ
+                           = 2                          14*NEQ
+                           = 3                          16*NEQ
+                  if ERRASS = .TRUE. and
+                    METHOD = 1, LENWRK must be at least 15*NEQ
+                           = 2                          26*NEQ
+                           = 3                          21*NEQ
+                         
+ Warning:  To exploit the interpolation capability of METHODs 1 and 2, you
+           must call subroutine INTRP.  This requires working storage in
+           addition to that specified in LENWRK.
+
+ UT and CT communicate with your calling program by means of a parameter,
+ UFLAG and CFLAG respectively.  If you wish, you can also have messages written
+ to the standard output channel OUTCH. The messages provide more detail, so it
+ is advisable to permit them for all but production runs.
+
+    MESAGE    - LOGICAL
+                Specify whether you want informative messages written to the
+                standard output channel OUTCH.
+                = .TRUE.   - provide messages (recommended choice for
+                             exploratory computations)
+                = .FALSE.  - do not provide messages
+
+ The data input to SETUP is monitored. Any error detected is catastrophic. An
+ error message is written to the output channel OUTCH (even if MESAGE =
+ .FALSE.), and the program STOPs.
+
+-------------------End of Description of Subroutine SETUP--------------------
+
+************************ UT: Code for the Usual Task **************************
+
+ Code UT is a member of the suite, RKSUITE, for solving the initial value
+ problem for a first order system of ordinary differential equations by
+ Runge-Kutta methods.  UT is designed for the "Usual Task", namely to compute
+ an approximate solution at a sequence of points.  First you call SETUP to
+ specify the problem and how it is to be solved. Thereafter you (repeatedly)
+ call UT to obtain answers at points you specify.  Another code, CT, in
+ RKSUITE is provided for all more "Complicated Task"s.
+
+ UT requires you to specify a sequence of output points.  They must be clearly
+ distinguishable in the precision available, and they must be distinguishable
+ from t      and t    as defined in the previous call to SETUP. You are
+       start      end
+ extremely unlikely to specify points that are not clearly distinguishable
+ except by mistake.  Should this happen, the code will tell you how far apart
+ the points must be.
+
+----------------------Description of Subroutine UT--------------------------
+
+      SUBROUTINE UT(F,TWANT,TGOT,YGOT,YPGOT,YMAX,WORK,UFLAG)
+
+ A call to SETUP must precede the first call to UT.  The results of this
+ call initializing the computation and the results of the previous call (if
+ any) to UT are retained in the array WORK(*), so the contents of this array
+ must not be altered between calls to UT.
+
+ The system of NEQ first order differential equations is defined by a
+ subroutine F(T,Y,YP) that you must provide.  You may give this subroutine
+ any name you like, but you must declare the name in an EXTERNAL statement in
+ the program that calls UT.  This subroutine must have the form:
+
+ SUBROUTINE F(T,Y,YP)
+ ...Scalar arguments and other scalar variables...
+ DOUBLE PRECISION T
+ ...Array arguments and other array variables...
+ DOUBLE PRECISION Y(*),YP(*)
+    Given input values of the independent variable T and the solution
+    components Y(*), for each L = 1,2,...,NEQ, evaluate the differential
+    equation for the derivative of the Lth solution component and place the
+    value in YP(L).  Do not alter the input values of T and Y(*).
+ RETURN
+ END
+
+ NAME DECLARED IN AN EXTERNAL STATEMENT IN THE PROGRAM CALLING UT:
+
+    F         - name of the subroutine for evaluating the differential
+                equations
+
+ UT attempts to approximate the true solution of the initial value problem
+ and its first derivative at the point TWANT specified in the call to UT.  
+ On return, the code has integrated successfully to TGOT, and YGOT(*) and
+ YPGOT(*) are accurate approximations to the solution and its first
+ derivative at TGOT.  If all has gone well, (the machine number) TGOT equals
+ (the machine number) TWANT and UFLAG = 1.  If the code did not reach TWANT
+ (TGOT is not equal to TWANT), an explanation is indicated by the value 
+ of UFLAG. The integration proceeds by steps from TSTART towards TEND (both
+ specified in SETUP).  For this reason, the specified TWANT must be closer to
+ TEND than the previous value of TGOT (TSTART on the first call to UT). 
+ TWANT can equal TEND.  As UT steps from TSTART towards TEND, for each
+ L = 1,2,...,NEQ it forms YMAX(L), the largest magnitude of Y(L) computed at
+ any step in the integration so far.
+
+ INPUT VARIABLE
+
+    TWANT     - DOUBLE PRECISION
+                The next value of the independent variable where a solution
+                is desired.
+                Constraint: TWANT must be closer to TEND than the previous
+                value of TGOT (TSTART on the first call to UT).  It can be
+                equal to TEND.  Unless exactly equal to TEND, it must be
+                clearly distinguishable from TEND and from TGOT, in the
+                precision available.
+
+ OUTPUT VARIABLES:  Do not alter any of these variables between calls to UT
+
+    TGOT      - DOUBLE PRECISION
+                A solution has been computed at this value of the independent
+                variable.  If the task was completed successfully, this
+                machine number is the same as the machine number TWANT.  If
+                the code did not reach TWANT, an explanation is provided by
+                the value of UFLAG.
+    YGOT(*)   - DOUBLE PRECISION array of length NEQ
+                Approximation to the true solution at TGOT.  At each step of
+                the integration to TGOT, the local error has been controlled
+                as specified by TOL and THRES(*) in SETUP.  The local error
+                in the reported values YGOT(*) has been controlled even when
+                TGOT differs from TWANT.
+    YPGOT(*)  - DOUBLE PRECISION array of length NEQ
+                Approximation to the first derivative of the true solution at
+                TGOT.  The local error has been controlled even when TGOT
+                differs from TWANT.
+    YMAX(*)   - DOUBLE PRECISION array of length NEQ
+                YMAX(L) is the largest value of ABS(Y(L)) computed at 
+                any step in the integration so far. (With METHODs 1 and 2,
+                YGOT(L) is computed by interpolation, so YMAX(L) might be 
+                a little larger in magnitude than any value ABS(YGOT(L))
+                reported so far.) 
+
+ WORKSPACE
+
+    WORK(*)   - DOUBLE PRECISION array specified in the subroutine SETUP.
+                Do not alter the contents of this array.
+
+ UT reports success by setting UFLAG = 1.  Difficulties with the integration
+ are reported by values UFLAG > 1.  If MESAGE was set .TRUE. in the call to
+ SETUP, details about the difficulties are written to the standard output
+ channel OUTCH. If UT fails catastrophically, for example if values of its
+ input variables are incompatible with those provided in SETUP, details are
+ written to the output channel OUTCH (even if MESAGE was set .FALSE.), and
+ the program STOPs.
+
+ OUTPUT VARIABLE
+
+    UFLAG     - INTEGER
+                      SUCCESS. TGOT = TWANT.
+                = 1 - Successful call. To compute an approximation at a new
+                      TWANT, just call UT again with the new value of TWANT.
+                      Do not alter any other variable.
+
+                      "SOFT FAILURES"
+                = 2 - This return is possible only when METHOD = 3. The code
+                      is being used inefficiently because the step size has
+                      been reduced drastically many times to get answers at
+                      many points TWANT.  If you really need the solution
+                      at this many points, you should change to METHOD = 2
+                      because it is (much) more efficient in this situation.
+                      To change METHOD, restart the integration from TGOT,
+                      YGOT(*) by a call to SETUP. If you wish to continue
+                      with METHOD = 3, just call UT again.  Do not alter any
+                      variable.  The monitor of this kind of inefficiency
+                      will be reset automatically so that the integration
+                      can proceed.
+                = 3 - A considerable amount of work has been expended in the
+                      (primary) integration. This is measured by counting the
+                      number of calls to the subroutine F. At least 5000
+                      calls have been made since the last time this counter
+                      was reset. Calls to F in a secondary integration for
+                      global error assessment (when ERRASS is set to .TRUE.
+                      in the initialization call to SETUP) are not counted
+                      in this total. The integration was interrupted, so TGOT
+                      is not equal to TWANT. If you wish to continue on
+                      towards TWANT, just call UT again. Do not alter any
+                      variable.  The counter measuring work will be reset to
+                      zero automatically.
+                = 4 - It appears that this problem is "stiff".  The methods
+                      implemented in UT can solve such problems, but they are
+                      inefficient.  You should change to another code based
+                      on methods appropriate for stiff problems.  If you want
+                      to continue on towards TWANT, just call UT again. Do
+                      not alter any variable.  The stiffness monitor will be
+                      reset automatically.
+
+                      "HARD FAILURES"
+                = 5 - It does not appear possible to achieve the accuracy 
+                      specified by TOL and THRES(*) in the call to SETUP with
+                      the precision available on this computer and with this
+                      value of METHOD.  You cannot continue integrating this
+                      problem. A larger value for METHOD, if possible, will
+                      permit greater accuracy with this precision.  To increase
+                      METHOD and/or continue with larger values of TOL and/or
+                      THRES(*), restart the integration from TGOT, YGOT(*) by a
+                      call to SETUP.
+                = 6 - The global error assessment may not be reliable beyond
+                      the current integration point TGOT. This may occur
+                      because either too little or too much accuracy has been
+                      requested or because f(t,y) is not smooth enough for
+                      values of t just past TGOT and current values of the
+                      solution y. The integration cannot be continued.  This
+                      return does not mean that you cannot integrate past TGOT,
+                      rather that you cannot do it with ERRASS = .TRUE..
+                      However, it may also indicate problems with the primary
+                      integration. 
+
+ Performance statistics are available after any return from UT by a call to
+ the subroutine STAT. IF ERRASS was set .TRUE. in the call to SETUP, global
+ error assessment is available after any return from UT by a call to the
+ subroutine GLBERR.
+
+ After a hard failure (UFLAG = 5 or 6) the diagnostic subroutines STAT and
+ GLBERR may be called only once. Other subroutines from RKSUITE may not
+ be called at all, except SETUP to restart the integration.
+
+-----------------End of Description of Subroutine UT------------------------
+
+------------------Description of Subroutine GLBERR--------------------------
+
+      SUBROUTINE GLBERR(RMSERR,ERRMAX,TERRMX,WORK)
+
+ To assess the true (global) error of the integration with CT or UT, set
+ ERRASS = .TRUE. in the call to SETUP.  After any call to CT or UT, GLBERR
+ may be called for information about the assessment.  The solution Y(*) is
+ computed in the primary integration. (The values YGOT(*) in UT and YNOW(*)
+ in CT result from the primary integration.)  A more accurate "true" solution
+ YT(L) is computed in a secondary integration.  The error is measured as
+ specified in SETUP for local error control.  At each step in the primary
+ integration, an average magnitude "size(L)" of component Y(L) is computed, and
+ the error in the component is
+
+            abs(Y(L) - YT(L))/max("size(L)",THRES(L)).
+
+ It is difficult to estimate reliably the true error at a single point. For 
+ this reason the RMS (root-mean-square) average of the estimated global error
+ in the Lth solution component is returned in RMSERR(L).  This average is taken
+ over all steps from TSTART through the current integration point.  If all has
+ gone well, the average errors reported in RMSERR(*) will be comparable to
+ TOL.  Other useful quantities are ERRMAX, the maximum error seen in any
+ component in the integration so far, and TERRMX, the point where the maximum
+ error first occurred.
+
+ You may call GLBERR only once after a hard failure in UT or CT.
+
+ OUTPUT VARIABLES
+
+    RMSERR(*) - DOUBLE PRECISION array of length NEQ
+                RMSERR(L) approximates the RMS average of the true error of
+                the numerical solution for the Lth solution component,
+                L = 1,2,...,NEQ.  The average is taken over all steps from
+                TSTART through the current integration point.  If all has
+                gone well, each component RMSERR(L) will be comparable to TOL.
+    ERRMAX    - DOUBLE PRECISION
+                The maximum weighted approximate true error taken over all
+                solution components and all steps from TSTART through the
+                current integration point.  If all has gone well, ERRMAX
+                will be comparable to TOL.
+    TERRMX    - DOUBLE PRECISION
+                First value of the independent variable where an approximate
+                true error attains the maximum value ERRMAX.
+
+ WORKSPACE
+
+    WORK(*)   - DOUBLE PRECISION array specified in the subroutine SETUP.
+                Do not alter the contents of this array.
+
+ The call to GLBERR is monitored. Any error is catastrophic. An error
+ message is written to the output channel OUTCH (even if MESAGE = .FALSE.),
+ and the program STOPs.
+
+-----------------End of Description of Subroutine GLBERR---------------------
+
+---------------------Description of Subroutine STAT--------------------------
+
+      SUBROUTINE STAT(TOTF,STPCST,WASTE,STPSOK,HNEXT)
+
+ STAT may be called after any call to UT or CT to obtain details about the
+ integration.
+
+ You may call STAT only once after a hard failure in UT or CT.
+
+
+ OUTPUT VARIABLES
+
+    TOTF      - INTEGER
+                Total number of calls to F in the integration so far --
+                a measure of the cost of the integration.
+    STPCST    - INTEGER
+                Cost of a typical step with this METHOD measured in
+                calls to F.
+    WASTE     - DOUBLE PRECISION
+                The number of attempted steps that failed to meet the local
+                error requirement divided by the total number of steps
+                attempted so far in the integration.  A "large" fraction
+                indicates that the integrator is having trouble with this
+                problem. This can happen when the problem is "stiff" and
+                also when the solution y(t) has discontinuities in a low
+                order derivative.
+    STPSOK    - INTEGER
+                The number of accepted steps.
+    HNEXT     - DOUBLE PRECISION
+                The step size the integrator plans to use for the next step.
+
+ The call to STAT is monitored. Any error is catastrophic. An error
+ message is written to the output channel OUTCH (even if MESAGE = .FALSE.),
+ and the program STOPs.
+
+-----------------End of Description of Subroutine STAT-----------------------
+
+************************ CT: Codes for Complicated Tasks **********************
+
+ CT is a member of a suite of codes, RKSUITE, for solving the initial value
+ problem for a first order system of ordinary differential equations by
+ Runge-Kutta methods.  SETUP is used to specify the problem and how it is to
+ be solved.  CT is used to advance the integration one step.  Another code,
+ UT, in RKSUITE is provided for the "Usual Task" of obtaining an approximate 
+ solution at a sequence of points.  The code CT is designed for the solution 
+ of more "Complicated Task"s that require close monitoring of the integration
+ and additional capabilities.  To make this code easier to use, less common 
+ demands are handled by means of the auxiliary subroutines INTRP and RESET.
+
+-----------------------------------------------------------------------------
+---------------------Description of Subroutine CT---------------------------
+
+      SUBROUTINE CT(F,TNOW,YNOW,YPNOW,WORK,CFLAG)
+
+
+ A call to SETUP must precede the first call to CT.  The results of this call
+ initializing the computation and the results of the previous call (if any)
+ to CT are retained in the array WORK(*), so the contents of this array must
+ not be altered between calls to CT.
+
+ CT is used to step from TSTART in the direction of TEND as specified in SETUP.
+ One way to use CT involves repeatedly resetting TEND, so a subroutine RESET
+ is provided for this purpose.  When CT is called, YNOW(*) approximates the
+ solution at TNOW and YPNOW(*) approximates the first derivative there. These 
+ quantities come from the preceding call to CT (SETUP on the first call).  If
+ the code encounters some difficulty in taking a step, it returns with these
+ values unaltered and provides an explanation by means of the value of CFLAG.
+ If all goes well, CT returns with CFLAG = 1, and YNOW(*) and YPNOW(*) are the
+ new values of the approximate solution at the end of a single step to the new
+ TNOW.  CT tries to advance the integration as far as possible subject to
+ passing the test on the local error and not going past TEND.  In the call to
+ SETUP, you specify that CT try HSTART as its first step size or that it
+ compute automatically an appropriate value.  Thereafter CT estimates an
+ appropriate step size for its next step. This value and other details of the
+ integration can be obtained after any call to CT by a call to the subroutine
+ STAT in RKSUITE.  The local error is controlled at every step as specified in
+ SETUP. If you wish to assess the true error, you must set ERRASS = .TRUE. in
+ the call to SETUP. This assessment can be obtained after any call to CT by a
+ call to the subroutine GLBERR.
+
+ There are three ways to use CT:
+
+ 1. Step from TSTART towards TEND, accepting answers at the points chosen by
+    the code.  This is often the best way to proceed when you want to see how
+    the solution behaves throughout the interval of integration because the
+    code will tend to produce answers more frequently where the solution
+    changes more rapidly (the step sizes tend to be smaller there).
+
+**  If you want answers at specific points, two ways to proceed are:
+
+ 2. The more efficient way is to step past the point where a solution is
+    desired, and then call a subroutine, INTRP, in RKSUITE to get an answer
+    there. Within the span of the current step, you can get all the answers
+    you want at very little cost by repeated calls to INTRP. This is very
+    valuable when you want to find where something happens, e.g., where a
+    particular solution component vanishes.  You cannot proceed in this
+    way with METHOD = 3.
+
+ 3. The other way to get an answer at a specific point is to set TEND to
+    this value and integrate to TEND.  CT will not step past TEND, so when a
+    step would carry it past, it will reduce the step size so as to produce
+    an answer at TEND exactly.  After getting an answer there (TNOW = TEND),
+    you can reset TEND to the next point where you want an answer, and
+    repeat. TEND could be reset by a call to SETUP, but you should not do
+    this. You should use the subroutine RESET because it is both easier to 
+    use and much more efficient.  This way of getting answers at specific 
+    points can be used with any of the METHODs, but it is the only way with
+    METHOD = 3.  It can be inefficient.  Should this be the case, the code 
+    will bring the matter to your attention.
+
+ The system of NEQ first order differential equations is defined by a
+ subroutine F(T,Y,YP) that you must provide.  You may give this subroutine any
+ name you like, but you must declare the name in an EXTERNAL statement in the
+ program that calls CT.  This subroutine must have the form
+
+ SUBROUTINE F(T,Y,YP)
+ ...Scalar arguments and other scalar variables...
+ DOUBLE PRECISION T
+ ...Array arguments and other array variables...
+ DOUBLE PRECISION Y(*),YP(*)
+    Given input values of the independent variable T and the solution
+    components Y(*), for each L = 1,2,...,NEQ evaluate the differential
+    equation for the derivative of the Lth solution component and place the
+    value in YP(L).  Do not alter the input values of T and Y(*).
+ RETURN
+ END
+
+ NAME DECLARED IN AN EXTERNAL STATEMENT IN THE PROGRAM CALLING CT:
+
+    F         - name of the subroutine for evaluating the differential
+                equations
+
+ On each call, CT tries to take a step from the current value of TNOW
+ (initially TSTART) in the direction of TEND.  On the previous call, the code
+ estimated an appropriate step size.  (On the first call, either you provide
+ the step size, or one is determined automatically.)  If this step size is too
+ big for the formula to achieve the specified accuracy, the code will adjust
+ the step size and try again.  It keeps trying until it produces a solution
+ that is sufficiently accurate, or it decides to report that it has run into
+ trouble via CFLAG (and the standard output channel OUTCH if MESAGE was set
+ .TRUE. in SETUP).  In any case, the values returned in YNOW(*) and YPNOW(*)
+ satisfy the specified accuracy requirement at the value TNOW returned.
+
+ OUTPUT VARIABLES
+
+    TNOW      - DOUBLE PRECISION
+                Current value of the independent variable after a step
+                towards TEND.
+    YNOW(*)   - DOUBLE PRECISION array of length NEQ
+                Approximation to the solution at TNOW.  The local error
+                of the step to TNOW was no greater than permitted by the
+                tolerances TOL, THRES(*) as specified in SETUP.
+    YPNOW(*)  - DOUBLE PRECISION array of length NEQ
+                Approximation to the derivative of the solution at TNOW.
+
+ WORKSPACE
+
+    WORK(*)   - DOUBLE PRECISION array specified in the subroutine SETUP.
+                Do not alter the contents of this array.
+
+ CT reports success by setting CFLAG = 1.  Difficulties with the integration
+ are reported by values of CFLAG > 1.  In such cases the integration has not
+ advanced and TNOW, YNOW(*), and YPNOW(*) are unchanged.  If MESAGE was set 
+ .TRUE. in the call to SETUP, some details about the difficulty are written 
+ to the standard output channel OUTCH. The call to CT is monitored. If a
+ catastrophic error is detected, for  example when CT has been called out of
+ context, then an error message is written to the output channel OUTCH (even
+ if MESAGE was set to .FALSE.), and the program STOPs.
+
+ Performance statistics are available after any return from CT by a call to
+ the subroutine STAT. IF ERRASS was set .TRUE. in the call to SETUP, global
+ error assessment is available after any return from CT by a call to the
+ subroutine GLBERR.
+
+ After a hard failure (CFLAG = 5 or 6) the diagnostic subroutines STAT and
+ GLBERR may be called only once. Other subroutines from RKSUITE may not
+ be called at all, except SETUP to restart the integration.
+
+    CFLAG     - INTEGER
+                      "SUCCESS"
+                = 1 - Successful call.  A step was taken to TNOW.  To
+                      continue the integration in the direction of TEND,
+                      just call CT again.  Do not alter any variables.
+
+                      "SOFT FAILURE"
+                = 2 - The code is being used inefficiently because the step
+                      size has been reduced drastically many times to get
+                      answers at many values of TEND. If you really need the
+                      solution at this many specific points, you should
+                      use INTRP to get the answers inexpensively.  If you
+                      need to change METHOD for this purpose, restart the
+                      integration from TNOW, YNOW(*) by a call to SETUP. If
+                      you wish to continue as before, just call CT again. Do
+                      not alter any variable.  The monitor of this kind of
+                      inefficiency will be reset automatically so that the
+                      integration can proceed.
+                = 3 - A considerable amount of work has been expended in the
+                      (primary) integration. This is measured by counting the
+                      number of calls to the subroutine F. At least 5000 calls
+                      have been made since the last time this counter was
+                      reset.  Calls to F in a secondary integration for global
+                      error assessment (when ERRASS is set to .TRUE. in the
+                      initialization call to SETUP) are not counted in this
+                      total.  If you wish to continue on towards TEND, just
+                      call CT again.  Do not alter any variable.  The counter
+                      measuring work will be reset to zero automatically.
+                = 4 - It appears that this problem is "stiff".  The methods
+                      implemented in CT can solve such problems, but they
+                      are inefficient.  You should change to another code
+                      based on methods appropriate for stiff problems.  If
+                      you want to continue, just call CT again. Do not alter
+                      any variable. The stiffness monitor will be reset
+                      automatically.
+
+                      "HARD FAILURE"
+                = 5 - It does not appear possible to achieve the accuracy 
+                      specified by TOL and THRES(*) in the call to SETUP with
+                      the precision available on this computer and with this
+                      value of METHOD.  You cannot continue integrating this
+                      problem. A larger value for METHOD, if possible, will
+                      permit greater accuracy with this precision.  To increase
+                      METHOD and/or continue with larger values of TOL and/or
+                      THRES(*), restart the integration from TNOW, YNOW(*) by a
+                      call to SETUP.
+                = 6 - The global error assessment may not be reliable beyond
+                      the current integration point TNOW. This may occur
+                      because either too little or too much accuracy has been
+                      requested or because f(t,y) is not smooth enough for
+                      values of t just past TNOW and current values of the
+                      solution y. The integration cannot be continued.  This
+                      return does not mean that you cannot integrate past TNOW,
+                      rather that you cannot do it with ERRASS = .TRUE..
+                      However, it may also indicate problems with the primary
+                      integration. 
+
+ Statistics of the performance of CT are available after any return from CT
+ by a call to the subroutine STAT. IF ERRASS was set .TRUE. in the call to
+ SETUP, global error assessment is available after any return from CT by a
+ call to the subroutine GLBERR.
+
+ After a hard failure (CFLAG = 5 or 6) the diagnostic subroutines STAT and
+ GLBERR may be called only once. Other subroutines from RKSUITE may not
+ be called at all, except SETUP to restart the integration.
+
+-----------------End of Description of Subroutine CT-------------------------
+
+--------------------Description of Subroutine RESET--------------------------
+
+      SUBROUTINE RESET(TENDNU)
+
+ In the description of CT it is explained how to get answers at specific values
+ of the independent variable by resetting TEND.  SETUP could be used to reset
+ TEND, but there are good reasons for calling RESET for this specific task:
+
+ *  RESET is simpler to use.
+
+ *  RESET is much more efficient than SETUP because it only resets the
+    value of a variable whereas SETUP completely restarts the integration.
+
+ The integration proceeds from TSTART in the direction of TEND, and at
+ present is at TNOW.  To change TEND to a new value TENDNU, just call RESET
+ with TENDNU as the argument.  You must continue integrating in the same
+ direction, so the sign of (TENDNU - TNOW) must be the same as the sign of
+ (TEND - TSTART). To change direction of integration you must restart by a
+ call to SETUP.  RESET cannot be called after a call to UT.
+
+ INPUT VARIABLE
+
+    TENDNU    - DOUBLE PRECISION
+                The new value of TEND.
+                Constraints: sign(TENDNU - TNOW) = sign(TEND - TSTART).
+                TEND must be clearly distinguishable from TNOW in the
+                precision available.
+
+ The call to RESET is monitored. Any error is catastrophic. An error
+ message is written to the output channel OUTCH (even if MESAGE = .FALSE.),
+ and the program STOPs.
+
+-----------------End of Description of Subroutine RESET----------------------
+
+---------------------Description of Subroutine INTRP-------------------------
+
+      SUBROUTINE INTRP(TWANT,REQEST,NWANT,YWANT,YPWANT,F,WORK,WRKINT,LENINT)
+
+ In the description of CT it is explained that when integrating with METHOD =
+ 1 or 2, answers can be obtained inexpensively by interpolation.  Subroutine
+ INTRP is provided for this purpose.  Within the span of each step the solution
+ is approximated by a polynomial of degree MINT = 3 when METHOD = 1 and a
+ polynomial of degree MINT = 6 when METHOD = 2.  The polynomials can be
+ evaluated anywhere, but the theory assures accurate approximations for the
+ solution and its first derivative only within the span of the current step, or
+ very close to it. The interpolants for successive steps connect to form a
+ piecewise-polynomial approximation over the whole interval of integration that
+ is continuous and has a continuous derivative (in the precision available).
+
+ With METHOD = 1, the interpolant uses just solution and derivative
+ information returned after calls to CT. The matter is more complicated and
+ expensive with METHOD = 2.  In the latter case additional calls to the
+ derivative evaluation subroutine F are needed to initialize the computation.
+ Although more expensive than for METHOD = 1, this extra cost is incurred
+ only on those steps where you require interpolation, and then only once per
+ step, no matter how many answers you require in the span of the step. In
+ either case it is far more efficient to let the code work with the largest
+ step size that will yield the desired accuracy and obtain answers by
+ interpolation than to obtain answers by reducing the step size so as to
+ step to the points where the answers are desired.
+
+ INTRP is called after a successful step by CT from a previous value of TNOW,
+ called TOLD below, to the current value of TNOW to get an answer at TWANT.
+ You can specify any value of TWANT you wish, but specifying a value outside
+ the interval [TOLD,TNOW], called "extrapolation," is likely to yield answers
+ with unsatisfactory accuracy.
+
+ Warning: You cannot call INTRP after a return from CT with any kind of 
+ failure.  You cannot call INTRP when you are using UT.
+
+ INPUT VARIABLE
+
+    TWANT     - DOUBLE PRECISION
+                The value of the independent variable where a solution
+                is desired.
+
+ The interpolant is to be evaluated at TWANT to approximate the solution
+ and/or its first derivative there.  There are three cases:
+
+    REQEST    - CHARACTER*(*)
+                Only the first character of REQEST is significant.
+                REQEST(1:1) = `S' or `s'- compute approximate `S'olution only.
+                            = `D' or `d'- compute approximate first
+                                          `D'erivative of the solution only.
+                            = `B' or `b'- compute `B'oth approximate solution
+                                          and first derivative.
+                Constraint: REQEST(1:1) must be `S',`s',`D',`d',`B' or `b'.
+
+ Often you will not want all the components of the solution and/or its
+ derivative.  INTRP approximates only the first NWANT components. By arranging
+ that the components interesting to you are among the first NWANT components,
+ you can reduce the overhead.  If you intend to interpolate only a few
+ components but at many points, this capability can be worth your while.
+
+    NWANT     - INTEGER
+                The first NWANT components of the answer are to be computed.
+                Constraint:  NEQ >= NWANT >= 1
+
+ OUTPUT VARIABLES
+
+    YWANT(*)  - DOUBLE PRECISION array of length NWANT
+                Approximation to the first NWANT components of the true
+                solution at TWANT when REQuESTed. YWANT(*) is not defined
+                when the solution is not REQuESTed.
+    YPWANT(*) - DOUBLE PRECISION array of length NWANT
+                Approximation to the first NWANT components of the first
+                derivative of the true solution at TWANT when REQuESTed.
+                YPWANT(*) is not defined when the derivative of the solution
+                is not REQuESTed.
+
+ Because INTRP may need to evaluate the differential equations, it must be
+ supplied with the name of the subroutine you provided to CT for evaluating
+ the differential equations.
+
+ NAME DECLARED IN AN EXTERNAL STATEMENT IN THE PROGRAM CALLING INTRP:
+
+    F         - name of the subroutine for evaluating the differential
+                equations provided to CT.
+
+ INTRP requires information about the last step from CT.  This is
+ communicated by means of the workspace.
+
+ WORKSPACE
+
+    WORK(*)   - DOUBLE PRECISION array specified in the subroutine SETUP.
+                Do not alter the contents of this array.
+
+ A small amount of additional workspace is required for interpolation.
+
+    WRKINT(*) - DOUBLE PRECISION array of length LENINT
+                Do not alter the contents of this array.
+
+ INPUT VARIABLE
+
+    LENINT    - INTEGER
+                Length of WRKINT. If
+                METHOD = 1, LENINT must be at least 1
+                       = 2, LENINT must be at least NEQ+MAX(NEQ,5*NWANT)
+                       = 3--CANNOT USE THIS SUBROUTINE
+
+ The call to INTRP and the data input are monitored. Any error is
+ catastrophic. An error message is written to the output channel OUTCH
+ (even if MESAGE = .FALSE.), and the program STOPs.
+
+----------------End of Description of Subroutine INTRP----------------------
+
+----------------End of RKSUITE Subroutine Documentation---------------------
+
+-----------------------------ACKNOWLEDGEMENTS-------------------------------
+
+ P.J. Prince and J.R. Dormand of Teesside Polytechnic developed one of 
+ the pairs of Runge-Kutta formulas used in RKSUITE and P. Bogacki of Old
+ Dominion University and one of the authors developed the others.  We
+ are grateful for the assistance these friends and colleagues gave us in
+ implementing their formulas.  We also wish to thank G. Kraut of Southern
+ Methodist University for her meticulous testing of the codes and valuable
+ comments about the user interface.
+
+ NATO Scientific Affairs Division (Grant 898/83) funded early joint work
+ of I. Gladwell and L.F. Shampine that led to the development of RKSUITE.
+ R.W. Brankin's involvement was entirely funded by the Numerical Algorithms
+ Group Ltd. Some of L.F. Shampine's research on basic algorithms used later
+ in RKSUITE was supported in part by the Applied Mathematical Sciences
+ program of the Office of Energy Research of the U.S. Department of Energy.
+
+--------------------------------REFERENCES-----------------------------------
+
+ Some of the references that follow describe the formulas and algorithms 
+ used in RKSUITE.  Others describe the design, implementation, and testing
+ of codes based on explicit Runge-Kutta formulas and the development of
+ additional capabilities that played a more-or-less direct role in the
+ development of RKSUITE.
+
+ C.A. Addison, W.H. Enright, P.W. Gaffney, I. Gladwell, and P.M. Hanson,
+ "A Decision Tree for the Numerical Solution of Initial Value Ordinary
+ Differential Equations",  ACM Trans. on Math. Soft., 16 (1991), to appear.
+
+ P. Bogacki and L.F. Shampine, "A 3(2) Pair of Runge-Kutta Formulas", Appl.
+ Math. Lett., 2 (1989) 321-325.
+
+ P. Bogacki and L.F. Shampine, "An Efficient Runge-Kutta (4,5) Pair", Rept.
+ 89-20, Math. Dept., Southern Methodist University, Dallas, Texas, USA, 1989.
+
+ R.W. Brankin, J.R. Dormand, I. Gladwell, P.J. Prince, and W.L. Seward,
+ "A Runge-Kutta-Nystrom Code",  ACM Trans. on Math. Soft., 15 (1989) 31-40.
+
+ R.W. Brankin, I. Gladwell, and L.F. Shampine, RKSUITE: a Suite of
+ Runge-Kutta Codes for the Initial Value Problem for ODEs, Softreport 91-1,
+ Math. Dept., Southern Methodist University, Dallas, Texas, U.S.A, 1991.
+
+ R.W. Brankin and I. Gladwell, "Using Shape Preserving Local Interpolants
+ for Plotting Solutions of Ordinary Differential Equations", IMA J. of
+ Numer. Anal., 9 (1989) 555-566.
+
+ R.W. Brankin, I. Gladwell, and L.F. Shampine, "Starting Adams and BDF
+ Codes at Optimal Order", J. Comp. Appl. Math., 21 (1988) 357-368.
+
+ I. Gladwell, "Initial Value Routines in the NAG Library", ACM Trans. on
+ Math. Soft., 5 (1979) 386-400.
+
+ I. Gladwell, J.A.I. Craigie, and C.R. Crowther, "Testing Initial Value
+ Routines as Black Boxes", Numer. Anal. Rept. 34, Math. Dept., Univ. of
+ Manchester, U.K., 1979.
+
+ I. Gladwell, M. Berzins, and M. Brankin, "Design of Stiff Integrators
+ in the NAG Library, SIGNUM Newsletter, 23 (1988) 16-23.
+
+ I. Gladwell, L.F. Shampine, L.S. Baca and R.W. Brankin, "Practical Aspects
+ of Interpolation with Runge-Kutta Codes",  SIAM J. Sci., Stat. Comp., 8
+ (1987) 322-341.
+
+ I. Gladwell, L.F. Shampine and R.W. Brankin,"Automatic Selection of the
+ Initial Step Size for an ODE Solver",  J. Comp. Appl. Math., 18 (1987)
+ 175-192.
+
+ I. Gladwell, L.F. Shampine and R.W. Brankin, "Locating Special Events When
+ Solving ODEs",  Appl. Math. Lett.,  1 (1988) 153-156.
+
+ G. Kraut, "A Comparison of RKSUITE with Runge-Kutta Codes from the IMSL, NAG
+ and SLATEC Libraries", Report 91-6, Math. Dept., Southern Methodist
+ University, Dallas, Texas, U.S.A., 1991.
+
+ P.J. Prince and J.R. Dormand, " High Order Embedded Runge-Kutta Formulae",
+ J. Comput. Appl. Math., 7 (1981), 67-85.
+
+ L.F. Shampine, "Local Extrapolation in the Solution of Ordinary
+ Differential Equations", Math. Comp., 27 (1973) 91-97.
+
+ L.F. Shampine, "Limiting Precision in Differential Equation Solvers", Math.
+ Comp., 28 (1974) 141-144.
+
+ L.F. Shampine, "Storage Reduction for Runge-Kutta Codes", ACM Trans. on
+ Math. Soft., 5 (1979) 245-250.
+
+ L.F. Shampine, "Stiffness and Non-Stiff Differential Equation Solvers II:
+ Detecting Stiffness with Runge-Kutta Methods", ACM Trans. on Math. Soft.,
+ 3 (1977) 44-53.
+
+ L.F. Shampine, "Local Error Control in Codes for Ordinary Differential
+ Equations", Appl. Math. Comp., 3 (1977) 189-210.
+
+ L.F. Shampine, "Limiting Precision in Differential Equation Solvers II:
+ Sources of Trouble and Starting a Code", Math. Comp., 32 (1978) 1115-1122.
+
+ L.F. Shampine, "Lipschitz Constants and Robust ODE Codes", pp. 427-449 in
+ J.T. Oden, ed., Computational Methods in Nonlinear Mechanics,
+ North-Holland, Amsterdam, 1980.
+
+ L.F. Shampine, "Estimating the Cost of Output in ODE Codes", Matematica
+ Aplicada e Computacional, 2 (1983) 157-169.
+
+ L.F. Shampine, "Stiffness and the Automatic Selection of ODE Code", J.
+ Comp. Phys., 54 (1984) 74-86.
+
+ L.F. Shampine, "Stability of Explicit Runge-Kutta Methods", Comp. & Maths.
+ with Applics., 10 (1984) 419-432.
+
+ L.F. Shampine, "Measuring Stiffness", Appl. Numer. Math., 1 (1985) 107-119.
+
+ L.F. Shampine, "The Step Sizes Used by One-Step Codes for ODEs", Appl.
+ Numer. Math., 1 (1985) 95-106.
+
+ L.F. Shampine, "Interpolation for Runge-Kutta Methods", SIAM J. Numer.
+ Anal., 22 (1985) 1014-1027.
+
+ L.F. Shampine, "Global Error Estimation with One-Step Methods", Comp. &
+ Maths. with Applics., 12A (1986) 885-894.
+
+ L.F. Shampine, "Some Practical Runge-Kutta Formulas", Math. Comp., 46
+ (1986) 135-150.
+
+ L.F. Shampine, "Interpolation for Variable Order Runge-Kutta Methods",
+ Comp. & Maths. with Applics., 14 (1987) 255-260.
+
+ L.F. Shampine, "Tolerance Proportionality in ODE Codes", pp. 118-136 in
+ Numerical Methods in ODEs, A. Bellen et al., eds.,Lecture Notes in Math.
+ #1386, Springer, Berlin, 1989.
+
+ L.F. Shampine, "Diagnosing Stiffness for Runge-Kutta Methods", SIAM J.
+ Sci., Stat. Comput., 12 (1991) 260-272.
+
+ L.F. Shampine and L.S. Baca, "Fixed vs. Variable Order Runge-Kutta", ACM
+ Trans. on Math. Soft., 12 (1986) 1-23.
+
+ L.F. Shampine, S.M. Davenport, and H.A. Watts, " Comparison of Some Codes
+ for the Initial Value Problem for Ordinary Differential Equations", pp.
+ 349-353 in Numerical Solutions of Boundary Value Problems for Ordinary
+ Differential Equations, A. K. Aziz, ed., Academic, New York,1975.
+
+ L.F. Shampine, S.M. Davenport, and H.A. Watts, "Solving Nonstiff Ordinary
+ Differential Equations -- the State of the Art", SIAM Review, 18 (1976)
+ 376-411.
+
+ L.F. Shampine and I. Gladwell, "The Next Generation of Runge-Kutta
+ Codes", in Computational ODEs, J.R.Cash and I.Gladwell, eds., Oxford
+ University Press, 1991, to appear.
+
+ L.F. Shampine, I. Gladwell, and R.W. Brankin, "Reliable Solution of Special
+ Root Finding Problems for ODE's",  ACM Trans. on Math. Soft., 17 (1991)
+ 11-25.
+
+ L.F. Shampine and M.K. Gordon, "Numerical Solution of Ordinary Differential
+ Equations: the Initial Value Problem", W. H. Freeman and Co., San
+ Francisco, 1975.
+
+ L.F. Shampine, M.K. Gordon and J.A. Wisniewski, "Variable order
+ Runge-Kutta codes", pp. 83-101 in Computational Techniques for Ordinary
+ Differential Equations, I. Gladwell and D.K. Sayers, eds., Academic,
+ London, 1980.
+
+ L.F. Shampine and H.A. Watts, "Comparing Error Estimators for Runge-Kutta
+ methods", Math. Comp., 25 (1971) 445-455.
+
+ L.F. Shampine and H.A. Watts, "Global Error Estimation for Ordinary
+ Differential Equations", ACM Trans. on Math. Soft., 2 (1976) 172-186.
+
+ L.F. Shampine and H.A. Watts, "The Art of Writing a Runge-Kutta Code,
+ Part I", in Mathematical Software III, J. R. Rice, ed., Academic,
+ New York, 1977.
+
+ L.F. Shampine and H.A. Watts, "The Art of Writing a Runge-Kutta Code, II",
+ Appl. Math. Comp., 5 (1979) 93-121.
+
+ H.A. Watts, "Step Size Control in Ordinary Differential Equation Solvers",
+ Trans. Soc. for Computer Simulation, 1 (1984), 15-25.
+
+************************** Installation Details *******************************
+
+ All machine-dependent aspects of the suite have been isolated in the
+ subroutine ENVIRN in the rksuite.for file.  Certain environmental parameters
+ must be specified in this subroutine.  The values in the distribution version
+ are those appropriate to the IEEE arithmetic standard.  They must be altered,
+ if necessary, to values appropriate to the computing system you are using
+ before calling the codes of the suite. If the IEEE arithmetic standard values
+ are not appropriate for your system, appropriate values can often be obtained
+ by calling routines named in the Comments of ENVIRN.
+
+       ================================================================
+       ================================================================
+         TO MAKE SURE THAT YOU SPECIFY THESE MACHINE AND INSTALLATION 
+         DEPENDENT QUANTITIES PROPERLY, WHEN THE DISTRIBUTION VERSION IS
+         CALLED IT WRITES A MESSAGE ABOUT THE QUANTITIES TO THE STANDARD 
+         OUTPUT CHANNEL THEN TERMINATES THE RUN.  THE VALUES PROVIDED IN 
+         THE DISTRIBUTION VERSION SHOULD BE ALTERED, IF NECESSARY, THEN
+         THE "WRITE" AND "STOP" STATEMENTS MUST BE COMMENTED OUT.
+       ================================================================
+       ================================================================
+
+ The values of the coefficients of the Runge-Kutta methods are supplied in
+ the subroutine CONST as DOUBLE PRECISION constants. Some of the coefficients
+ are given to 30 significant figures.  It is likely that your compiler will
+ round these constants correctly to the nearest representable machine number.
+ If possible, you should request your compiler to round the constants rather
+ than truncate them.  Your compiler might warn you that it has shortened
+ the representation of the constants. The warning does not imply anything is
+ wrong, but you might wish to take action to avoid receiving such messages
+ every time you compile RKSUITE.
+
+************************** Organization Details *******************************
+
+ The file details.doc shows how the codes are organized.  Included are:
+ (1) The ordering of the subroutines in the file rksuite.for.
+ (2) For each subroutine, there is a brief description, a list of
+     subroutines it calls,and a list of subroutines that call it directly.
+ (3) A description of the COMMON blocks used for communication throughout
+     the suite.
+ (4) Details of the usage of the COMMON blocks, including which routines
+     initialize, read, or alter variables in each block.
+
+************************ End of rksuite.doc *******************************
