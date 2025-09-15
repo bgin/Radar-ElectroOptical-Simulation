@@ -1,7 +1,11 @@
 
 
+#include <fstream>
 #include "GMS_trapezoid_waveform.h"
-
+#include "GMS_sse_memset.h"
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 0
+#include <cmath>
+#endif 
 
 #if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
 
@@ -436,6 +440,25 @@ if( sign < 0 )
 return( z );
 }
 
+__ATTR_ALWAYS_INLINE__
+static inline 
+float ceph_acosf(const float x ) {
+if( x < -1.0f )
+	goto domerr;
+
+if( x < -0.5f) 
+	return( 3.14159265358979323846f
+                - 2.0f * ceph_asinf(ceph_sqrtf(0.5f*(1.0f+x)) ) );
+if( x > 1.0f ) {
+domerr:
+	return( 0.0f );
+}
+if( x > 0.5f )
+	return( 2.0f * ceph_asinf(  ceph_sqrtf(0.5f*(1.0f-x) ) ) );
+	
+return(1.5707963267948966192f - ceph_asinf(x) );
+}
+
 #endif 
 
 
@@ -498,5 +521,141 @@ gms::radiolocation
     this->__n_param_m__               = std::move(other.__n_param_m__);
     this->__trapezw_samples__.operator=(std::move(other.__trapezw_samples__));
     return (*this);
+}
+
+void
+gms::radiolocation 
+::trapezoid_waveform_t
+::init_storage(const float filler)
+{
+#if (INIT_BY_STD_FILL) == 0
+     using namespace gms::common;
+	 sse_memset_unroll8x_ps(&this->__trapezw_samples__.m_data[0],filler,this->__n_samples__);
+#else 
+     std::fill(this->__trapezw_samples__,this->__trapezw_samples__+this->__n_samples__,filler);
+#endif 
+}
+
+void
+gms::radiolocation
+::trapezoid_waveform_t
+::create_signal_plot(const std::uint32_t n_samp,
+                    const float * __restrict sig_arg,
+                    const float * __restrict sig_val,
+                    const std::string &header,
+                    const std::string &title,
+                    const bool is_sig_arg_present)
+{
+    std::string plot_fname;
+    std::string sig_fname;
+    std::ofstream plot_unit;
+    std::ofstream sig_unit;
+    sig_fname = header+"_plot.txt";
+    sig_unit.open(sig_fname.c_str());
+    if(is_sig_arg_present==true)
+    {
+        for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+        {
+            sig_unit << " " << sig_arg[__i] << " "
+                            << sig_val[__i] << "\n";
+        }
+    }
+    else
+    {
+        for(std::size_t __i{0ull}; __i != n_samp; ++__i)
+        {
+            sig_unit << " " << sig_arg[__i] << "\n";
+         
+        }
+    }
+    sig_unit.close();
+    std::cout << "Created signal data file \"" << sig_fname << "\".\n";
+    plot_fname = header+"plot_commands.txt";
+    plot_unit.open(plot_fname.c_str());
+    plot_unit << "#" << plot_fname << "\n";
+    plot_unit << "#\n";
+    plot_unit << "# Usage:\n";
+    plot_unit << "# gnuplot < " << plot_fname << "\n";
+    plot_unit << "#\n";
+    plot_unit << "set term png\n";
+    plot_unit << "set output \"" << header << ".png\"\n";
+    plot_unit << "set xlabel 't'\n";
+    plot_unit << "set ylabel 'y(t)'\n";
+    plot_unit << "set title '" << title << "'\n";
+    plot_unit << "set grid\n";
+    plot_unit << "set style data lines\n";
+    if(is_sig_arg_present==true)
+    {
+            plot_unit << "plot \"" << sig_fname << "\" using 1:2 lw 1 linecolor rgb \"red\"\n";
+    }
+    else
+    {
+            plot_unit << "plot \"" << sig_fname << "\" lw 1 linecolor rgb \"red\"\n";
+    }
+    plot_unit << "quit\n";
+    plot_unit.close();
+    std::cout << " Created signal data file \"" << plot_fname << "\"\n";
+}
+
+void 
+gms::radiolocation
+::trapezoid_waveform_t
+::create_single_trapezoid_wave(const float a,
+                               const float m,
+						       const float l,
+						       const float c)
+{
+	 constexpr float PI{3.14159265358979323846264338328f};
+	 float     a_over_PI{a/PI};
+	 float     PI_over_m{PI/m};
+     float     sum;
+	 for(std::uint32_t __i{0}; __i != this->__n_samples__; ++__i)
+	 {
+		 const float t__i{static_cast<float>(__i)};
+		 const float arg{PI_over_m*t__i+l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+         const float t_as{ceph_asinf(ceph_sinf(arg))};
+		 const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+         const float t_as{std::asin(std::sin(arg))};
+		 const float t_ac{std::acos(std::cos(arg))};
+#endif 
+         const float t_0{a_over_PI*(t_as+t_ac)};
+		 const float t_1{t_0-5.0f+c};
+		 this->__trapezw_samples__.m_data[__i] = t_1;
+	 }
+}
+
+void 
+gms::radiolocation
+::trapezoid_waveform_t
+::create_single_trapezoid_wave_coded(const float a,
+                                     const float m,
+						             const float l,
+						             const float c,
+									 darray_r4_t &code_seq)
+{
+	 if(__builtin_expect(this->__n_samples__!=code_seq.mnx,0)) return;
+     constexpr float PI{3.14159265358979323846264338328f};
+	 const float * p_code_seq{&code_seq.m_data[0]};
+	 float     a_over_PI{a/PI};
+	 float     PI_over_m{PI/m};
+     float     sum;
+	 for(std::uint32_t __i{0}; __i != this->__n_samples__; ++__i)
+	 {
+		 const float t__i{static_cast<float>(__i)};
+		 const float arg{PI_over_m*t__i+l};
+		 const float t_code_seq{p_code_seq[__i]};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+         const float t_as{ceph_asinf(ceph_sinf(arg))};
+		 const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+         const float t_as{std::asin(std::sin(arg))};
+		 const float t_ac{std::acos(std::cos(arg))};
+#endif 
+         const float t_0{a_over_PI*(t_as+t_ac)};
+		 const float t_1{t_0-5.0f+c};
+		 this->__trapezw_samples__.m_data[__i] = t_1*t_code_seq;
+	 }
 }
 

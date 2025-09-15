@@ -171,6 +171,23 @@ namespace radiolocation
 
                     trapezoid_waveform_t & operator=(trapezoid_waveform_t &&);
 
+                    void init_storage(const float);
+
+                    static void create_signal_plot(const std::uint32_t,
+                                                   const float * __restrict,
+                                                   const float * __restrict,
+                                                   const std::string &,
+                                                   const std::string &,
+                                                   const bool );
+                    /* Create single trzpezoid waveform*/
+                    void create_single_trapezoid_wave(const float,const float,
+                                                      const float,const float);
+
+                    /* Create single trapezoid wave coded sequence added*/
+                    void create_single_trapezoid_wave_coded(const float,const float,
+                                                            const float,const float,
+                                                            darray_r4_t &);
+
                     
             };
 }
