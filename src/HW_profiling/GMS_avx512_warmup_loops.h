@@ -9,8 +9,6 @@
 
 
 __ATTR_ALWAYS_INLINE__
-__ATTR_HOT__
-__ATTR_ALIGN__(32)
 static inline
 int32_t avx512_warmup_loop1_ps(const float * volatile __restrict in_a,
                                const float * volatile __restrict in_b,
