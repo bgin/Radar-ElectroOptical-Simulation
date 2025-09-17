@@ -179,14 +179,45 @@ namespace radiolocation
                                                    const std::string &,
                                                    const std::string &,
                                                    const bool );
-                    /* Create single trzpezoid waveform*/
-                    void create_single_trapezoid_wave(const float,const float,
-                                                      const float,const float);
+                    /* Create single trapezoid waveform*/
+                    void single_trapezoid_wave(const float,
+                                               const float,
+                                               const float,
+                                               const float);
 
                     /* Create single trapezoid wave coded sequence added*/
-                    void create_single_trapezoid_wave_coded(const float,const float,
-                                                            const float,const float,
-                                                            darray_r4_t &);
+                    void single_trapezoid_wave_coded(const float,
+                                                     const float,
+                                                     const float,
+                                                     const float,
+                                                     darray_r4_t &);
+                     /* Create series of trapezoid waves (shaping the curve)*/
+                    void series_of_trapezoid_waves(const float,
+                                                   const float,
+                                                   const float,
+                                                   const float,
+                                                   const std::uint32_t);
+                     
+                       /* Create series of trapezoid waves, unroll the outer loop 2 times*/
+                    void series_of_trapezoid_waves_u2x(const float,
+                                                       const float,
+                                                       const float,
+                                                       const float);
+                    
+                      /* Create series of trapezoid waves, unroll the outer loop 4 times*/
+                    void series_of_trapezoid_waves_u4x(const float,
+                                                       const float,
+                                                       const float,
+                                                       const float);
+
+                    /* Creat series of trapezoid waves modulated by the coded sequence.
+                       non-shaped*/
+                    void series_of_trapezoid_waves_coded(const float,
+                                                         const float,
+                                                         const float,
+                                                         const float,
+                                                         const std::uint32_t, 
+                                                         darray_r4_t &);
 
                     
             };
