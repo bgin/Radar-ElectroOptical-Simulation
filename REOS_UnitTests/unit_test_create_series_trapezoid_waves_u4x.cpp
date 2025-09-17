@@ -6,18 +6,18 @@
 #include "GMS_trapezoid_waveform.h"
 
 /*
-   icpc -o unit_test_create_trapezw_single -fp-model -std=c++17 fast=2 -ftz -ggdb -ipo -march=skylake-avx512 -mavx512f -falign-functions=32 -w1 -qopt-report=5  \
-   GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h  GMS_dyn_array.h GMS_sse_memset.h GMS_sse_memset.cpp GMS_trapezoid_waveform.h GMS_trapezoid_waveform.cpp unit_test_create_single_trapezoid_wave.cpp
+   icpc -o unit_test_create_trapezw_series_u4x -fp-model -std=c++17 fast=2 -ftz -ggdb -ipo -march=skylake-avx512 -mavx512f -falign-functions=32 -w1 -qopt-report=5  \
+   GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h  GMS_dyn_array.h GMS_sse_memset.h GMS_sse_memset.cpp GMS_trapezoid_waveform.h GMS_trapezoid_waveform.cpp unit_test_create_series_trapezoid_waves_u4x.cpp
    ASM: 
-   icpc -S -fverbose-asm -masm=intel  -std=c++17 -march=skylake-avx512 -mavx512f -falign-functions=32 GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h  GMS_dyn_array.h GMS_sse_memset.h GMS_sse_memset.cpp GMS_trapezoid_waveform.h GMS_trapezoid_waveform.cpp unit_test_create_single_trapezoid_wave.cpp
+   icpc -S -fverbose-asm -masm=intel  -std=c++17 -march=skylake-avx512 -mavx512f -falign-functions=32 GMS_config.h GMS_malloc.h GMS_fast_pmc_access.h  GMS_dyn_array.h GMS_sse_memset.h GMS_sse_memset.cpp GMS_trapezoid_waveform.h GMS_trapezoid_waveform.cpp unit_test_create_series_trapezoid_waves_u4x.cpp
 
 */
 
 __attribute__((hot))
 __attribute__((noinline))
-void unit_test_create_trapezw_single();
+void unit_test_create_trapezw_series_u4x();
 
-void unit_test_create_trapezw_single()
+void unit_test_create_trapezw_series_u4x()
 {
      using namespace gms::radiolocation;
      constexpr std::size_t   n_samples{1024ull};
@@ -49,16 +49,16 @@ void unit_test_create_trapezw_single()
      }   
      std::printf("[UNIT-TEST:] -- Dumping an array members info and alignment.\n");
      __trapezw_1__.__trapezw_samples__.info_size_alignment();
-     std::printf("[UNIT-TEST:] -- Creating single trapezoid waveform.\n");
-     __trapezw_1__.single_trapezoid_wave(a,m,l,c);
+     std::printf("[UNIT-TEST:] -- Creating series of trapezoid waves (unrolled 4x).\n");
+     __trapezw_1__.series_of_trapezoid_waves_u4x(a,m,l,c);
      std::printf("[UNIT-TEST:] -- Creating gnuplot plotting command file.\n");
      trapezoid_waveform_t::create_signal_plot(__trapezw_1__.__n_samples__,__trapezw_1__.__trapezw_samples__.m_data,nullptr,
-                                              "single_trapezoid_wave_test_1","Single_Trapezoid_Waveform",false);
+                                              "series_of_trapezoid_waves_u4x_test_2","Series_Trapezoid_Waveform",false);
      printf("[UNIT_TEST]: function=%s -- **END**\n", __PRETTY_FUNCTION__);
 }
 
 int main()
 {
-     unit_test_create_trapezw_single();
+     unit_test_create_trapezw_series_u4x();
      return 0;
 }
