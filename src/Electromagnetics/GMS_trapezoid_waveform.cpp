@@ -1006,3 +1006,208 @@ gms::radiolocation
 
 }
 
+void 
+gms::radiolocation
+::trapezoid_waveform_t
+::single_trapezoid_wave_v2(const float a,
+                           const float m,
+						   const float l,
+						   const float c,
+						   const std::uint32_t shaping)
+{
+	 constexpr float PI{3.14159265358979323846264338328f};
+	 //float     a_over_PI{a*0.318309886183790671537767526745f};
+	 //float     PI_over_m{PI/m};
+	 float __a{a};
+	 float __m{m};
+	 float __l{l};
+	 float __c{c};
+	 const  std::uint32_t n_samples{static_cast<std::uint32_t>(this->__n_samples__)};
+	 float  sum{0.0f};
+	 this->init_storage(0.0f);
+     switch (shaping)
+	 {
+		case 0 : 
+		      for(std::uint32_t __i{1}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  __a += t__i;
+				  __m += t__i;
+				  __l += t__i;
+				  __c += t__i;
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+                        const float arg{PI_over_m*t__i+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		case 1 : 
+		      for(std::uint32_t __i{1}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  __a += t__i;
+				  __m += t__i;
+				  __l += t__i;
+				  __c += t__i;
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+					    const float t__j{static_cast<float>(__j)};
+                        const float arg{PI_over_m*(t__i+t__j)+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		case 2 : 
+		      for(std::uint32_t __i{1}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  __a += t__i;
+				  __m += t__i;
+				  __l += t__i;
+				  __c += t__i;
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+					    const float t__j{static_cast<float>(__j)};
+                        const float arg{PI_over_m*t__i*t__j+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		default : 
+		      return;
+	 }
+}
+
+void 
+gms::radiolocation 
+::trapezoid_waveform_t
+::single_trapezoid_wave_v2(const float * __restrict p_a,
+                           const float * __restrict p_m,
+						   const float * __restrict p_l,
+						   const float * __restrict p_c,
+						   const std::uint32_t shaping)
+{
+	constexpr float PI{3.14159265358979323846264338328f};
+	 //float     a_over_PI{a*0.318309886183790671537767526745f};
+	 //float     PI_over_m{PI/m};
+	 const float * __restrict __p_a{p_a};
+	 const float * __restrict __p_m{p_m};
+	 const float * __restrict __p_l{p_l};
+	 const float * __restrict __p_c{p_c};
+	 const  std::uint32_t n_samples{static_cast<std::uint32_t>(this->__n_samples__)};
+	 float  sum{0.0f};
+	 this->init_storage(0.0f);
+     switch (shaping)
+	 {
+		case 0 : 
+		      for(std::uint32_t __i{0}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  const float __a{__p_a[__i]}; 
+				  const float __m{__p_m[__i]};
+				  const float __l{__p_l[__i]};
+				  const float __c{__p_c[__i]};
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+                        const float arg{PI_over_m*t__i+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		case 1 : 
+		      for(std::uint32_t __i{0}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  const float __a{__p_a[__i]}; 
+				  const float __m{__p_m[__i]};
+				  const float __l{__p_l[__i]};
+				  const float __c{__p_c[__i]};
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+					    const float t__j{static_cast<float>(__j)};
+                        const float arg{PI_over_m*(t__i+t__j)+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		case 2 : 
+		      for(std::uint32_t __i{0}; __i != this->__n_waves__; ++__i) 
+			  {
+				  const float t__i{static_cast<float>(__i)};
+				  const float __a{__p_a[__i]}; 
+				  const float __m{__p_m[__i]};
+				  const float __l{__p_l[__i]};
+				  const float __c{__p_c[__i]};
+                  float a_over_PI{__a*0.318309886183790671537767526745f};
+				  float PI_over_m{PI/__m};
+				  for(std::uint32_t __j{0}; __j != n_samples; ++__j) 
+				  {
+					    const float t__j{static_cast<float>(__j)};
+                        const float arg{PI_over_m*t__i*t__j+__l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+                        const float t_as{ceph_asinf(ceph_sinf(arg))};
+		                const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+                        const float t_as{std::asin(std::sin(arg))};
+		                const float t_ac{std::acos(std::cos(arg))};
+#endif 
+                        sum = a_over_PI*(t_as+t_ac)-5.0f+__c;
+						this->__trapezw_samples__.m_data[__j] += sum;
+				  }
+			  }
+		break;
+		default : 
+		      return;
+	 }
+}

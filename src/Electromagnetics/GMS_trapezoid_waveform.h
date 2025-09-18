@@ -219,6 +219,28 @@ namespace radiolocation
                                                          const std::uint32_t, 
                                                          darray_r4_t &);
 
+                    /*
+                      Create single trapezoid wave with a,l,c,m parameters
+                      monotonically growing. and (curve shaped)
+                    */
+                   void single_trapezoid_wave_v2(const float,
+                                                 const float,
+                                                 const float,
+                                                 const float,
+                                                 const std::uint32_t);
+
+                    /*
+                      Create single trapezoid wave with a,l,c,m parameters
+                      caller passed (curve shaped)
+                    */
+                   void single_trapezoid_wave_v2(const float * __restrict,
+                                                 const float * __restrict,
+                                                 const float * __restrict,
+                                                 const float * __restrict,
+                                                 const std::uint32_t);
+
+                                                    
+
                     
             };
 }
