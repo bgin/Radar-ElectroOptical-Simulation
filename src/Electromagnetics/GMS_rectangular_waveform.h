@@ -129,7 +129,9 @@ namespace radiolocation
                                                  const std::string &,
                                                  const bool );
 
-                  void fourier_series_expansion();
+                  void fourier_series_expansion(const std::uint32_t);
+
+                  void fourier_series_expansion_optim(const std::uint32_t);
           };
 
 }

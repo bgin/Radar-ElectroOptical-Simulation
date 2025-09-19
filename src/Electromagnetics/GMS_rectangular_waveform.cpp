@@ -341,7 +341,7 @@ gms::radiolocation
 void 
 gms::radiolocation
 ::rectangular_waveform_t 
-::fourier_series_expansion()
+::fourier_series_expansion(const std::uint32_t which_index)
 {
     constexpr float C6283185307179586476925286766559{6.283185307179586476925286766559f};
     constexpr float C314159265358979323846264338328{3.14159265358979323846264338328f};
@@ -350,27 +350,147 @@ gms::radiolocation
     const float twoA_over_PI{(this->__A__+this->__A__)*0.318309886183790671537767526745f};
     const std::uint32_t n_samples{static_cast<std::uint32_t>(this->__n_samples__)};
     float sum;
-    for(std::uint32_t __i{0}; __i != n_samples; ++__i) 
+    switch (which_index)
     {
-         const float t__i{static_cast<float>(__i)};
-         sum = 0.0f;
-         for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
-         {
-             const float t__n{static_cast<float>(__n)};
-             const float i_t__n{1.0f/t__n};
-             const float sin_arg{C314159265358979323846264338328*t__n*rho_over_T};
-             const float cos_arg{C6283185307179586476925286766559*t__n*f*t__i};
+         case 0 : 
+             for(std::uint32_t __i{0}; __i != n_samples; ++__i) 
+             {
+                   const float t__i{static_cast<float>(__i)};
+                   sum = 0.0f;
+                   for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
+                   {
+                        const float t__n{static_cast<float>(__n)};
+                        const float i_t__n{1.0f/t__n};
+                        const float sin_arg{C314159265358979323846264338328*t__n*rho_over_T};
+                        const float cos_arg{C6283185307179586476925286766559*t__n*f*t__i};
 #if (RECTANGULAR_WAVEFORM_USE_CEPHES) == 1
-             const float t_sin{i_t__n*ceph_sinf(sin_arg)};
-             const float t_cos{ceph_cosf(cos_arg)};
+                        const float t_sin{i_t__n*ceph_sinf(sin_arg)};
+                        const float t_cos{ceph_cosf(cos_arg)};
 #else 
-             const float t_sin{std::sin(sin_arg)};
-             const float t_cos{std::cos(cos_arg)};
+                        const float t_sin{std::sin(sin_arg)};
+                        const float t_cos{std::cos(cos_arg)};
 #endif 
-             const float mul_part{t_sin*t_cos};
-             sum += mul_part;
-         }
-         this->__rw_samples__.m_data[__i] = (this->__A__*rho_over_T)+twoA_over_PI*sum;
+                        const float mul_part{t_sin*t_cos};
+                        sum += mul_part;
+                   }
+                  this->__rw_samples__.m_data[__i] = (this->__A__*rho_over_T)+twoA_over_PI*sum;
+             }
+         break;
+         case 1 : 
+             const float f_n_samples{1.0f/static_cast<float>(n_samples)};
+             for(std::uint32_t __i{0}; __i != n_samples; ++__i) 
+             {
+                   const float t__i{static_cast<float>(__i)};
+                   const float t__t{t__i*this->__T__*f_n_samples};
+                   sum = 0.0f;
+                   for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
+                   {
+                        const float t__n{static_cast<float>(__n)};
+                        const float i_t__n{1.0f/t__n};
+                        const float sin_arg{C314159265358979323846264338328*t__n*rho_over_T};
+                        const float cos_arg{C6283185307179586476925286766559*t__n*f*t__t};
+#if (RECTANGULAR_WAVEFORM_USE_CEPHES) == 1
+                        const float t_sin{i_t__n*ceph_sinf(sin_arg)};
+                        const float t_cos{ceph_cosf(cos_arg)};
+#else 
+                        const float t_sin{std::sin(sin_arg)};
+                        const float t_cos{std::cos(cos_arg)};
+#endif 
+                        const float mul_part{t_sin*t_cos};
+                        sum += mul_part;
+                   }
+                  this->__rw_samples__.m_data[__i] = (this->__A__*rho_over_T)+twoA_over_PI*sum;
+             }
+         break;
+         default : 
+            return;
+    }
+    
+}
+
+void 
+gms::radiolocation
+::rectangular_waveform_t 
+::fourier_series_expansion_optim(const std::uint32_t which_index)
+{
+    if(__builtin_expect(this->__n_waves__>256u,0)) { return;}
+
+    constexpr float C6283185307179586476925286766559{6.283185307179586476925286766559f};
+    constexpr float C314159265358979323846264338328{3.14159265358979323846264338328f};
+    __ATTR_ALIGN__(64) float sin_buf[256];
+    const float rho_over_T{this->__rho__/this->__T__};
+    const float f{1.0f/this->__T__};
+    const float twoA_over_PI{(this->__A__+this->__A__)*0.318309886183790671537767526745f};
+    const std::uint32_t n_samples{static_cast<std::uint32_t>(this->__n_samples__)};
+    std::int32_t idx{-1};
+
+    for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
+    {
+         //idx += 1;
+         const float t__n{static_cast<float>(__n)};
+         const float i_t__n{1.0f/t__n};
+         const float sin_arg{C314159265358979323846264338328*t__n*rho_over_T};
+#if (RECTANGULAR_WAVEFORM_USE_CEPHES) == 1
+         const float t_sin{i_t__n*ceph_sinf(sin_arg)};
+#else 
+         const float t_sin{std::sin(sin_arg)};
+#endif 
+         sin_buf[idx++] = t_sin; 
+    }
+
+    float sum;
+    switch (which_index)
+    {
+         case 0 : 
+             for(std::uint32_t __i{0}; __i != n_samples; ++__i) 
+             {
+                   const float t__i{static_cast<float>(__i)};
+                   sum = 0.0f;
+                   idx = -1;
+                   for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
+                   {
+                        const float t__n{static_cast<float>(__n)};
+                        const float cos_arg{C6283185307179586476925286766559*t__n*f*t__i};
+#if (RECTANGULAR_WAVEFORM_USE_CEPHES) == 1
+                        
+                        const float t_cos{ceph_cosf(cos_arg)};
+#else 
+                       
+                        const float t_cos{std::cos(cos_arg)};
+#endif 
+                        const float mul_part{sin_buf[idx++]*t_cos};
+                        sum += mul_part;
+                   }
+                  this->__rw_samples__.m_data[__i] = (this->__A__*rho_over_T)+twoA_over_PI*sum;
+             }
+         break;
+         case 1 : 
+             const float f_n_samples{1.0f/static_cast<float>(n_samples)};
+             for(std::uint32_t __i{0}; __i != n_samples; ++__i) 
+             {
+                   const float t__i{static_cast<float>(__i)};
+                   const float t__t{t__i*this->__T__*f_n_samples};
+                   sum = 0.0f;
+                   idx = -1;
+                   for(std::uint32_t __n{1}; __n <= this->__n_waves__; ++__n) 
+                   {
+                        const float t__n{static_cast<float>(__n)};
+                        const float cos_arg{C6283185307179586476925286766559*t__n*f*t__t};
+#if (RECTANGULAR_WAVEFORM_USE_CEPHES) == 1
+                       
+                        const float t_cos{ceph_cosf(cos_arg)};
+#else 
+                       
+                        const float t_cos{std::cos(cos_arg)};
+#endif 
+                        const float mul_part{sin_buf[idx++]*t_cos};
+                        sum += mul_part;
+                   }
+                  this->__rw_samples__.m_data[__i] = (this->__A__*rho_over_T)+twoA_over_PI*sum;
+             }
+         break;
+         default : 
+            return;
     }
     
 }
