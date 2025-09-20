@@ -597,6 +597,31 @@ gms::radiolocation
     std::cout << " Created signal data file \"" << plot_fname << "\"\n";
 }
 
+float
+gms::radiolocation
+::trapezoid_waveform_t
+::sample_of_trapezoid_wave(const float t,
+	                       const float a,
+                           const float m,
+						   const float l,
+					       const float c)
+{
+	 constexpr float PI{3.14159265358979323846264338328f};
+	 float     a_over_PI{a/PI};
+	 float     PI_over_m{PI/m};
+	 const float arg{PI_over_m*t+l};
+#if (TRAPEZOID_WAVEFORM_USE_CEPHES) == 1
+         const float t_as{ceph_asinf(ceph_sinf(arg))};
+		 const float t_ac{ceph_acosf(ceph_cosf(arg))};
+#else 
+         const float t_as{std::asin(std::sin(arg))};
+		 const float t_ac{std::acos(std::cos(arg))};
+#endif 
+         const float t_0{a_over_PI*(t_as+t_ac)};
+		 const float t_1{t_0-5.0f+c};
+		 return (t_1);
+}
+
 void 
 gms::radiolocation
 ::trapezoid_waveform_t

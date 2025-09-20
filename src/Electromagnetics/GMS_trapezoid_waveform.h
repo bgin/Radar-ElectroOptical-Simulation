@@ -179,13 +179,21 @@ namespace radiolocation
                                                    const std::string &,
                                                    const std::string &,
                                                    const bool );
+
+                    /*Create a single sample of trapezoid wave*/
+                    float sample_of_trapezoid_wave(const float,
+                                                   const float,
+                                                   const float,
+                                                   const float,
+                                                   const float);
+
                     /* Create single trapezoid waveform*/
                     void single_trapezoid_wave(const float,
                                                const float,
                                                const float,
                                                const float);
 
-                    /* Create single trapezoid wave coded sequence added*/
+                   /* Create single trapezoid wave coded sequence added*/
                     void single_trapezoid_wave_coded(const float,
                                                      const float,
                                                      const float,
